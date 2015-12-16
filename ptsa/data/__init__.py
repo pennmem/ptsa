@@ -12,7 +12,10 @@ from timeseries import TimeSeries
 
 from basewrapper import BaseWrapper
 from arraywrapper import ArrayWrapper
-#from edfwrapper import EdfWrapper
+try:
+    from edfwrapper import EdfWrapper
+except ImportError:
+    print 'COULD NOT FIND COMP{ILED VERSION OF C LIBRARY FOR HANDING EDF FILES. IF YOU WANT EDF SUPPORT PLEASE RUN setup.py and compile this library'
 
 from events import Events
 
