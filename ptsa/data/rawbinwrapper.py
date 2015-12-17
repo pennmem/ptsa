@@ -22,6 +22,9 @@ class RawBinWrapper(BaseWrapper):
     Interface to data stored in binary format with a separate file for
     each channel.  
     """
+
+    dataroot = property(lambda self: self._get_dataroot())
+
     def __init__(self,dataroot,samplerate=None,format='int16',gain=1):
         """Initialize the interface to the data.  You must specify the
         dataroot, which is a string that contains the path to and
@@ -149,7 +152,11 @@ class RawBinWrapper(BaseWrapper):
         # loop over channels
         for c, channel in enumerate(channels):
             # determine the file
-            eegfname = self._dataroot+'.'+self._channel_info['name'][channel]
+            #ORIGINAL CODE
+            # eegfname = self._dataroot+'.'+self._channel_info['name'][channel]
+            #NEW CODE
+            eegfname = self._dataroot+'.'+self._channel_info['name'][c]
+
             # eegfname = '{}.{:0>3}'.format(self._dataroot,channel)
             if os.path.isfile(eegfname):
                 efile = open(eegfname,'rb')
@@ -184,92 +191,9 @@ class RawBinWrapper(BaseWrapper):
                 eventdata[c, e, :] = data
 
         # multiply by the gain
-	eventdata *= self._gain
+    	eventdata *= self._gain
 	
         return eventdata
-
-    dataroot = property(lambda self: self._get_dataroot())
-
-# # This doesn't seem to work and also doesn't seem to belong in this file:
-# def createEventsFromMatFile(matfile):
-#     """Create an events data array with data wrapper information from
-#     an events structure saved in a Matlab mat file."""
-#     # load the mat file
-#     mat = loadmat(matfile)
-
-#     if 'events' not in mat.keys():
-#         raise "\nError processing the Matlab file: %s\n" + \
-#               "This file must contain an events structure" + \
-#               "with the name \"events\" (case sensitive)!\n" +\
-#               "(All other content of the file is ignored.)" % matfile 
-
-#     # get the events
-#     events = mat['events'][0]
-    
-#     # get num events
-#     numEvents = len(events)
-
-#     # determine the fieldnames and formats
-#     fields = events[0]._fieldnames
-
-#     def loadfield(events,field,dtype=None):
-#         data = []
-#         for x in events:
-#             dat = getattr(x,field)
-#             if len(dat) == 0:
-#                 data.append(None)
-#             else:
-#                 data.append(dtype(dat[0]))
-#         return data
-    
-#     # create list with array for each field
-#     data = []
-#     for f,field in enumerate(fields):
-# 	# handle special cases
-# 	if field == 'eegfile':
-# 	    # get unique files
-# 	    #eegfiles = np.unique(map(lambda x: str(x.eegfile),events))
-# 	    #eegfiles = np.unique([str(x.eegfile[0]) for x in events])
-#             eegfiles = np.unique(loadfield(events,field))
-#             eegfiles = eegfiles[eegfiles!=None]
-	    
-# 	    # make dictionary of data wrapers for the unique eeg files
-# 	    efile_dict = {}
-# 	    for eegfile in eegfiles:
-# 		efile_dict[eegfile] = RawBinWrapper(eegfile)
-
-# 	    # Handle when the eegfile field is blank
-# 	    efile_dict[''] = None
-	
-# 	    # set the eegfile to the correct data wrapper
-            
-# 	    # newdat = np.array(
-#             #     map(lambda x: efile_dict[str(x.__getattribute__(field))],
-#             #         events))
-#             newdat = np.array([efile_dict[str(x.__getattribute__(field)[0])]
-#                                for x in events])
-			
-# 	    # change field name to esrc
-# 	    fields[f] = 'esrc'
-# 	elif field == 'eegoffset':
-#             # change the field name
-#             fields[f] = 'eoffset'
-#             newdat = np.array([x.__getattribute__(field)[0]
-#                                for x in events])
-# 	else:
-# 	    # get the data in normal fashion
-# 	    # newdat = np.array(
-#             #     map(lambda x: x.__getattribute__(field),events))
-#             newdat = np.array([x.__getattribute__(field)[0]
-#                                for x in events])
-
-# 	# append the data
-# 	data.append(newdat)
-
-#     # allocate for new array
-#     newrec = np.rec.fromarrays(data,names=fields).view(Events)
-
-#     return newrec
 
 
 

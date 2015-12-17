@@ -1038,9 +1038,10 @@ class DimArray(AttrArray):
             raise ValueError('Names of the dimensions do not match!')
                 
         # make sure all dims except for the extended one match:
-        dim_deviations = [np.sum(d.dims!=self.dims) for d in data]
-        if np.sum(dim_deviations)>1:
-            raise ValueError('Dimensions do not match!')
+        #COMMENTED OUT SANITY CHECK THAT IS OVERZEALOUS
+        # dim_deviations = [np.sum(d.dims!=self.dims) for d in data]
+        # if np.sum(dim_deviations)>1:
+        #     raise ValueError('Dimensions do not match!')
                 
         # add the current DimArray to the beginning of list:
         data.insert(0,self)
