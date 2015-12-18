@@ -2,7 +2,8 @@ __author__ = 'm'
 
 from os.path import *
 import pathlib
-from ptsa.data.rawbinwrapper import RawBinWrapper
+# from ptsa.data.rawbinwrapper import RawBinWrapper
+from ptsa.data.RawBinWrapperXray import RawBinWrapperXray
 from ptsa.data.events import Events
 import numpy as np
 
@@ -21,6 +22,7 @@ class TimeSeriesEEGReader(object):
         self._buffer_time = 0.0
         self._keep_buffer = False
         self._samplerate = None
+
     
 
     # def attach_raw_bin_wrappers(self, events):
@@ -47,7 +49,11 @@ class TimeSeriesEEGReader(object):
             ev_with_matched_eegfile = events_with_matched_eegfile[0]
             try:
                 eeg_file_path = join(self.data_dir_prefix, str(pathlib.Path(str(ev_with_matched_eegfile.eegfile)).parts[1:]))
-                raw_bin_wrappers.append(RawBinWrapper(eeg_file_path))
+
+                # raw_bin_wrappers.append(RawBinWrapper(eeg_file_path))
+
+                raw_bin_wrappers.append(RawBinWrapperXray(eeg_file_path))
+
                 original_eeg_files.append(eegfile)
 
                 inds = np.where(evs.eegfile == eegfile)[0]
@@ -63,8 +69,8 @@ class TimeSeriesEEGReader(object):
                 print 'skipping event with eegfile=',evs.eegfile
                 pass
 
-        raw_bin_wrappers = np.array(raw_bin_wrappers, dtype=np.dtype(RawBinWrapper))
-
+        # raw_bin_wrappers = np.array(raw_bin_wrappers, dtype=np.dtype(RawBinWrapper))
+        raw_bin_wrappers = np.array(raw_bin_wrappers, dtype=np.dtype(RawBinWrapperXray))
 
         return raw_bin_wrappers, original_eeg_files
 
