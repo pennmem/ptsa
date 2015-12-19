@@ -12,6 +12,8 @@ sys.path.append('/Users/m/PTSA_NEW_GIT')
 from ptsa.data.events import Events
 
 from ptsa.data.common import TypeValTuple, PropertiedObject
+from ptsa.data.common.path_utils import find_dir_prefix
+from ptsa.data.common import pathlib
 
 class BaseEventReader(PropertiedObject):
     _descriptors = [
@@ -71,6 +73,12 @@ class BaseEventReader(PropertiedObject):
 
             evs = evs[indicator]
 
+        # determining data_dir_prefix in case rhino /data filesystem was mounted under different root
+        data_dir_prefix = self.find_data_dir_prefix()
+        for i, ev in enumerate(evs):
+            ev.eegfile=join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
+
+
         # NEW CODE
         if self.use_ptsa_events_class:
             evs = Events(evs)
@@ -82,8 +90,26 @@ class BaseEventReader(PropertiedObject):
 
         return self._events
 
-    def get_raw_data_root(self):
-        return self.raw_data_root
+
+    def find_data_dir_prefix(self):
+        # determining dir_prefix
+        #
+        # data on rhino is mounted as /data
+        # copying rhino /data structure to another directory will cause all files in data have new prefix
+        # example:
+        # self._event_file='/Users/m/data/events/R1060M_events.mat'
+        # prefix is '/Users/m'
+        # we use find_dir_prefix to determine prefix based on common_root in path with and without prefix
+        common_root = 'data/events'
+        prefix = find_dir_prefix(path_with_prefix=self._event_file, common_root=common_root)
+        if not prefix:
+            raise RuntimeError(
+                'Could not determine prefix from: %s using common_root: %s' % (self._event_file, common_root))
+
+        return find_dir_prefix(self._event_file, 'data/events')
+
+    # def get_raw_data_root(self):
+    #     return self.raw_data_root
 
     def get_output(self):
         return self._events

@@ -45,11 +45,13 @@ class PTSAEventReader(BaseEventReader):
 
         for ev in evs:
             try:
-                eeg_file_path = join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
+                # eeg_file_path = join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
 
                 if self.attach_rawbinwrapper:
-                    ev.esrc = RawBinWrapper(eeg_file_path)
-                self.raw_data_root = str(eeg_file_path)
+                    # ev.esrc = RawBinWrapper(eeg_file_path)
+                    ev.esrc = RawBinWrapper(ev.eegfile)
+
+                # self.raw_data_root = str(eeg_file_path)
 
             except TypeError:
                 print 'skipping event with eegfile=', ev.eegfile
