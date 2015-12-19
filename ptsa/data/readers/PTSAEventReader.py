@@ -31,6 +31,12 @@ class PTSAEventReader(BaseEventReader):
 
     def correct_eegfile_field(self, events):
         events = events[events.eegfile != '[]']  # remove events with no recording
+
+        good_ev_indicator = np.zeros((len(events),),dtype=np.bool)
+        for i,ev in enumerate(events):
+            good_ev_indicator[i] = isinstance(ev.eegfile,str) and ev.eegfile != '[]'
+
+
         data_dir_bad = r'/data.*/' + events[0].subject + r'/eeg'
         data_dir_good = r'/data/eeg/' + events[0].subject + r'/eeg'
         for ev in events:
@@ -101,6 +107,10 @@ class PTSAEventReader(BaseEventReader):
         # this replaces references to reref eef with references to noreref eeg in the file path stored in the eegfile field
         # if not self.use_reref_eeg:
         #     evs = self.correct_eegfile_field(evs) ################## RESTORE THIS
+
+        # in case evs is simply recarray
+        if not isinstance(evs,Events):
+            evs = Events(evs)
 
         if self.attach_rawbinwrapper:
             evs = evs.add_fields(esrc=np.dtype(RawBinWrapper))
