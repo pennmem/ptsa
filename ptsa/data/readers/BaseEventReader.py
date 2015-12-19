@@ -26,7 +26,7 @@ class BaseEventReader(PropertiedObject):
 
     def __init__(self, event_file, **kwds):
         self.__event_file = event_file
-        self.__events = None
+        self._events = None
 
         possible_argument_list = ['eliminate_events_with_no_eeg', 'data_dir_prefix', 'use_ptsa_events_class',
                                   'use_reref_eeg']
@@ -74,18 +74,18 @@ class BaseEventReader(PropertiedObject):
         if not self.use_reref_eeg:
             evs = self.correct_eegfile_field(evs)
 
-        self.__events = evs
+        self._events = evs
 
-        return self.__events
+        return self._events
 
     def get_raw_data_root(self):
         return self.raw_data_root
 
     def get_output(self):
-        return self.__events
+        return self._events
 
     def set_output(self, evs):
-        self.__events = evs
+        self._events = evs
 
 
 if __name__ == '__main__':
@@ -93,7 +93,7 @@ if __name__ == '__main__':
     # e_path = join('/Volumes/rhino_root', 'data/events/RAM_FR1/R1060M_math.mat')
     e_path = '/Users/m/data/events/RAM_FR1/R1056M_events.mat'
     e_reader = BaseEventReader(event_file=e_path, eliminate_events_with_no_eeg=True,
-                               data_dir_prefix='/Volumes/rhino_root')
+                               data_dir_prefix='/Users/m')
 
     events = e_reader.read()
 
