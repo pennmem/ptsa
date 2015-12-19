@@ -18,26 +18,30 @@ class BaseEventReader(PropertiedObject):
         TypeValTuple('samplerate', float, 20),
         TypeValTuple('order', str, ''),
         TypeValTuple('eliminate_events_with_no_eeg', bool, True),
-        TypeValTuple('data_dir_prefix', str, None),
         TypeValTuple('raw_data_root', str, None),
-        TypeValTuple('use_ptsa_events_class', bool, True),
+        TypeValTuple('use_ptsa_events_class', bool, False),
         TypeValTuple('use_reref_eeg', bool, False),
     ]
 
     def __init__(self, event_file, **kwds):
-        self.__event_file = event_file
+        self._event_file = event_file
         self._events = None
 
-        possible_argument_list = ['eliminate_events_with_no_eeg', 'data_dir_prefix', 'use_ptsa_events_class',
+        possible_argument_list = ['eliminate_events_with_no_eeg', 'use_ptsa_events_class',
                                   'use_reref_eeg']
 
         for argument in possible_argument_list:
-
             try:
-                setattr(self, argument, kwds[argument])
-            except LookupError:
-                print 'did not find the argument: ', argument
+                accessor = getattr(self, argument)
+                accessor = argument
+            except AttributeError:
+                sys.exit()
                 pass
+            # try:
+            #     setattr(self, argument, kwds[argument])
+            # except LookupError:
+            #     print 'did not find the argument: ', argument
+            #     pass
 
     def correct_eegfile_field(self, events):
         data_dir_bad = r'/data.*/' + events[0].subject + r'/eeg'
@@ -51,7 +55,7 @@ class BaseEventReader(PropertiedObject):
         from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
 
         # extract matlab matrix (called 'events') as numpy structured array
-        struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.__event_file, 'events')
+        struct_array = read_single_matlab_matrix_as_numpy_structured_array(self._event_file, 'events')
 
         evs = struct_array
 
@@ -92,8 +96,8 @@ if __name__ == '__main__':
     from BaseEventReader import BaseEventReader
     # e_path = join('/Volumes/rhino_root', 'data/events/RAM_FR1/R1060M_math.mat')
     e_path = '/Users/m/data/events/RAM_FR1/R1056M_events.mat'
-    e_reader = BaseEventReader(event_file=e_path, eliminate_events_with_no_eeg=True,
-                               data_dir_prefix='/Users/m')
+    e_reader = BaseEventReader(event_file=e_path, eliminate_events_with_no_eeg=True)
+
 
     events = e_reader.read()
 
