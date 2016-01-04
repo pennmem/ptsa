@@ -35,7 +35,6 @@ class PTSAEventReader(BaseEventReader):
             pass
 
 
-
     def read(self):
 
         # calling base class read fcn
@@ -56,50 +55,11 @@ class PTSAEventReader(BaseEventReader):
             else:    # used for debuggin purposes
                 self.attach_rawbinwrapper_individual(evs)
 
-
-        # for ev in evs:
-        #     try:
-        #         # eeg_file_path = join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
-        #
-        #         if self.attach_rawbinwrapper:
-        #             # ev.esrc = RawBinWrapper(eeg_file_path)
-        #             ev.esrc = RawBinWrapper(ev.eegfile)
-        #
-        #         # self.raw_data_root = str(eeg_file_path)
-        #
-        #     except TypeError:
-        #         print 'skipping event with eegfile=', ev.eegfile
-        #         pass
-
         self._events = evs
         return self._events
 
         # self.set_output(evs)
         # return self.get_output()
-
-    # def read(self):
-    #
-    #     # calling base class read fcn
-    #     evs = BaseEventReader.read(self)
-    #
-    #     # determining data_dir_prefix in case rhino /data filesystem was mounted under different root
-    #     data_dir_prefix = self.find_data_dir_prefix()
-    #
-    #     # in case evs is simply recarray
-    #     if not isinstance(evs, Events):
-    #         evs = Events(evs)
-    #
-    #
-    #     if self.attach_rawbinwrapper:
-    #         # self.attach_rawbinwrapper_groupped(evs)
-    #         self.attach_rawbinwrapper_individual(evs)
-    #
-    #
-    #     self._events = evs
-    #     return self._events
-    #
-    #     # self.set_output(evs)
-    #     # return self.get_output()
 
 
     def attach_rawbinwrapper_groupped(self,evs):
@@ -158,40 +118,3 @@ if __name__ == '__main__':
     print events
 
 
-
-
-
-    # def read(self):
-    #
-    #     # calling base class read fcn
-    #     evs = BaseEventReader.read(self)
-    #
-    #     # determining data_dir_prefix in case rhino /data filesystem was mounted under different root
-    #     data_dir_prefix = self.find_data_dir_prefix()
-    #
-    #     # in case evs is simply recarray
-    #     if not isinstance(evs, Events):
-    #         evs = Events(evs)
-    #
-    #     if self.attach_rawbinwrapper:
-    #         evs = evs.add_fields(esrc=np.dtype(RawBinWrapper))
-    #
-    #     for ev in evs:
-    #         try:
-    #             # eeg_file_path = join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
-    #
-    #             if self.attach_rawbinwrapper:
-    #                 # ev.esrc = RawBinWrapper(eeg_file_path)
-    #                 ev.esrc = RawBinWrapper(ev.eegfile)
-    #
-    #             # self.raw_data_root = str(eeg_file_path)
-    #
-    #         except TypeError:
-    #             print 'skipping event with eegfile=', ev.eegfile
-    #             pass
-    #
-    #     self._events = evs
-    #     return self._events
-    #
-    #     # self.set_output(evs)
-    #     # return self.get_output()

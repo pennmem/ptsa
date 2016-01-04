@@ -456,7 +456,7 @@ class BaseWrapper(object):
         samp_end = samp_start + (dur_samp-1)*samplesize
         time_range = np.linspace(samp_start,samp_end,dur_samp)
 
-        # when channels is and array of channels labels i.e. strings like  '002','003',...
+        # when channels is an array of channels labels i.e. strings like  '002','003',...
         # we need to use xray arrays to do fancy indexing
         if channels.dtype.char=='S':
             try:
