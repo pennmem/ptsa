@@ -22,11 +22,19 @@ class PTSAEventReader(BaseEventReader):
         BaseEventReader.__init__(self, event_file, **kwds)
 
         self.attach_rawbinwrapper = True
+        self.use_groupped_rawbinwrapper = True
 
         try:
             self.attach_rawbinwrapper = bool(kwds['attach_rawbinwrapper'])
         except LookupError:
             pass
+
+        try:
+            self.use_groupped_rawbinwrapper = bool(kwds['use_groupped_rawbinwrapper'])
+        except LookupError:
+            pass
+
+
 
     def read(self):
 
@@ -43,25 +51,80 @@ class PTSAEventReader(BaseEventReader):
         if self.attach_rawbinwrapper:
             evs = evs.add_fields(esrc=np.dtype(RawBinWrapper))
 
-        for ev in evs:
-            try:
-                # eeg_file_path = join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
+            if self.use_groupped_rawbinwrapper: # this should be default choice - much faster execution
+                self.attach_rawbinwrapper_groupped(evs)
+            else:    # used for debuggin purposes
+                self.attach_rawbinwrapper_individual(evs)
 
-                if self.attach_rawbinwrapper:
-                    # ev.esrc = RawBinWrapper(eeg_file_path)
-                    ev.esrc = RawBinWrapper(ev.eegfile)
 
-                # self.raw_data_root = str(eeg_file_path)
-
-            except TypeError:
-                print 'skipping event with eegfile=', ev.eegfile
-                pass
+        # for ev in evs:
+        #     try:
+        #         # eeg_file_path = join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
+        #
+        #         if self.attach_rawbinwrapper:
+        #             # ev.esrc = RawBinWrapper(eeg_file_path)
+        #             ev.esrc = RawBinWrapper(ev.eegfile)
+        #
+        #         # self.raw_data_root = str(eeg_file_path)
+        #
+        #     except TypeError:
+        #         print 'skipping event with eegfile=', ev.eegfile
+        #         pass
 
         self._events = evs
         return self._events
 
         # self.set_output(evs)
         # return self.get_output()
+
+    # def read(self):
+    #
+    #     # calling base class read fcn
+    #     evs = BaseEventReader.read(self)
+    #
+    #     # determining data_dir_prefix in case rhino /data filesystem was mounted under different root
+    #     data_dir_prefix = self.find_data_dir_prefix()
+    #
+    #     # in case evs is simply recarray
+    #     if not isinstance(evs, Events):
+    #         evs = Events(evs)
+    #
+    #
+    #     if self.attach_rawbinwrapper:
+    #         # self.attach_rawbinwrapper_groupped(evs)
+    #         self.attach_rawbinwrapper_individual(evs)
+    #
+    #
+    #     self._events = evs
+    #     return self._events
+    #
+    #     # self.set_output(evs)
+    #     # return self.get_output()
+
+
+    def attach_rawbinwrapper_groupped(self,evs):
+
+
+        eegfiles = np.unique(evs.eegfile)
+
+        for eegfile in eegfiles:
+
+            raw_bin_wrapper = RawBinWrapper(eegfile)
+            inds = np.where(evs.eegfile == eegfile)[0]
+            for i in inds:
+                evs[i]['esrc'] = raw_bin_wrapper
+
+
+    def attach_rawbinwrapper_individual(self,evs):
+
+        for ev in evs:
+            try:
+                if self.attach_rawbinwrapper:
+                    ev.esrc = RawBinWrapper(ev.eegfile)
+            except TypeError:
+                print 'skipping event with eegfile=', ev.eegfile
+                pass
+
 
     def find_data_dir_prefix(self):
         # determining dir_prefix
@@ -93,3 +156,42 @@ if __name__ == '__main__':
     events = e_reader.get_output()
 
     print events
+
+
+
+
+
+    # def read(self):
+    #
+    #     # calling base class read fcn
+    #     evs = BaseEventReader.read(self)
+    #
+    #     # determining data_dir_prefix in case rhino /data filesystem was mounted under different root
+    #     data_dir_prefix = self.find_data_dir_prefix()
+    #
+    #     # in case evs is simply recarray
+    #     if not isinstance(evs, Events):
+    #         evs = Events(evs)
+    #
+    #     if self.attach_rawbinwrapper:
+    #         evs = evs.add_fields(esrc=np.dtype(RawBinWrapper))
+    #
+    #     for ev in evs:
+    #         try:
+    #             # eeg_file_path = join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
+    #
+    #             if self.attach_rawbinwrapper:
+    #                 # ev.esrc = RawBinWrapper(eeg_file_path)
+    #                 ev.esrc = RawBinWrapper(ev.eegfile)
+    #
+    #             # self.raw_data_root = str(eeg_file_path)
+    #
+    #         except TypeError:
+    #             print 'skipping event with eegfile=', ev.eegfile
+    #             pass
+    #
+    #     self._events = evs
+    #     return self._events
+    #
+    #     # self.set_output(evs)
+    #     # return self.get_output()

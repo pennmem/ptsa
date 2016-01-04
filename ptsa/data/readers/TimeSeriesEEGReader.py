@@ -19,7 +19,7 @@ class TimeSeriesEEGReader(PropertiedObject):
 # class TimeSeriesEEGReader(object):
     _descriptors = [
         TypeValTuple('samplerate', float, -1.0),
-        TypeValTuple('keep_buffer', bool, False),
+        TypeValTuple('keep_buffer', bool, True),
         TypeValTuple('buffer_time', float, 0.0),
         TypeValTuple('start_time', float, 0.0),
         TypeValTuple('end_time', float, 0.0),
@@ -80,6 +80,9 @@ class TimeSeriesEEGReader(PropertiedObject):
         raw_bin_wrappers = np.array(raw_bin_wrappers, dtype=np.dtype(RawBinWrapperXray))
 
         return raw_bin_wrappers, original_eeg_files
+
+    def get_number_of_samples_for_interval(self,time_interval):
+        return int(np.ceil(time_interval*self.samplerate))
 
 
     def __compute_time_series_length(self):
@@ -197,11 +200,16 @@ class TimeSeriesEEGReader(PropertiedObject):
         events = np.concatenate(events).view(Events)
 
         eventdata_xray = xray.DataArray(eventdata.values, coords=[cdim,events,tdim], dims=['channels','events','time'])
+        eventdata_xray.attrs['samplerate'] = eventdata.attrs['samplerate']
 
 
         eventdata_xray = eventdata_xray[:,event_indices_restore_sort_order_array,:] #### RESTORE THIS
 
-
+        if not self.keep_buffer:
+            # trimming buffer data samples
+            number_of_buffer_samples =  self.get_number_of_samples_for_interval(self.buffer_time)
+            if number_of_buffer_samples > 0:
+                eventdata_xray = eventdata_xray[:,:,number_of_buffer_samples:-number_of_buffer_samples]
 
         self.__time_series = eventdata_xray
 
