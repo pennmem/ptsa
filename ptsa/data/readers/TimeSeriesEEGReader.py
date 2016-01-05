@@ -33,6 +33,16 @@ class TimeSeriesEEGReader(PropertiedObject):
 
         self.__time_series = None
 
+        for option_name, val in kwds.items():
+
+            if option_name=='events':
+                self.__events = events
+            else:
+                try:
+                    attr = getattr(self,option_name)
+                    setattr(self,option_name,val)
+                except AttributeError:
+                    print 'Option: '+ option_name+' is not allowed'
 
 
 

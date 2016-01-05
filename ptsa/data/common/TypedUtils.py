@@ -16,7 +16,7 @@ class TypedProperty(object):
 
     def __set__(self,instance,value):
         if not isinstance(value,self.type):
-            raise TypeError("Must be a %s" % self.type)
+            raise TypeError(" Property %s must be a %s" %(self.name[1:],self.type))
         setattr(instance,self.name,value)
 
     def __delete__(self,instance):
