@@ -14,16 +14,28 @@ class ButterworthFiler(PropertiedObject):
     ]
 
 
-    def __init__(self):
+    def __init__(self,**kwds):
 
         self.time_series = None
         self.time_axis = -1
+
+        for option_name, val in kwds.items():
+
+            try:
+                attr = getattr(self,option_name)
+                setattr(self,option_name,val)
+            except AttributeError:
+                print 'Option: '+ option_name+' is not allowed'
+
+
 
     def set_input(self, time_series):
         self.time_series = time_series
 
     def get_output(self):
         return self.filtered_time_series
+
+
 
     def filter(self):
 
