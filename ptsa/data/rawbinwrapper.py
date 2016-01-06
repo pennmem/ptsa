@@ -153,11 +153,15 @@ class RawBinWrapper(BaseWrapper):
         for c, channel in enumerate(channels):
             # determine the file
             #ORIGINAL CODE
-            # eegfname = self._dataroot+'.'+self._channel_info['name'][channel]
+            #eegfname = self._dataroot+'.'+self._channel_info['name'][channel]
+            
             #NEW CODE
+            if isinstance(channel, basestring):
+                eegfname = self._dataroot+'.'+channel
+            else:
+                eegfname = self._dataroot+'.'+self._channel_info['name'][channel]
+            
             # eegfname = self._dataroot+'.'+self._channel_info['name'][c]
-
-            eegfname = self._dataroot+'.'+channel
 
             # eegfname = '{}.{:0>3}'.format(self._dataroot,channel)
             if os.path.isfile(eegfname):
