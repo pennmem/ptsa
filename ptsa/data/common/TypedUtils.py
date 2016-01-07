@@ -9,7 +9,7 @@ class TypedProperty(object):
     def __init__(self,name,type,default=None):
         self.name = "_" + name
         self.type = type
-        self.default = default if default else type()
+        self.default = default if default is not None else type()
 
     def __get__(self,instance,cls):
         return getattr(instance,self.name,self.default)
