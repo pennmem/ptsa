@@ -134,10 +134,12 @@ if __name__ == '__main__':
         if not isinstance(events, Events):
             events = Events(events)
 
-        eegs = events.get_data(channels=['002', '003'], start_time=0.0, end_time=1.6,
+        eegs = events.get_data(channels=['003', '004'], start_time=0.0, end_time=1.6,
                                buffer_time=1.0, eoffset='eegoffset', keep_buffer=True,
                                eoffset_in_time=False, verbose=True)
 
+
+        print
         eegs = eegs.resampled(50)
 
         ############################################################

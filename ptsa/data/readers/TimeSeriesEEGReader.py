@@ -1,7 +1,7 @@
 __author__ = 'm'
 
 from os.path import *
-import pathlib
+from ptsa.data.common import pathlib
 # from ptsa.data.rawbinwrapper import RawBinWrapper
 from ptsa.data.RawBinWrapperXray import RawBinWrapperXray
 from ptsa.data.events import Events
@@ -223,6 +223,71 @@ class TimeSeriesEEGReader(PropertiedObject):
 
         self.__time_series = eventdata_xray
 
+        return self.__time_series
+
+
+
+    def read_all(self,channels, start_offset,  end_offset, buffer):
+        evs = self.__events
+
+        raw_bin_wrappers, original_eeg_files = self.__create_bin_readers()
+
+        # we need to create rawbinwrappers first to figure out sample rate before calling __compute_time_series_length()
+        time_series_length = self.__compute_time_series_length()
+
+        time_series_data = np.empty((len(channels),len(evs),time_series_length),
+                             dtype=np.float)*np.nan
+
+        events = []
+
+        newdat_list = []
+
+        # for s,src in enumerate(usources):
+        for s,(src,eegfile) in enumerate(zip(raw_bin_wrappers,original_eeg_files)):
+            ind = np.atleast_1d( evs.eegfile == eegfile)
+
+            if len(ind) == 1:
+                events.append(evs[0])
+            else:
+                events.append(evs[ind])
+
+            # print event_offsets
+            #print "Loading %d events from %s" % (ind.sum(),src)
+            # get the timeseries for those events
+            newdat = src.get_event_data_xray_simple(channels=channels,events=events,
+                                                    start_offset=start_offset,end_offset=end_offset,buffer=buffer)
+
+            newdat_list.append(newdat)
+
+
+        start_extend_time = time.time()
+        #new code
+        eventdata = xray.concat(newdat_list,dim='events')
+        end_extend_time = time.time()
+
+
+        # concatenate (must eventually check that dims match)
+        # ORIGINAL CODE
+        tdim = eventdata['time']
+        cdim = eventdata['channels']
+        # srate = eventdata.samplerate
+        srate = eventdata.attrs['samplerate']
+
+        eventdata_xray = eventdata
+        # eventdata_xray = xray.DataArray(np.squeeze(eventdata.values), coords=[cdim,tdim], dims=['channels','time'])
+        # eventdata_xray.attrs['samplerate'] = eventdata.attrs['samplerate']
+
+
+        if not self.keep_buffer:
+            # trimming buffer data samples
+            number_of_buffer_samples =  self.get_number_of_samples_for_interval(self.buffer_time)
+            if number_of_buffer_samples > 0:
+                eventdata_xray = eventdata_xray[:,:,number_of_buffer_samples:-number_of_buffer_samples]
+
+        self.__time_series = eventdata_xray
+
+        return self.__time_series
+
 
 
 
@@ -234,4 +299,134 @@ class TimeSeriesEEGReader(PropertiedObject):
         pass
 
 
+
+if __name__=='__main__':
+    event_range = range(0, 30, 1)
+    e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
+
+    from ptsa.data.readers import BaseEventReader
+
+    base_e_reader = BaseEventReader(event_file=e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
+
+    base_e_reader.read()
+
+    base_events = base_e_reader.get_output()
+
+    base_events = base_events[base_events.type == 'WORD']
+
+    # sorting names in the order in which they appear in the file
+    eegfile_names =  np.unique(base_events.eegfile)
+    eeg_file_names_sorter = np.zeros(len(eegfile_names), dtype=np.int)
+
+    for i, eegfile_name in enumerate(eegfile_names):
+
+        eeg_file_names_sorter[i] = np.where(base_events.eegfile==eegfile_name)[0][0]
+
+    eeg_file_names_sorter = np.argsort(eeg_file_names_sorter)
+
+    eegfile_names = eegfile_names [eeg_file_names_sorter]
+
+    print eegfile_names
+
+
+    base_events_0 = base_events[base_events.eegfile==eegfile_names[0]]
+
+
+    print base_events_0
+
+    master_event_0 = base_events_0[[0]] # using fancy indexing to force return of the array
+    master_event__1 = base_events_0[[-1]] # using fancy indexing to force return of the array
+
+
+
+    print 'master_event_0=',master_event_0
+    print 'master_event__1=',master_event__1
+
+    from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
+
+    time_series_reader = TimeSeriesEEGReader(events=master_event_0, start_time=0.0,
+                                             end_time=1.6, buffer_time=1.0, keep_buffer=True)
+
+    ts = time_series_reader.read_all(channels=['002', '003'],start_offset = master_event_0[0].eegoffset,
+                                     end_offset = master_event__1[0].eegoffset, buffer=2000)
+
+
+
+    print ts
+
+    samplerate = ts.attrs['samplerate']
+    ev_duration = 1.6
+    buffer = 1.0
+
+
+    eegoffset_time_array = ts['time'].values['eegoffset']
+
+    ev_data_list = []
+    for i, ev  in enumerate(base_events_0):
+        print ev.eegoffset
+        start_offset = ev.eegoffset-int(np.ceil(buffer*samplerate))
+        end_offset = ev.eegoffset+int(np.ceil((ev_duration+buffer)*samplerate))
+        print "start_offset,end_offset, size=",start_offset,end_offset,end_offset-start_offset
+        # eegoffset_time_array = ts['time'].values['eegoffset']
+        selector_array = np.where( (eegoffset_time_array>=start_offset)& (eegoffset_time_array<end_offset))[0]
+
+        event_time_axis = np.linspace(-1.0,2.6,len(selector_array))
+
+        ev_array = ts[:,:,selector_array]
+
+        ev_array['time']=event_time_axis
+        ev_array['events']= [i]
+
+        ev_data_list.append(ev_array)
+        # ev_data_list.append(ts[:,:,selector_array].values)
+
+        print i
+        # print ev_array
+        if i ==2:
+            break
+
+
+    eventdata = xray.concat(ev_data_list,dim='events')
+
+    # eventdata =np.concatenate(ev_data_list,axis=1)
+
+    # eventdata = xray.concat(ev_data_list,dim='events')
+
+
+    print eventdata
+
+
+
+
+    # eegoffset_time_array = ts['time'].values['eegoffset']
+    #
+    # ev_data_list = []
+    # for i, ev  in enumerate(base_events_0):
+    #     print ev.eegoffset
+    #     start_offset = ev.eegoffset-int(np.ceil(buffer*samplerate))
+    #     end_offset = ev.eegoffset+int(np.ceil((ev_duration+buffer)*samplerate))
+    #     print "start_offset,end_offset, size=",start_offset,end_offset,end_offset-start_offset
+    #     # eegoffset_time_array = ts['time'].values['eegoffset']
+    #     selector_array = np.where( (eegoffset_time_array>=start_offset)& (eegoffset_time_array<end_offset))[0]
+    #
+    #     event_time_axis = np.linspace(-1.0,2.6,len(selector_array))
+    #
+    #     ev_array = ts[:,:,selector_array]
+    #     ev_array['time']=event_time_axis
+    #     ev_array['events']= [i]
+    #
+    #     ev_data_list.append(ev_array)
+    #     # ev_data_list.append(ts[:,:,selector_array])
+    #
+    #     print i
+    #     # print ev_array
+    #     if i ==2:
+    #         break
+    #
+    #
+    # # eventdata = xray.concat(ev_data_list,dim='events')
+    # eventdata = xray.concat(ev_data_list,dim='events')
+    #
+    #
+    # print eventdata
 

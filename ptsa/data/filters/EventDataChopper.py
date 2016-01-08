@@ -76,6 +76,11 @@ class EventDataChopper(PropertiedObject):
 
             eventdata = xray.concat(ev_data_list,dim='events')
 
+            # replacing simple events axis (consecutive integers) with recarray of events
+            eventdata['events'] = evs
+
+
+
             eventdata.attrs['samplerate'] = samplerate
             eventdata.attrs['time_shift'] = self.time_shift
             eventdata.attrs['event_duration'] = self.event_duration

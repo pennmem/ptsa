@@ -16,7 +16,10 @@ class TimeSeriesSessionEEGReader(PropertiedObject):
         TypeValTuple('samplerate', float, -1.0),
         TypeValTuple('channels', list, []),
         TypeValTuple('offset', int, 0),
+        TypeValTuple('event_data_only', bool, False),
+        TypeValTuple('default_buffer', float, 10.0),
         TypeValTuple('events', np.recarray, np.recarray((1,), dtype=[('x', int)])),
+
     ]
 
     def __init__(self, **kwds):
@@ -80,22 +83,42 @@ class TimeSeriesSessionEEGReader(PropertiedObject):
 
         return bin_readers_dict
 
+    def determine_read_offset_range(self, eegfile_name):
+        # determine events that have matching eegfile_name
+        evs = self.events[self.events.eegfile == eegfile_name]
+
+        start_offset = evs[0].eegoffset - int(np.ceil(self.default_buffer*self.samplerate))
+        if start_offset<0:
+            start_offset
+
+        end_offset = evs[-1].eegoffset + int(np.ceil(self.default_buffer*self.samplerate))
+
+        return start_offset,end_offset
+
     def read_session(self, eegfile_name):
         samplesize = 1.0 / self.samplerate
 
         bin_reader = self.bin_readers_dict[eegfile_name]
 
         print 'reading ', eegfile_name
-        eegdata = bin_reader._load_all_data(channels=self.channels, start_offset=self.offset)
+
+        start_offset = self.offset
+        end_offset = -1
+        if self.event_data_only:
+            #reading continuous data containig events and small buffer
+            start_offset, end_offset = self.determine_read_offset_range(eegfile_name)
+
+        eegdata = bin_reader._load_all_data(channels=self.channels, start_offset=start_offset, end_offset=end_offset)
+
 
         # constructing time exis as record array [(session_time_in_sec,offset)]
 
         number_of_time_points = eegdata.shape[2]
-        start_time = self.offset * samplesize
+        start_time = start_offset * samplesize
         end_time = start_time + number_of_time_points * samplesize
 
         time_range = np.linspace(start_time, end_time, number_of_time_points)
-        eegoffset = np.arange(self.offset, self.offset + number_of_time_points)
+        eegoffset = np.arange(start_offset, start_offset+ number_of_time_points)
 
         time_axis = np.rec.fromarrays([time_range, eegoffset], names='time,eegoffset')
 
@@ -104,6 +127,8 @@ class TimeSeriesSessionEEGReader(PropertiedObject):
         eegdata_xray = xray.DataArray(eegdata, coords=[self.channels, np.arange(1), time_axis],
                                       dims=['channels', 'events', 'time'])
         eegdata_xray.attrs['samplerate'] = self.samplerate
+
+        print 'last_time_stamp=',eegdata_xray['time'][-1]
 
         return eegdata_xray
 
@@ -136,93 +161,94 @@ if __name__ == '__main__':
 
     from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
 
-    time_series_reader = TimeSeriesSessionEEGReader(events=base_events, channels=['002', '003', '004', '005'])
+    time_series_reader = TimeSeriesSessionEEGReader(events=base_events, event_data_only=True, channels=['002', '003', '004', '005'])
 
+    # time_series_reader = TimeSeriesSessionEEGReader(events=base_events, event_data_only=True, channels=['002', '003', '004', '005'])
     ts = time_series_reader.read()
 
     print ts
 
+    # #
+    # # sys.exit()
+    # print ts
     #
-    # sys.exit()
-    print ts
-
-    for eegfile_name, eeg_session_data in ts.items():
-        base_events_0 = base_events[base_events.eegfile == eegfile_name]
-        break
-
-    print base_events_0
-
-    samplerate = eeg_session_data.attrs['samplerate']
-    ev_duration = 1.6
-    buffer = 1.0
-
-    eegoffset_time_array = eeg_session_data['time'].values['eegoffset']
-
-    ev_data_list = []
-    for i, ev in enumerate(base_events_0):
-        print ev.eegoffset
-        start_offset = ev.eegoffset - int(np.ceil(buffer * samplerate))
-        end_offset = ev.eegoffset + int(np.ceil((ev_duration + buffer) * samplerate))
-        print "start_offset,end_offset, size=", start_offset, end_offset, end_offset - start_offset
-        # eegoffset_time_array = ts['time'].values['eegoffset']
-        selector_array = np.where((eegoffset_time_array >= start_offset) & (eegoffset_time_array < end_offset))[0]
-
-        event_time_axis = np.linspace(-1.0, 2.6, len(selector_array))
-
-        ev_array = eeg_session_data[:, :, selector_array]
-
-        ev_array['time'] = event_time_axis
-        ev_array['events'] = [i]
-
-        ev_data_list.append(ev_array)
-        # ev_data_list.append(ts[:,:,selector_array].values)
-
-        print i
-        # print ev_array
-        # if i==2:
-        #     break
-
-    eventdata = xray.concat(ev_data_list, dim='events')
-
-    # eventdata =np.concatenate(ev_data_list,axis=1)
-
-    # eventdata = xray.concat(ev_data_list,dim='events')
-
-
-    print eventdata
+    # for eegfile_name, eeg_session_data in ts.items():
+    #     base_events_0 = base_events[base_events.eegfile == eegfile_name]
+    #     break
     #
+    # print base_events_0
     #
+    # samplerate = eeg_session_data.attrs['samplerate']
+    # ev_duration = 1.6
+    # buffer = 1.0
     #
+    # eegoffset_time_array = eeg_session_data['time'].values['eegoffset']
     #
-    # # eegoffset_time_array = ts['time'].values['eegoffset']
-    # #
-    # # ev_data_list = []
-    # # for i, ev  in enumerate(base_events_0):
-    # #     print ev.eegoffset
-    # #     start_offset = ev.eegoffset-int(np.ceil(buffer*samplerate))
-    # #     end_offset = ev.eegoffset+int(np.ceil((ev_duration+buffer)*samplerate))
-    # #     print "start_offset,end_offset, size=",start_offset,end_offset,end_offset-start_offset
-    # #     # eegoffset_time_array = ts['time'].values['eegoffset']
-    # #     selector_array = np.where( (eegoffset_time_array>=start_offset)& (eegoffset_time_array<end_offset))[0]
-    # #
-    # #     event_time_axis = np.linspace(-1.0,2.6,len(selector_array))
-    # #
-    # #     ev_array = ts[:,:,selector_array]
-    # #     ev_array['time']=event_time_axis
-    # #     ev_array['events']= [i]
-    # #
-    # #     ev_data_list.append(ev_array)
-    # #     # ev_data_list.append(ts[:,:,selector_array])
-    # #
-    # #     print i
-    # #     # print ev_array
-    # #     if i ==2:
-    # #         break
-    # #
-    # #
-    # # # eventdata = xray.concat(ev_data_list,dim='events')
+    # ev_data_list = []
+    # for i, ev in enumerate(base_events_0):
+    #     print ev.eegoffset
+    #     start_offset = ev.eegoffset - int(np.ceil(buffer * samplerate))
+    #     end_offset = ev.eegoffset + int(np.ceil((ev_duration + buffer) * samplerate))
+    #     print "start_offset,end_offset, size=", start_offset, end_offset, end_offset - start_offset
+    #     # eegoffset_time_array = ts['time'].values['eegoffset']
+    #     selector_array = np.where((eegoffset_time_array >= start_offset) & (eegoffset_time_array < end_offset))[0]
+    #
+    #     event_time_axis = np.linspace(-1.0, 2.6, len(selector_array))
+    #
+    #     ev_array = eeg_session_data[:, :, selector_array]
+    #
+    #     ev_array['time'] = event_time_axis
+    #     ev_array['events'] = [i]
+    #
+    #     ev_data_list.append(ev_array)
+    #     # ev_data_list.append(ts[:,:,selector_array].values)
+    #
+    #     print i
+    #     # print ev_array
+    #     # if i==2:
+    #     #     break
+    #
+    # eventdata = xray.concat(ev_data_list, dim='events')
+    #
+    # # eventdata =np.concatenate(ev_data_list,axis=1)
+    #
     # # eventdata = xray.concat(ev_data_list,dim='events')
-    # #
-    # #
-    # # print eventdata
     #
+    #
+    # print eventdata
+    # #
+    # #
+    # #
+    # #
+    # # # eegoffset_time_array = ts['time'].values['eegoffset']
+    # # #
+    # # # ev_data_list = []
+    # # # for i, ev  in enumerate(base_events_0):
+    # # #     print ev.eegoffset
+    # # #     start_offset = ev.eegoffset-int(np.ceil(buffer*samplerate))
+    # # #     end_offset = ev.eegoffset+int(np.ceil((ev_duration+buffer)*samplerate))
+    # # #     print "start_offset,end_offset, size=",start_offset,end_offset,end_offset-start_offset
+    # # #     # eegoffset_time_array = ts['time'].values['eegoffset']
+    # # #     selector_array = np.where( (eegoffset_time_array>=start_offset)& (eegoffset_time_array<end_offset))[0]
+    # # #
+    # # #     event_time_axis = np.linspace(-1.0,2.6,len(selector_array))
+    # # #
+    # # #     ev_array = ts[:,:,selector_array]
+    # # #     ev_array['time']=event_time_axis
+    # # #     ev_array['events']= [i]
+    # # #
+    # # #     ev_data_list.append(ev_array)
+    # # #     # ev_data_list.append(ts[:,:,selector_array])
+    # # #
+    # # #     print i
+    # # #     # print ev_array
+    # # #     if i ==2:
+    # # #         break
+    # # #
+    # # #
+    # # # # eventdata = xray.concat(ev_data_list,dim='events')
+    # # # eventdata = xray.concat(ev_data_list,dim='events')
+    # # #
+    # # #
+    # # # print eventdata
+    # #
