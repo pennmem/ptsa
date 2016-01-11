@@ -42,18 +42,22 @@ class TalReader(PropertiedObject):
         from ptsa.data.MatlabIO import deserialize_single_object_from_matlab_format
         bp_tal_struct = deserialize_single_object_from_matlab_format(self.tal_filename,'bpTalStruct')
         #extract bipolar pairs
-        self.bipolar_channels = np.empty(shape=(len(bp_tal_struct),2), dtype=np.str)
+        self.bipolar_channels = np.empty(shape=(len(bp_tal_struct),2), dtype='|S3')
 
-        for record in  bp_tal_struct:
-            self.bipolar_channels = np.asarray(map(lambda x: str(x).zfill(3),record.channel), dtype=np.str)
+        for i, record in enumerate(bp_tal_struct):
+            self.bipolar_channels[i] = np.asarray(map(lambda x: str(x).zfill(3),record.channel), dtype=np.str)
 
-            # print record.channel
 
     def get_bipolar_pairs(self):
-        if self.bipolar_channels is None
+        if self.bipolar_channels is None:
             self.read()
-        self.bipolar_channels is
+        return self.bipolar_channels
 
+    def get_monopolar_channels(self):
+
+        bipolar_array = self.get_bipolar_pairs()
+        monopolar_set = set(bipolar_array.flatten())
+        return sorted(list(monopolar_set))
 
 if __name__=='__main__':
     event_range = range(0, 30, 1)
@@ -61,3 +65,5 @@ if __name__=='__main__':
 
     tal_reader = TalReader(tal_filename=e_path)
     tal_reader.read()
+
+    print tal_reader.get_monopolar_channels()

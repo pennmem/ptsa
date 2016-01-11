@@ -116,10 +116,16 @@ if __name__=='__main__':
     base_events = base_events[base_events.type == 'WORD']
 
 
+    from ptsa.data.readers.TalReader import TalReader
+    tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
+    tal_reader = TalReader(tal_filename=tal_path)
+    monopolar_channels = tal_reader.get_monopolar_channels()
+
+
     from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
 
-    time_series_reader = TimeSeriesSessionEEGReader(events=base_events, channels = ['002', '003', '004', '005'])
-
+    # time_series_reader = TimeSeriesSessionEEGReader(events=base_events, channels = ['002', '003', '004', '005'])
+    time_series_reader = TimeSeriesSessionEEGReader(events=base_events, channels=monopolar_channels)
     ts = time_series_reader.read()
 
     print ts
