@@ -135,6 +135,35 @@ class TimeSeriesXray(xray.DataArray):
         return resampled_time_series
 
 
+    def remove_buffer(self, duration):
+	"""
+        Remove the desired buffer duration (in seconds) and reset the
+	time range.
+
+        Parameter
+        ---------
+        duration : {int,float,({int,float},{int,float})}
+            The duration to be removed. The units depend on the samplerate:
+            E.g., if samplerate is specified in Hz (i.e., samples per second),
+            the duration needs to be specified in seconds and if samplerate is
+            specified in kHz (i.e., samples per millisecond), the duration needs
+            to be specified in milliseconds.
+            A single number causes the specified duration to be removed from the
+            beginning and end. A 2-tuple can be passed in to specify different
+            durations to be removed from the beginning and the end respectively.
+
+        Returns
+        -------
+        ts : {TimeSeries}
+            A TimeSeries instance with the requested durations removed from the
+            beginning and/or end.
+        """
+
+        number_of_buffer_samples =  int(np.ceil(duration*self.attrs['samplerate']))
+        if number_of_buffer_samples > 0:
+            return  self[:,:,number_of_buffer_samples:-number_of_buffer_samples]
+
+
 
 
 d = np.arange(120).reshape(4,3,10)
@@ -171,12 +200,23 @@ base_ev_data_ptsa, base_ev_data_xray = base_events_ptsa.get_data(channels=channe
 # casting data DataArray into TimeSeriesXray
 base_ev_data_xray = TimeSeriesXray(base_ev_data_xray)
 
+
+# remove buffer test
+no_buffer_base_ev_data_ptsa = base_ev_data_ptsa.remove_buffer(1.0)
+no_buffer_base_ev_data_xray = base_ev_data_xray.remove_buffer(1.0)
+
+
+print 'EXITING AFTER BUFFER TEST'
+import sys
+sys.exit(0)
+
 #filtered_test
 
 base_ev_data_ptsa_filtered = base_ev_data_ptsa.filtered([58,62],filt_type='stop',order=4)
 
 base_ev_data_xray_filtered = base_ev_data_xray.filtered([58,62],filt_type='stop',order=4)
 
+#resample test
 import time
 s = time.time()
 print 'starting resampling'
