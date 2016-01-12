@@ -165,6 +165,28 @@ class TimeSeriesXray(xray.DataArray):
 
 
 
+    def baseline_corrected(self, base_range):
+        """
+
+        Return a baseline corrected timeseries by subtracting the
+        average value in the baseline range from all other time points
+        for each dimension.
+
+        Parameters
+        ----------
+        base_range: {tuple}
+            Tuple specifying the start and end time range (inclusive)
+            for the baseline.
+
+        Returns
+        -------
+        ts : {TimeSeries}
+            A TimeSeries instance with the baseline corrected data.
+
+        """
+
+        return self - self.isel(time=(self['time'] >= base_range[0]) & (self['time'] <= base_range[1])).mean(dim='time')
+
 
 d = np.arange(120).reshape(4,3,10)
 
@@ -199,6 +221,13 @@ base_ev_data_ptsa, base_ev_data_xray = base_events_ptsa.get_data(channels=channe
 
 # casting data DataArray into TimeSeriesXray
 base_ev_data_xray = TimeSeriesXray(base_ev_data_xray)
+
+
+#baseline_corrected test
+
+corrected_base_ev_data_ptsa = base_ev_data_ptsa.baseline_corrected((0.0,0.2))
+
+corrected_base_ev_data_xray = base_ev_data_xray.baseline_corrected((0.0,0.2))
 
 
 # remove buffer test
