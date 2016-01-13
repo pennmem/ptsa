@@ -181,6 +181,13 @@ def read_single_matlab_matrix_as_numpy_structured_array(file_name, object_name):
 
 def reinterpret_matlab_matrix_as_structured_array(matlab_matrix_as_python_obj, matlab_matrix_structured):
     template_element = None
+
+    # picking first first elment  plus 20 randomly selected elements to determine type
+    selector_array = [0]+np.random.randint(len(matlab_matrix_as_python_obj),size=20)
+    selector_array = np.hstack(([0],selector_array))
+    template_element_array = matlab_matrix_as_python_obj[selector_array]
+
+
     for index, x in np.ndenumerate(matlab_matrix_as_python_obj):
         template_element = x
         break
@@ -191,7 +198,10 @@ def reinterpret_matlab_matrix_as_structured_array(matlab_matrix_as_python_obj, m
 
     # print '------------------extracting new format'
 
-    template_element_record_format = get_record_format(template_element)
+    # template_element_record_format = get_record_format(template_element) #### RESTORE THIS - ORIGINAL
+    template_element_record_format = get_record_format_multi_trial(template_element_array)
+
+
     # print '--------- extracted template_element_recort_format=',template_element_record_format
 
     # idx = 1
@@ -247,9 +257,9 @@ def get_record_format(obj):
     for class_member, class_member_name, class_member_value in get_non_special_class_members(obj):
         # print 'class_member, class_member_name, class_member_value=',(class_member, class_member_name, class_member_value)
         #
-        # print 'class_member=',class_member
-        # print 'class_member_name=',class_member_name
-        # print 'class_member_value',class_member_value
+        print 'class_member=',class_member
+        print 'class_member_name=',class_member_name
+        print 'class_member_value',class_member_value
 
 
         try:
@@ -266,6 +276,54 @@ def get_record_format(obj):
         format_list.append(numpy_type_abbreviation)
 
     return {'names': names_list, 'formats': format_list}
+
+
+def get_record_format_multi_trial(obj_array):
+
+    names_list = []
+    format_list = []
+    obj = obj_array[0]
+
+    for class_member, class_member_name, class_member_value in get_non_special_class_members(obj):
+        # print 'class_member, class_member_name, class_member_value=',(class_member, class_member_name, class_member_value)
+        #
+        print 'class_member=',class_member
+        print 'class_member_name=',class_member_name
+        print 'class_member_value',class_member_value
+
+        # for obj_tmp in obj_array:
+        try:
+            numpy_type_abbreviation = determine_dtype_abbreviation(class_member)
+            print 'numpy_type_abbreviation=',numpy_type_abbreviation
+        except:
+            print 'COULD NOT DETERMINE FORMAT FOR:'
+            print 'class_member_name=', class_member_value
+            print 'class_member_values=', class_member_value
+            print 'SKIPPING this'
+            continue
+
+        # if initial guess for dtype is generic object type 'O' we try to improve this by
+        # probing sample of record searching for a record where the inferred dtype is different than 'O'
+        if numpy_type_abbreviation == 'O':
+            for obj_tmp in obj_array:
+                class_member_fetched = getattr(obj_tmp,class_member_name)
+                try:
+                    numpy_type_abbreviation_new_guess = determine_dtype_abbreviation(class_member_fetched)
+                    # print 'numpy_type_abbreviation=',numpy_type_abbreviation
+                except:
+                    continue
+
+                if numpy_type_abbreviation_new_guess !='O':
+                    numpy_type_abbreviation = numpy_type_abbreviation_new_guess
+                    break
+
+
+        names_list.append(class_member_name)
+        format_list.append(numpy_type_abbreviation)
+
+    return {'names': names_list, 'formats': format_list}
+
+
 
 
 def get_numpy_type_dict():

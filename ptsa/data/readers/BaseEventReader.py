@@ -53,6 +53,7 @@ class BaseEventReader(PropertiedObject):
             ev.eegfile = re.sub(data_dir_bad, data_dir_good, ev.eegfile)
         return events
 
+
     def read(self):
         from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
 
@@ -69,7 +70,8 @@ class BaseEventReader(PropertiedObject):
 
             for i, ev in enumerate(evs):
                 # MAKE THIS CHECK STRONGER
-                indicator[i] = (type(evs[i].eegfile).__name__.startswith('unicode')) & (len(str(evs[i].eegfile)) > 3)
+                indicator[i] = (len(str(evs[i].eegfile)) > 3)
+                # indicator[i] = (type(evs[i].eegfile).__name__.startswith('unicode')) & (len(str(evs[i].eegfile)) > 3)
 
             evs = evs[indicator]
 
@@ -89,6 +91,44 @@ class BaseEventReader(PropertiedObject):
         self._events = evs
 
         return self._events
+
+
+    # def read(self):
+    #     from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
+    #
+    #     # extract matlab matrix (called 'events') as numpy structured array
+    #     struct_array = read_single_matlab_matrix_as_numpy_structured_array(self._event_file, 'events')
+    #
+    #     evs = struct_array
+    #
+    #     if self.eliminate_events_with_no_eeg:
+    #
+    #         # eliminating events that have no eeg file
+    #         indicator = np.empty(len(evs), dtype=bool)
+    #         indicator[:] = False
+    #
+    #         for i, ev in enumerate(evs):
+    #             # MAKE THIS CHECK STRONGER
+    #             indicator[i] = (type(evs[i].eegfile).__name__.startswith('unicode')) & (len(str(evs[i].eegfile)) > 3)
+    #
+    #         evs = evs[indicator]
+    #
+    #     # determining data_dir_prefix in case rhino /data filesystem was mounted under different root
+    #     data_dir_prefix = self.find_data_dir_prefix()
+    #     for i, ev in enumerate(evs):
+    #         ev.eegfile=join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
+    #
+    #
+    #     # NEW CODE
+    #     if self.use_ptsa_events_class:
+    #         evs = Events(evs)
+    #
+    #     if not self.use_reref_eeg:
+    #         evs = self.correct_eegfile_field(evs)
+    #
+    #     self._events = evs
+    #
+    #     return self._events
 
 
     def find_data_dir_prefix(self):
