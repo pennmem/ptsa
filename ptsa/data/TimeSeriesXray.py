@@ -68,7 +68,7 @@ class TimeSeriesXray(xray.DataArray):
         :return: resampled time series
         '''
 
-
+        # use ResampleFilter instead
         samplerate = self.attrs['samplerate']
 
 
