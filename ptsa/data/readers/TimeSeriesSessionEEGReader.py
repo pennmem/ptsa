@@ -161,9 +161,9 @@ if __name__ == '__main__':
 
     from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
 
-    time_series_reader = TimeSeriesSessionEEGReader(events=base_events, event_data_only=True, channels=['002', '003', '004', '005'])
+    time_series_reader = TimeSeriesSessionEEGReader(events=base_events, channels=['002', '003', '004', '005'])
 
-    # time_series_reader = TimeSeriesSessionEEGReader(events=base_events, event_data_only=True, channels=['002', '003', '004', '005'])
+    # time_series_reader = TimeSeriesSessionEEGReader(events=base_events, event_data_only=True, channels=['002', '003', '004', '005']*20)
     ts = time_series_reader.read()
 
     print ts
