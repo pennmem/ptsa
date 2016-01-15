@@ -63,13 +63,6 @@ class ResampleFilter(PropertiedObject):
                                          new_length, t=time_idx_array,
                                          axis=self.time_axis_index, window=self.window)
 
-
-
-        # filtered_array, new_time_axis = resample(self.time_series.data,
-        #                                  new_length, t=time_axis.data,
-        #                                  axis=self.time_axis_index, window=self.window)
-
-
         # print new_time_axis
 
         new_time_idx_array = np.rint(new_time_idx_array).astype(np.int)
@@ -90,84 +83,6 @@ class ResampleFilter(PropertiedObject):
         return self.filtered_time_series
 
 
-    # def filter(self):
-    #     samplerate = self.time_series.attrs['samplerate']
-    #
-    #
-    #     time_axis_length = np.squeeze(self.time_series.coords['time'].shape)
-    #     new_length = int(np.round(time_axis_length*self.resamplerate/samplerate))
-    #
-    #     print new_length
-    #
-    #     if self.time_axis_index<0:
-    #         self.time_axis_index = get_axis_index(data_array=self.time_series,axis_name='time')
-    #
-    #     time_axis = self.time_series.coords[ self.time_series.dims[self.time_axis_index] ]
-    #
-    #     try:
-    #         time_axis_data = time_axis.data['time'] # time axis can be recarray with one of the arrays being time
-    #     except KeyError:
-    #         time_axis_data = time_axis.data
-    #
-    #     filtered_array, new_time_axis = resample(self.time_series.data,
-    #                                      new_length, t=time_axis_data,
-    #                                      axis=self.time_axis_index, window=self.window)
-    #
-    #     # filtered_array, new_time_axis = resample(self.time_series.data,
-    #     #                                  new_length, t=time_axis.data,
-    #     #                                  axis=self.time_axis_index, window=self.window)
-    #
-    #
-    #     print new_time_axis
-    #
-    #     coords = []
-    #     for i, dim_name in enumerate(self.time_series.dims):
-    #         if i != self.time_axis_index:
-    #             coords.append(self.time_series.coords[dim_name].copy())
-    #         else:
-    #             coords.append((dim_name,new_time_axis))
-    #
-    #
-    #     self.filtered_time_series = xray.DataArray(filtered_array, coords=coords)
-    #     self.filtered_time_series.attrs['samplerate'] = self.resamplerate
-    #
-    #     return self.filtered_time_series
-
-        # #adding coordinates
-        # for i,dim_name in enumerate(self.time_series.dims):
-        #     if i != self.time_axis_index:
-        #         self.filtered_time_series[dim_name] = self.time_series.coords[dim_name].copy()
-        #     else:
-        #         self.filtered_time_series[dim_name] = (dim_name, new_time_axis)
-        #
-
-        # from ptsa.filt  import buttfilt
-        #
-        # # find index  of the  axis called 'time'
-        # if self.time_axis<0:
-        #
-        #     time_index_array = np.where(np.array(self.time_series.dims) == 'time')
-        #     if len(time_index_array)>0:
-        #         self.time_axis =time_index_array[0] # picking first index that corresponds to the dimension
-        #     else:
-        #         raise RuntimeError("Could not locate 'time' axis in your time series."
-        #                            " Make sure to either label appropriate axis of your time series 'time' or specify"
-        #                            "time axis explicitely as a non-negative integer '")
-        #
-        # filtered_array = buttfilt(self.time_series,
-        #                                self.freq_range, self.samplerate, self.filt_type,
-        #                                self.order,axis=self.time_axis)
-        #
-        #
-        # self.filtered_time_series = xray.DataArray(
-        #     filtered_array,
-        #     coords = [xray.DataArray(coord.copy()) for coord_name, coord in self.time_series.coords.items() ]
-        # )
-        #
-        # self.filtered_time_series.attrs['samplerate'] = self.time_series.attrs['samplerate']
-        # # l = [xray.DataArray(coord.copy()) for coord_name, coord in self.time_series.coords.items() ]
-
-        # return self.filtered_time_series
 
 
 

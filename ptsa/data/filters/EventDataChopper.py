@@ -31,32 +31,20 @@ class EventDataChopper(PropertiedObject):
             except AttributeError:
                 print 'Option: ' + option_name + ' is not allowed'
 
-
-
-
-    def get_event_chunk_size_and_start_point_shift(self,ev,samplerate,offset_time_array):
+    def get_event_chunk_size_and_start_point_shift(self, ev, samplerate, offset_time_array):
         # figuring out read size chunk and shift w.r.t to eegoffset
 
-        original_samplerate =float((offset_time_array[-1]-offset_time_array[0]))/offset_time_array.shape[0]*samplerate
+        original_samplerate = float((offset_time_array[-1] - offset_time_array[0])) / offset_time_array.shape[
+            0] * samplerate
 
-
-        start_point = ev.eegoffset - int(np.ceil((self.buffer +self.time_shift)* original_samplerate))
-        end_point = ev.eegoffset + int(np.ceil((self.event_duration + self.buffer+self.time_shift) * original_samplerate))
-
-        print 'start_point=',start_point
-        print 'end_point=',end_point
+        start_point = ev.eegoffset - int(np.ceil((self.buffer + self.time_shift) * original_samplerate))
+        end_point = ev.eegoffset + int(
+            np.ceil((self.event_duration + self.buffer + self.time_shift) * original_samplerate))
 
         selector_array = np.where((offset_time_array >= start_point) & (offset_time_array < end_point))[0]
         start_point_shift = selector_array[0] - np.where((offset_time_array >= ev.eegoffset))[0][0]
 
-        print 'selector_array =',selector_array
-
-        print 'len(selector_array)=',len(selector_array)
         return len(selector_array), start_point_shift
-
-
-
-
 
     def filter(self):
 
@@ -71,23 +59,13 @@ class EventDataChopper(PropertiedObject):
             # used in constructing time_axis
             offset_time_array = data['time'].values['eegoffset']
 
-
-            event_chunk_size, start_point_shift = self.get_event_chunk_size_and_start_point_shift(ev=evs[0], samplerate=samplerate,
-                                                                       offset_time_array=offset_time_array)
+            event_chunk_size, start_point_shift = self.get_event_chunk_size_and_start_point_shift(ev=evs[0],
+                                                                                                  samplerate=samplerate,
+                                                                                                  offset_time_array=offset_time_array)
 
             event_time_axis = np.linspace(-self.buffer + self.time_shift,
                                           self.event_duration + self.buffer + self.time_shift,
                                           event_chunk_size)
-
-
-            # selector_array_template = self.get_selector_array_template(ev=evs[0], samplerate=samplerate,
-            #                                                            offset_time_array=offset_time_array)
-
-            # event_time_axis = np.linspace(-self.buffer + self.time_shift,
-            #                               self.event_duration + self.buffer + self.time_shift,
-            #                               len(selector_array_template))
-
-
 
             data_list = []
 
@@ -96,9 +74,8 @@ class EventDataChopper(PropertiedObject):
             for i, ev in enumerate(evs):
                 print ev.eegoffset
                 start_chop_pos = np.where(offset_time_array >= ev.eegoffset)[0][0]
-                start_chop_pos+=start_point_shift
-                selector_array = np.arange(start=start_chop_pos,stop=start_chop_pos+event_chunk_size)
-
+                start_chop_pos += start_point_shift
+                selector_array = np.arange(start=start_chop_pos, stop=start_chop_pos + event_chunk_size)
 
                 # ev_array = eeg_session_data[:,:,selector_array] # ORIG CODE
 
@@ -110,13 +87,6 @@ class EventDataChopper(PropertiedObject):
                 data_list.append(chopped_data_array)
 
                 print i
-                # print 'chopped_data_array.shape=', chopped_data_array.shape
-                #
-                # if shape is None:
-                #     shape = chopped_data_array.shape
-                # else:
-                #     if not np.all(np.equal(np.array(shape), np.array(chopped_data_array.shape))):
-                #         sys.exit()
 
             ev_concat_data = xray.concat(data_list, dim='events')
 
@@ -133,75 +103,6 @@ class EventDataChopper(PropertiedObject):
             break  # REMOVE THIS
 
         return event_data_dict
-
-
-        # def filter(self):
-        #
-        #     event_data_dict = OrderedDict()
-        #
-        #     for eegfile_name, data in self.data_dict.items():
-        #
-        #         evs = self.events[self.events.eegfile==eegfile_name]
-        #
-        #         samplerate = data.attrs['samplerate']
-        #
-        #         #used in constructing time_axis
-        #         offset_time_array = data['time'].values['eegoffset']
-        #
-        #         data_list = []
-        #
-        #         shape = None
-        #
-        #         for i, ev  in enumerate(evs):
-        #             print ev.eegoffset
-        #             start_offset = ev.eegoffset-int(np.ceil(self.buffer*samplerate))
-        #             end_offset = ev.eegoffset+int(np.ceil((self.event_duration+self.buffer)*samplerate))
-        #             #adding additional time shift if user requests it
-        #             start_offset += int(np.ceil(self.time_shift*samplerate))
-        #             end_offset += int(np.ceil(self.time_shift*samplerate))
-        #
-        #             print "start_offset,end_offset, size=",start_offset,end_offset,end_offset-start_offset
-        #             # eegoffset_time_array = ts['time'].values['eegoffset']
-        #             selector_array = np.where( (offset_time_array>=start_offset)& (offset_time_array<end_offset))[0]
-        #
-        #             event_time_axis = np.linspace(-self.buffer, self.event_duration+self.buffer, len(selector_array))
-        #
-        #             # ev_array = eeg_session_data[:,:,selector_array] # ORIG CODE
-        #
-        #             chopped_data_array = data.isel(time=selector_array)
-        #
-        #             chopped_data_array['time'] = event_time_axis
-        #             chopped_data_array['events'] = [i]
-        #
-        #             data_list.append(chopped_data_array)
-        #
-        #             print i
-        #             print 'chopped_data_array.shape=',chopped_data_array.shape
-        #
-        #             if shape is None:
-        #                 shape = chopped_data_array.shape
-        #             else:
-        #                 if not np.all(np.equal(np.array(shape),np.array(chopped_data_array.shape))):
-        #                     sys.exit()
-        #
-        #
-        #         ev_concat_data = xray.concat(data_list,dim='events')
-        #
-        #         # replacing simple events axis (consecutive integers) with recarray of events
-        #         ev_concat_data['events'] = evs
-        #
-        #
-        #
-        #         ev_concat_data.attrs['samplerate'] = samplerate
-        #         ev_concat_data.attrs['time_shift'] = self.time_shift
-        #         ev_concat_data.attrs['event_duration'] = self.event_duration
-        #         ev_concat_data.attrs['buffer'] = self.buffer
-        #
-        #         event_data_dict[eegfile_name] = ev_concat_data
-        #
-        #         break # REMOVE THIS
-        #
-        #     return event_data_dict
 
 
 if __name__ == '__main__':
