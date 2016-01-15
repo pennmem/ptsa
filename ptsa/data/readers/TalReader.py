@@ -42,21 +42,23 @@ class TalReader(PropertiedObject):
         from ptsa.data.MatlabIO import deserialize_single_object_from_matlab_format
         bp_tal_struct = deserialize_single_object_from_matlab_format(self.tal_filename,'bpTalStruct')
         #extract bipolar pairs
-        self.bipolar_channels = np.empty(shape=(len(bp_tal_struct),2), dtype='|S3')
+        # self.bipolar_channels = np.empty(shape=(len(bp_tal_struct),2), dtype='|S3')
+        self.bipolar_channels = np.recarray(shape=(len(bp_tal_struct)), dtype=[('ch0','|S3'),('ch1','|S3')])
 
         for i, record in enumerate(bp_tal_struct):
-            self.bipolar_channels[i] = np.asarray(map(lambda x: str(x).zfill(3),record.channel), dtype=np.str)
+            # self.bipolar_channels[i] = np.asarray(map(lambda x: str(x).zfill(3),record.channel), dtype=np.str)
+            self.bipolar_channels[i] = tuple(map(lambda x: str(x).zfill(3), record.channel))
 
 
     def get_bipolar_pairs(self):
         if self.bipolar_channels is None:
             self.read()
         return self.bipolar_channels
-
     def get_monopolar_channels(self):
 
         bipolar_array = self.get_bipolar_pairs()
-        monopolar_set = set(bipolar_array.flatten())
+        # monopolar_set = set(bipolar_array.flatten())
+        monopolar_set = set(list(bipolar_array['ch0'])+list(bipolar_array['ch1']))
         return sorted(list(monopolar_set))
 
 if __name__=='__main__':
