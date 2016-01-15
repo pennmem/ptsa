@@ -139,7 +139,7 @@ class RawBinWrapper(BaseWrapper):
                 'The following fields were supplied:\n' + str(params.keys()))
         # return the params dict
         return params
-        
+
 
     def _load_data(self,channels,event_offsets,dur_samp,offset_samp):
         """
@@ -154,13 +154,15 @@ class RawBinWrapper(BaseWrapper):
             # determine the file
             #ORIGINAL CODE
             #eegfname = self._dataroot+'.'+self._channel_info['name'][channel]
-            
+
             #NEW CODE
             if isinstance(channel, basestring):
                 eegfname = self._dataroot+'.'+channel
             else:
                 eegfname = self._dataroot+'.'+self._channel_info['name'][channel]
-            
+
+
+            filesize = os.path.getsize(eegfname)
             # eegfname = self._dataroot+'.'+self._channel_info['name'][c]
 
             # eegfname = '{}.{:0>3}'.format(self._dataroot,channel)
@@ -178,8 +180,14 @@ class RawBinWrapper(BaseWrapper):
                 thetime = offset_samp + ev_offset
                 efile.seek(self._nbytes * thetime,0)
 
-                # read the data
-                data = efile.read(int(self._nbytes * dur_samp))
+                if dur_samp>=0:
+
+                    # read the data
+                    data = efile.read(int(self._nbytes * dur_samp))
+                else:
+
+                    #reading til the end of file
+                    data = efile.read(filesize)
 
                 # convert from string to array based on the format
                 # hard codes little endian
@@ -198,8 +206,72 @@ class RawBinWrapper(BaseWrapper):
 
         # multiply by the gain
     	eventdata *= self._gain
-	
+
         return eventdata
 
 
 
+
+
+    # def _load_data(self,channels,event_offsets,dur_samp,offset_samp):
+    #     """
+    #     """
+    #
+    #     # allocate for data
+    #     eventdata = np.empty((len(channels),len(event_offsets),dur_samp),
+    #                          dtype=np.float)*np.nan
+    #
+    #     # loop over channels
+    #     for c, channel in enumerate(channels):
+    #         # determine the file
+    #         #ORIGINAL CODE
+    #         #eegfname = self._dataroot+'.'+self._channel_info['name'][channel]
+    #
+    #         #NEW CODE
+    #         if isinstance(channel, basestring):
+    #             eegfname = self._dataroot+'.'+channel
+    #         else:
+    #             eegfname = self._dataroot+'.'+self._channel_info['name'][channel]
+    #
+    #         # eegfname = self._dataroot+'.'+self._channel_info['name'][c]
+    #
+    #         # eegfname = '{}.{:0>3}'.format(self._dataroot,channel)
+    #         if os.path.isfile(eegfname):
+    #             efile = open(eegfname,'rb')
+    #         else:
+    #             raise IOError(
+    #                 'EEG file not found: '+eegfname)
+    #                 # 'EEG file not found for channel {:0>3} '.format(channel) +
+    #                 # 'and file root {}\n'.format(self._dataroot))
+    #
+    #         # loop over events
+    #         for e, ev_offset in enumerate(event_offsets):
+    #             # seek to the position in the file
+    #             thetime = offset_samp + ev_offset
+    #             efile.seek(self._nbytes * thetime,0)
+    #
+    #             # read the data
+    #             data = efile.read(int(self._nbytes * dur_samp))
+    #
+    #             # convert from string to array based on the format
+    #             # hard codes little endian
+    #             data = np.array(struct.unpack(
+    #                 '<' + str(len(data) / self._nbytes) +
+    #                 self._fmt_str, data))
+    #
+    #             # make sure we got some data
+    #             if len(data) < dur_samp:
+    #                 raise IOError(
+    #                     'Event with offset ' + str(ev_offset) +
+    #                     ' is outside the bounds of file ' + str(eegfname))
+    #
+    #             # append it to the events
+    #             eventdata[c, e, :] = data
+    #
+    #     # multiply by the gain
+    # 	eventdata *= self._gain
+    #
+    #     return eventdata
+    #
+    #
+    #
