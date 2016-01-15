@@ -51,8 +51,9 @@ class ResampleFilter(PropertiedObject):
         time_axis = self.time_series.coords[ self.time_series.dims[self.time_axis_index] ]
 
         try:
-            time_axis_data = time_axis.data['time'] # time axis can be recarray with one of the arrays being time
-        except KeyError:
+                time_axis_data = time_axis.data['time'] # time axis can be recarray with one of the arrays being time
+        except (KeyError ,IndexError) as excp:
+            # if we get here then most likely time axis is ndarray of floats
             time_axis_data = time_axis.data
 
         time_idx_array = np.arange(len(time_axis))
@@ -142,7 +143,7 @@ if __name__ == '__main__':
         time_series_reader = TimeSeriesEEGReader(events=base_events, start_time=0.0,
                                                  end_time=1.6, buffer_time=1.0, keep_buffer=True)
 
-        time_series_reader.read(channels=['002', '003'])
+        time_series_reader.read(channels=['003', '004'])
 
         base_eegs = time_series_reader.get_output()
 
@@ -151,3 +152,5 @@ if __name__ == '__main__':
         resample_filter = ResampleFilter(time_series=base_eegs, resamplerate=50.0)
 
         base_eegs_resampled = resample_filter.filter()
+
+        print
