@@ -45,5 +45,37 @@ class PropertiedObject(object):
     __metaclass__ = MyMeta
     _descriptors = []
 
+    def init_attrs(self, kwds):
+        for option_name, val in kwds.items():
+            try:
+                attr = getattr(self,option_name)
+                setattr(self,option_name,val)
+            except AttributeError:
+                print 'Option: '+ option_name+' is not allowed'
 
 
+
+
+
+
+if __name__=='__main__':
+
+    class RF(PropertiedObject):
+        _descriptors = [
+            TypeValTuple('resamplerate', float, -1.0),
+            TypeValTuple('time_axis_index', int, -1),
+        ]
+
+
+        def __init__(self,**kwds):
+
+            self.window = None
+            self.time_series = None
+
+            self.init_attrs(kwds)
+
+
+    rf = RF(resamplerate=20.0,time_axis_index=2,window=[0,1])
+
+    print rf.resamplerate
+    print rf.window
