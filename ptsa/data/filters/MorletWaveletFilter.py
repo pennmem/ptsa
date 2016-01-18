@@ -11,6 +11,7 @@ from ptsa.wavelet import morlet_multi, next_pow2
 from scipy.fftpack import fft, ifft
 
 
+
 class MorletWaveletFilter(PropertiedObject):
     _descriptors = [
         TypeValTuple('freqs', np.ndarray, np.array([], dtype=np.float)),
@@ -367,6 +368,25 @@ def test_2():
 if __name__ == '__main__':
     edcw_1 = test_1()
     edcw_2 = test_2()
+
+    wavelet_1 = edcw_1[0,0,0,500:-500]
+    wavelet_2 = edcw_1[0,0,0,500:-501]
+
+    import matplotlib;
+    matplotlib.use('Qt4Agg')
+
+
+    import matplotlib.pyplot as plt
+    plt.get_current_fig_manager().window.raise_()
+
+
+    plt.plot(np.arange(wavelet_1.shape[0]),wavelet_1)
+    plt.plot(np.arange(wavelet_2.shape[0]),wavelet_2)
+
+
+    plt.show()
+
+
 
     print
 
