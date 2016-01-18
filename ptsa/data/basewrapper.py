@@ -314,8 +314,10 @@ class BaseWrapper(object):
             # dims = [Dim(self.channels['name'],'channels'),  # can index into channels
             #         Dim(events,'events'),
             #         Dim(time_range,'time')]
+        # ORIGINAL CODE - MY EDITS
+        # self.channels_xray=np.rec.fromarrays([self.channels_xray.values,self.channels_xray.coords['name'].values],names='number,name')
 
-        self.channels_xray=np.rec.fromarrays([self.channels_xray.values,self.channels_xray.coords['name'].values],names='number,name')
+        self.channels_xray=self.channels_xray.coords['name'].values
 
         #ORIGINAL CODE
         # eventdata = TimeSeries(np.asarray(eventdata),
