@@ -16,56 +16,32 @@ from ptsa.data.common.path_utils import find_dir_prefix
 
 
 class TimeSeriesEEGReader(PropertiedObject):
-# class TimeSeriesEEGReader(object):
     _descriptors = [
         TypeValTuple('samplerate', float, -1.0),
         TypeValTuple('keep_buffer', bool, True),
         TypeValTuple('buffer_time', float, 0.0),
         TypeValTuple('start_time', float, 0.0),
         TypeValTuple('end_time', float, 0.0),
+        TypeValTuple('events', np.recarray, np.recarray((0,), dtype=[('x', int)])),
     ]
 
 
-    def __init__(self, events, **kwds):
-        self.__events = events
-        # self.data_dir_prefix = kwds['data_dir_prefix']
-        # self.data_dir_prefix = find_dir_prefix(str(events[0].eegfile),'/data/eeg')
+    def __init__(self,**kwds):
 
-        self.__time_series = None
-
-        for option_name, val in kwds.items():
-
-            if option_name=='events':
-                self.__events = events
-            else:
-                try:
-                    attr = getattr(self,option_name)
-                    setattr(self,option_name,val)
-                except AttributeError:
-                    print 'Option: '+ option_name+' is not allowed'
-
-
-
+        self.init_attrs(kwds)
 
     def __create_bin_readers(self):
-        evs = self.__events
+        evs = self.events
         eegfiles = np.unique(evs.eegfile)
         raw_bin_wrappers = []
         original_eeg_files = []
-
-
 
         for eegfile in eegfiles:
             events_with_matched_eegfile = evs[evs.eegfile == eegfile]
             ev_with_matched_eegfile = events_with_matched_eegfile[0]
             try:
                 # eeg_file_path = join(self.data_dir_prefix, str(pathlib.Path(str(ev_with_matched_eegfile.eegfile)).parts[1:]))
-                #
-                #
-                #
                 # raw_bin_wrappers.append(RawBinWrapperXray(eeg_file_path))
-
-
 
                 eeg_file_path = ev_with_matched_eegfile.eegfile
 
@@ -74,9 +50,6 @@ class TimeSeriesEEGReader(PropertiedObject):
                 original_eeg_files.append(eegfile)
 
                 inds = np.where(evs.eegfile == eegfile)[0]
-
-
-
 
                 if self.samplerate < 0.0:
                     data_params = raw_bin_wrappers[-1]._get_params(eeg_file_path)
@@ -93,7 +66,6 @@ class TimeSeriesEEGReader(PropertiedObject):
 
     def get_number_of_samples_for_interval(self,time_interval):
         return int(np.ceil(time_interval*self.samplerate))
-
 
     def __compute_time_series_length(self):
 
@@ -128,7 +100,7 @@ class TimeSeriesEEGReader(PropertiedObject):
 
 
     def read(self,channels):
-        evs = self.__events
+        evs = self.events
 
         raw_bin_wrappers, original_eeg_files = self.__create_bin_readers()
 
@@ -193,8 +165,6 @@ class TimeSeriesEEGReader(PropertiedObject):
 
         event_indices_restore_sort_order_array = event_indices_array.argsort()
 
-
-
         start_extend_time = time.time()
         #new code
         eventdata = xray.concat(newdat_list,dim='events')
@@ -221,14 +191,13 @@ class TimeSeriesEEGReader(PropertiedObject):
             if number_of_buffer_samples > 0:
                 eventdata_xray = eventdata_xray[:,:,number_of_buffer_samples:-number_of_buffer_samples]
 
-        self.__time_series = eventdata_xray
+        return eventdata_xray
 
-        return self.__time_series
 
 
 
     def read_all(self,channels, start_offset,  end_offset, buffer):
-        evs = self.__events
+        evs = self.events
 
         raw_bin_wrappers, original_eeg_files = self.__create_bin_readers()
 
@@ -284,9 +253,8 @@ class TimeSeriesEEGReader(PropertiedObject):
             if number_of_buffer_samples > 0:
                 eventdata_xray = eventdata_xray[:,:,number_of_buffer_samples:-number_of_buffer_samples]
 
-        self.__time_series = eventdata_xray
+        return eventdata_xray
 
-        return self.__time_series
 
 
 
