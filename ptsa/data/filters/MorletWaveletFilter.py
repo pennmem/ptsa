@@ -11,7 +11,7 @@ from ptsa.wavelet import morlet_multi, next_pow2
 from scipy.fftpack import fft, ifft
 
 
-class WaveletFilter(PropertiedObject):
+class MorletWaveletFilter(PropertiedObject):
     _descriptors = [
         TypeValTuple('freqs', np.ndarray, np.array([], dtype=np.float)),
         TypeValTuple('time_axis_index', int, -1),
@@ -27,15 +27,13 @@ class WaveletFilter(PropertiedObject):
         self.time_series = time_series
         self.init_attrs(kwds)
 
-        self.compute_power_and_phase_fcn=None
+        self.compute_power_and_phase_fcn = None
         if self.output == 'power':
             self.compute_power_and_phase_fcn = self.compute_power
         elif self.output == 'phase':
             self.compute_power_and_phase_fcn = self.compute_phase
         else:
             self.compute_power_and_phase_fcn = self.compute_power_and_phase
-
-
 
     def all_but_time_iterator(self, array):
         from itertools import product
@@ -82,53 +80,49 @@ class WaveletFilter(PropertiedObject):
 
         return rs_time_axis
 
-
-
-
     def allocate_output_arrays(self, time_axis_size):
         array_type = np.float32
         # if self.output not in ('phase', 'power'):
         #     array_type = np.float32
 
         if len(self.bipolar_pairs):
-            shape = (self.bipolar_pairs.shape[0], self.time_series['events'].shape[0], self.freqs.shape[0],time_axis_size)
+            shape = (
+            self.bipolar_pairs.shape[0], self.time_series['events'].shape[0], self.freqs.shape[0], time_axis_size)
         else:
             shape = self.time_series.shape[:-1] + (self.freqs.shape[0], time_axis_size,)
 
         if self.output == 'power':
-            return np.empty(shape=shape, dtype = array_type), None
+            return np.empty(shape=shape, dtype=array_type), None
         elif self.output == 'phase':
-            return  None, np.empty(shape=shape, dtype = array_type)
+            return None, np.empty(shape=shape, dtype=array_type)
         else:
-            return np.empty(shape=shape, dtype = array_type), np.empty(shape=shape, dtype = array_type)
+            return np.empty(shape=shape, dtype=array_type), np.empty(shape=shape, dtype=array_type)
 
-    def resample_power_and_phase(self,pow_array_single,phase_array_single, num_points):
+    def resample_power_and_phase(self, pow_array_single, phase_array_single, num_points):
 
         resampled_pow_array = None
         resampled_phase_array = None
 
-        if self.resamplerate>0.0:
+        if self.resamplerate > 0.0:
             if pow_array_single is not None:
                 resampled_pow_array = resample(pow_array_single, num=num_points)
             if phase_array_single is not None:
                 resampled_phase_array = resample(phase_array_single, num=num_points)
 
         else:
-            resampled_pow_array=pow_array_single
-            resampled_phase_array=phase_array_single
+            resampled_pow_array = pow_array_single
+            resampled_phase_array = phase_array_single
 
-        return resampled_pow_array,resampled_phase_array
+        return resampled_pow_array, resampled_phase_array
 
-
-    def compute_power(self,wavelet_coef_array):
+    def compute_power(self, wavelet_coef_array):
         return wavelet_coef_array.real ** 2 + wavelet_coef_array.imag ** 2, None
 
-    def compute_phase(self,wavelet_coef_array):
+    def compute_phase(self, wavelet_coef_array):
         return None, np.angle(wavelet_coef_array)
 
-    def compute_power_and_phase(self,wavelet_coef_array):
-        return wavelet_coef_array.real ** 2 + wavelet_coef_array.imag ** 2,np.angle(wavelet_coef_array)
-
+    def compute_power_and_phase(self, wavelet_coef_array):
+        return wavelet_coef_array.real ** 2 + wavelet_coef_array.imag ** 2, np.angle(wavelet_coef_array)
 
     def store_power_and_phase(self, idx_tuple, power_array, phase_array, power_array_single, phase_array_single):
 
@@ -137,7 +131,6 @@ class WaveletFilter(PropertiedObject):
         if phase_array_single is not None:
             phase_array[idx_tuple] = phase_array_single
 
-
     def get_data_iterator(self):
         if len(self.bipolar_pairs):
             data_iterator = self.bipolar_iterator(self.time_series)
@@ -145,6 +138,38 @@ class WaveletFilter(PropertiedObject):
             data_iterator = self.all_but_time_iterator(self.time_series)
 
         return data_iterator
+
+    def construct_output_array(self,array, dims, coords):
+        out_array =  xray.DataArray(array, dims=dims,coords=coords)
+        out_array.attrs['samplerate'] = self.time_series.attrs['samplerate']
+        if self.resamplerate > 0.0:
+            out_array.attrs['samplerate'] = self.time_series.attrs['samplerate']
+
+        return out_array
+
+    def build_output_arrays(self,wavelet_pow_array, wavelet_phase_array, time_axis):
+        wavelet_pow_array_xray = None
+        wavelet_phase_array_xray = None
+
+        if isinstance(self.time_series, xray.DataArray):
+
+
+            if len(self.bipolar_pairs):
+                dims= ['bipolar_pairs','events','frequency','time']
+                coords = [self.bipolar_pairs,self.time_series['events'],self.freqs, time_axis]
+            else:
+                dims= list(self.time_series.dims[:-1]+('frequency','time',))
+                coords = [self.time_series.coords[dim_name]  for dim_name  in self.time_series.dims[:-1]]
+                coords.append(self.freqs)
+                coords.append(time_axis)
+
+            if wavelet_pow_array is not None:
+                wavelet_pow_array_xray = self.construct_output_array(wavelet_pow_array, dims=dims,coords=coords)
+            if wavelet_phase_array is not None:
+                wavelet_phase_array_xray = self.construct_output_array(wavelet_phase_array, dims=dims,coords=coords)
+
+            return wavelet_pow_array_xray, wavelet_phase_array_xray
+
 
     def compute_wavelet_ffts(self):
 
@@ -173,14 +198,14 @@ class WaveletFilter(PropertiedObject):
         for i, wavelet in enumerate(wavelets):
             wavelet_fft_array[i] = fft(wavelet, convolution_size_pow2)
 
-        return wavelet_fft_array, convolution_size , convolution_size_pow2
+        return wavelet_fft_array, convolution_size, convolution_size_pow2
 
     def filter(self):
 
         data_iterator = self.get_data_iterator()
 
         time_axis = self.resample_time_axis()
-        time_axis_size =  time_axis.shape[0]
+        time_axis_size = time_axis.shape[0]
 
         wavelet_pow_array, wavelet_phase_array = self.allocate_output_arrays(time_axis_size=time_axis_size)
 
@@ -205,14 +230,15 @@ class WaveletFilter(PropertiedObject):
 
                 out_idx_tuple = idx_tuple + (w,)
 
-                pow_array_single, phase_array_single = self.compute_power_and_phase_fcn( wavelet_coef_single_array)
+                pow_array_single, phase_array_single = self.compute_power_and_phase_fcn(wavelet_coef_single_array)
 
                 self.resample_power_and_phase(pow_array_single, phase_array_single, num_points=time_axis_size)
 
-                self.store_power_and_phase(out_idx_tuple,wavelet_pow_array, wavelet_phase_array, pow_array_single, phase_array_single)
+                self.store_power_and_phase(out_idx_tuple, wavelet_pow_array, wavelet_phase_array, pow_array_single,
+                                           phase_array_single)
 
         print 'total time wavelet loop: ', time.time() - wavelet_start
-        #
+        return self.build_output_arrays(wavelet_pow_array, wavelet_phase_array,time_axis)
 
 
 def test_1():
@@ -254,15 +280,17 @@ def test_1():
 
     wavelet_start = time.time()
 
-    wf = WaveletFilter(time_series=first_session_data,
-                       bipolar_pairs=bipolar_pairs[0:3],
-                       freqs=np.logspace(np.log10(3), np.log10(180), 12),
+    wf = MorletWaveletFilter(time_series=first_session_data,
+                       # bipolar_pairs=bipolar_pairs[0:3],
+                       freqs=np.logspace(np.log10(3), np.log10(180), 2),
+                       # freqs=np.array([3.]),
+                       output='power'
                        # resamplerate=50.0
                        )
 
-    pow_wavelet = wf.filter()
+    pow_wavelet, phase_wavelet = wf.filter()
     print 'wavelet total time = ', time.time() - wavelet_start
-    return pow_wavelet
+    # return pow_wavelet
 
     from ptsa.data.filters.EventDataChopper import EventDataChopper
     edcw = EventDataChopper(events=base_events, event_duration=1.6, buffer=1.0,
@@ -321,15 +349,15 @@ def test_2():
     # bipolar_pairs = bipolar_pairs[0:10]
 
 
-    wf = WaveletFilter(time_series=base_eegs,
+    wf = MorletWaveletFilter(time_series=base_eegs,
                        # bipolar_pairs=bipolar_pairs,
-                       freqs=np.logspace(np.log10(3), np.log10(180), 12),
+                       freqs=np.logspace(np.log10(3), np.log10(180), 2),
                        # freqs=np.array([3.]),
                        output='power',
                        # resamplerate=50.0
                        )
 
-    pow_wavelet = wf.filter()
+    pow_wavelet, phase_wavelet = wf.filter()
 
     print 'total time = ', time.time() - start
 
@@ -337,8 +365,10 @@ def test_2():
 
 
 if __name__ == '__main__':
-    edcw = test_2()
+    edcw_1 = test_1()
+    edcw_2 = test_2()
 
+    print
 
 # if __name__=='__main__':
 #
@@ -378,225 +408,3 @@ if __name__ == '__main__':
 #
 #     plt.show()
 #
-
-
-# class WaveletFilter(PropertiedObject):
-#     _descriptors = [
-#         TypeValTuple('freqs', np.ndarray, np.array([],dtype=np.float)),
-#         TypeValTuple('time_axis_index', int, -1),
-#         TypeValTuple('bipolar_pairs', np.recarray, np.recarray((0,),dtype=[('ch0', '|S3'),('ch1', '|S3')])),
-#         TypeValTuple('resamplerate',float,-1)
-#
-#     ]
-#
-#
-#     def __init__(self,time_series, **kwds):
-#
-#         self.window = None
-#         self.time_series = time_series
-#
-#         for option_name, val in kwds.items():
-#
-#             try:
-#                 attr = getattr(self,option_name)
-#                 setattr(self,option_name,val)
-#             except AttributeError:
-#                 print 'Option: '+ option_name+' is not allowed'
-#
-#
-#     def filter(self):
-#
-#         from ptsa.data.filters.ResampleFilter import ResampleFilter
-#
-#         rs_time_axis = None # resampled time axis
-#         if self.resamplerate > 0:
-#
-#             rs_time_filter = ResampleFilter (resamplerate=self.resamplerate)
-#             rs_time_filter.set_input(self.time_series[0,0,:])
-#             time_series_resampled = rs_time_filter.filter()
-#             rs_time_axis = time_series_resampled ['time']
-#         else:
-#             rs_time_axis  = self.time_series['time']
-#
-#
-#         pow_array = xray.DataArray(
-#             np.empty(
-#             shape=(self.bipolar_pairs.shape[0],self.time_series['events'].shape[0],self.freqs.shape[0],rs_time_axis.shape[0]),
-#             dtype=np.float64),
-#             dims=['bipolar_pair','events','frequency','time']
-#         )
-#
-#
-#         # pow_array = xray.DataArray(
-#         #     np.empty(
-#         #     shape=(self.bipolar_pairs.shape[0],self.time_series['events'].shape[0],self.freqs.shape[0],self.time_series['time'].shape[0]),
-#         #     dtype=np.float64),
-#         #     dims=['bipolar_pair','events','frequency','time']
-#         # )
-#
-#
-#
-#
-#         # rand_array = np.random.rand(self.bipolar_pairs.shape[0],self.time_series['events'].shape[0],self.freqs.shape[0],self.time_series['time'].shape[0])
-#
-#
-#         # pow_array = xray.DataArray(
-#         #     rand_array,
-#         #     dims=['bipolar_pair','event','frequency','time']
-#         # )
-#
-#
-#         # depending on the reader channel axis may be a rec array or a simple array
-#         # we are interested in an array that has channel labels
-#         time_series_channel_axis = self.time_series['channels'].data
-#         try:
-#             time_series_channel_axis = time_series_channel_axis['name']
-#         except (KeyError,IndexError):
-#             pass
-#
-#         samplerate = self.time_series.attrs['samplerate']
-#
-#         for e, ev in enumerate(self.time_series['events']):
-#             for b, bp_pair in enumerate(self.bipolar_pairs):
-#
-#                 print 'bp_pair=',bp_pair, ' event num = ',e
-#
-#                 ch0 = self.time_series.isel(channels=(time_series_channel_axis == bp_pair['ch0']), events=e).values
-#                 ch1 = self.time_series.isel(channels=(time_series_channel_axis == bp_pair['ch1']), events=e).values
-#
-#                 # ch0 = self.time_series.isel(channels=(time_series_channel_axis == bp_pair['ch0'])).values
-#                 # ch1 = self.time_series.isel(channels=(time_series_channel_axis == bp_pair['ch1'])).values
-#
-#                 # ch0 = self.time_series.isel(channels=(self.time_series['channels']==bp_pair['ch0'])).values
-#                 # ch1 = self.time_series.isel(channels=(self.time_series['channels']==bp_pair['ch1'])).values
-#
-#
-#                 bp_data = ch0-ch1
-#                 # import time
-#                 # time.sleep(0.5)
-#
-#                 bp_data_wavelet = phase_pow_multi(self.freqs, bp_data, to_return='power', samplerates=samplerate)
-#
-#                 bp_data_wavelet = np.squeeze(bp_data_wavelet)
-#
-#                 if self.resamplerate>0.0:
-#                     bp_data_wavelet = resample(bp_data_wavelet, num=rs_time_axis.shape[0], axis=1)
-#                 # print bp_data_wavelet
-#                 #
-#
-#
-#
-#                 pow_array[b,e] = bp_data_wavelet
-#                 # pow_array[b,e,:,:] = np.squeeze(bp_data_wavelet)[:,:]
-#                 # pow_array[b,e,:,:] = -1.0
-#                 # if b == 2:
-#                 #     break
-#         #assigning axes
-#         pow_array['frequency'] = self.freqs
-#         pow_array['bipolar_pair'] = self.bipolar_pairs
-#         pow_array['time'] = rs_time_axis
-#
-#         pow_array.attrs['samplerate'] = samplerate
-#
-#         if self.resamplerate>0:
-#             pow_array.attrs['samplerate'] = self.resamplerate
-#
-#
-#
-#         return pow_array
-#
-
-
-
-
-
-    # def allocate_output_arrays(self, time_axis_size):
-    #     array_type = np.float32
-    #     if self.output not in ('phase', 'power'):
-    #         array_type = np.float32
-    #
-    #     if self.output in ('phase', 'power'):
-    #         if len(self.bipolar_pairs):
-    #
-    #             wavelet_pow_array = xray.DataArray(
-    #                 np.empty(
-    #                     shape=(self.bipolar_pairs.shape[0], self.time_series['events'].shape[0], self.freqs.shape[0],
-    #                            time_axis_size),
-    #                     dtype=array_type),
-    #                 dims=['bipolar_pair', 'events', 'frequency', 'time']
-    #             )
-    #
-    #         else:
-    #             wavelet_pow_array = xray.DataArray(
-    #                 np.empty(
-    #                     shape=self.time_series.shape[:-1] + (self.freqs.shape[0], time_axis_size,),
-    #                     dtype=array_type),
-    #                 dims=['bipolar_pair', 'events', 'frequency', 'time']
-    #             )
-    #
-    #         return wavelet_pow_array, None
-    #
-    #     else:
-    #         if len(self.bipolar_pairs):
-    #
-    #             wavelet_pow_array = xray.DataArray(
-    #                 np.empty(
-    #                     shape=(self.bipolar_pairs.shape[0], self.time_series['events'].shape[0], self.freqs.shape[0],
-    #                            time_axis_size),
-    #                     dtype=array_type),
-    #                 dims=['bipolar_pair', 'events', 'frequency', 'time']
-    #             )
-    #
-    #             wavelet_phase_array = xray.DataArray(
-    #                 np.empty(
-    #                     shape=(self.bipolar_pairs.shape[0], self.time_series['events'].shape[0], self.freqs.shape[0],
-    #                            time_axis_size),
-    #                     dtype=array_type),
-    #                 dims=['bipolar_pair', 'events', 'frequency', 'time']
-    #             )
-    #
-    #         else:
-    #             wavelet_pow_array = xray.DataArray(
-    #                 np.empty(
-    #                     shape=(self.bipolar_pairs.shape[0], self.time_series['events'].shape[0], self.freqs.shape[0],
-    #                            time_axis_size),
-    #                     dtype=array_type),
-    #                 dims=['bipolar_pair', 'events', 'frequency', 'time']
-    #             )
-    #
-    #             wavelet_phase_array = xray.DataArray(
-    #                 np.empty(
-    #                     shape=(self.bipolar_pairs.shape[0], self.time_series['events'].shape[0], self.freqs.shape[0],
-    #                            time_axis_size),
-    #                     dtype=array_type),
-    #                 dims=['bipolar_pair', 'events', 'frequency', 'time']
-    #             )
-    #
-    #         return wavelet_pow_array, wavelet_phase_array
-
-
-
-    # def compute_and_store_power(self, idx_tuple, power_array, phase_array, wavelet_coef_array):
-    #
-    #     power_array[idx_tuple] = wavelet_coef_array.real ** 2 + wavelet_coef_array.imag ** 2
-    #
-    # def compute_and_store_phase(self, idx_tuple, power_array, phase_array, wavelet_coef_array):
-    #
-    #     phase_array[idx_tuple] = np.angle(wavelet_coef_array)
-    #
-    # def compute_and_store_phase_and_power(self,idx_tuple, power_array, phase_array, wavelet_coef_array):
-    #     self.compute_and_store_power(idx_tuple, power_array, phase_array, wavelet_coef_array)
-    #     self.compute_and_store_phase(idx_tuple, power_array, phase_array, wavelet_coef_array)
-
-
-        # def compute_and_store_phase(self, idx_tuple, power_array, phase_array, wavelet_coef_array):
-    #
-    #     phase_array[idx_tuple] = np.angle(wavelet_coef_array)
-
-    # def get_compute_and_store_output(self):
-    #     if self.output == 'power':
-    #         return self.compute_and_store_power
-    #     elif self.output == 'phase':
-    #         return self.compute_and_store_phase
-    #     else:
-    #         return self.compute_and_store_phase_and_power
