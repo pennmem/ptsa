@@ -18,16 +18,7 @@ class ResampleFilter(PropertiedObject):
 
         self.window = None
         self.time_series = None
-
-        for option_name, val in kwds.items():
-
-            try:
-                attr = getattr(self,option_name)
-                setattr(self,option_name,val)
-            except AttributeError:
-                print 'Option: '+ option_name+' is not allowed'
-
-
+        self.init_attrs(kwds)
 
     def set_input(self, time_series):
         self.time_series = time_series

@@ -23,13 +23,7 @@ class EventDataChopper(PropertiedObject):
 
     def __init__(self, **kwds):
 
-        for option_name, val in kwds.items():
-
-            try:
-                attr = getattr(self, option_name)
-                setattr(self, option_name, val)
-            except AttributeError:
-                print 'Option: ' + option_name + ' is not allowed'
+        self.init_attrs(kwds)
 
     def get_event_chunk_size_and_start_point_shift(self, ev, samplerate, offset_time_array):
         # figuring out read size chunk and shift w.r.t to eegoffset
