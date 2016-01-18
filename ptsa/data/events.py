@@ -360,6 +360,13 @@ class Events(np.recarray):
         except LookupError:
             pass
 
+
+        return_both=False
+        try:
+            return_both = kwds['return_both']
+        except LookupError:
+            pass
+
         # check for necessary fields
         if not (esrc in self.dtype.names and
                 eoffset in self.dtype.names):
@@ -460,6 +467,7 @@ class Events(np.recarray):
 
         eventdata_xray = xray.DataArray(eventdata.base.base.base, coords=[cdim,events,tdim], dims=['channels','events','time'])
         eventdata_xray  = eventdata_xray [:,event_indices_restore_sort_order_array ,:]
+        eventdata_xray.attrs['samplerate'] = srate
 
         #ORIGINAL CODE
         # eventdata = TimeSeries(eventdata,
@@ -481,4 +489,8 @@ class Events(np.recarray):
             print 'get_data tuntime=',(end - start), 's'
             print 'extend_time = =',(end_extend_time - start_extend_time), 's'
 
-        return eventdata
+        if return_both:
+            return eventdata, eventdata_xray
+
+        else:
+            return eventdata
