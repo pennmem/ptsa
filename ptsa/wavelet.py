@@ -402,6 +402,7 @@ def phase_pow_multi(freqs, _dat,  samplerates=None, widths=5,
     dimension is for the frequencies and is inserted as the first
     dimension.
     """
+
     from xray import DataArray
 
     if isinstance(_dat,DataArray):

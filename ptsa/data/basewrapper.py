@@ -13,7 +13,6 @@ from timeseries import TimeSeries,Dim
 
 # global imports
 import numpy as np
-from xray import DataArray
 
 class BaseWrapper(object):
     """
@@ -22,19 +21,6 @@ class BaseWrapper(object):
     annotations, and channel information.  The annotations and channel
     information will typically be recarrays.
     """
-
-    # class properties
-    samplerate = property(lambda self: self._get_samplerate())
-    nsamples = property(lambda self: self._get_nsamples())
-    nchannels = property(lambda self: self._get_nchannels())
-    annotations = property(lambda self: self._get_annotations(),
-                           lambda self,annot: self._set_annotations(annot))
-    channel_info = property(lambda self: self._get_channel_info(),
-                            lambda self,chan_info: self._set_channel_info(chan_info))
-    channels = property(lambda self: self._get_channel_info(),
-                        lambda self,chan_info: self._set_channel_info(chan_info))
-    data = property(lambda self: self.get_all_data())
-
 
     # required methods that the child class must define.
     def _get_samplerate(self,channel=None):
@@ -158,181 +144,7 @@ class BaseWrapper(object):
         """
         """
         raise NotImplementedError
-
-
-    def get_event_data_xray(self,channels,events,
-                       start_time,end_time,buffer_time=0.0,
-                       resampled_rate=None,
-                       filt_freq=None,filt_type='stop',filt_order=4,
-                       keep_buffer=False,
-                       loop_axis=None,num_mp_procs=0,eoffset='eoffset',
-                       eoffset_in_time=True):
-        """
-        Return an TimeSeries containing data for the specified channel
-        in the form [events,duration].
-
-        Parameters
-        ----------
-        channels: {int} or {dict}
-            Channels from which to load data.
-        events: {array_like} or {recarray}
-            Array/list of event offsets (in time or samples as
-            specified by eoffset_in_time; in time by default) into
-            the data, specifying each event onset time.
-        start_time: {float}
-            Start of epoch to retrieve (in time-unit of the data).
-        end_time: {float}
-            End of epoch to retrieve (in time-unit of the data).
-        buffer_time: {float},optional
-            Extra buffer to add on either side of the event in order
-            to avoid edge effects when filtering (in time unit of the
-            data).
-        resampled_rate: {float},optional
-            New samplerate to resample the data to after loading.
-        filt_freq: {array_like},optional
-            The range of frequencies to filter (depends on the filter
-            type.)
-        filt_type = {scipy.signal.band_dict.keys()},optional
-            Filter type.
-        filt_order = {int},optional
-            The order of the filter.
-        keep_buffer: {boolean},optional
-            Whether to keep the buffer when returning the data.
-        eoffset_in_time: {boolean},optional
-            If True, the unit of the event offsets is taken to be
-            time (unit of the data), otherwise samples.
-        """
-
-        # translate back to dur and offset
-        dur = end_time - start_time
-        offset = start_time
-        buf = buffer_time
-
-        # get the event offsets
-        if ((not (hasattr(events,'dtype') or hasattr(events,'columns'))) or
-            (hasattr(events,'dtype') and events.dtype.names is None)):
-            # they just passed in a list
-            event_offsets = events
-        elif ((hasattr(events, 'dtype') and (eoffset in events.dtype.names)) or
-              (hasattr(events, 'columns') and (eoffset in events.columns))):
-            event_offsets = events[eoffset]
-        else:
-            raise ValueError(eoffset+' must be a valid fieldname '+
-                             'specifying the offset for the data.')
-
-        # Sanity checks:
-        if(dur<0):
-            raise ValueError('Duration must not be negative! '+
-                             'Specified duration: '+str(dur))
-        if(np.min(event_offsets)<0):
-            raise ValueError('Event offsets must not be negative!')
-
-        # make sure the events are an actual array:
-        event_offsets = np.asarray(event_offsets)
-        if eoffset_in_time:
-            # convert to samples
-            event_offsets = np.atleast_1d(np.int64(
-                np.round(event_offsets*self.samplerate)))
-
-        # set event durations from rate
-        # get the samplesize
-        samplesize = 1./self.samplerate
-
-        # get the number of buffer samples
-        buf_samp = int(np.ceil(buf/samplesize))
-
-        # calculate the offset samples that contains the desired offset
-        offset_samp = int(np.ceil((np.abs(offset)-samplesize*.5)/samplesize)*
-                          np.sign(offset))
-
-        # finally get the duration necessary to cover the desired span
-        #dur_samp = int(np.ceil((dur - samplesize*.5)/samplesize))
-        dur_samp = (int(np.ceil((dur+offset - samplesize*.5)/samplesize)) -
-                    offset_samp + 1)
-
-        # add in the buffer
-        dur_samp += 2*buf_samp
-        offset_samp -= buf_samp
-
-        # check that we have all the data we need before every event:
-        if(np.min(event_offsets+offset_samp)<0):
-            bad_evs = ((event_offsets+offset_samp)<0)
-            raise ValueError('The specified values for offset and buffer '+
-                             'require more data than is available before '+
-                             str(np.sum(bad_evs))+' of all '+
-                             str(len(bad_evs))+' events.')
-
-        # process the channels
-        if isinstance(channels, dict):
-            # turn into indices
-            ch_info = self.channels
-            key = channels.keys()[0]
-            channels = [np.nonzero(ch_info[key]==c)[0][0] for c in channels[key]]
-        elif isinstance(channels, str):
-            # find that channel by name
-            channels = np.nonzero(self.channels['name']==channels)[0][0]
-        if channels is None or len(np.atleast_1d(channels))==0:
-            channels = np.arange(self.nchannels)
-        channels = np.atleast_1d(channels)
-        channels.sort()
-
-        # load the timeseries (this must be implemented by subclasses)
-        eventdata = self._load_data(channels,event_offsets,dur_samp,offset_samp)
-
-        # calc the time range
-        # get the samplesize
-        samp_start = offset_samp*samplesize
-        samp_end = samp_start + (dur_samp-1)*samplesize
-        time_range = np.linspace(samp_start,samp_end,dur_samp)
-
-        # when channels is and array of channels labels i.e. strings like  '002','003',...
-        # we need to use xray arrays to do fancy indexing
-
-        self.channels_xray = DataArray(self.channels.number,coords=[self.channels.name],dims=['name'])
-
-        if channels.dtype.char=='S':
-
-            self.channels_xray = self.channels_xray.loc[channels]
-
-
-
-            # dims = [Dim(self.channels_xray,'channels'),  # can index into channels
-            #         Dim(events,'events'),
-            #         Dim(time_range,'time')]
-
-        else:
-
-            self.channels_xray = self.channels_xray[channels]
-
-            # make it a timeseries
-            # ORIGINAL CODE
-            # dims = [Dim(self.channels[channels],'channels'),  # can index into channels
-            #         Dim(events,'events'),
-            #         Dim(time_range,'time')]
-
-            # NEW CODE
-            # dims = [Dim(self.channels['name'],'channels'),  # can index into channels
-            #         Dim(events,'events'),
-            #         Dim(time_range,'time')]
-        # ORIGINAL CODE - MY EDITS
-        # self.channels_xray=np.rec.fromarrays([self.channels_xray.values,self.channels_xray.coords['name'].values],names='number,name')
-
-        self.channels_xray=self.channels_xray.coords['name'].values
-
-        #ORIGINAL CODE
-        # eventdata = TimeSeries(np.asarray(eventdata),
-        #                        'time',
-        #                        self.samplerate,dims=dims)
-
-        eventdata = DataArray(eventdata,coords=[self.channels_xray,events,time_range],dims=['channels','events','time'])
-        eventdata.attrs['samplerate'] = self.samplerate
-
-
-        # return the timeseries
-        return eventdata
-
-
-
+            
     def get_event_data(self,channels,events,
                        start_time,end_time,buffer_time=0.0,
                        resampled_rate=None,
@@ -371,7 +183,7 @@ class BaseWrapper(object):
             The order of the filter.
         keep_buffer: {boolean},optional
             Whether to keep the buffer when returning the data.
-        eoffset_in_time: {boolean},optional
+        eoffset_in_time: {boolean},optional        
             If True, the unit of the event offsets is taken to be
             time (unit of the data), otherwise samples.
         """
@@ -392,7 +204,7 @@ class BaseWrapper(object):
         else:
             raise ValueError(eoffset+' must be a valid fieldname '+
                              'specifying the offset for the data.')
-
+        
         # Sanity checks:
         if(dur<0):
             raise ValueError('Duration must not be negative! '+
@@ -406,7 +218,7 @@ class BaseWrapper(object):
             # convert to samples
             event_offsets = np.atleast_1d(np.int64(
                 np.round(event_offsets*self.samplerate)))
-
+        
         # set event durations from rate
         # get the samplesize
         samplesize = 1./self.samplerate
@@ -422,7 +234,7 @@ class BaseWrapper(object):
         #dur_samp = int(np.ceil((dur - samplesize*.5)/samplesize))
         dur_samp = (int(np.ceil((dur+offset - samplesize*.5)/samplesize)) -
                     offset_samp + 1)
-
+        
         # add in the buffer
         dur_samp += 2*buf_samp
         offset_samp -= buf_samp
@@ -484,10 +296,13 @@ class BaseWrapper(object):
                     Dim(events,'events'),
                     Dim(time_range,'time')]
 
-            # NEW CODE
-            # dims = [Dim(self.channels['name'],'channels'),  # can index into channels
-            #         Dim(events,'events'),
-            #         Dim(time_range,'time')]
+
+        # # make it a timeseries
+        # dims = [Dim(self.channels[channels],'channels'),  # can index into channels
+        #         Dim(events,'events'),
+        #         Dim(time_range,'time')]
+
+
 
         eventdata = TimeSeries(np.asarray(eventdata),
                                'time',
@@ -515,12 +330,6 @@ class BaseWrapper(object):
 
         # return the timeseries
         return eventdata
-
-
-
-
-
-
 
     def get_all_data(self, channels=None):
         """
@@ -550,219 +359,15 @@ class BaseWrapper(object):
                           self.samplerate,dims=dims)
 
         return data
-
-
-
-
-    # def get_event_data(self,channels,events,
-     #                   start_time,end_time,buffer_time=0.0,
-     #                   resampled_rate=None,
-     #                   filt_freq=None,filt_type='stop',filt_order=4,
-     #                   keep_buffer=False,
-     #                   loop_axis=None,num_mp_procs=0,eoffset='eoffset',
-     #                   eoffset_in_time=True):
-     #    """
-     #    Return an TimeSeries containing data for the specified channel
-     #    in the form [events,duration].
-    #
-     #    Parameters
-     #    ----------
-     #    channels: {int} or {dict}
-     #        Channels from which to load data.
-     #    events: {array_like} or {recarray}
-     #        Array/list of event offsets (in time or samples as
-     #        specified by eoffset_in_time; in time by default) into
-     #        the data, specifying each event onset time.
-     #    start_time: {float}
-     #        Start of epoch to retrieve (in time-unit of the data).
-     #    end_time: {float}
-     #        End of epoch to retrieve (in time-unit of the data).
-     #    buffer_time: {float},optional
-     #        Extra buffer to add on either side of the event in order
-     #        to avoid edge effects when filtering (in time unit of the
-     #        data).
-     #    resampled_rate: {float},optional
-     #        New samplerate to resample the data to after loading.
-     #    filt_freq: {array_like},optional
-     #        The range of frequencies to filter (depends on the filter
-     #        type.)
-     #    filt_type = {scipy.signal.band_dict.keys()},optional
-     #        Filter type.
-     #    filt_order = {int},optional
-     #        The order of the filter.
-     #    keep_buffer: {boolean},optional
-     #        Whether to keep the buffer when returning the data.
-     #    eoffset_in_time: {boolean},optional
-     #        If True, the unit of the event offsets is taken to be
-     #        time (unit of the data), otherwise samples.
-     #    """
-    #
-     #    # translate back to dur and offset
-     #    dur = end_time - start_time
-     #    offset = start_time
-     #    buf = buffer_time
-    #
-     #    # get the event offsets
-     #    if ((not (hasattr(events,'dtype') or hasattr(events,'columns'))) or
-     #        (hasattr(events,'dtype') and events.dtype.names is None)):
-     #        # they just passed in a list
-     #        event_offsets = events
-     #    elif ((hasattr(events, 'dtype') and (eoffset in events.dtype.names)) or
-     #          (hasattr(events, 'columns') and (eoffset in events.columns))):
-     #        event_offsets = events[eoffset]
-     #    else:
-     #        raise ValueError(eoffset+' must be a valid fieldname '+
-     #                         'specifying the offset for the data.')
-     #
-     #    # Sanity checks:
-     #    if(dur<0):
-     #        raise ValueError('Duration must not be negative! '+
-     #                         'Specified duration: '+str(dur))
-     #    if(np.min(event_offsets)<0):
-     #        raise ValueError('Event offsets must not be negative!')
-    #
-     #    # make sure the events are an actual array:
-     #    event_offsets = np.asarray(event_offsets)
-     #    if eoffset_in_time:
-     #        # convert to samples
-     #        event_offsets = np.atleast_1d(np.int64(
-     #            np.round(event_offsets*self.samplerate)))
-     #
-     #    # set event durations from rate
-     #    # get the samplesize
-     #    samplesize = 1./self.samplerate
-    #
-     #    # get the number of buffer samples
-     #    buf_samp = int(np.ceil(buf/samplesize))
-    #
-     #    # calculate the offset samples that contains the desired offset
-     #    offset_samp = int(np.ceil((np.abs(offset)-samplesize*.5)/samplesize)*
-     #                      np.sign(offset))
-    #
-     #    # finally get the duration necessary to cover the desired span
-     #    #dur_samp = int(np.ceil((dur - samplesize*.5)/samplesize))
-     #    dur_samp = (int(np.ceil((dur+offset - samplesize*.5)/samplesize)) -
-     #                offset_samp + 1)
-     #
-     #    # add in the buffer
-     #    dur_samp += 2*buf_samp
-     #    offset_samp -= buf_samp
-    #
-     #    # check that we have all the data we need before every event:
-     #    if(np.min(event_offsets+offset_samp)<0):
-     #        bad_evs = ((event_offsets+offset_samp)<0)
-     #        raise ValueError('The specified values for offset and buffer '+
-     #                         'require more data than is available before '+
-     #                         str(np.sum(bad_evs))+' of all '+
-     #                         str(len(bad_evs))+' events.')
-    #
-     #    # process the channels
-     #    if isinstance(channels, dict):
-     #        # turn into indices
-     #        ch_info = self.channels
-     #        key = channels.keys()[0]
-     #        channels = [np.nonzero(ch_info[key]==c)[0][0] for c in channels[key]]
-     #    elif isinstance(channels, str):
-     #        # find that channel by name
-     #        channels = np.nonzero(self.channels['name']==channels)[0][0]
-     #    if channels is None or len(np.atleast_1d(channels))==0:
-     #        channels = np.arange(self.nchannels)
-     #    channels = np.atleast_1d(channels)
-     #    channels.sort()
-    #
-     #    # load the timeseries (this must be implemented by subclasses)
-     #    eventdata = self._load_data(channels,event_offsets,dur_samp,offset_samp)
-    #
-     #    # calc the time range
-     #    # get the samplesize
-     #    samp_start = offset_samp*samplesize
-     #    samp_end = samp_start + (dur_samp-1)*samplesize
-     #    time_range = np.linspace(samp_start,samp_end,dur_samp)
-    #
-     #    # when channels is and array of channels labels i.e. strings like  '002','003',...
-     #    # we need to use xray arrays to do fancy indexing
-     #    if channels.dtype.char=='S':
-     #        try:
-     #            from xray import DataArray
-     #            self.channels_xray = DataArray(self.channels.number,coords=[self.channels.name],dims=['name'])
-     #            self.channels_xray = self.channels_xray.loc[channels]
-    #
-     #            self.channels_xray=np.rec.fromarrays([self.channels_xray.values,self.channels_xray.coords['name'].values],names='number,name')
-    #
-     #        except ImportError:
-     #            pass
-    #
-    #
-     #        dims = [Dim(self.channels_xray,'channels'),  # can index into channels
-     #                Dim(events,'events'),
-     #                Dim(time_range,'time')]
-    #
-     #    else:
-    #
-     #        # make it a timeseries
-     #        # ORIGINAL CODE
-     #        dims = [Dim(self.channels[channels],'channels'),  # can index into channels
-     #                Dim(events,'events'),
-     #                Dim(time_range,'time')]
-    #
-     #        # NEW CODE
-     #        # dims = [Dim(self.channels['name'],'channels'),  # can index into channels
-     #        #         Dim(events,'events'),
-     #        #         Dim(time_range,'time')]
-    #
-     #    eventdata = TimeSeries(np.asarray(eventdata),
-     #                           'time',
-     #                           self.samplerate,dims=dims)
-    #
-	# # filter if desired
-	# if not(filt_freq is None):
-	#     # filter that data
-     #        eventdata = eventdata.filtered(filt_freq,
-     #                                       filt_type=filt_type,
-     #                                       order=filt_order)
-    #
-	# # resample if desired
-	# if (not(resampled_rate is None) and
-     #        not(resampled_rate == eventdata.samplerate)):
-	#     # resample the data
-     #        eventdata = eventdata.resampled(resampled_rate,
-     #                                        loop_axis=loop_axis,
-     #                                        num_mp_procs=num_mp_procs)
-    #
-     #    # remove the buffer and set the time range
-	# if buf > 0 and not(keep_buffer):
-	#     # remove the buffer
-     #        eventdata = eventdata.remove_buffer(buf)
-    #
-     #    # return the timeseries
-     #    return eventdata
-
-    # def get_all_data(self, channels=None):
-     #    """
-     #    Return a TimeSeries containing all the data.
-     #    """
-     #    if channels is None:
-     #        channels = np.arange(self.nchannels)
-     #    dur_samp = self.nsamples
-     #    data = self._load_data(channels,[0],dur_samp,0)
-     #    # remove events dimension
-     #    data = data[:,0,:]
-    #
-     #    # turn it into a TimeSeries
-     #    # get the samplesize
-     #    samplesize = 1./self.samplerate
-    #
-     #    # set timerange
-     #    samp_start = 0*samplesize
-     #    samp_end = samp_start + (dur_samp-1)*samplesize
-     #    time_range = np.linspace(samp_start,samp_end,dur_samp)
-    #
-	# # make it a timeseries
-     #    dims = [Dim(self.channels[channels],'channels'),
-     #            Dim(time_range,'time')]
-     #    data = TimeSeries(np.asarray(data),
-     #                      'time',
-     #                      self.samplerate,dims=dims)
-    #
-     #    return data
-    #
+    
+    # class properties
+    samplerate = property(lambda self: self._get_samplerate())
+    nsamples = property(lambda self: self._get_nsamples())
+    nchannels = property(lambda self: self._get_nchannels())
+    annotations = property(lambda self: self._get_annotations(),
+                           lambda self,annot: self._set_annotations(annot))
+    channel_info = property(lambda self: self._get_channel_info(),
+                            lambda self,chan_info: self._set_channel_info(chan_info))
+    channels = property(lambda self: self._get_channel_info(),
+                        lambda self,chan_info: self._set_channel_info(chan_info))
+    data = property(lambda self: self.get_all_data())
