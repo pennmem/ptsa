@@ -56,7 +56,7 @@ class MorletWaveletFilter(PropertiedObject):
         except (KeyError, IndexError):
             pass
 
-        ranges = [xrange(len(self.time_series['events'])), xrange(len(self.bipolar_pairs))]
+        ranges = [xrange(len(self.bipolar_pairs)), xrange(len(self.time_series['events'])) ]
         for cart_prod_idx_tuple in product(*ranges):
             e, b = cart_prod_idx_tuple[0], cart_prod_idx_tuple[1]
             bp_pair = self.bipolar_pairs[b]
