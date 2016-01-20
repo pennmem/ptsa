@@ -171,36 +171,6 @@ class MorletWaveletFilter(PropertiedObject):
 
             return wavelet_pow_array_xray, wavelet_phase_array_xray
 
-
-    # def compute_wavelet_ffts(self):
-    #
-    #     samplerate = self.time_series.attrs['samplerate']
-    #
-    #     freqs = np.atleast_1d(self.freqs)
-    #
-    #     wavelets = morlet_multi(freqs=freqs, widths=5, samplerates=samplerate)
-    #     # ADD WARNING HERE FROM PHASE_MULTI
-    #
-    #     num_wavelets = len(wavelets)
-    #
-    #     # computting length of the longest wavelet
-    #     s_w = max(map(lambda wavelet: wavelet.shape[0], wavelets))
-    #     # length of the tie axis of the time series
-    #     s_d = self.time_series['time'].shape[0]
-    #
-    #     # determine the size based on the next power of 2
-    #     convolution_size = s_w + s_d - 1
-    #     convolution_size_pow2 = np.power(2, next_pow2(convolution_size))
-    #
-    #     # preallocating arrays
-    #     wavelet_fft_array = np.empty(shape=(num_wavelets, convolution_size_pow2), dtype=np.complex64)
-    #
-    #     # computting wavelet ffts
-    #     for i, wavelet in enumerate(wavelets):
-    #         wavelet_fft_array[i] = fft(wavelet, convolution_size_pow2)
-    #
-    #     return wavelet_fft_array, convolution_size, convolution_size_pow2
-
     def compute_wavelet_ffts(self):
 
         samplerate = self.time_series.attrs['samplerate']
@@ -247,14 +217,10 @@ class MorletWaveletFilter(PropertiedObject):
         # preallocating array
         wavelet_coef_single_array = np.empty(shape=(time_axis.shape[0]), dtype=np.complex64)
 
-        # wavelet_fft_array, convolution_size, convolution_size_pow2 = self.compute_wavelet_ffts()
         wavelet_fft_array, convolution_size_array, convolution_size_pow2 = self.compute_wavelet_ffts()
         num_wavelets = wavelet_fft_array.shape[0]
 
         wavelet_start = time.time()
-
-        # start_offset = (convolution_size - time_axis.shape[0]) / 2
-        # end_offset = start_offset + time_axis.shape[0]
 
         for idx_tuple, signal in data_iterator:
 
