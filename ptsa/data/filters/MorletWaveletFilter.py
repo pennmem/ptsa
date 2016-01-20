@@ -58,7 +58,7 @@ class MorletWaveletFilter(PropertiedObject):
 
         ranges = [xrange(len(self.bipolar_pairs)), xrange(len(self.time_series['events'])) ]
         for cart_prod_idx_tuple in product(*ranges):
-            e, b = cart_prod_idx_tuple[0], cart_prod_idx_tuple[1]
+            b, e = cart_prod_idx_tuple[0], cart_prod_idx_tuple[1]
             bp_pair = self.bipolar_pairs[b]
 
             ch0 = self.time_series.isel(channels=(time_series_channel_axis == bp_pair['ch0']), events=e).values
@@ -172,6 +172,35 @@ class MorletWaveletFilter(PropertiedObject):
             return wavelet_pow_array_xray, wavelet_phase_array_xray
 
 
+    # def compute_wavelet_ffts(self):
+    #
+    #     samplerate = self.time_series.attrs['samplerate']
+    #
+    #     freqs = np.atleast_1d(self.freqs)
+    #
+    #     wavelets = morlet_multi(freqs=freqs, widths=5, samplerates=samplerate)
+    #     # ADD WARNING HERE FROM PHASE_MULTI
+    #
+    #     num_wavelets = len(wavelets)
+    #
+    #     # computting length of the longest wavelet
+    #     s_w = max(map(lambda wavelet: wavelet.shape[0], wavelets))
+    #     # length of the tie axis of the time series
+    #     s_d = self.time_series['time'].shape[0]
+    #
+    #     # determine the size based on the next power of 2
+    #     convolution_size = s_w + s_d - 1
+    #     convolution_size_pow2 = np.power(2, next_pow2(convolution_size))
+    #
+    #     # preallocating arrays
+    #     wavelet_fft_array = np.empty(shape=(num_wavelets, convolution_size_pow2), dtype=np.complex64)
+    #
+    #     # computting wavelet ffts
+    #     for i, wavelet in enumerate(wavelets):
+    #         wavelet_fft_array[i] = fft(wavelet, convolution_size_pow2)
+    #
+    #     return wavelet_fft_array, convolution_size, convolution_size_pow2
+
     def compute_wavelet_ffts(self):
 
         samplerate = self.time_series.attrs['samplerate']
@@ -195,11 +224,16 @@ class MorletWaveletFilter(PropertiedObject):
         # preallocating arrays
         wavelet_fft_array = np.empty(shape=(num_wavelets, convolution_size_pow2), dtype=np.complex64)
 
+        convolution_size_array = np.empty(shape=(num_wavelets), dtype=np.int)
+
+
         # computting wavelet ffts
         for i, wavelet in enumerate(wavelets):
             wavelet_fft_array[i] = fft(wavelet, convolution_size_pow2)
+            convolution_size_array[i] = wavelet.shape[0] + s_d - 1
 
-        return wavelet_fft_array, convolution_size, convolution_size_pow2
+        return wavelet_fft_array, convolution_size_array, convolution_size_pow2
+
 
     def filter(self):
 
@@ -213,20 +247,28 @@ class MorletWaveletFilter(PropertiedObject):
         # preallocating array
         wavelet_coef_single_array = np.empty(shape=(time_axis.shape[0]), dtype=np.complex64)
 
-        wavelet_fft_array, convolution_size, convolution_size_pow2 = self.compute_wavelet_ffts()
+        # wavelet_fft_array, convolution_size, convolution_size_pow2 = self.compute_wavelet_ffts()
+        wavelet_fft_array, convolution_size_array, convolution_size_pow2 = self.compute_wavelet_ffts()
         num_wavelets = wavelet_fft_array.shape[0]
 
         wavelet_start = time.time()
 
-        start_offset = (convolution_size - time_axis.shape[0]) / 2
-        end_offset = start_offset + time_axis.shape[0]
+        # start_offset = (convolution_size - time_axis.shape[0]) / 2
+        # end_offset = start_offset + time_axis.shape[0]
 
         for idx_tuple, signal in data_iterator:
 
             signal_fft = fft(signal, convolution_size_pow2)
 
             for w in xrange(num_wavelets):
+
+
                 signal_wavelet_conv = ifft(wavelet_fft_array[w] * signal_fft)
+
+                # computting trim indices for the wavelet_coeff array
+                start_offset = (convolution_size_array[w] - time_axis_size) / 2
+                end_offset = start_offset + time_axis_size
+
                 wavelet_coef_single_array[:] = signal_wavelet_conv[start_offset:end_offset]
 
                 out_idx_tuple = idx_tuple + (w,)
@@ -366,7 +408,7 @@ def test_2():
 
 
 if __name__ == '__main__':
-    edcw_1 = test_1()
+    # edcw_1 = test_1()
     edcw_2 = test_2()
 
     wavelet_1 = edcw_1[0,0,0,500:-500]
