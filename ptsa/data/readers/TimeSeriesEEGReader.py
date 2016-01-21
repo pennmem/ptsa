@@ -140,7 +140,7 @@ class TimeSeriesEEGReader(PropertiedObject):
                 event_offsets = evs[ind]['eegoffset']
                 events.append(evs[ind])
 
-            print event_offsets
+            # print event_offsets
             #print "Loading %d events from %s" % (ind.sum(),src)
             # get the timeseries for those events
             newdat = src.get_event_data_xray(channels,
