@@ -3,6 +3,7 @@ __author__ = 'm'
 import numpy as np
 import xray
 from ptsa.data.common import TypeValTuple, PropertiedObject, get_axis_index
+import scipy
 from scipy.signal import resample
 
 from ptsa.wavelet import phase_pow_multi
@@ -18,6 +19,8 @@ class MorletWaveletFilterSimple(PropertiedObject):
         # TypeValTuple('time_axis_index', int, -1),
         # TypeValTuple('bipolar_pairs', np.recarray, np.recarray((0,), dtype=[('ch0', '|S3'), ('ch1', '|S3')])),
         TypeValTuple('resamplerate', float, -1),
+        # TypeValTuple('downsample_factor', int, 1),
+        # TypeValTuple('downsample_filter', str, 'resample'),
         TypeValTuple('output', str, '')
 
     ]
@@ -28,7 +31,15 @@ class MorletWaveletFilterSimple(PropertiedObject):
         self.time_series = time_series
         self.init_attrs(kwds)
 
+        # self.downsample_filter_fcn = scipy.signal.resample
+        # if self.downsample_filter=='decimate':
+        #     self.downsample_filter_fcn = scipy.signal.decimate
+        #
+        # if self.downsample_factor >1:
+
+
         self.compute_power_and_phase_fcn = None
+
         if self.output == 'power':
             self.compute_power_and_phase_fcn = self.compute_power
         elif self.output == 'phase':
@@ -103,28 +114,29 @@ class MorletWaveletFilterSimple(PropertiedObject):
     def resample_array(self,array,num_points):
         if self.resamplerate > 0.0 and array is not None:
             return resample(array, num=num_points)
+            # return scipy.signal.decimate(array, q=10)[:-1]
         return array
 
-    def resample_power_and_phase(self, pow_array_single, phase_array_single, num_points):
-
-        # resampled_pow_array = None
-        # resampled_phase_array = None
-
-        resampled_pow_array = pow_array_single
-        resampled_phase_array = phase_array_single
-
-        if self.resamplerate > 0.0:
-            if pow_array_single is not None:
-                # resampled_pow_array = pow_array_single[0:num_points]
-                resampled_pow_array = resample(pow_array_single, num=num_points)
-            if phase_array_single is not None:
-                resampled_phase_array = resample(phase_array_single, num=num_points)
-
-        else:
-            resampled_pow_array = pow_array_single
-            resampled_phase_array = phase_array_single
-
-        return resampled_pow_array, resampled_phase_array
+    # def resample_power_and_phase(self, pow_array_single, phase_array_single, num_points):
+    #
+    #     # resampled_pow_array = None
+    #     # resampled_phase_array = None
+    #
+    #     resampled_pow_array = pow_array_single
+    #     resampled_phase_array = phase_array_single
+    #
+    #     if self.resamplerate > 0.0:
+    #         if pow_array_single is not None:
+    #             # resampled_pow_array = pow_array_single[0:num_points]
+    #             resampled_pow_array = resample(pow_array_single, num=num_points)
+    #         if phase_array_single is not None:
+    #             resampled_phase_array = resample(phase_array_single, num=num_points)
+    #
+    #     else:
+    #         resampled_pow_array = pow_array_single
+    #         resampled_phase_array = phase_array_single
+    #
+    #     return resampled_pow_array, resampled_phase_array
 
     def compute_power(self, wavelet_coef_array):
         return wavelet_coef_array.real ** 2 + wavelet_coef_array.imag ** 2, None
@@ -261,10 +273,10 @@ class MorletWaveletFilterSimple(PropertiedObject):
 
                 pow_array_single, phase_array_single = self.compute_power_and_phase_fcn(wavelet_coef_single_array)
 
-                resampled_pow_array, resampled_phase_array = self.resample_power_and_phase(pow_array_single, phase_array_single, num_points=time_axis_size)
+                # resampled_pow_array, resampled_phase_array = self.resample_power_and_phase(pow_array_single, phase_array_single, num_points=time_axis_size)
 
-                # resampled_pow_array = self.resample(pow_array_single, num_points=time_axis_size)
-                # resampled_phase_array = self.resample(phase_array_single, num_points=time_axis_size)
+                resampled_pow_array = self.resample_array(pow_array_single, num_points=time_axis_size)
+                resampled_phase_array = self.resample_array(phase_array_single, num_points=time_axis_size)
                 self.store(out_idx_tuple,wavelet_pow_array,resampled_pow_array)
                 self.store(out_idx_tuple,wavelet_phase_array,resampled_phase_array)
 
