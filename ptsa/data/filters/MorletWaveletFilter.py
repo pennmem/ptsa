@@ -374,11 +374,11 @@ def test_2():
 
 
 if __name__ == '__main__':
-    # edcw_1 = test_1()
+    edcw_1 = test_1()
     edcw_2 = test_2()
 
     wavelet_1 = edcw_1[0,0,0,500:-500]
-    wavelet_2 = edcw_1[0,0,0,500:-501]
+    wavelet_2 = edcw_2[0,0,0,500:-501]
 
     import matplotlib;
     matplotlib.use('Qt4Agg')

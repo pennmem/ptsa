@@ -66,7 +66,7 @@ class EventDataChopper(PropertiedObject):
             shape = None
 
             for i, ev in enumerate(evs):
-                print ev.eegoffset
+                # print ev.eegoffset
                 start_chop_pos = np.where(offset_time_array >= ev.eegoffset)[0][0]
                 start_chop_pos += start_point_shift
                 selector_array = np.arange(start=start_chop_pos, stop=start_chop_pos + event_chunk_size)
@@ -80,7 +80,7 @@ class EventDataChopper(PropertiedObject):
 
                 data_list.append(chopped_data_array)
 
-                print i
+                # print i
 
             ev_concat_data = xray.concat(data_list, dim='events')
 
