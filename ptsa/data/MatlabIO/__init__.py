@@ -257,19 +257,19 @@ def get_record_format(obj):
     for class_member, class_member_name, class_member_value in get_non_special_class_members(obj):
         # print 'class_member, class_member_name, class_member_value=',(class_member, class_member_name, class_member_value)
         #
-        print 'class_member=',class_member
-        print 'class_member_name=',class_member_name
-        print 'class_member_value',class_member_value
+        # print 'class_member=',class_member
+        # print 'class_member_name=',class_member_name
+        # print 'class_member_value',class_member_value
 
 
         try:
             numpy_type_abbreviation = determine_dtype_abbreviation(class_member)
             # print 'numpy_type_abbreviation=',numpy_type_abbreviation
         except:
-            print 'COULD NOT DETERMINE FORMAT FOR:'
-            print 'class_member_name=', class_member_value
-            print 'class_member_values=', class_member_value
-            print 'SKIPPING this'
+            # print 'COULD NOT DETERMINE FORMAT FOR:'
+            # print 'class_member_name=', class_member_value
+            # print 'class_member_values=', class_member_value
+            # print 'SKIPPING this'
             continue
 
         names_list.append(class_member_name)
@@ -287,19 +287,19 @@ def get_record_format_multi_trial(obj_array):
     for class_member, class_member_name, class_member_value in get_non_special_class_members(obj):
         # print 'class_member, class_member_name, class_member_value=',(class_member, class_member_name, class_member_value)
         #
-        print 'class_member=',class_member
-        print 'class_member_name=',class_member_name
-        print 'class_member_value',class_member_value
+        # print 'class_member=',class_member
+        # print 'class_member_name=',class_member_name
+        # print 'class_member_value',class_member_value
 
         # for obj_tmp in obj_array:
         try:
             numpy_type_abbreviation = determine_dtype_abbreviation(class_member)
-            print 'numpy_type_abbreviation=',numpy_type_abbreviation
+            # print 'numpy_type_abbreviation=',numpy_type_abbreviation
         except:
-            print 'COULD NOT DETERMINE FORMAT FOR:'
-            print 'class_member_name=', class_member_value
-            print 'class_member_values=', class_member_value
-            print 'SKIPPING this'
+            # print 'COULD NOT DETERMINE FORMAT FOR:'
+            # print 'class_member_name=', class_member_value
+            # print 'class_member_values=', class_member_value
+            # print 'SKIPPING this'
             continue
 
         # if initial guess for dtype is generic object type 'O' we try to improve this by
