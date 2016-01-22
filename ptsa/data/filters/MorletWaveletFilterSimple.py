@@ -118,7 +118,7 @@ class MorletWaveletFilterSimple(PropertiedObject):
 
         freqs = np.atleast_1d(self.freqs)
 
-        wavelets = morlet_multi(freqs=freqs, widths=5, samplerates=samplerate)
+        wavelets = morlet_multi(freqs=freqs, widths=self.width, samplerates=samplerate)
         # ADD WARNING HERE FROM PHASE_MULTI
 
         num_wavelets = len(wavelets)
@@ -309,20 +309,25 @@ def test_2():
 
     print 'total time = ', time.time() - start
 
+
+    res_start =time.time()
+
+    # from ptsa.data.filters.ResampleFilter import ResampleFilter
+    # rsf = ResampleFilter (resamplerate=50.0)
+    # rsf.set_input(pow_wavelet)
+    # pow_wavelet = rsf.filter()
+
+
+
+    print 'resample_time=',time.time()-res_start
     return pow_wavelet
 
 
-# if __name__ == '__main__':
-#     # edcw_1 = test_1()
-#     edcw_2 = test_2()
-
-
-
 if __name__ == '__main__':
-    edcw_1 = test_1()
+    # edcw_1 = test_1()
     edcw_2 = test_2()
 
-    wavelet_1 = edcw_1[0,0,0,500:1300]
+
     wavelet_2 = edcw_2[0,0,0,500:1300]
 
     import matplotlib;
@@ -333,11 +338,30 @@ if __name__ == '__main__':
     plt.get_current_fig_manager().window.raise_()
 
 
-    plt.plot(np.arange(wavelet_1.shape[0])-1,wavelet_1,'r--')
-    plt.plot(np.arange(wavelet_2.shape[0]),wavelet_2)
-
-
+    plt.plot(np.arange(wavelet_2.shape[0])-1,wavelet_2,'r--')
     plt.show()
+
+
+# if __name__ == '__main__':
+#     edcw_1 = test_1()
+#     edcw_2 = test_2()
+#
+#     wavelet_1 = edcw_1[0,0,0,500:1300]
+#     wavelet_2 = edcw_2[0,0,0,500:1300]
+#
+#     import matplotlib;
+#     matplotlib.use('Qt4Agg')
+#
+#
+#     import matplotlib.pyplot as plt
+#     plt.get_current_fig_manager().window.raise_()
+#
+#
+#     plt.plot(np.arange(wavelet_1.shape[0])-1,wavelet_1,'r--')
+#     plt.plot(np.arange(wavelet_2.shape[0]),wavelet_2)
+#
+#
+#     plt.show()
 
 
 #
