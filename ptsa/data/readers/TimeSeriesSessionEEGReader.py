@@ -9,7 +9,7 @@ import numpy as np
 import xray
 
 from ptsa.data.common import TypeValTuple, PropertiedObject
-
+from ptsa.data.TimeSeriesXray import TimeSeriesXray
 
 class TimeSeriesSessionEEGReader(PropertiedObject):
     _descriptors = [
@@ -130,7 +130,7 @@ class TimeSeriesSessionEEGReader(PropertiedObject):
 
         print 'last_time_stamp=',eegdata_xray['time'][-1]
 
-        return eegdata_xray
+        return TimeSeriesXray(eegdata_xray)
 
     def read(self, session_list=[]):
 

@@ -2,8 +2,8 @@ __author__ = 'm'
 
 from os.path import *
 from ptsa.data.common import pathlib
-# from ptsa.data.rawbinwrapper import RawBinWrapper
 from ptsa.data.RawBinWrapperXray import RawBinWrapperXray
+from ptsa.data.TimeSeriesXray import TimeSeriesXray
 from ptsa.data.events import Events
 import numpy as np
 
@@ -191,7 +191,7 @@ class TimeSeriesEEGReader(PropertiedObject):
             if number_of_buffer_samples > 0:
                 eventdata_xray = eventdata_xray[:,:,number_of_buffer_samples:-number_of_buffer_samples]
 
-        return eventdata_xray
+        return TimeSeriesXray(eventdata_xray)
 
 
 
@@ -254,18 +254,6 @@ class TimeSeriesEEGReader(PropertiedObject):
                 eventdata_xray = eventdata_xray[:,:,number_of_buffer_samples:-number_of_buffer_samples]
 
         return eventdata_xray
-
-
-
-
-
-
-    def get_output(self):
-        return self.__time_series
-
-    def set_output(self,evs):
-        pass
-
 
 
 if __name__=='__main__':
