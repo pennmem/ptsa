@@ -2,3 +2,4 @@ from PTSAEventReader import PTSAEventReader
 from BaseEventReader import BaseEventReader
 from TimeSeriesEEGReader import TimeSeriesEEGReader
 from NetCDF4XrayReader import NetCDF4XrayReader
+from ParamsReader import ParamsReader
