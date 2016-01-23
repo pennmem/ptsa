@@ -6,11 +6,13 @@ from ptsa.data.common import TypeValTuple, PropertiedObject, get_axis_index
 from scipy.signal import resample
 
 
+from ptsa.data.TimeSeriesXray import TimeSeriesXray
 
 class ResampleFilter(PropertiedObject):
     _descriptors = [
         TypeValTuple('resamplerate', float, -1.0),
         TypeValTuple('time_axis_index', int, -1),
+        TypeValTuple('round_to_original_timepoints', bool, False),
     ]
 
 
@@ -50,16 +52,23 @@ class ResampleFilter(PropertiedObject):
         time_idx_array = np.arange(len(time_axis))
 
 
+        if self.round_to_original_timepoints:
+            filtered_array, new_time_idx_array = resample(self.time_series.data,
+                                             new_length, t=time_idx_array,
+                                             axis=self.time_axis_index, window=self.window)
 
-        filtered_array, new_time_idx_array = resample(self.time_series.data,
-                                         new_length, t=time_idx_array,
-                                         axis=self.time_axis_index, window=self.window)
+            # print new_time_axis
 
-        # print new_time_axis
+            new_time_idx_array = np.rint(new_time_idx_array).astype(np.int)
 
-        new_time_idx_array = np.rint(new_time_idx_array).astype(np.int)
+            new_time_axis = time_axis[new_time_idx_array]
 
-        new_time_axis = time_axis[new_time_idx_array]
+        else:
+            filtered_array, new_time_axis = resample(self.time_series.data,
+                                             new_length, t=time_axis_data,
+                                             axis=self.time_axis_index, window=self.window)
+
+
 
         coords = []
         for i, dim_name in enumerate(self.time_series.dims):
@@ -69,10 +78,12 @@ class ResampleFilter(PropertiedObject):
                 coords.append((dim_name,new_time_axis))
 
 
-        self.filtered_time_series = xray.DataArray(filtered_array, coords=coords)
-        self.filtered_time_series.attrs['samplerate'] = self.resamplerate
+        filtered_time_series = xray.DataArray(filtered_array, coords=coords)
+        filtered_time_series.attrs['samplerate'] = self.resamplerate
+        filtered_time_series = TimeSeriesXray(filtered_time_series)
 
-        return self.filtered_time_series
+
+        return filtered_time_series
 
 
 
@@ -84,42 +95,41 @@ if __name__ == '__main__':
         event_range = range(0, 30, 1)
         e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
 
+
         ##################################################################
 
-        from ptsa.data.readers import PTSAEventReader
-        from ptsa.data.events import Events
-        e_reader = PTSAEventReader(event_file=e_path, eliminate_events_with_no_eeg=True)
-        e_reader.read()
-
-        events = e_reader.get_output()
-
-        events = events[events.type == 'WORD']
-
-        events = events[event_range]
-
-        ev_order = np.argsort(events, order=('session','list','mstime'))
-        events = events[ev_order]
-
-        # in case fancy indexing looses Eventness of events we need to create Events object explicitely
-        if not isinstance(events, Events):
-            events = Events(events)
-
-        eegs = events.get_data(channels=['003', '004'], start_time=0.0, end_time=1.6,
-                               buffer_time=1.0, eoffset='eegoffset', keep_buffer=True,
-                               eoffset_in_time=False, verbose=True)
-
-
-        print
-        eegs = eegs.resampled(50)
-
-        ############################################################
+        # from ptsa.data.readers import PTSAEventReader
+        # from ptsa.data.events import Events
+        # e_reader = PTSAEventReader(event_file=e_path, eliminate_events_with_no_eeg=True)
+        # e_reader.read()
+        #
+        # events = e_reader.get_output()
+        #
+        # events = events[events.type == 'WORD']
+        #
+        # events = events[event_range]
+        #
+        # ev_order = np.argsort(events, order=('session','list','mstime'))
+        # events = events[ev_order]
+        #
+        # # in case fancy indexing looses Eventness of events we need to create Events object explicitely
+        # if not isinstance(events, Events):
+        #     events = Events(events)
+        #
+        # eegs = events.get_data(channels=['003', '004'], start_time=0.0, end_time=1.6,
+        #                        buffer_time=1.0, eoffset='eegoffset', keep_buffer=True,
+        #                        eoffset_in_time=False, verbose=True)
+        #
+        #
+        #
+        # eegs = eegs.resampled(50)
+        #
+        # ############################################################
         from ptsa.data.readers import BaseEventReader
 
         base_e_reader = BaseEventReader(event_file=e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
 
-        base_e_reader.read()
-
-        base_events = base_e_reader.get_output()
+        base_events = base_e_reader.read()
 
         base_events = base_events[base_events.type == 'WORD']
 
@@ -127,21 +137,39 @@ if __name__ == '__main__':
         base_events = base_events[base_ev_order]
 
         base_events = base_events[event_range]
-        print base_events
+
+
+#####################
+        from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
+
+        time_series_session_reader = TimeSeriesSessionEEGReader(events=base_events, channels=['003', '004', '005'])
+
+        ts_dict = time_series_session_reader.read()
+        print ts_dict
+        ts=ts_dict.items()[0][1]
+
+        resample_filter_rounded = ResampleFilter(time_series=ts, resamplerate=50.0,round_to_original_timepoints=True)
+        # resample_filter_rounded = ResampleFilter(time_series=ts, resamplerate=50.0)
+        base_eegs_resampled_rounded = resample_filter_rounded.filter()
+
+######################################
 
         from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
 
         time_series_reader = TimeSeriesEEGReader(events=base_events, start_time=0.0,
                                                  end_time=1.6, buffer_time=1.0, keep_buffer=True)
 
-        time_series_reader.read(channels=['003', '004'])
-
-        base_eegs = time_series_reader.get_output()
-
+        base_eegs = time_series_reader.read(channels=['003', '004'])
 
 
         resample_filter = ResampleFilter(time_series=base_eegs, resamplerate=50.0)
 
         base_eegs_resampled = resample_filter.filter()
+
+
+        resample_filter_rounded = ResampleFilter(time_series=base_eegs, resamplerate=50.0, round_to_original_timepoints=True)
+
+        base_eegs_resampled_rounded = resample_filter_rounded.filter()
+
 
         print
