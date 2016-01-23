@@ -3,6 +3,8 @@ __author__ = 'm'
 import numpy as np
 import xray
 from ptsa.data.common import TypeValTuple, PropertiedObject, get_axis_index
+
+from ptsa.data.TimeSeriesXray import TimeSeriesXray
 import scipy
 from scipy.signal import resample
 
@@ -109,6 +111,12 @@ class MorletWaveletFilterSimple(PropertiedObject):
                 wavelet_pow_array_xray = self.construct_output_array(wavelet_pow_array, dims=dims,coords=coords)
             if wavelet_phase_array is not None:
                 wavelet_phase_array_xray = self.construct_output_array(wavelet_phase_array, dims=dims,coords=coords)
+
+            if wavelet_pow_array_xray is not None:
+                wavelet_pow_array_xray = TimeSeriesXray(wavelet_pow_array_xray)
+
+            if wavelet_phase_array_xray is not None:
+                wavelet_phase_array_xray = TimeSeriesXray(wavelet_phase_array_xray)
 
             return wavelet_pow_array_xray, wavelet_phase_array_xray
 

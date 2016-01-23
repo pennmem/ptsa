@@ -80,13 +80,7 @@ class ResampleFilter(PropertiedObject):
 
         filtered_time_series = xray.DataArray(filtered_array, coords=coords)
         filtered_time_series.attrs['samplerate'] = self.resamplerate
-        filtered_time_series = TimeSeriesXray(filtered_time_series)
-
-
-        return filtered_time_series
-
-
-
+        return TimeSeriesXray(filtered_time_series)
 
 
 if __name__ == '__main__':

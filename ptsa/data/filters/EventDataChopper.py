@@ -9,7 +9,7 @@ import numpy as np
 import xray
 
 from ptsa.data.common import TypeValTuple, PropertiedObject
-
+from ptsa.data.TimeSeriesXray import TimeSeriesXray
 
 class EventDataChopper(PropertiedObject):
     _descriptors = [
@@ -92,7 +92,7 @@ class EventDataChopper(PropertiedObject):
             ev_concat_data.attrs['event_duration'] = self.event_duration
             ev_concat_data.attrs['buffer'] = self.buffer
 
-            event_data_dict[eegfile_name] = ev_concat_data
+            event_data_dict[eegfile_name] = TimeSeriesXray(ev_concat_data)
 
             break  # REMOVE THIS
 

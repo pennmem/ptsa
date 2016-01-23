@@ -63,9 +63,9 @@ class MonopolarToBipolarMapper(PropertiedObject):
 
         ts.attrs = self.time_series.attrs.copy()
 
-        ts = TimeSeriesXray(data=ts)
+        return TimeSeriesXray(data=ts)
 
-        return ts
+
 
 
 
