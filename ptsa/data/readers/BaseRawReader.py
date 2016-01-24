@@ -98,6 +98,7 @@ class BaseRawReader(PropertiedObject):
 
         eventdata = xray.DataArray(eventdata,dims=['channels','start_offsets','offsets'])
         eventdata['start_offsets'] = self.start_offsets.copy()
+        eventdata['channels'] = self.channels
 
         from copy import deepcopy
         eventdata.attrs = deepcopy(self.params_dict)

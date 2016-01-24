@@ -67,7 +67,35 @@ class EEGReader(PropertiedObject):
         p_reader = ParamsReader(dataroot=self.session_dataroot)
         params = p_reader.read()
         brr = BaseRawReader(dataroot=self.session_dataroot, channels=self.channels)
-        return brr.read()
+        session_array = brr.read()
+
+        offsets_axis=session_array['offsets']
+        number_of_time_points = offsets_axis.shape[0]
+        physical_time_array = np.arange(number_of_time_points)*(1.0/session_array.attrs['samplerate'])
+
+        cdim = self.channels
+        edim = session_array['start_offsets']
+        # tdim = np.rec.fromarrays([physical_time_array,offsets_axis.values], names='time,eegoffset')
+
+        # session_array = session_array.rename({'start_offsets':'events','offsets':'time'})
+        session_array = session_array.rename({'start_offsets':'events'})
+
+        session_time_series = TimeSeriesXray(session_array.values,
+                             dims=['channels','events','time'],
+                             coords={
+                            'channels':session_array['channels'],
+                            'events':session_array['events'],
+                            'time':physical_time_array,
+                            'offsets':('time',session_array['offsets']),
+                            # 'dataroot':self.session_dataroot
+
+                            }
+                            )
+        session_time_series.attrs = session_array.attrs.copy()
+        session_time_series.attrs['dataroot']=self.session_dataroot
+        # session_time_series['time']=tdim
+
+        return session_time_series
 
 
     def read_events_data(self):
@@ -88,10 +116,8 @@ class EEGReader(PropertiedObject):
             event_indices_list.append(ordered_indices[ind])
             events.append(evs[ind])
 
-
             ts_array = raw_reader.read()
             ts_array_list.append(ts_array)
-
 
         event_indices_array = np.hstack(event_indices_list)
 
@@ -141,25 +167,25 @@ if __name__=='__main__':
     bipolar_pairs = tal_reader.get_bipolar_pairs()
 
 
-    s = time.time()
-    from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
-
-    time_series_reader = TimeSeriesEEGReader(events=base_events, start_time=0.0,
-                                             end_time=1.6, buffer_time=1.0, keep_buffer=True)
-
-    base_eegs = time_series_reader.read(channels=monopolar_channels)
-    print 'TimeSeriesEEGReader total read time = ',time.time()-s
-    #############################################################################################
+    # s = time.time()
+    # from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
     #
-    s = time.time()
-    from ptsa.data.readers import EEGReader
-    eeg_reader = EEGReader(events=base_events, channels=monopolar_channels, start_time=0.0,end_time=1.6, buffer_time=1.0)
-
-    n_eegs = eeg_reader.read()
-
-    print 'EEGReader total read time = ',time.time()-s
-
-
+    # time_series_reader = TimeSeriesEEGReader(events=base_events, start_time=0.0,
+    #                                          end_time=1.6, buffer_time=1.0, keep_buffer=True)
+    #
+    # base_eegs = time_series_reader.read(channels=monopolar_channels)
+    # print 'TimeSeriesEEGReader total read time = ',time.time()-s
+    # #############################################################################################
+    # #
+    # s = time.time()
+    # from ptsa.data.readers import EEGReader
+    # eeg_reader = EEGReader(events=base_events, channels=monopolar_channels, start_time=0.0,end_time=1.6, buffer_time=1.0)
+    #
+    # n_eegs = eeg_reader.read()
+    #
+    # print 'EEGReader total read time = ',time.time()-s
+    #
+    #
     s = time.time()
     dataroot=base_events[0].eegfile
     from ptsa.data.readers import EEGReader
@@ -167,10 +193,11 @@ if __name__=='__main__':
     session_eegs = session_reader.read()
     print 'SESSION EEGReader total read time = ',time.time()-s
 
-
+    s = time.time()
     from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
 
     time_series_reader = TimeSeriesSessionEEGReader(events=base_events[0:1], channels=monopolar_channels)
 
     ts = time_series_reader.read()
+    print 'TimeSeriesSessionEEGReader total read time = ',time.time()-s
     print
