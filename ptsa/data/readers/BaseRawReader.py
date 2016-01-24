@@ -3,7 +3,7 @@ import numpy as np
 import struct
 from collections import namedtuple
 import os
-
+import xray
 
 class BaseRawReader(PropertiedObject):
     _descriptors = [
@@ -60,7 +60,7 @@ class BaseRawReader(PropertiedObject):
                 raise IOError(
                         'EEG file not found: ' + eegfname)
 
-            # loop over events
+            # loop over start offsets
             for e, start_offset in enumerate(self.start_offsets):
                 # seek to the position in the file
                 efile.seek(self.file_format.data_size * start_offset, 0)
@@ -85,6 +85,12 @@ class BaseRawReader(PropertiedObject):
 
         # multiply by the gain
         eventdata *= self.params_dict['gain']
+
+        eventdata = xray.DataArray(eventdata,dims=['channels','start_offsets','offsets'])
+        eventdata['start_offsets'] = self.start_offsets.copy()
+
+        from copy import deepcopy
+        eventdata.attrs = deepcopy(self.params_dict)
 
         return eventdata
 
