@@ -7,15 +7,19 @@ import collections
 
 class ParamsReader(PropertiedObject):
     _descriptors = [
-        TypeValTuple('params_path', str, ''),
-        TypeValTuple('dataroot', str, ''),
+        TypeValTuple('params_file', str, ''),
+        TypeValTuple('params_dir', str, ''),
     ]
 
     def __init__(self, **kwds):
 
         self.init_attrs(kwds)
-        if self.params_path and not os.path.isfile(self.params_path):
-            raise IOError('Could not open params file: %' % self.params_path)
+
+        if self.params_file and not os.path.isfile(self.params_file):
+            raise IOError('Could not open params file: %s' % self.params_file)
+
+        elif self.params_dir:
+            self.params_file = self.locate_params_file(dir=self.params_dir)
 
         Converter = collections.namedtuple('Converter', ['convert', 'name'])
         self.param_to_convert_fcn = {
@@ -25,22 +29,20 @@ class ParamsReader(PropertiedObject):
             'dataformat': Converter(convert=lambda s: s.replace("'", "").replace('"', ''), name='format')
         }
 
-    def get_params_file_from_dataroot(self, dataroot):
+    def locate_params_file(self, dir):
         for param_file_name in ('.params', 'params.txt'):
-            full_param_file_name = os.path.join(dataroot, param_file_name)
+            full_param_file_name = os.path.join(dir, param_file_name)
             if os.path.isfile(full_param_file_name):
                 return full_param_file_name
 
-        raise IOError('No params file found in ' + str(dataroot) +
+        raise IOError('No params file found in ' + str(dir) +
                       '. Params files must be in the same directory ' +
                       'as the EEG data and must be named .params ' +
                       'or params.txt.')
 
     def read(self):
         params = {}
-        param_file = self.params_path
-        if self.dataroot:
-            param_file = self.get_params_file_from_dataroot(self.dataroot)
+        param_file = self.params_file
 
         # we have a file, so open and process it
         for line in open(param_file, 'r').readlines():
@@ -63,6 +65,12 @@ if __name__ == '__main__':
     p_path = '/Users/m/data/eeg/R1060M/eeg.noreref/params.txt'
     from ptsa.data.readers.ParamsReader import ParamsReader
 
-    p_reader = ParamsReader(params_path=p_path)
+    p_reader = ParamsReader(params_file=p_path)
+    params = p_reader.read()
+    print params
+
+
+    params_dir = '/Users/m/data/eeg/R1060M/eeg.noreref'
+    p_reader = ParamsReader(params_dir=params_dir)
     params = p_reader.read()
     print params
