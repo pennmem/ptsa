@@ -1,25 +1,27 @@
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.common.path_utils import find_dir_prefix
 from ptsa.data.common import pathlib
-import os
+from os.path import *
 import collections
 
 
 class ParamsReader(PropertiedObject):
     _descriptors = [
         TypeValTuple('params_file', str, ''),
-        TypeValTuple('params_dir', str, ''),
+        TypeValTuple('dataroot', str, ''),
     ]
 
     def __init__(self, **kwds):
 
         self.init_attrs(kwds)
 
-        if self.params_file and not os.path.isfile(self.params_file):
+        if self.params_file and not isfile(self.params_file):
             raise IOError('Could not open params file: %s' % self.params_file)
 
-        elif self.params_dir:
-            self.params_file = self.locate_params_file(dir=self.params_dir)
+        elif self.dataroot:
+            self.params_file = self.locate_params_file(dataroot=self.dataroot)
+        else:
+            raise IOError('Could not find params file using dataroot: %s or using direct path:%s'%(self.dataroot,self.params_file))
 
         Converter = collections.namedtuple('Converter', ['convert', 'name'])
         self.param_to_convert_fcn = {
@@ -29,11 +31,14 @@ class ParamsReader(PropertiedObject):
             'dataformat': Converter(convert=lambda s: s.replace("'", "").replace('"', ''), name='format')
         }
 
-    def locate_params_file(self, dir):
-        for param_file_name in ('.params', 'params.txt'):
-            full_param_file_name = os.path.join(dir, param_file_name)
-            if os.path.isfile(full_param_file_name):
-                return full_param_file_name
+    def locate_params_file(self, dataroot):
+
+        for param_file in (abspath(dataroot + '.params'),
+                          abspath(join(dirname(dataroot), 'params.txt'))):
+
+            if isfile(param_file):
+                return param_file
+
 
         raise IOError('No params file found in ' + str(dir) +
                       '. Params files must be in the same directory ' +
@@ -70,7 +75,7 @@ if __name__ == '__main__':
     print params
 
 
-    params_dir = '/Users/m/data/eeg/R1060M/eeg.noreref'
-    p_reader = ParamsReader(params_dir=params_dir)
+    dataroot = '/Users/m/data/eeg/R1060M/eeg.noreref/R1060M_01Aug15_0805'
+    p_reader = ParamsReader(dataroot=dataroot)
     params = p_reader.read()
     print params
