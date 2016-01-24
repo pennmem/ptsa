@@ -9,7 +9,7 @@ class BaseRawReader(PropertiedObject):
     _descriptors = [
         TypeValTuple('dataroot', str, ''),
         TypeValTuple('channels', list, []),
-        TypeValTuple('start_offsets', np.ndarray, np.ndarray([], dtype=np.int)),
+        TypeValTuple('start_offsets', np.ndarray, np.array([0], dtype=np.int)),
         TypeValTuple('read_size', int, -1),
     ]
 
@@ -43,7 +43,16 @@ class BaseRawReader(PropertiedObject):
             print 'Could not find data format definition in the params file. Wwilll read te file assuming' \
                   ' data format is int16'
 
+    def get_file_size(self):
+        eegfname = self.dataroot + '.' + self.channels[0]
+        return os.path.getsize(eegfname)
+
     def read(self):
+
+        if self.read_size<0:
+            self.read_size = self.get_file_size() / self.file_format.data_size
+
+
         # allocate for data
         eventdata = np.empty((len(self.channels), len(self.start_offsets), self.read_size),
                              dtype=np.float) * np.nan
@@ -51,7 +60,7 @@ class BaseRawReader(PropertiedObject):
         # loop over channels
         for c, channel in enumerate(self.channels):
 
-            eegfname = self._dataroot + '.' + channel
+            eegfname = self.dataroot + '.' + channel
 
             # eegfname = '{}.{:0>3}'.format(self._dataroot,channel)
             if os.path.isfile(eegfname):
@@ -63,6 +72,7 @@ class BaseRawReader(PropertiedObject):
             # loop over start offsets
             for e, start_offset in enumerate(self.start_offsets):
                 # seek to the position in the file
+
                 efile.seek(self.file_format.data_size * start_offset, 0)
 
                 # read the data
@@ -132,11 +142,29 @@ if __name__ == '__main__':
 
     dataroot = base_events[0].eegfile
 
-    brr = BaseRawReader(dataroot=dataroot, channels=monopolar_channels, start_offsets=base_events.eegoffset-500,
-                        read_size=1801)
-    arr = brr.read()
+    # brr = BaseRawReader(dataroot=dataroot, channels=monopolar_channels, start_offsets=base_events.eegoffset-500,
+    #                     read_size=1801)
+    # arr = brr.read()
+    #
+    # print arr
 
-    print arr
+
+
+    from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
+
+    time_series_reader = TimeSeriesSessionEEGReader(events=base_events[0:1], channels=monopolar_channels)
+
+    ts = time_series_reader.read()
+
+    print ts
+    brr_session = BaseRawReader(dataroot=dataroot, channels=monopolar_channels)
+    arr_session = brr_session.read()
+
+    print arr_session
+
+
+
+
 
 
 

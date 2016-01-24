@@ -24,14 +24,18 @@ class EEGReader(PropertiedObject):
 
     def __init__(self, **kwds):
         self.init_attrs(kwds)
-        self.samplerate=-1.0
-        # MAKE SURE START <END
+
+        assert self.start_time <= self.end_time , \
+            'start_time (%s) must be less or equal to end_time(%s) '%(self.start_time,self.end_time)
+
+        self.read_fcn = self.read_events_data
+        if self.session_dataroot:
+            self.read_fcn = self.read_session_data
 
     def compute_read_offsets(self, dataroot):
         p_reader = ParamsReader(dataroot=dataroot)
         params = p_reader.read()
         samplerate = params['samplerate']
-        self.samplerate = samplerate
         start_offset = int(np.ceil(self.start_time * samplerate))
         end_offset = int(np.ceil(self.end_time * samplerate))
         buffer_offset = int(np.ceil(self.buffer_time * samplerate))
@@ -58,6 +62,13 @@ class EEGReader(PropertiedObject):
             original_dataroots.append(dataroot)
 
         return raw_readers, original_dataroots
+
+    def read_session_data(self):
+        p_reader = ParamsReader(dataroot=self.session_dataroot)
+        params = p_reader.read()
+        brr = BaseRawReader(dataroot=self.session_dataroot, channels=self.channels)
+        return brr.read()
+
 
     def read_events_data(self):
         evs = self.events
@@ -89,9 +100,10 @@ class EEGReader(PropertiedObject):
         start_extend_time = time.time()
         #new code
         eventdata = xray.concat(ts_array_list,dim='start_offsets')
-        tdim = np.linspace(self.start_time-self.buffer_time,self.end_time+self.buffer_time,num=eventdata['offsets'].shape[0])
+        # tdim = np.linspace(self.start_time-self.buffer_time,self.end_time+self.buffer_time,num=eventdata['offsets'].shape[0])
+        tdim = np.arange(eventdata.shape[-1])*(1.0/eventdata.attrs['samplerate'])+(self.start_time-self.buffer_time)
         cdim = eventdata['channels']
-        edim = np.concatenate(events).view(np.recarray)
+        edim = np.concatenate(events).view(np.recarray).copy()
 
         attrs = eventdata.attrs.copy()
         # constructing TimeSeries Object
@@ -104,7 +116,7 @@ class EEGReader(PropertiedObject):
         return eventdata
 
     def read(self):
-        return self.read_events_data()
+        return self.read_fcn()
 
 
 if __name__=='__main__':
@@ -146,3 +158,19 @@ if __name__=='__main__':
     n_eegs = eeg_reader.read()
 
     print 'EEGReader total read time = ',time.time()-s
+
+
+    s = time.time()
+    dataroot=base_events[0].eegfile
+    from ptsa.data.readers import EEGReader
+    session_reader = EEGReader(session_dataroot=dataroot, channels=monopolar_channels)
+    session_eegs = session_reader.read()
+    print 'SESSION EEGReader total read time = ',time.time()-s
+
+
+    from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
+
+    time_series_reader = TimeSeriesSessionEEGReader(events=base_events[0:1], channels=monopolar_channels)
+
+    ts = time_series_reader.read()
+    print
