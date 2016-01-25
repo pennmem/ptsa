@@ -10,8 +10,8 @@ class TimeSeriesXray(xray.DataArray):
 
     def __init__(self,data,**kwds):
         xray.DataArray.__init__(self,data,**kwds)
-        self.a=10
-        self.time_axis_index=get_axis_index(self,axis_name='time')
+        # self.a=10
+        # self.time_axis_index=get_axis_index(self,axis_name='time')
 
 
 
@@ -36,9 +36,9 @@ class TimeSeriesXray(xray.DataArray):
         """
 
         from ptsa.filt  import buttfilt
-
+        time_axis_index = get_axis_index(self,axis_name='time')
         filtered_array = buttfilt(self.values, freq_range, self.attrs['samplerate'], filt_type,
-                                       order,axis=self.time_axis_index)
+                                       order,axis=time_axis_index)
 
         # filtered_time_series = xray.DataArray(
         #     filtered_array,
