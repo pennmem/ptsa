@@ -96,27 +96,11 @@ class MorletWaveletFilterSimple(PropertiedObject):
 
         if isinstance(self.time_series, xray.DataArray):
 
-
-            # if len(self.bipolar_pairs):
-            #     dims= ['bipolar_pairs','events','frequency','time']
-            #     coords = [self.bipolar_pairs,self.time_series['events'],self.freqs, time_axis]
-            # else:
-
             dims= list(self.time_series.dims[:-1]+('frequency','time',))
-            # coords = [self.time_series.coords[dim_name]  for dim_name  in self.time_series.dims[:-1]]
-            # coords.append(self.freqs)
-            # coords.append(time_axis)
 
             coords = {dim_name:self.time_series.coords[dim_name]  for dim_name  in self.time_series.dims[:-1]}
             coords['frequency'] = self.freqs
             coords['time'] = time_axis
-#
-# coords_dict = {dim_name:coords[i] for i, dim_name in enumerate(dims)}
-# # a = xray.DataArray(array, dims=dims,coords=coords)
-# # a = xray.DataArray(array, dims=dims,coords=coords_dict)
-# a = xray.DataArray(array, dims=dims,coords=coords)
-# print a.coords['offsets']
-
 
             if wavelet_pow_array is not None:
                 wavelet_pow_array_xray = self.construct_output_array(wavelet_pow_array, dims=dims,coords=coords)
