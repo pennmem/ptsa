@@ -235,7 +235,10 @@ def reinterpret_matlab_matrix_as_structured_array(matlab_matrix_as_python_obj, m
 
             pass
         else:
-            reconstructed_array[field_name] = matlab_matrix_structured[field_name]
+            try:
+                reconstructed_array[field_name] = matlab_matrix_structured[field_name]
+            except ValueError:
+                pass
 
     return reconstructed_array
 
