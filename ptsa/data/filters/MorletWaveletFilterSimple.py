@@ -103,9 +103,20 @@ class MorletWaveletFilterSimple(PropertiedObject):
             # else:
 
             dims= list(self.time_series.dims[:-1]+('frequency','time',))
-            coords = [self.time_series.coords[dim_name]  for dim_name  in self.time_series.dims[:-1]]
-            coords.append(self.freqs)
-            coords.append(time_axis)
+            # coords = [self.time_series.coords[dim_name]  for dim_name  in self.time_series.dims[:-1]]
+            # coords.append(self.freqs)
+            # coords.append(time_axis)
+
+            coords = {dim_name:self.time_series.coords[dim_name]  for dim_name  in self.time_series.dims[:-1]}
+            coords['frequency'] = self.freqs
+            coords['time'] = time_axis
+#
+# coords_dict = {dim_name:coords[i] for i, dim_name in enumerate(dims)}
+# # a = xray.DataArray(array, dims=dims,coords=coords)
+# # a = xray.DataArray(array, dims=dims,coords=coords_dict)
+# a = xray.DataArray(array, dims=dims,coords=coords)
+# print a.coords['offsets']
+
 
             if wavelet_pow_array is not None:
                 wavelet_pow_array_xray = self.construct_output_array(wavelet_pow_array, dims=dims,coords=coords)
@@ -114,9 +125,11 @@ class MorletWaveletFilterSimple(PropertiedObject):
 
             if wavelet_pow_array_xray is not None:
                 wavelet_pow_array_xray = TimeSeriesXray(wavelet_pow_array_xray)
+                wavelet_pow_array_xray.attrs = self.time_series.attrs.copy()
 
             if wavelet_phase_array_xray is not None:
                 wavelet_phase_array_xray = TimeSeriesXray(wavelet_phase_array_xray)
+                wavelet_phase_array_xray.attrs = self.time_series.attrs.copy()
 
             return wavelet_pow_array_xray, wavelet_phase_array_xray
 
@@ -199,7 +212,8 @@ class MorletWaveletFilterSimple(PropertiedObject):
         return self.build_output_arrays(wavelet_pow_array, wavelet_phase_array,time_axis)
 
 
-def test_1():
+
+def test_1_old():
     import time
     start = time.time()
 
@@ -268,6 +282,68 @@ def test_1():
     return chopped_wavelets
 
 
+def test_2_old():
+    import time
+    start = time.time()
+
+    e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
+
+    from ptsa.data.readers import BaseEventReader
+
+    base_e_reader = BaseEventReader(event_file=e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
+
+    base_e_reader.read()
+
+    base_events = base_e_reader.get_output()
+
+    base_events = base_events[base_events.type == 'WORD']
+
+    # selecting only one session
+    base_events = base_events[base_events.eegfile == base_events[0].eegfile]
+
+    from ptsa.data.readers.TalReader import TalReader
+    tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
+    tal_reader = TalReader(tal_filename=tal_path)
+    monopolar_channels = tal_reader.get_monopolar_channels()
+    bipolar_pairs = tal_reader.get_bipolar_pairs()
+
+    print 'bipolar_pairs=', bipolar_pairs
+
+    from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
+
+    time_series_reader = TimeSeriesEEGReader(events=base_events, start_time=0.0,
+                                             end_time=1.6, buffer_time=1.0, keep_buffer=True)
+
+    base_eegs = time_series_reader.read(channels=monopolar_channels)
+
+    # base_eegs = base_eegs[:, 0:10, :]
+    # bipolar_pairs = bipolar_pairs[0:10]
+
+
+    wf = MorletWaveletFilterSimple(time_series=base_eegs,
+                       freqs=np.logspace(np.log10(3), np.log10(180), 2),
+                       # freqs=np.array([3.]),
+                       output='power',
+                       # resamplerate=50.0
+                       )
+
+    pow_wavelet, phase_wavelet = wf.filter()
+
+    print 'total time = ', time.time() - start
+
+
+    res_start =time.time()
+
+    # from ptsa.data.filters.ResampleFilter import ResampleFilter
+    # rsf = ResampleFilter (resamplerate=50.0)
+    # rsf.set_input(pow_wavelet)
+    # pow_wavelet = rsf.filter()
+
+
+
+    print 'resample_time=',time.time()-res_start
+    return pow_wavelet
+
 def test_2():
     import time
     start = time.time()
@@ -330,12 +406,69 @@ def test_2():
     print 'resample_time=',time.time()-res_start
     return pow_wavelet
 
+def test_1():
+    import time
+    start = time.time()
+
+    e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
+
+    from ptsa.data.readers import BaseEventReader
+
+    base_e_reader = BaseEventReader(event_file=e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
+
+    base_events = base_e_reader.read()
+
+    base_events = base_events[base_events.type == 'WORD']
+
+    # selecting only one session
+    base_events = base_events[base_events.eegfile == base_events[0].eegfile]
+
+    from ptsa.data.readers.TalReader import TalReader
+    tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
+    tal_reader = TalReader(tal_filename=tal_path)
+    monopolar_channels = tal_reader.get_monopolar_channels()
+    bipolar_pairs = tal_reader.get_bipolar_pairs()
+
+
+
+    dataroot=base_events[0].eegfile
+    from ptsa.data.readers import EEGReader
+    session_reader = EEGReader(session_dataroot=dataroot, channels=monopolar_channels)
+    session_eegs = session_reader.read()
+
+
+    from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
+
+
+    wavelet_start = time.time()
+
+    wf = MorletWaveletFilterSimple(time_series=session_eegs,
+                       freqs=np.logspace(np.log10(3), np.log10(180), 2),
+                       # freqs=np.array([3.]),
+                       output='power',
+                       # resamplerate=50.0
+                       )
+
+    pow_wavelet, phase_wavelet = wf.filter()
+    print 'wavelet total time = ', time.time() - wavelet_start
+    # return pow_wavelet
+
+
+    from ptsa.data.filters import SessionEventDataChopper
+    sedc = SessionEventDataChopper(events=base_events, session_data=pow_wavelet,start_time=0.0,end_time=1.6,buffer_time=1.0)
+    chopped_wavelets = sedc.filter()
+
+    print 'total time = ', time.time() - start
+
+    return chopped_wavelets
+
+
 
 if __name__ == '__main__':
-    # edcw_1 = test_1()
+    edcw_1 = test_1()
     edcw_2 = test_2()
 
-
+    wavelet_1 = edcw_1[0,0,0,500:1300]
     wavelet_2 = edcw_2[0,0,0,500:1300]
 
     import matplotlib;
@@ -346,9 +479,11 @@ if __name__ == '__main__':
     plt.get_current_fig_manager().window.raise_()
 
 
+    plt.plot(np.arange(wavelet_1.shape[0])-1,wavelet_1,'k')
     plt.plot(np.arange(wavelet_2.shape[0])-1,wavelet_2,'r--')
-    plt.show()
 
+    plt.show()
+    #
 
 # if __name__ == '__main__':
 #     edcw_1 = test_1()
