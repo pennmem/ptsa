@@ -377,7 +377,7 @@ def get_record_format_multi_trial(obj_array):
             guessed_types_np = np.array(guessed_types)
 
             if 'f' in guessed_types_np:
-                numpy_type_abbreviation = 'f'
+                numpy_type_abbreviation = 'f8'
 
         else:
         # if numpy_type_abbreviation == 'O':
