@@ -281,6 +281,53 @@ def get_record_format(obj):
     return {'names': names_list, 'formats': format_list}
 
 
+# def get_record_format_multi_trial(obj_array):
+#
+#     names_list = []
+#     format_list = []
+#     obj = obj_array[0]
+#
+#     for class_member, class_member_name, class_member_value in get_non_special_class_members(obj):
+#         # print 'class_member, class_member_name, class_member_value=',(class_member, class_member_name, class_member_value)
+#         #
+#         # print 'class_member=',class_member
+#         # print 'class_member_name=',class_member_name
+#         # print 'class_member_value',class_member_value
+#
+#         # for obj_tmp in obj_array:
+#         try:
+#             numpy_type_abbreviation = determine_dtype_abbreviation(class_member)
+#             # print 'numpy_type_abbreviation=',numpy_type_abbreviation
+#         except:
+#             # print 'COULD NOT DETERMINE FORMAT FOR:'
+#             # print 'class_member_name=', class_member_value
+#             # print 'class_member_values=', class_member_value
+#             # print 'SKIPPING this'
+#             continue
+#
+#         # if initial guess for dtype is generic object type 'O' we try to improve this by
+#         # probing sample of record searching for a record where the inferred dtype is different than 'O'
+#         if numpy_type_abbreviation == 'O':
+#             for obj_tmp in obj_array:
+#                 class_member_fetched = getattr(obj_tmp,class_member_name)
+#                 try:
+#                     numpy_type_abbreviation_new_guess = determine_dtype_abbreviation(class_member_fetched)
+#                     # print 'numpy_type_abbreviation=',numpy_type_abbreviation
+#                 except:
+#                     continue
+#
+#                 if numpy_type_abbreviation_new_guess !='O':
+#                     numpy_type_abbreviation = numpy_type_abbreviation_new_guess
+#                     break
+#
+#
+#         names_list.append(class_member_name)
+#         format_list.append(numpy_type_abbreviation)
+#
+#     return {'names': names_list, 'formats': format_list}
+
+
+
 def get_record_format_multi_trial(obj_array):
 
     names_list = []
@@ -293,7 +340,8 @@ def get_record_format_multi_trial(obj_array):
         # print 'class_member=',class_member
         # print 'class_member_name=',class_member_name
         # print 'class_member_value',class_member_value
-
+        # if class_member_name=='amplitude':
+        #     pass
         # for obj_tmp in obj_array:
         try:
             numpy_type_abbreviation = determine_dtype_abbreviation(class_member)
@@ -307,7 +355,32 @@ def get_record_format_multi_trial(obj_array):
 
         # if initial guess for dtype is generic object type 'O' we try to improve this by
         # probing sample of record searching for a record where the inferred dtype is different than 'O'
-        if numpy_type_abbreviation == 'O':
+
+
+        if numpy_type_abbreviation != 'O':
+
+            guessed_types = []
+            for obj_tmp in obj_array:
+                class_member_fetched = getattr(obj_tmp,class_member_name)
+                try:
+                    numpy_type_abbreviation_new_guess = np.array([class_member_fetched]).dtype.kind
+                    guessed_types.append(numpy_type_abbreviation_new_guess)
+                except:
+                    continue
+                # try:
+                #     numpy_type_abbreviation_new_guess = determine_dtype_abbreviation(class_member_fetched)
+                #     guessed_types.append(numpy_type_abbreviation_new_guess)
+                #     # print 'numpy_type_abbreviation=',numpy_type_abbreviation
+                # except:
+                #     continue
+
+            guessed_types_np = np.array(guessed_types)
+
+            if 'f' in guessed_types_np:
+                numpy_type_abbreviation = 'f'
+
+        else:
+        # if numpy_type_abbreviation == 'O':
             for obj_tmp in obj_array:
                 class_member_fetched = getattr(obj_tmp,class_member_name)
                 try:
@@ -325,7 +398,6 @@ def get_record_format_multi_trial(obj_array):
         format_list.append(numpy_type_abbreviation)
 
     return {'names': names_list, 'formats': format_list}
-
 
 
 
