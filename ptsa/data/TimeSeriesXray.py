@@ -5,15 +5,60 @@ import numpy as np
 from ptsa.data.common import get_axis_index
 from scipy.signal import resample
 
-
+def a_fcn():
+    return 5
 class TimeSeriesXray(xray.DataArray):
 
-    def __init__(self,data,**kwds):
-        xray.DataArray.__init__(self,data,**kwds)
+    # def __init__(self,data,**kwds):
+    #     xray.DataArray.__init__(self,data,**kwds)
+    #     # self.a=10
+    #     # self.time_axis_index=get_axis_index(self,axis_name='time')
+
+
+    def __init__(self,data,
+                 coords=None,
+                 dims=None,
+                 name=None,
+                 attrs=None,
+                 encoding=None,
+                 # fastpath=False
+                 ):
+        xray.DataArray.__init__(self,data=data,
+                                coords=coords,
+                                dims=dims,
+                                name=name,
+                                attrs=attrs,
+                                encoding=encoding,
+                                # fastpath=fastpath
+                                )
+        # self.time_axis_index = get_axis_index(self,axis_name='time')
+        # self._time_axis_index = None
+        # tai = get_axis_index(self,axis_name='time')
+
+        # self['time_axis_index'] = get_axis_index(self,axis_name='time')
+
+        # self['time_axis_index']= get_axis_index(self,axis_name='time')
+        print self.dims
+        self['time_axis_index']= -1
+        # self['a'] = 10.0
+
+
+        for i , dim_name in enumerate(self.dims):
+            if dim_name == 'time':
+                self['time_axis_index'] = i
+                break
+
+
+    # def __init__(self,**kwds):
+    #     xray.DataArray.__init__(self,**kwds)
         # self.a=10
         # self.time_axis_index=get_axis_index(self,axis_name='time')
 
-
+    # @property
+    # def time_axis_index(self):
+    #     if self._time_axis_index is not None:
+    #         self._time_axis_index = get_axis_index(self,axis_name='time')
+    #     return self._time_axis_index
 
     def filtered(self,freq_range,filt_type='stop',order=4):
         """
@@ -37,8 +82,11 @@ class TimeSeriesXray(xray.DataArray):
 
         from ptsa.filt  import buttfilt
         time_axis_index = get_axis_index(self,axis_name='time')
-        filtered_array = buttfilt(self.values, freq_range, self.attrs['samplerate'], filt_type,
+        filtered_array = buttfilt(self.values, freq_range, self['samplerate'].data, filt_type,
                                        order,axis=time_axis_index)
+
+        # filtered_array = buttfilt(self.values, freq_range, self.attrs['samplerate'], filt_type,
+        #                                order,axis=time_axis_index)
 
         # filtered_time_series = xray.DataArray(
         #     filtered_array,
@@ -47,7 +95,8 @@ class TimeSeriesXray(xray.DataArray):
 
         filtered_time_series = TimeSeriesXray(
             filtered_array,
-            coords = [xray.DataArray(coord.copy()) for coord_name, coord in self.coords.items() ]
+            dims = [dim_name for dim_name in self.dims],
+            coords = {coord_name:xray.DataArray(coord.copy()) for coord_name, coord in self.coords.items() }
         )
 
 
@@ -73,6 +122,8 @@ class TimeSeriesXray(xray.DataArray):
 
 
         time_axis = self['time']
+        # time_axis_index = get_axis_index(self,axis_name='time')
+        time_axis_index = self['time_axis_index'].data
         time_axis_length = np.squeeze(time_axis.shape)
         new_length = int(np.round(time_axis_length*resampled_rate/float(samplerate)))
 
@@ -87,7 +138,7 @@ class TimeSeriesXray(xray.DataArray):
 
         resampled_array, new_time_axis = resample(self.values,
                                          new_length, t=time_axis.values,
-                                         axis=self.time_axis_index, window=window)
+                                         axis=time_axis_index, window=window)
 
 
         # print new_time_axis
@@ -95,7 +146,7 @@ class TimeSeriesXray(xray.DataArray):
         #constructing axes
         coords = []
         for i, dim_name in enumerate(self.dims):
-            if i != self.time_axis_index:
+            if i != time_axis_index:
                 coords.append(self.coords[dim_name].copy())
             else:
                 coords.append((dim_name,new_time_axis))
@@ -108,9 +159,9 @@ class TimeSeriesXray(xray.DataArray):
 
 
     def remove_buffer(self, duration):
-	"""
+        """
         Remove the desired buffer duration (in seconds) and reset the
-	time range.
+        time range.
 
         Parameter
         ---------
@@ -159,3 +210,9 @@ class TimeSeriesXray(xray.DataArray):
 
         return self - self.isel(time=(self['time'] >= base_range[0]) & (self['time'] <= base_range[1])).mean(dim='time')
 
+if __name__=='__main__':
+
+    # ts = xray.DataArray(data=np.arange(20).reshape(4,5),dims=['channels','time'])
+    ts = TimeSeriesXray(data=np.arange(20).reshape(4,5),dims=['channels','time'])
+
+    print ts
