@@ -31,6 +31,9 @@ def determine_dtype_abbreviation(inspect_member_info, default_string_length=256)
     class_member_val = inspect_member_info[1]
     class_member_type = type(class_member_val)
 
+    if class_member_name=='avgSurf':
+        pass
+
     if class_member_type.__name__ == 'ndarray':
         # print 'found array'
         # print 'class_member_val=', class_member_val
@@ -171,12 +174,245 @@ def read_matlab_matrices_as_numpy_structured_arrays(file_name, *object_names):
     return structured_array_dict
 
 
-def read_single_matlab_matrix_as_numpy_structured_array(file_name, object_name):
-    structured_array_dict = read_matlab_matrices_as_numpy_structured_arrays(file_name, object_name)
+# def read_single_matlab_matrix_as_numpy_structured_array(file_name, object_name):
+#     structured_array_dict = read_matlab_matrices_as_numpy_structured_arrays(file_name, object_name)
+#     try:
+#         return structured_array_dict[object_name]
+#     except LookupError:
+#         return None
+
+def read_single_matlab_matrix_as_numpy_structured_array(file_name,object_name):
+    matlab_matrix_as_python_obj_dict = deserialize_objects_from_matlab_format(file_name, object_name)
+
     try:
-        return structured_array_dict[object_name]
-    except LookupError:
+        matlab_matrix_as_python_obj = matlab_matrix_as_python_obj_dict[object_name]
+    except KeyError:
         return None
+
+    # picking first first elment  plus 20 randomly selected elements to determine type
+    selector_array = [0]+np.random.randint(len(matlab_matrix_as_python_obj),size=20)
+    selector_array = np.hstack(([0],selector_array))
+    template_element_array = matlab_matrix_as_python_obj[selector_array]
+
+
+    record = matlab_matrix_as_python_obj[0]
+    # format_dict = get_np_format([record])
+    format_dict = get_np_format(template_element_array)
+    # format_dict = get_np_format(record)
+
+    array_fd = np.recarray(shape=matlab_matrix_as_python_obj.shape, dtype=format_dict)
+
+    populate_record_array(source_array=matlab_matrix_as_python_obj, target_array=array_fd,format_dict=format_dict,prepend_name='')
+
+    print array_fd
+    return array_fd
+
+
+def get_np_type(record,_fieldname):
+
+    kind_2_type ={'U':'|S256',
+                  'S':'S256',
+                  'u':'<i8',
+                  'i':'<i8',
+                  'f':'<f8'
+                  }
+
+    attr = getattr(record,_fieldname)
+    attr_dtype = np.dtype(type(attr))
+    if _fieldname =='eegfile':
+        print
+    if hasattr(attr,'dtype'):
+        attr_dtype = attr.dtype
+        attr_shape = attr.shape
+        if not attr_shape[0]:
+            return None
+
+        if attr_dtype.kind in kind_2_type.keys():
+
+            format = (kind_2_type[attr_dtype.kind] , attr_shape)
+            return format
+        else:
+            print 'COULD NOT FIGURE OUT TYPE FOR ',_fieldname
+            # format_list.append(format)
+
+    else:
+        attr_dtype = np.array([attr]).dtype
+        attr_dtype_kind  = attr_dtype.kind
+        if attr_dtype_kind in kind_2_type.keys():
+            return kind_2_type[attr_dtype_kind]
+        elif attr_dtype_kind =='O':
+            print 'got object'
+            format_dict = get_np_format([attr])
+            # format_dict = get_np_format(attr)
+            # format_dict = get_np_type(attr,_fieldname)
+            if len(format_dict['names']):
+                return format_dict
+            print 'got format:',format_dict
+            print
+        else:
+
+            return attr_dtype.str
+
+
+def get_np_format(record_array):
+    names_list=[]
+    format_list=[]
+
+    record = record_array[0]
+
+    dt = {'names':['a','b'], 'formats':['<f8',{'names':['x'],'formats':['<f8']}]}
+    array_fd = np.recarray(shape=(10,), dtype=dt)
+
+    for _fieldname in record._fieldnames:
+        formats = []
+        for record in record_array:
+            format = get_np_type(record,_fieldname)
+            if format is not None:
+                if len(np.dtype(format).shape):
+                    formats.append(format)
+                    break
+                elif  isinstance(format,dict):
+                    formats.append(format)
+                    break
+                elif np.dtype(format).kind=='S':
+                    formats.append(format)
+                    break
+                else:
+                    formats.append(format)
+
+            # if format is not None:
+            #     formats.append(format)
+        print formats
+        if not len(formats):
+            pass
+        elif len(formats)==1:
+            names_list.append(_fieldname)
+            format_list.append(formats[0])
+        else:
+
+            try:
+                arrays = map(lambda dtype_: np.ndarray(shape=(1),dtype=dtype_) , formats)
+
+
+                common_format =  np.dtype(np.common_type(*arrays)).str
+                names_list.append(_fieldname)
+                format_list.append(common_format)
+
+                # numpy_type_abbreviation = np.dtype(np.common_type(np.array(formats))).str
+
+            except TypeError:
+                print 'COULD NOT FIGURE OUT '+class_member_name
+            pass
+
+
+
+    #################OK
+    # for _fieldname in record._fieldnames:
+    #     attr = getattr(record,_fieldname)
+    #     attr_dtype = np.dtype(type(attr))
+    #     format = get_np_type(record,_fieldname)
+    #     if format is not None:
+    #         names_list.append(_fieldname)
+    #         format_list.append(format)
+    #     else:
+    #         formats = []
+    #         for record in record_array:
+    #             format = get_np_type(record,_fieldname)
+    #             if format is not None:
+    #                 formats.append(format)
+    #
+    #         print formats
+    #################OK
+
+
+
+    # for _fieldname in record._fieldnames:
+    #     attr = getattr(record,_fieldname)
+    #     attr_dtype = np.dtype(type(attr))
+    #     if _fieldname =='eegfile':
+    #         print
+    #     if hasattr(attr,'dtype'):
+    #         attr_dtype = attr.dtype
+    #         attr_shape = attr.shape
+    #         if not attr_shape[0]:
+    #             continue
+    #
+    #         if attr_dtype.kind in kind_2_type.keys():
+    #
+    #             format = (kind_2_type[attr_dtype.kind] , attr_shape)
+    #             names_list.append(_fieldname)
+    #
+    #             format_list.append(format)
+    #         else:
+    #             print 'COULD NOT FIGURE OUT TYPE FOR ',_fieldname
+    #             # format_list.append(format)
+    #
+    #     else:
+    #         attr_dtype = np.array([attr]).dtype
+    #         attr_dtype_kind  = attr_dtype.kind
+    #         if attr_dtype_kind in kind_2_type.keys():
+    #             names_list.append(_fieldname)
+    #             format_list.append(kind_2_type[attr_dtype_kind])
+    #         elif attr_dtype_kind =='O':
+    #             print 'got object'
+    #             format_dict = get_np_format(attr)
+    #             if len(format_dict['names']):
+    #                 names_list.append(_fieldname)
+    #                 format_list.append(format_dict)
+    #             print 'got format:',format_dict
+    #             print
+    #         else:
+    #             names_list.append(_fieldname)
+    #             format_list.append(attr_dtype.str)
+    #
+    #
+    #     print '_name: ',_fieldname,' dtype=',attr_dtype, 'type=',type(attr)
+
+        # if attr_dtype_kind in kind_2_type.keys():
+        #     names_list.append(_fieldname)
+        #     format_list.append(kind_2_type[attr_dtype_kind])
+        # else:
+        #     names_list.append(_fieldname)
+        #     format_list.append(attr_dtype.str)
+        #
+        # if attr_dtype.char !='O':
+        #     names_list.append(_fieldname)
+        #     format_list.append(attr_dtype.str)
+        # eturn {'names': names_list, 'formats': format_list}
+    print names_list
+    print format_list
+    fd = {'names':names_list,'formats':format_list}
+    return {'names':names_list,'formats':format_list}
+    pass
+
+import functools
+
+def rgetattr(obj, attr):
+    return functools.reduce(getattr, [obj]+attr.split('.'))
+
+# def populate_single_record_array(source_array, target_array,field_name, field_prepend=''):
+#     for index, x in np.ndenumerate(source_array):
+#         target_array[index] = rgetattr(source_array[index],field_prepend+field_name)
+#     print target_array
+
+def populate_record_array(source_array, target_array,format_dict,prepend_name=''):
+
+    for i, field_name in enumerate(format_dict['names']):
+        format = format_dict['formats'][i]
+        if isinstance(format,dict):
+            populate_record_array(source_array=source_array, target_array=target_array[field_name],
+                                  format_dict=format,prepend_name=prepend_name+field_name+'.')
+        else:
+
+            for index, x in np.ndenumerate(source_array):
+                try:
+                    target_array[field_name][index] = rgetattr(source_array[index],prepend_name+field_name)
+                except ValueError:
+                    pass
+
+    print target_array
+
+
 
 
 def reinterpret_matlab_matrix_as_structured_array(matlab_matrix_as_python_obj, matlab_matrix_structured):
@@ -186,6 +422,58 @@ def reinterpret_matlab_matrix_as_structured_array(matlab_matrix_as_python_obj, m
     selector_array = [0]+np.random.randint(len(matlab_matrix_as_python_obj),size=20)
     selector_array = np.hstack(([0],selector_array))
     template_element_array = matlab_matrix_as_python_obj[selector_array]
+
+
+    record = matlab_matrix_as_python_obj[0]
+    # format_dict = get_np_format([record])
+    format_dict = get_np_format(template_element_array)
+    # format_dict = get_np_format(record)
+
+    array_fd = np.recarray(shape=matlab_matrix_as_python_obj.shape, dtype=format_dict)
+
+    populate_record_array(source_array=matlab_matrix_as_python_obj, target_array=array_fd,format_dict=format_dict,prepend_name='')
+
+    print array_fd
+    return array_fd
+
+
+    # for i, field_name in enumerate(format_dict['names']):
+    #     format = format_dict['format'][i]
+    #     if isinstance(format,dict):
+    #         populate_single_record_array(source_array=matlab_matrix_as_python_obj,
+    #                                      target_array=array_fd[field_name],
+    #                                      field_name=field_name,
+    #                                         field_prepend=)
+    #     else:
+    #         populate_single_record_array(source_array=matlab_matrix_as_python_obj, target_array=array_fd[field_name],field_name=field_name)
+
+    for field_name in format_dict['names']:
+
+        # print 'field_name = ', field_name
+        # print 'array_value=',matlab_matrix_structured [field_name]
+        field_val = getattr(record, field_name)
+        # print field_val, type(field_val).__name__
+        field_val_type = type(field_val).__name__
+
+        matlab_matrix_as_python_obj[0].avgSurf.x
+
+        if field_name=='avgSurf':
+            print
+        if field_val_type == 'ndarray':
+            for index, x in np.ndenumerate(array_fd):
+                # print 'index, x = ',index,reconstructed_array[field_name][index]
+                # print 'index, x = ',index,matlab_matrix_structured ['m'][index]
+                array_fd[field_name][index] = matlab_matrix_structured[field_name][index]
+
+            pass
+        else:
+            try:
+                array_fd[field_name] = matlab_matrix_structured[field_name]
+            except ValueError:
+                pass
+
+
+
 
 
     for index, x in np.ndenumerate(matlab_matrix_as_python_obj):
@@ -200,7 +488,7 @@ def reinterpret_matlab_matrix_as_structured_array(matlab_matrix_as_python_obj, m
 
     # template_element_record_format = get_record_format(template_element) #### RESTORE THIS - ORIGINAL
     template_element_record_format = get_record_format_multi_trial(template_element_array)
-
+    pass
 
     # print '--------- extracted template_element_recort_format=',template_element_record_format
 
@@ -340,11 +628,31 @@ def get_record_format_multi_trial(obj_array):
         # print 'class_member=',class_member
         # print 'class_member_name=',class_member_name
         # print 'class_member_value',class_member_value
+        # if class_member_name=='avgSurf':
+        #     pass
+
         # if class_member_name=='amplitude':
         #     pass
+
+
+        if class_member_name=='avgSurf':
+            pass
+        # np.dtype(type(getattr(class_member[1],class_member[1]._fieldnames[0])))
+        # # for obj_tmp in obj_array:
+        # try:
+        #     numpy_type_abbreviation = determine_dtype_abbreviation(class_member)
+        #     # print 'numpy_type_abbreviation=',numpy_type_abbreviation
+        # except:
+        #     # print 'COULD NOT DETERMINE FORMAT FOR:'
+        #     # print 'class_member_name=', class_member_value
+        #     # print 'class_member_values=', class_member_value
+        #     # print 'SKIPPING this'
+        #     continue
+
         # for obj_tmp in obj_array:
         try:
             numpy_type_abbreviation = determine_dtype_abbreviation(class_member)
+            # numpy_type_abbreviation = np.dtype(np.common_type(np.array([class_member]))).str
             # print 'numpy_type_abbreviation=',numpy_type_abbreviation
         except:
             # print 'COULD NOT DETERMINE FORMAT FOR:'
@@ -358,6 +666,16 @@ def get_record_format_multi_trial(obj_array):
 
 
         if numpy_type_abbreviation != 'O':
+            # sample_obj_array = []
+            # for obj_tmp in obj_array:
+            #     sample_obj_array.append(getattr(obj_tmp,class_member_name))
+            #
+            #
+            # try:
+            #     numpy_type_abbreviation = np.dtype(np.common_type(np.array(sample_obj_array))).str
+            # except TypeError:
+            #     print 'COULD NOT FIGURE OUT '+class_member_name
+            # pass
 
             guessed_types = []
             for obj_tmp in obj_array:
