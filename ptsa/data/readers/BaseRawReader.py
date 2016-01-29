@@ -133,8 +133,6 @@ class BaseRawReader(PropertiedObject):
                                    'samplerate':self.params_dict['samplerate']
 
                                    }
-
-
                                    )
 
         # eventdata['start_offsets'] = self.start_offsets.copy()
