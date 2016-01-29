@@ -1,41 +1,59 @@
 __author__ = 'm'
 
-import sys
-
-sys.path.append('/Users/m/PTSA_NEW_GIT')
-
-import re
-from os.path import *
 import numpy as np
-
 from ptsa.data.events import Events
 from ptsa.data.rawbinwrapper import RawBinWrapper
-from ptsa.data.common import pathlib
-
 from BaseEventReader import BaseEventReader
 from ptsa.data.common import TypeValTuple
-from ptsa.data.common.path_utils import find_dir_prefix
 
 
 class PTSAEventReader(BaseEventReader):
-    def __init__(self, event_file, **kwds):
-        BaseEventReader.__init__(self, event_file, **kwds)
+    '''
+    Event reader that returns original PTSA Events object with attached rawbinwrappers
+    rawbinwrappers are objects that know how to read eeg binary data
+    '''
 
-        self.attach_rawbinwrapper = True
-        self.use_groupped_rawbinwrapper = True
+    # _descriptors = BaseEventReader._descriptors+[
+    #
+    #     TypeValTuple('attach_rawbinwrapper', bool, True),
+    #     TypeValTuple('use_groupped_rawbinwrapper', bool, True),
+    #
+    #     # TypeValTuple('event_file', str, ''),
+    #     # TypeValTuple('eliminate_events_with_no_eeg', bool, True),
+    #     # TypeValTuple('use_reref_eeg', bool, False),
+    # ]
 
-        try:
-            self.attach_rawbinwrapper = bool(kwds['attach_rawbinwrapper'])
-        except LookupError:
-            pass
+    _descriptors = [
 
-        try:
-            self.use_groupped_rawbinwrapper = bool(kwds['use_groupped_rawbinwrapper'])
-        except LookupError:
-            pass
+        TypeValTuple('attach_rawbinwrapper', bool, True),
+        TypeValTuple('use_groupped_rawbinwrapper', bool, True),
+
+    ]
+
+    def __init__(self, **kwds):
+        '''
+        Constructor:
+
+        :param kwds:allowed values are:
+        -------------------------------------
+        :param event_file {str} -  path to event file
+        :param eliminate_events_with_no_eeg {bool} - flag to automatically remov events woth no eegfile (default True)
+        :param use_reref_eeg {bool} -  flag that changes eegfiles to point reref eegs. Default is False and eegs read
+        are nonreref ones
+        :param attach_rawbinwrapper {bool} - flag signaling whether to attach rawbinwrappers to Event obj or not.
+        Default is True
+        :param use_groupped_rawbinwrapper {bool} - flag signaling whether to use groupped rawbinwrappers
+        (i.e. shared between many events with same eeglile) or not. Default is True. When True data reads are much faster
+        :return: None
+        '''
+        BaseEventReader.__init__(self, **kwds)
 
 
     def read(self):
+        '''
+        Reads Matlab event file , converts it to np.recarray and attaches rawbinwrappers (if appropriate flags indicate so)
+        :return: Events object. depending on flagg settings the rawbinwrappers may be attached as well
+        '''
 
         # calling base class read fcn
         evs = BaseEventReader.read(self)
@@ -52,18 +70,20 @@ class PTSAEventReader(BaseEventReader):
 
             if self.use_groupped_rawbinwrapper: # this should be default choice - much faster execution
                 self.attach_rawbinwrapper_groupped(evs)
-            else:    # used for debuggin purposes
+            else:    # used for debugging purposes
                 self.attach_rawbinwrapper_individual(evs)
 
-        self._events = evs
-        return self._events
 
-        # self.set_output(evs)
-        # return self.get_output()
+        return evs
 
 
     def attach_rawbinwrapper_groupped(self,evs):
-
+        '''
+        attaches raw bin wrappers to individual records. Single rawbinwrapper is shared between events that have same
+        eegfile
+        :param evs: Events object
+        :return: Events object with attached rawbinarappers
+        '''
 
         eegfiles = np.unique(evs.eegfile)
 
@@ -76,6 +96,11 @@ class PTSAEventReader(BaseEventReader):
 
 
     def attach_rawbinwrapper_individual(self,evs):
+        '''
+        attaches raw bin wrappers to individual records. Uses separate rawbinwrapper for each record
+        :param evs: Events object
+        :return: Events object with attached rawbinarappers
+        '''
 
         for ev in evs:
             try:
@@ -84,24 +109,6 @@ class PTSAEventReader(BaseEventReader):
             except TypeError:
                 print 'skipping event with eegfile=', ev.eegfile
                 pass
-
-
-    def find_data_dir_prefix(self):
-        # determining dir_prefix
-        #
-        # data on rhino is mounted as /data
-        # copying rhino /data structure to another directory will cause all files in data have new prefix
-        # example:
-        # self._event_file='/Users/m/data/events/R1060M_events.mat'
-        # prefix is '/Users/m'
-        # we use find_dir_prefix to determine prefix based on common_root in path with and without prefix
-        common_root = 'data/events'
-        prefix = find_dir_prefix(path_with_prefix=self._event_file, common_root=common_root)
-        if not prefix:
-            raise RuntimeError(
-                'Could not determine prefix from: %s using common_root: %s' % (self._event_file, common_root))
-
-        return find_dir_prefix(self._event_file, 'data/events')
 
 
 if __name__ == '__main__':

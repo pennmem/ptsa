@@ -3,9 +3,6 @@ __author__ = 'm'
 from os.path import *
 import numpy as np
 import re
-
-from ptsa.data.events import Events
-
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.common.path_utils import find_dir_prefix
 from ptsa.data.common import pathlib
@@ -17,7 +14,6 @@ class BaseEventReader(PropertiedObject):
     _descriptors = [
         TypeValTuple('event_file', str, ''),
         TypeValTuple('eliminate_events_with_no_eeg', bool, True),
-        TypeValTuple('use_ptsa_events_class', bool, False),
         TypeValTuple('use_reref_eeg', bool, False),
     ]
     def __init__(self,**kwds):
@@ -30,32 +26,18 @@ class BaseEventReader(PropertiedObject):
         :param eliminate_events_with_no_eeg {bool} - flag to automatically remov events woth no eegfile (default True)
         :param use_reref_eeg {bool} -  flag that changes eegfiles to point reref eegs. Default is False and eegs read
         are nonreref ones
+
         :return: None
         '''
         self.init_attrs(kwds)
 
 
-    # def __init__(self, event_file, **kwds):
-    #     self._event_file = event_file
-    #     self._events = None
-    #
-    #     possible_argument_list = ['eliminate_events_with_no_eeg', 'use_ptsa_events_class',
-    #                               'use_reref_eeg']
-    #
-    #     for argument in possible_argument_list:
-    #         try:
-    #             accessor = getattr(self, argument)
-    #             accessor = argument
-    #         except AttributeError:
-    #             sys.exit()
-    #             pass
-    #         # try:
-    #         #     setattr(self, argument, kwds[argument])
-    #         # except LookupError:
-    #         #     print 'did not find the argument: ', argument
-    #         #     pass
-    #
     def correct_eegfile_field(self, events):
+        '''
+        Replaces 'eeg.reref' with 'eeg.noreref' in eegfile path
+        :param events: np.recarray representing events. One of hte field of this array should be eegfile
+        :return:
+        '''
         data_dir_bad = r'/data.*/' + events[0].subject + r'/eeg'
         data_dir_good = r'/data/eeg/' + events[0].subject + r'/eeg'
         for ev in events:
@@ -65,6 +47,14 @@ class BaseEventReader(PropertiedObject):
 
 
     def read(self):
+        '''
+        Reads Matlab event file and returns corresponging np.recarray. Path to the eegfile is changed
+        w.r.t original Matlab code to account for the following:
+        1. /data dir of the database might have been mounted under different mount point e.g. /Users/m/data
+        2. use_reref_eeg is set to True in which case we replaces 'eeg.reref' with 'eeg.noreref' in eegfile path
+
+        :return: np.recarray representing events
+        '''
         from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
 
         # extract matlab matrix (called 'events') as numpy structured array
@@ -90,16 +80,10 @@ class BaseEventReader(PropertiedObject):
         for i, ev in enumerate(evs):
             ev.eegfile=join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
 
-
-        # NEW CODE
-        if self.use_ptsa_events_class:
-            evs = Events(evs)
-
         if not self.use_reref_eeg:
             evs = self.correct_eegfile_field(evs)
 
         return evs
-
 
     def find_data_dir_prefix(self):
         '''
