@@ -5,6 +5,7 @@ from collections import namedtuple
 import os
 import xray
 
+
 class BaseRawReader(PropertiedObject):
     '''
     Object that knows how to read binary eeg files
@@ -54,7 +55,7 @@ class BaseRawReader(PropertiedObject):
                 self.file_format = self.file_format_dict[format_name]
             except KeyError:
                 raise RuntimeError('Unsupported format: %s. Allowed format names are: %s' % (
-                format_name, self.file_format_dict.keys()))
+                    format_name, self.file_format_dict.keys()))
         except KeyError:
             print 'Could not find data format definition in the params file. Wwilll read te file assuming' \
                   ' data format is int16'
@@ -77,9 +78,8 @@ class BaseRawReader(PropertiedObject):
 
         '''
 
-        if self.read_size<0:
+        if self.read_size < 0:
             self.read_size = self.get_file_size() / self.file_format.data_size
-
 
         # allocate for data
         eventdata = np.empty((len(self.channels), len(self.start_offsets), self.read_size),
@@ -95,7 +95,7 @@ class BaseRawReader(PropertiedObject):
                 efile = open(eegfname, 'rb')
             else:
                 raise IOError(
-                        'EEG file not found: ' + eegfname)
+                    'EEG file not found: ' + eegfname)
 
             # loop over start offsets
             for e, start_offset in enumerate(self.start_offsets):
@@ -109,14 +109,14 @@ class BaseRawReader(PropertiedObject):
                 # convert from string to array based on the format
                 # hard codes little endian
                 data = np.array(struct.unpack(
-                        '<' + str(len(data) / self.file_format.data_size) +
-                        self.file_format.format_string, data))
+                    '<' + str(len(data) / self.file_format.data_size) +
+                    self.file_format.format_string, data))
 
                 # make sure we got some data
                 if len(data) < self.read_size:
                     raise IOError(
-                            'Cannot read full chunk of data for offset ' + str(start_offset) +
-                            'End of read interval  is outside the bounds of file ' + str(eegfname))
+                        'Cannot read full chunk of data for offset ' + str(start_offset) +
+                        'End of read interval  is outside the bounds of file ' + str(eegfname))
 
                 # append it to the events
                 eventdata[c, e, :] = data
@@ -125,12 +125,12 @@ class BaseRawReader(PropertiedObject):
         eventdata *= self.params_dict['gain']
 
         eventdata = xray.DataArray(eventdata,
-                                   dims=['channels','start_offsets','offsets'],
+                                   dims=['channels', 'start_offsets', 'offsets'],
                                    coords={
-                                   'channels':self.channels,
-                                   'start_offsets':self.start_offsets.copy(),
-                                   'offsets':np.arange(self.read_size),
-                                   'samplerate':self.params_dict['samplerate']
+                                       'channels': self.channels,
+                                       'start_offsets': self.start_offsets.copy(),
+                                       'offsets': np.arange(self.read_size),
+                                       'samplerate': self.params_dict['samplerate']
 
                                    }
                                    )
@@ -145,7 +145,6 @@ class BaseRawReader(PropertiedObject):
 
 
 if __name__ == '__main__':
-
     e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
     from ptsa.data.readers import BaseEventReader
 
@@ -159,6 +158,7 @@ if __name__ == '__main__':
     base_events = base_events[base_events.eegfile == base_events[0].eegfile]
 
     from ptsa.data.readers.TalReader import TalReader
+
     tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
     tal_reader = TalReader(tal_filename=tal_path)
     monopolar_channels = tal_reader.get_monopolar_channels()
@@ -172,10 +172,6 @@ if __name__ == '__main__':
                                              end_time=1.6, buffer_time=1.0, keep_buffer=True)
 
     base_eegs = time_series_reader.read(channels=monopolar_channels)
-
-
-
-
 
     # dataroot = '/Users/m/data/eeg/R1060M/eeg.noreref/R1060M_01Aug15_0805'
 
@@ -200,11 +196,3 @@ if __name__ == '__main__':
     arr_session = brr_session.read()
 
     print arr_session
-
-
-
-
-
-
-
-
