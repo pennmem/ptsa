@@ -13,16 +13,6 @@ class PTSAEventReader(BaseEventReader):
     rawbinwrappers are objects that know how to read eeg binary data
     '''
 
-    # _descriptors = BaseEventReader._descriptors+[
-    #
-    #     TypeValTuple('attach_rawbinwrapper', bool, True),
-    #     TypeValTuple('use_groupped_rawbinwrapper', bool, True),
-    #
-    #     # TypeValTuple('event_file', str, ''),
-    #     # TypeValTuple('eliminate_events_with_no_eeg', bool, True),
-    #     # TypeValTuple('use_reref_eeg', bool, False),
-    # ]
-
     _descriptors = [
 
         TypeValTuple('attach_rawbinwrapper', bool, True),
@@ -48,7 +38,6 @@ class PTSAEventReader(BaseEventReader):
         '''
         BaseEventReader.__init__(self, **kwds)
 
-
     def read(self):
         '''
         Reads Matlab event file , converts it to np.recarray and attaches rawbinwrappers (if appropriate flags indicate so)
@@ -58,9 +47,6 @@ class PTSAEventReader(BaseEventReader):
         # calling base class read fcn
         evs = BaseEventReader.read(self)
 
-        # determining data_dir_prefix in case rhino /data filesystem was mounted under different root
-        data_dir_prefix = self.find_data_dir_prefix()
-
         # in case evs is simply recarray
         if not isinstance(evs, Events):
             evs = Events(evs)
@@ -68,16 +54,14 @@ class PTSAEventReader(BaseEventReader):
         if self.attach_rawbinwrapper:
             evs = evs.add_fields(esrc=np.dtype(RawBinWrapper))
 
-            if self.use_groupped_rawbinwrapper: # this should be default choice - much faster execution
+            if self.use_groupped_rawbinwrapper:  # this should be default choice - much faster execution
                 self.attach_rawbinwrapper_groupped(evs)
-            else:    # used for debugging purposes
+            else:  # used for debugging purposes
                 self.attach_rawbinwrapper_individual(evs)
-
 
         return evs
 
-
-    def attach_rawbinwrapper_groupped(self,evs):
+    def attach_rawbinwrapper_groupped(self, evs):
         '''
         attaches raw bin wrappers to individual records. Single rawbinwrapper is shared between events that have same
         eegfile
@@ -94,8 +78,7 @@ class PTSAEventReader(BaseEventReader):
             for i in inds:
                 evs[i]['esrc'] = raw_bin_wrapper
 
-
-    def attach_rawbinwrapper_individual(self,evs):
+    def attach_rawbinwrapper_individual(self, evs):
         '''
         attaches raw bin wrappers to individual records. Uses separate rawbinwrapper for each record
         :param evs: Events object
@@ -113,6 +96,7 @@ class PTSAEventReader(BaseEventReader):
 
 if __name__ == '__main__':
     from PTSAEventReader import PTSAEventReader
+
     # e_path = join('/Volumes/rhino_root', 'data/events/RAM_FR1/R1060M_events.mat')
     e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
 
@@ -123,5 +107,3 @@ if __name__ == '__main__':
     events = e_reader.get_output()
 
     print events
-
-
