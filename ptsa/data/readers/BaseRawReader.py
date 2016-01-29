@@ -6,6 +6,9 @@ import os
 import xray
 
 class BaseRawReader(PropertiedObject):
+    '''
+    Object that knows how to read binary eeg files
+    '''
     _descriptors = [
         TypeValTuple('dataroot', str, ''),
         TypeValTuple('channels', list, []),
@@ -14,6 +17,19 @@ class BaseRawReader(PropertiedObject):
     ]
 
     def __init__(self, **kwds):
+        '''
+        Constructor
+        :param kwds:allowed values are:
+        -------------------------------------
+        :param dataroot {str} -  core name of the eegfile file (i.e. full path except extension e.g. '.002').
+        Normally this is eegfile field from events record
+
+        :param channels {list} - list of channels (list of strings) that should be read
+        :param start_offsets {ndarray} -  array of ints with read offsets
+        :param read_size {int} - size of the read chunk. If -1 the entire file is read
+        --------------------------------------
+        :return:None
+        '''
 
         self.init_attrs(kwds)
 
@@ -44,10 +60,22 @@ class BaseRawReader(PropertiedObject):
                   ' data format is int16'
 
     def get_file_size(self):
+        '''
+
+        :return: {int} size of the files whose core name (dataroot) matches self.dataroot. Assumes ALL files with this
+        dataroot are of the same length and uses first channel to determin the common file length
+        '''
         eegfname = self.dataroot + '.' + self.channels[0]
         return os.path.getsize(eegfname)
 
     def read(self):
+        '''
+
+        :return: DataArray objects populated with data read from eeg files. The size of the output is
+        number of channels x number of start offsets x number of time series points
+        The corresponding DataArray axes are: 'channels', 'start_offsets', 'offsets'
+
+        '''
 
         if self.read_size<0:
             self.read_size = self.get_file_size() / self.file_format.data_size
@@ -96,9 +124,21 @@ class BaseRawReader(PropertiedObject):
         # multiply by the gain
         eventdata *= self.params_dict['gain']
 
-        eventdata = xray.DataArray(eventdata,dims=['channels','start_offsets','offsets'])
-        eventdata['start_offsets'] = self.start_offsets.copy()
-        eventdata['channels'] = self.channels
+        eventdata = xray.DataArray(eventdata,
+                                   dims=['channels','start_offsets','offsets'],
+                                   coords={
+                                   'channels':self.channels,
+                                   'start_offsets':self.start_offsets.copy(),
+                                   'offsets':np.arange(self.read_size),
+                                   'samplerate':self.params_dict['samplerate']
+
+                                   }
+
+
+                                   )
+
+        # eventdata['start_offsets'] = self.start_offsets.copy()
+        # eventdata['channels'] = self.channels
 
         from copy import deepcopy
         eventdata.attrs = deepcopy(self.params_dict)
