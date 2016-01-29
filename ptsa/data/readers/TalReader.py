@@ -1,22 +1,10 @@
 __author__ = 'm'
 
-from os.path import *
-from ptsa.data.common import pathlib
-# from ptsa.data.rawbinwrapper import RawBinWrapper
-from ptsa.data.RawBinWrapperXray import RawBinWrapperXray
-from ptsa.data.events import Events
 import numpy as np
-
-import xray
-
-import time
-
 from ptsa.data.common import TypeValTuple, PropertiedObject
-from ptsa.data.common.path_utils import find_dir_prefix
 
 
 class TalReader(PropertiedObject):
-# class TimeSeriesEEGReader(object):
     _descriptors = [
         TypeValTuple('samplerate', float, -1.0),
         TypeValTuple('keep_buffer', bool, True),
@@ -24,7 +12,6 @@ class TalReader(PropertiedObject):
         TypeValTuple('start_time', float, 0.0),
         TypeValTuple('tal_filename', str, ''),
     ]
-
 
     def __init__(self, **kwds):
 
@@ -39,27 +26,39 @@ class TalReader(PropertiedObject):
 
 
     def read(self):
-        from ptsa.data.MatlabIO import deserialize_single_object_from_matlab_format
-        bp_tal_struct = deserialize_single_object_from_matlab_format(self.tal_filename,'bpTalStruct')
+        # from ptsa.data.MatlabIO import deserialize_single_object_from_matlab_format
+        # bp_tal_struct = deserialize_single_object_from_matlab_format(self.tal_filename,'bpTalStruct')
+
+        from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
+        tal_struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.tal_filename,'bpTalStruct')
+
         #extract bipolar pairs
         # self.bipolar_channels = np.empty(shape=(len(bp_tal_struct),2), dtype='|S3')
-        self.bipolar_channels = np.recarray(shape=(len(bp_tal_struct)), dtype=[('ch0','|S3'),('ch1','|S3')])
+        # self.bipolar_channels = np.recarray(shape=(len(bp_tal_struct)), dtype=[('ch0','|S3'),('ch1','|S3')])
+        self.bipolar_channels = np.recarray(shape=(len(tal_struct_array)), dtype=[('ch0','|S3'),('ch1','|S3')])
 
-        for i, record in enumerate(bp_tal_struct):
+        channel_record_array = tal_struct_array['channel']
+        for i, channel_array in enumerate(channel_record_array):
             # self.bipolar_channels[i] = np.asarray(map(lambda x: str(x).zfill(3),record.channel), dtype=np.str)
-            self.bipolar_channels[i] = tuple(map(lambda x: str(x).zfill(3), record.channel))
+
+            # self.bipolar_channels[i] = tuple(map(lambda x: str(x).zfill(3), record.channel))
+            self.bipolar_channels[i] = tuple(map(lambda x: str(x).zfill(3), channel_array))
+
+        # for i, record in enumerate(bp_tal_struct):
+        #     # self.bipolar_channels[i] = np.asarray(map(lambda x: str(x).zfill(3),record.channel), dtype=np.str)
+        #     self.bipolar_channels[i] = tuple(map(lambda x: str(x).zfill(3), record.channel))
 
 
     def get_bipolar_pairs(self):
         if self.bipolar_channels is None:
             self.read()
         return self.bipolar_channels
-    def get_monopolar_channels(self):
 
+    def get_monopolar_channels(self):
         bipolar_array = self.get_bipolar_pairs()
         # monopolar_set = set(bipolar_array.flatten())
         monopolar_set = set(list(bipolar_array['ch0'])+list(bipolar_array['ch1']))
-        return sorted(list(monopolar_set))
+        return np.array(sorted(list(monopolar_set)))
 
 if __name__=='__main__':
     event_range = range(0, 30, 1)
