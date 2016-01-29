@@ -57,8 +57,8 @@ def get_np_type(record,_fieldname):
 
     attr = getattr(record,_fieldname)
     attr_dtype = np.dtype(type(attr))
-    if _fieldname =='eegfile':
-        print
+    # if _fieldname =='eegfile':
+    #     print
     if hasattr(attr,'dtype'):
         attr_dtype = attr.dtype
         attr_shape = attr.shape
@@ -79,14 +79,14 @@ def get_np_type(record,_fieldname):
         if attr_dtype_kind in kind_2_type.keys():
             return kind_2_type[attr_dtype_kind]
         elif attr_dtype_kind =='O':
-            print 'got object'
+            # print 'got object'
             format_dict = get_np_format([attr])
             # format_dict = get_np_format(attr)
             # format_dict = get_np_type(attr,_fieldname)
             if len(format_dict['names']):
                 return format_dict
-            print 'got format:',format_dict
-            print
+            # print 'got format:',format_dict
+            # print
         else:
 
             return attr_dtype.str
@@ -120,7 +120,7 @@ def get_np_format(record_array):
 
             # if format is not None:
             #     formats.append(format)
-        print formats
+        # print formats
         if not len(formats):
             pass
         elif len(formats)==1:
@@ -139,16 +139,15 @@ def get_np_format(record_array):
                 # numpy_type_abbreviation = np.dtype(np.common_type(np.array(formats))).str
 
             except TypeError:
-                print 'COULD NOT FIGURE OUT '+class_member_name
+                print 'COULD NOT FIGURE OUT FORMAT FOR: '+_fieldname
             pass
 
 
 
-    print names_list
-    print format_list
+    # print names_list
+    # print format_list
     fd = {'names':names_list,'formats':format_list}
     return {'names':names_list,'formats':format_list}
-    pass
 
 import functools
 
