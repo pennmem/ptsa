@@ -26,7 +26,7 @@ class EventReadersTestBase(object):
 
     def read_base_events(self):
 
-        base_e_reader = BaseEventReader(event_file=self.e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
+        base_e_reader = BaseEventReader(event_file=self.e_path, eliminate_events_with_no_eeg=True)
 
         base_events = base_e_reader.read()
 
