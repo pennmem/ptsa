@@ -1,27 +1,37 @@
 from ptsa.data.common import TypeValTuple, PropertiedObject
-from ptsa.data.common.path_utils import find_dir_prefix
-from ptsa.data.common import pathlib
 from os.path import *
 import collections
 
 
 class ParamsReader(PropertiedObject):
+    '''
+    Reader for parameter file (e.g. params.txt)
+    '''
     _descriptors = [
-        TypeValTuple('params_file', str, ''),
+        TypeValTuple('filename', str, ''),
         TypeValTuple('dataroot', str, ''),
     ]
 
     def __init__(self, **kwds):
+        '''
+        Constructor
+        :param kwds:allowed values are:
+        -------------------------------------
+        :param filename {str} -  path t params file
+        :param dataroot {str} -  core name of the eegfiles
 
+        :return: None
+        '''
         self.init_attrs(kwds)
 
-        if self.params_file and not isfile(self.params_file):
-            raise IOError('Could not open params file: %s' % self.params_file)
+        if self.filename:
+            if not isfile(self.filename):
+                raise IOError('Could not open params file: %s' % self.filename)
 
         elif self.dataroot:
-            self.params_file = self.locate_params_file(dataroot=self.dataroot)
+            self.filename = self.locate_params_file(dataroot=self.dataroot)
         else:
-            raise IOError('Could not find params file using dataroot: %s or using direct path:%s'%(self.dataroot,self.params_file))
+            raise IOError('Could not find params file using dataroot: %s or using direct path:%s'%(self.dataroot,self.filename))
 
         Converter = collections.namedtuple('Converter', ['convert', 'name'])
         self.param_to_convert_fcn = {
@@ -32,6 +42,11 @@ class ParamsReader(PropertiedObject):
         }
 
     def locate_params_file(self, dataroot):
+        """
+        Identifies exact path to param file.
+        :param dataroot: {str} eeg core file name
+        :return: {str}
+        """
 
         for param_file in (abspath(dataroot + '.params'),
                           abspath(join(dirname(dataroot), 'params.txt'))):
@@ -46,8 +61,12 @@ class ParamsReader(PropertiedObject):
                       'or params.txt.')
 
     def read(self):
+        """
+        Parses param file
+        :return: {dict} dictionary with param file content
+        """
         params = {}
-        param_file = self.params_file
+        param_file = self.filename
 
         # we have a file, so open and process it
         for line in open(param_file, 'r').readlines():
@@ -70,7 +89,7 @@ if __name__ == '__main__':
     p_path = '/Users/m/data/eeg/R1060M/eeg.noreref/params.txt'
     from ptsa.data.readers.ParamsReader import ParamsReader
 
-    p_reader = ParamsReader(params_file=p_path)
+    p_reader = ParamsReader(filename=p_path)
     params = p_reader.read()
     print params
 
