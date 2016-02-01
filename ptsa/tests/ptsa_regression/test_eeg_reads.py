@@ -7,20 +7,34 @@ import unittest
 
 from EventReadersTestBase import EventReadersTestBase
 from ptsa.data.events import Events
+from ptsa.data.readers import BaseEventReader
+from ptsa.data.readers import PTSAEventReader
 from ptsa.data.readers.EEGReader import EEGReader
 from ptsa.data.filters.ButterworthFilter import ButterworthFiler
 from ptsa.data.filters.ResampleFilter import ResampleFilter
+from ptsa.data.filters.MorletWaveletFilterSimple import MorletWaveletFilterSimple
 
 
-class TestEEGRead(unittest.TestCase, EventReadersTestBase):
+# class TestEEGRead(unittest.TestCase, EventReadersTestBase):
+class TestEEGRead(unittest.TestCase):
     # class TestEEGRead(unittest.TestCase):
     def setUp(self):
         self.event_range = range(0, 30, 1)
         self.e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
 
         # ---------------- ORIG PTSA -------------------
+        e_reader = PTSAEventReader(filename=self.e_path, eliminate_events_with_no_eeg=True)
+        events = e_reader.read()
 
-        self.events = self.read_ptsa_events()
+        events = events[events.type == 'WORD']
+
+        events = events[self.event_range]
+
+        ev_order = np.argsort(events, order=('session','list','mstime'))
+        self.events = events[ev_order]
+
+        # self.events = self.read_ptsa_events()
+
         # in case fancy indexing looses Eventness of events we need to create Events object explicitely
         if not isinstance(self.events, Events):
             self.events = Events(self.events)
@@ -29,8 +43,18 @@ class TestEEGRead(unittest.TestCase, EventReadersTestBase):
                                          eoffset_in_time=False, verbose=True)
 
         # ---------------- NEW STYLE PTSA -------------------
+        base_e_reader = BaseEventReader(filename=self.e_path, eliminate_events_with_no_eeg=True)
 
-        self.base_events = self.read_base_events()
+        base_events = base_e_reader.read()
+
+        base_events = base_events[base_events.type == 'WORD']
+
+        base_ev_order = np.argsort(base_events, order=('session','list','mstime'))
+        base_events = base_events[base_ev_order]
+
+        self.base_events = base_events[self.event_range]
+
+        # self.base_events = self.read_base_events()
 
         eeg_reader = EEGReader(events=self.base_events, channels=np.array(['002', '003']),
                                start_time=0.0, end_time=1.6, buffer_time=1.0)
@@ -183,6 +207,58 @@ class TestEEGRead(unittest.TestCase, EventReadersTestBase):
         var_base_eegs = base_eegs.var(dim='time')
         assert_array_equal(var_eegs, var_base_eegs)
         
+    def test_wavelets(self):
+        eegs = self.eegs[:, :, :-1]
+        base_eegs = self.base_eegs
+
+        wf = MorletWaveletFilterSimple(time_series=base_eegs,
+                           freqs=np.logspace(np.log10(3), np.log10(180), 8),
+                           output='power',
+                           frequency_dim_pos=0,
+
+                           )
+
+        pow_wavelet, phase_wavelet = wf.filter()
+        print 'pow_wavelet=',pow_wavelet
+
+        from ptsa.wavelet import phase_pow_multi
+        pow_wavelet_ptsa_orig = phase_pow_multi(freqs=np.logspace(np.log10(3), np.log10(180), 8), _dat=eegs,to_return='power')
+        print 'pow_wavelets_ptsa_orig=',pow_wavelet_ptsa_orig
+
+
+        # import matplotlib;
+        # matplotlib.use('Qt4Agg')
+        #
+        #
+        # import matplotlib.pyplot as plt
+        # plt.get_current_fig_manager().window.raise_()
+        #
+        wavelet_1 = pow_wavelet[0,0,0,500:-500]
+        wavelet_2 = pow_wavelet_ptsa_orig[0,0,0,500:-500]
+        #
+        # plt.plot(np.arange(wavelet_1.shape[0])-1,wavelet_1,'k')
+        # plt.plot(np.arange(wavelet_2.shape[0])-1,wavelet_2,'r--')
+        #
+        # plt.show()
+
+        assert_array_equal(eegs, base_eegs.data)
+        # assert_array_equal(wavelet_1, wavelet_2)
+
+        # assert_array_almost_equal((wavelet_1-wavelet_2)/wavelet_1, np.zeros_like(wavelet_1), decimal=4)
+        # assert_array_almost_equal((pow_wavelet_ptsa_orig-pow_wavelet)/pow_wavelet_ptsa_orig, np.zeros_like(pow_wavelet), decimal=4)
+
+
+        assert_array_almost_equal(
+            (pow_wavelet_ptsa_orig-pow_wavelet)/pow_wavelet_ptsa_orig,
+            np.zeros_like(pow_wavelet), decimal=6)
+
+
+        freq_num = 7
+        assert_array_equal(
+            (pow_wavelet_ptsa_orig[freq_num,:,:,500:-500]-pow_wavelet[freq_num,:,:,500:-500])/pow_wavelet_ptsa_orig[freq_num,:,:,500:-500],
+            np.zeros_like(pow_wavelet[freq_num,:,:,500:-500]))
+
+
 
 
 if __name__ == '__main__':

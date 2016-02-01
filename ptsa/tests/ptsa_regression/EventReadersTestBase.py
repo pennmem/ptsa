@@ -12,7 +12,7 @@ class EventReadersTestBase(object):
 
     def read_ptsa_events(self):
 
-        e_reader = PTSAEventReader(event_file=self.e_path, eliminate_events_with_no_eeg=True)
+        e_reader = PTSAEventReader(filename=self.e_path, eliminate_events_with_no_eeg=True)
         events = e_reader.read()
 
         events = events[events.type == 'WORD']
@@ -26,7 +26,7 @@ class EventReadersTestBase(object):
 
     def read_base_events(self):
 
-        base_e_reader = BaseEventReader(event_file=self.e_path, eliminate_events_with_no_eeg=True)
+        base_e_reader = BaseEventReader(filename=self.e_path, eliminate_events_with_no_eeg=True)
 
         base_events = base_e_reader.read()
 
