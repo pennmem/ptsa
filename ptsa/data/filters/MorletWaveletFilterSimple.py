@@ -4,7 +4,7 @@ import numpy as np
 import xray
 from ptsa.data.common import TypeValTuple, PropertiedObject, get_axis_index
 
-from ptsa.data.TimeSeriesXray import TimeSeriesXray
+from ptsa.data.TimeSeriesX import TimeSeriesX
 import scipy
 from scipy.signal import resample
 
@@ -17,7 +17,8 @@ class MorletWaveletFilterSimple(PropertiedObject):
     _descriptors = [
         TypeValTuple('freqs', np.ndarray, np.array([], dtype=np.float)),
         TypeValTuple('width', int, 5),
-        TypeValTuple('output', str, '')
+        TypeValTuple('output', str, ''),
+        TypeValTuple('frequency_dim_pos', int, -2)
     ]
 
     def __init__(self, time_series, **kwds):
@@ -70,6 +71,9 @@ class MorletWaveletFilterSimple(PropertiedObject):
 
     def compute_power(self, wavelet_coef_array):
         return wavelet_coef_array.real ** 2 + wavelet_coef_array.imag ** 2, None
+        # return np.abs(wavelet_coef_array)**2, None
+        # # wavelet_coef_array.real ** 2 + wavelet_coef_array.imag ** 2, None
+
 
     def compute_phase(self, wavelet_coef_array):
         return None, np.angle(wavelet_coef_array)
@@ -98,6 +102,16 @@ class MorletWaveletFilterSimple(PropertiedObject):
 
             dims= list(self.time_series.dims[:-1]+('frequency','time',))
 
+            transposed_dims = []
+
+            # getting frequency dim position as positive integer
+            self.frequency_dim_pos = (len(dims)+self.frequency_dim_pos) % len(dims)
+            orig_frequency_idx = dims.index('frequency')
+
+            if self.frequency_dim_pos != orig_frequency_idx:
+                transposed_dims = dims[:orig_frequency_idx] + dims[orig_frequency_idx+1:]
+                transposed_dims.insert(self.frequency_dim_pos, 'frequency')
+
             coords = {dim_name:self.time_series.coords[dim_name]  for dim_name  in self.time_series.dims[:-1]}
             coords['frequency'] = self.freqs
             coords['time'] = time_axis
@@ -108,12 +122,22 @@ class MorletWaveletFilterSimple(PropertiedObject):
                 wavelet_phase_array_xray = self.construct_output_array(wavelet_phase_array, dims=dims,coords=coords)
 
             if wavelet_pow_array_xray is not None:
-                wavelet_pow_array_xray = TimeSeriesXray(wavelet_pow_array_xray)
+                wavelet_pow_array_xray = TimeSeriesX(wavelet_pow_array_xray)
+                if len(transposed_dims):
+                    wavelet_pow_array_xray = wavelet_pow_array_xray.transpose(*transposed_dims)
+
                 wavelet_pow_array_xray.attrs = self.time_series.attrs.copy()
 
+
             if wavelet_phase_array_xray is not None:
-                wavelet_phase_array_xray = TimeSeriesXray(wavelet_phase_array_xray)
+                wavelet_phase_array_xray = TimeSeriesX(wavelet_phase_array_xray)
+                if len(transposed_dims):
+                    wavelet_phase_array_xray =wavelet_phase_array_xray.transpose(*transposed_dims)
+
                 wavelet_phase_array_xray.attrs = self.time_series.attrs.copy()
+
+
+
 
             return wavelet_pow_array_xray, wavelet_phase_array_xray
 
