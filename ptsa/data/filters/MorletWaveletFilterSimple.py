@@ -70,8 +70,8 @@ class MorletWaveletFilterSimple(PropertiedObject):
             return np.empty(shape=shape, dtype=array_type), np.empty(shape=shape, dtype=array_type)
 
     def compute_power(self, wavelet_coef_array):
-        return wavelet_coef_array.real ** 2 + wavelet_coef_array.imag ** 2, None
-        # return np.abs(wavelet_coef_array)**2, None
+        # return wavelet_coef_array.real ** 2 + wavelet_coef_array.imag ** 2, None
+        return np.abs(wavelet_coef_array)**2, None
         # # wavelet_coef_array.real ** 2 + wavelet_coef_array.imag ** 2, None
 
 
@@ -137,9 +137,9 @@ class MorletWaveletFilterSimple(PropertiedObject):
                 wavelet_phase_array_xray.attrs = self.time_series.attrs.copy()
 
 
-
-
             return wavelet_pow_array_xray, wavelet_phase_array_xray
+
+
 
     def compute_wavelet_ffts(self):
 
@@ -162,8 +162,8 @@ class MorletWaveletFilterSimple(PropertiedObject):
         convolution_size_pow2 = np.power(2, next_pow2(convolution_size))
 
         # preallocating arrays
-        wavelet_fft_array = np.empty(shape=(num_wavelets, convolution_size_pow2), dtype=np.complex64)
-
+        # wavelet_fft_array = np.empty(shape=(num_wavelets, convolution_size_pow2), dtype=np.complex64)
+        wavelet_fft_array = np.empty(shape=(num_wavelets, convolution_size_pow2), dtype=np.complex)
         convolution_size_array = np.empty(shape=(num_wavelets), dtype=np.int)
 
 
@@ -422,7 +422,7 @@ def test_1():
 
     from ptsa.data.readers import BaseEventReader
 
-    base_e_reader = BaseEventReader(event_file=e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
+    base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
 
     base_events = base_e_reader.read()
 
@@ -433,7 +433,7 @@ def test_1():
 
     from ptsa.data.readers.TalReader import TalReader
     tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
-    tal_reader = TalReader(tal_filename=tal_path)
+    tal_reader = TalReader(filename=tal_path)
     monopolar_channels = tal_reader.get_monopolar_channels()
     bipolar_pairs = tal_reader.get_bipolar_pairs()
 
