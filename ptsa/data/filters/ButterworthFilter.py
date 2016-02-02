@@ -1,62 +1,58 @@
 __author__ = 'm'
 
-import numpy as np
-import xray
+from ptsa.data.common.xr import DataArray
 from ptsa.data.common import TypeValTuple, PropertiedObject
-from ptsa.data.TimeSeriesXray import TimeSeriesXray
+from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.common import get_axis_index
+
 
 class ButterworthFiler(PropertiedObject):
+    '''
+    Applies Butterworth filter to a time series
+    '''
     _descriptors = [
-        TypeValTuple('samplerate', float, -1.0),
+        TypeValTuple('time_series', TimeSeriesX, TimeSeriesX([0.0], dims=['time'])),
         TypeValTuple('order', int, 4),
-        TypeValTuple('freq_range', list, [58,62]),
+        TypeValTuple('freq_range', list, [58, 62]),
         TypeValTuple('filt_type', str, 'stop'),
     ]
 
-
-    def __init__(self,**kwds):
-
-        self.time_series = None
-        self.time_axis = -1
-
-        for option_name, val in kwds.items():
-
-            try:
-                attr = getattr(self,option_name)
-                setattr(self,option_name,val)
-            except AttributeError:
-                print 'Option: '+ option_name+' is not allowed'
+    def __init__(self, **kwds):
+        '''
+        Constructor
+        :param kwds:allowed values are:
+        -------------------------------------
+        :param time_series  -  TimeSeriesX object
+        :param order -  Butterworth filter order
+        :param freq_range -  array of frequencies [min_freq, max_freq] to filter out
+        :return: None
+        '''
+        self.init_attrs(kwds)
 
     def filter(self):
+        '''
+        Applies Butterwoth filter to input time series and returns filtered TimeSeriesX object
+        :return: TimeSeriesX object
+        '''
 
-        from ptsa.filt  import buttfilt
+        from ptsa.filt import buttfilt
 
-        # find index  of the  axis called 'time'
-        if self.time_axis<0:
-
-            time_index_array = np.where(np.array(self.time_series.dims) == 'time')
-            if len(time_index_array)>0:
-                self.time_axis =time_index_array[0] # picking first index that corresponds to the dimension
-            else:
-                raise RuntimeError("Could not locate 'time' axis in your time series."
-                                   " Make sure to either label appropriate axis of your time series 'time' or specify"
-                                   "time axis explicitely as a non-negative integer '")
-
+        time_axis_index = get_axis_index(self.time_series, axis_name='time')
         filtered_array = buttfilt(self.time_series,
-                                       self.freq_range, self.samplerate, self.filt_type,
-                                       self.order,axis=self.time_axis)
+                                  self.freq_range, self.time_series['samplerate'].data, self.filt_type,
+                                  self.order, axis=time_axis_index)
 
-
-        filtered_time_series = xray.DataArray(
+        coords_dict = {coord_name: DataArray(coord.copy()) for coord_name, coord in self.time_series.coords.items()}
+        coords_dict['samplerate'] = self.time_series['samplerate']
+        dims = [dim_name for dim_name in self.time_series.dims]
+        filtered_time_series = TimeSeriesX(
             filtered_array,
-            coords = [xray.DataArray(coord.copy()) for coord_name, coord in self.time_series.coords.items() ]
+            dims=dims,
+            coords=coords_dict
         )
 
-        filtered_time_series.attrs['samplerate'] = self.time_series.attrs['samplerate']
-
-        filtered_time_series = TimeSeriesXray(filtered_time_series)
+        # filtered_time_series.attrs['samplerate'] = self.time_series.attrs['samplerate']
+        filtered_time_series.attrs['samplerate'] = self.time_series['samplerate']
+        filtered_time_series = TimeSeriesX(filtered_time_series)
 
         return filtered_time_series
-
-
-

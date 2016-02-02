@@ -1,10 +1,10 @@
 __author__ = 'm'
 
-
 import numpy as np
 import xray
-from ptsa.data.common import TypeValTuple, PropertiedObject, get_axis_index
-from ptsa.data.TimeSeriesXray import TimeSeriesXray
+
+from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.common import TypeValTuple, PropertiedObject
 
 
 class MonopolarToBipolarMapper(PropertiedObject):
@@ -63,7 +63,7 @@ class MonopolarToBipolarMapper(PropertiedObject):
 
         ts.attrs = self.time_series.attrs.copy()
 
-        return TimeSeriesXray(data=ts)
+        return TimeSeriesX(data=ts)
 
 
 
@@ -95,7 +95,7 @@ if __name__=='__main__':
 
     print 'bipolar_pairs=', bipolar_pairs
 
-    from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
+    from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
 
     time_series_reader = TimeSeriesEEGReader(events=base_events, start_time=0.0,
                                              end_time=1.6, buffer_time=1.0, keep_buffer=True)
