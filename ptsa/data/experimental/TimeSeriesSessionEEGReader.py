@@ -1,20 +1,18 @@
 __author__ = 'm'
 
-from ptsa.data.RawBinWrapperXray import RawBinWrapperXray
-
 from collections import OrderedDict
 
 import numpy as np
-
 import xray
 
+from ptsa.data.RawBinWrapperXray import RawBinWrapperXray
+from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import TypeValTuple, PropertiedObject
-from ptsa.data.TimeSeriesXray import TimeSeriesXray
 
 class TimeSeriesSessionEEGReader(PropertiedObject):
     _descriptors = [
         TypeValTuple('samplerate', float, -1.0),
-        TypeValTuple('channels', list, []),
+        TypeValTuple('channels', np.ndarray, np.array([],dtype='|S3')),
         TypeValTuple('offset', int, 0),
         TypeValTuple('event_data_only', bool, False),
         TypeValTuple('default_buffer', float, 10.0),
@@ -130,7 +128,7 @@ class TimeSeriesSessionEEGReader(PropertiedObject):
 
         print 'last_time_stamp=',eegdata_xray['time'][-1]
 
-        return TimeSeriesXray(eegdata_xray)
+        return TimeSeriesX(eegdata_xray)
 
     def read(self, session_list=[]):
 
@@ -159,7 +157,7 @@ if __name__ == '__main__':
 
     base_events = base_events[base_events.type == 'WORD']
 
-    from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
+    from ptsa.data.experimental.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
 
     time_series_reader = TimeSeriesSessionEEGReader(events=base_events, channels=['002', '003', '004', '005'])
 

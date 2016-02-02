@@ -1,18 +1,14 @@
 __author__ = 'm'
 
-from os.path import *
-from ptsa.data.common import pathlib
-from ptsa.data.RawBinWrapperXray import RawBinWrapperXray
-from ptsa.data.TimeSeriesXray import TimeSeriesXray
-from ptsa.data.events import Events
-import numpy as np
-
-import xray
-
 import time
 
+import numpy as np
+import xray
+
+from ptsa.data.RawBinWrapperXray import RawBinWrapperXray
+from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import TypeValTuple, PropertiedObject
-from ptsa.data.common.path_utils import find_dir_prefix
+from ptsa.data.events import Events
 
 
 class TimeSeriesEEGReader(PropertiedObject):
@@ -191,7 +187,7 @@ class TimeSeriesEEGReader(PropertiedObject):
             if number_of_buffer_samples > 0:
                 eventdata_xray = eventdata_xray[:,:,number_of_buffer_samples:-number_of_buffer_samples]
 
-        return TimeSeriesXray(eventdata_xray)
+        return TimeSeriesX(eventdata_xray)
 
 
 
@@ -298,7 +294,7 @@ if __name__=='__main__':
     print 'master_event_0=',master_event_0
     print 'master_event__1=',master_event__1
 
-    from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
+    from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
 
     time_series_reader = TimeSeriesEEGReader(events=master_event_0, start_time=0.0,
                                              end_time=1.6, buffer_time=1.0, keep_buffer=True)

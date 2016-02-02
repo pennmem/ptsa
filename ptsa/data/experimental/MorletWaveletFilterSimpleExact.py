@@ -1,17 +1,15 @@
 __author__ = 'm'
 
+import time
+
 import numpy as np
 import xray
-from ptsa.data.common import TypeValTuple, PropertiedObject, get_axis_index
+from scipy.fftpack import fft, ifft
 
 from ptsa.data.TimeSeriesX import TimeSeriesX
-import scipy
-from scipy.signal import resample
+from ptsa.data.common import TypeValTuple, PropertiedObject
+from ptsa.wavelet import morlet_multi
 
-from ptsa.wavelet import phase_pow_multi
-import time
-from ptsa.wavelet import morlet_multi, next_pow2
-from scipy.fftpack import fft, ifft
 
 class MorletWaveletFilterSimple(PropertiedObject):
     _descriptors = [
@@ -345,7 +343,7 @@ def test_1_old():
 
     print 'bipolar_pairs=', bipolar_pairs
 
-    from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
+    from ptsa.data.experimental.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
 
     # time_series_reader = TimeSeriesSessionEEGReader(events=base_events, channels = ['002', '003', '004', '005'])
     time_series_reader = TimeSeriesSessionEEGReader(events=base_events, channels=monopolar_channels)
@@ -368,7 +366,7 @@ def test_1_old():
     print 'wavelet total time = ', time.time() - wavelet_start
     # return pow_wavelet
 
-    from ptsa.data.filters.EventDataChopper import EventDataChopper
+    from ptsa.data.experimental.EventDataChopper import EventDataChopper
     edcw = EventDataChopper(events=base_events, event_duration=1.6, buffer=1.0,
                             data_dict={base_events[0].eegfile: pow_wavelet})
 
@@ -414,7 +412,7 @@ def test_2_old():
 
     print 'bipolar_pairs=', bipolar_pairs
 
-    from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
+    from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
 
     time_series_reader = TimeSeriesEEGReader(events=base_events, start_time=0.0,
                                              end_time=1.6, buffer_time=1.0, keep_buffer=True)
@@ -476,7 +474,7 @@ def test_2():
 
     print 'bipolar_pairs=', bipolar_pairs
 
-    from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
+    from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
 
     time_series_reader = TimeSeriesEEGReader(events=base_events, start_time=0.0,
                                              end_time=1.6, buffer_time=1.0, keep_buffer=True)
@@ -541,10 +539,6 @@ def test_1():
     session_reader = EEGReader(session_dataroot=dataroot, channels=monopolar_channels)
     session_eegs = session_reader.read()
 
-
-    from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
-
-
     wavelet_start = time.time()
 
     wf = MorletWaveletFilterSimple(time_series=session_eegs,
@@ -559,8 +553,8 @@ def test_1():
     # return pow_wavelet
 
 
-    from ptsa.data.filters import SessionEventDataChopper
-    sedc = SessionEventDataChopper(events=base_events, session_data=pow_wavelet,start_time=0.0,end_time=1.6,buffer_time=1.0)
+    from ptsa.data.filters import EventDataChopper
+    sedc = EventDataChopper(events=base_events, session_data=pow_wavelet, start_time=0.0, end_time=1.6, buffer_time=1.0)
     chopped_wavelets = sedc.filter()
 
     print 'total time = ', time.time() - start
