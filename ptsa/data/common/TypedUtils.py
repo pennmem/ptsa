@@ -15,6 +15,7 @@ class TypedProperty(object):
         return getattr(instance,self.name,self.default)
 
     def __set__(self,instance,value):
+        # print 'self.name=',self.name,' val=',value
         if not isinstance(value,self.type):
             raise TypeError(" Property %s must be a %s" %(self.name[1:],self.type))
         setattr(instance,self.name,value)
@@ -51,7 +52,9 @@ class PropertiedObject(object):
                 attr = getattr(self,option_name)
                 setattr(self,option_name,val)
             except AttributeError:
-                print 'Option: '+ option_name+' is not allowed'
+                s = 'Option: '+ option_name+' is not allowed'
+                print s
+                raise AttributeError(s)
 
 
 
