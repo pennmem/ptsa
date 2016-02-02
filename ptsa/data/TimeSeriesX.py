@@ -1,17 +1,18 @@
 __author__ = 'm'
 
-import xray
-
-
+try:
+    from xarray import __version__, DataArray
+except ImportError:
+    from xray import __version__, DataArray
 
 import numpy as np
 from ptsa.data.common import get_axis_index
 from scipy.signal import resample
 
 
-major_x_ver, minor_x_ver, build_x_ver = map(int, xray.__version__.split('.'))
+major_x_ver, minor_x_ver, build_x_ver = map(int, __version__.split('.'))
 
-class TimeSeriesX(xray.DataArray):
+class TimeSeriesX(DataArray):
 
     def __init__(self,data,
                  coords=None,
@@ -24,23 +25,23 @@ class TimeSeriesX(xray.DataArray):
 
         if major_x_ver==0 and minor_x_ver<7:
 
-            xray.DataArray.__init__(self,data=data,
-                                    coords=coords,
-                                    dims=dims,
-                                    name=name,
-                                    attrs=attrs,
-                                    encoding=encoding,
-                                    # fastpath=fastpath
-                                    )
+            DataArray.__init__(self, data=data,
+                               coords=coords,
+                               dims=dims,
+                               name=name,
+                               attrs=attrs,
+                               encoding=encoding,
+                               # fastpath=fastpath
+                               )
         else:
-            xray.DataArray.__init__(self,data=data,
-                                    coords=coords,
-                                    dims=dims,
-                                    name=name,
-                                    attrs=attrs,
-                                    encoding=encoding,
-                                    fastpath=fastpath
-                                    )
+            DataArray.__init__(self, data=data,
+                               coords=coords,
+                               dims=dims,
+                               name=name,
+                               attrs=attrs,
+                               encoding=encoding,
+                               fastpath=fastpath
+                               )
 
         # self.time_axis_index = get_axis_index(self,axis_name='time')
         # self._time_axis_index = None
@@ -107,7 +108,7 @@ class TimeSeriesX(xray.DataArray):
         filtered_time_series = TimeSeriesX(
             filtered_array,
             dims = [dim_name for dim_name in self.dims],
-            coords = {coord_name:xray.DataArray(coord.copy()) for coord_name, coord in self.coords.items() }
+            coords = {coord_name: DataArray(coord.copy()) for coord_name, coord in self.coords.items()}
         )
 
 
@@ -163,7 +164,7 @@ class TimeSeriesX(xray.DataArray):
                 coords.append((dim_name,new_time_axis))
 
 
-        resampled_time_series = xray.DataArray(resampled_array, coords=coords)
+        resampled_time_series = DataArray(resampled_array, coords=coords)
         resampled_time_series['samplerate'] = resampled_rate
         resampled_time_series.attrs['samplerate'] = resampled_rate
 
