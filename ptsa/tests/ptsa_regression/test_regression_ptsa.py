@@ -12,12 +12,12 @@ from ptsa.data.readers import PTSAEventReader
 from ptsa.data.readers.EEGReader import EEGReader
 from ptsa.data.filters.ButterworthFilter import ButterworthFiler
 from ptsa.data.filters.ResampleFilter import ResampleFilter
-from ptsa.data.filters.MorletWaveletFilterSimple import MorletWaveletFilterSimple
+from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
 
 
-# class TestEEGRead(unittest.TestCase, EventReadersTestBase):
-class TestEEGRead(unittest.TestCase):
-    # class TestEEGRead(unittest.TestCase):
+# class test_regression_ptsa(unittest.TestCase, EventReadersTestBase):
+class test_regression_ptsa(unittest.TestCase):
+    # class test_regression_ptsa(unittest.TestCase):
     def setUp(self):
         self.event_range = range(0, 30, 1)
         self.e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
@@ -211,12 +211,12 @@ class TestEEGRead(unittest.TestCase):
         eegs = self.eegs[:, :, :-1]
         base_eegs = self.base_eegs
 
-        wf = MorletWaveletFilterSimple(time_series=base_eegs,
-                           freqs=np.logspace(np.log10(3), np.log10(180), 8),
-                           output='power',
-                           frequency_dim_pos=0,
+        wf = MorletWaveletFilter(time_series=base_eegs,
+                                 freqs=np.logspace(np.log10(3), np.log10(180), 8),
+                                 output='power',
+                                 frequency_dim_pos=0,
 
-                           )
+                                 )
 
         pow_wavelet, phase_wavelet = wf.filter()
         print 'pow_wavelet=',pow_wavelet
@@ -267,7 +267,7 @@ if __name__ == '__main__':
     # if __name__=='__main__':
     #     test_suite = unittest.TestSuite()
     #     # test_suite.addTest(unittest.makeSuite(TestEventRead))
-    #     test_suite.addTest(unittest.makeSuite(TestEEGRead))
+    #     test_suite.addTest(unittest.makeSuite(test_regression_ptsa))
     #
     #     # test_suite.addTest(unittest.makeSuite(test_morlet_multi))
     #
