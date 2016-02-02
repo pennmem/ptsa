@@ -12,7 +12,7 @@ class BaseEventReader(PropertiedObject):
     Reader class that reads event file and returns them as np.recarray
     '''
     _descriptors = [
-        TypeValTuple('event_file', str, ''),
+        TypeValTuple('filename', str, ''),
         TypeValTuple('eliminate_events_with_no_eeg', bool, True),
         TypeValTuple('use_reref_eeg', bool, False),
     ]
@@ -22,7 +22,7 @@ class BaseEventReader(PropertiedObject):
 
         :param kwds:allowed values are:
         -------------------------------------
-        :param event_file {str} -  path to event file
+        :param filename {str} -  path to event file
         :param eliminate_events_with_no_eeg {bool} - flag to automatically remov events woth no eegfile (default True)
         :param use_reref_eeg {bool} -  flag that changes eegfiles to point reref eegs. Default is False and eegs read
         are nonreref ones
@@ -58,7 +58,7 @@ class BaseEventReader(PropertiedObject):
         from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
 
         # extract matlab matrix (called 'events') as numpy structured array
-        struct_array = read_single_matlab_matrix_as_numpy_structured_array(self._event_file, 'events')
+        struct_array = read_single_matlab_matrix_as_numpy_structured_array(self._filename, 'events')
 
         evs = struct_array
 
@@ -92,7 +92,7 @@ class BaseEventReader(PropertiedObject):
         data on rhino database is mounted as /data
         copying rhino /data structure to another directory will cause all files in data have new prefix
         example:
-        self._event_file='/Users/m/data/events/R1060M_events.mat'
+        self._filename='/Users/m/data/events/R1060M_events.mat'
         prefix is '/Users/m'
         we use find_dir_prefix to determine prefix based on common_root in path with and without prefix
 
@@ -100,12 +100,12 @@ class BaseEventReader(PropertiedObject):
         '''
 
         common_root = 'data/events'
-        prefix = find_dir_prefix(path_with_prefix=self._event_file, common_root=common_root)
+        prefix = find_dir_prefix(path_with_prefix=self._filename, common_root=common_root)
         if not prefix:
             raise RuntimeError(
-                'Could not determine prefix from: %s using common_root: %s' % (self._event_file, common_root))
+                'Could not determine prefix from: %s using common_root: %s' % (self._filename, common_root))
 
-        return find_dir_prefix(self._event_file, 'data/events')
+        return find_dir_prefix(self._filename, 'data/events')
 
 
 if __name__ == '__main__':
@@ -115,7 +115,7 @@ if __name__ == '__main__':
 
     # e_path ='/Users/m/data/events/RAM_FR1/R1056M_events.mat'
 
-    e_reader = BaseEventReader(event_file=e_path, eliminate_events_with_no_eeg=True)
+    e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
 
 
     events = e_reader.read()

@@ -1,9 +1,11 @@
-from ptsa.data.common import TypeValTuple, PropertiedObject
-import numpy as np
+import os
 import struct
 from collections import namedtuple
-import os
-import xray
+
+import numpy as np
+
+from ptsa.data.common import TypeValTuple, PropertiedObject
+from ptsa.data.common.xr import DataArray
 
 
 class BaseRawReader(PropertiedObject):
@@ -12,7 +14,8 @@ class BaseRawReader(PropertiedObject):
     '''
     _descriptors = [
         TypeValTuple('dataroot', str, ''),
-        TypeValTuple('channels', list, []),
+        # TypeValTuple('channels', list, []),
+        TypeValTuple('channels', np.ndarray, np.array([],dtype='|S3')),
         TypeValTuple('start_offsets', np.ndarray, np.array([0], dtype=np.int)),
         TypeValTuple('read_size', int, -1),
     ]
@@ -81,7 +84,7 @@ class BaseRawReader(PropertiedObject):
         if self.read_size < 0:
             self.read_size = self.get_file_size() / self.file_format.data_size
 
-        # allocate for data
+        # allocate space for data
         eventdata = np.empty((len(self.channels), len(self.start_offsets), self.read_size),
                              dtype=np.float) * np.nan
 
@@ -107,7 +110,7 @@ class BaseRawReader(PropertiedObject):
                 data = efile.read(int(self.file_format.data_size * self.read_size))
 
                 # convert from string to array based on the format
-                # hard codes little endian
+                # hard-codes little endian
                 data = np.array(struct.unpack(
                     '<' + str(len(data) / self.file_format.data_size) +
                     self.file_format.format_string, data))
@@ -124,16 +127,16 @@ class BaseRawReader(PropertiedObject):
         # multiply by the gain
         eventdata *= self.params_dict['gain']
 
-        eventdata = xray.DataArray(eventdata,
-                                   dims=['channels', 'start_offsets', 'offsets'],
-                                   coords={
+        eventdata = DataArray(eventdata,
+                              dims=['channels', 'start_offsets', 'offsets'],
+                              coords={
                                        'channels': self.channels,
                                        'start_offsets': self.start_offsets.copy(),
                                        'offsets': np.arange(self.read_size),
                                        'samplerate': self.params_dict['samplerate']
 
                                    }
-                                   )
+                              )
 
         # eventdata['start_offsets'] = self.start_offsets.copy()
         # eventdata['channels'] = self.channels
@@ -148,7 +151,7 @@ if __name__ == '__main__':
     e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
     from ptsa.data.readers import BaseEventReader
 
-    base_e_reader = BaseEventReader(event_file=e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
+    base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
 
     base_events = base_e_reader.read()
 
@@ -160,13 +163,13 @@ if __name__ == '__main__':
     from ptsa.data.readers.TalReader import TalReader
 
     tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
-    tal_reader = TalReader(tal_filename=tal_path)
+    tal_reader = TalReader(filename=tal_path)
     monopolar_channels = tal_reader.get_monopolar_channels()
     bipolar_pairs = tal_reader.get_bipolar_pairs()
 
     print 'bipolar_pairs=', bipolar_pairs
 
-    from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
+    from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
 
     time_series_reader = TimeSeriesEEGReader(events=base_events, start_time=0.0,
                                              end_time=1.6, buffer_time=1.0, keep_buffer=True)
@@ -185,7 +188,7 @@ if __name__ == '__main__':
 
 
 
-    from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
+    from ptsa.data.experimental.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
 
     time_series_reader = TimeSeriesSessionEEGReader(events=base_events[0:1], channels=monopolar_channels)
 

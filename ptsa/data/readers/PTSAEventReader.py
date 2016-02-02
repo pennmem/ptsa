@@ -26,7 +26,7 @@ class PTSAEventReader(BaseEventReader):
 
         :param kwds:allowed values are:
         -------------------------------------
-        :param event_file {str} -  path to event file
+        :param filename {str} -  path to event file
         :param eliminate_events_with_no_eeg {bool} - flag to automatically remov events woth no eegfile (default True)
         :param use_reref_eeg {bool} -  flag that changes eegfiles to point reref eegs. Default is False and eegs read
         are nonreref ones
@@ -100,10 +100,9 @@ if __name__ == '__main__':
     # e_path = join('/Volumes/rhino_root', 'data/events/RAM_FR1/R1060M_events.mat')
     e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
 
-    e_reader = PTSAEventReader(event_file=e_path, eliminate_events_with_no_eeg=True)
+    e_reader = PTSAEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
 
     events = e_reader.read()
 
-    events = e_reader.get_output()
 
     print events
