@@ -10,9 +10,11 @@ from ptsa.data.events import Events
 from ptsa.data.readers import BaseEventReader
 from ptsa.data.readers import PTSAEventReader
 from ptsa.data.readers.EEGReader import EEGReader
+from ptsa.data.readers.TalReader import TalReader
 from ptsa.data.filters.ButterworthFilter import ButterworthFiler
 from ptsa.data.filters.ResampleFilter import ResampleFilter
 from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
+
 
 
 # class test_regression_ptsa(unittest.TestCase, EventReadersTestBase):
@@ -21,6 +23,12 @@ class test_regression_ptsa(unittest.TestCase):
     def setUp(self):
         self.event_range = range(0, 30, 1)
         self.e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
+        self.tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
+
+        # --------------- TAL STRUCTS READ
+        tal_reader = TalReader(filename=self.tal_path)
+        self.monopolar_channels = tal_reader.get_monopolar_channels()
+
 
         # ---------------- ORIG PTSA -------------------
         e_reader = PTSAEventReader(filename=self.e_path, eliminate_events_with_no_eeg=True)
@@ -60,6 +68,50 @@ class test_regression_ptsa(unittest.TestCase):
                                start_time=0.0, end_time=1.6, buffer_time=1.0)
 
         self.base_eegs = eeg_reader.read()
+
+
+    def test_full_session_read(self):
+
+
+        # ---------------- ORIG PTSA -------------------
+        e_reader = PTSAEventReader(filename=self.e_path, eliminate_events_with_no_eeg=True)
+        events = e_reader.read()
+
+        events = events[events.type == 'WORD']
+
+        events = events[self.event_range]
+
+        ev_order = np.argsort(events, order=('session','list','mstime'))
+        self.events = events[ev_order]
+
+        # self.events = self.read_ptsa_events()
+
+        # in case fancy indexing looses Eventness of events we need to create Events object explicitely
+        if not isinstance(self.events, Events):
+            self.events = Events(self.events)
+
+        eegs = self.events.get_data(channels=self.monopolar_channels, start_time=0.0, end_time=1.6,
+                                         buffer_time=1.0, eoffset='eegoffset', keep_buffer=True,
+                                         eoffset_in_time=False, verbose=True)
+
+        # removing last entry to match dimensions - ptsa adds one extra element at the end of time axis
+        eegs = eegs[:,:,:-1]
+        eeg_reader = EEGReader(events=self.base_events, channels=self.monopolar_channels,
+                               start_time=0.0, end_time=1.6, buffer_time=1.0)
+
+
+        base_eegs = eeg_reader.read()
+
+        assert_array_equal(x=eegs, y=base_eegs)
+        # checking if axes match
+        assert_array_equal(np.array(eegs['channels']['name']), base_eegs['channels'].data)
+        assert_array_almost_equal(np.array(eegs['time']), base_eegs['time'].data, decimal=3)
+        assert_array_equal(np.array(eegs['events']['item']), base_eegs['events'].data['item'])
+
+
+        print
+
+
 
     def test_ptsa_event_ordering(self):
         # --------------------OROG PTSA - one raw bin wrapper per event
@@ -253,7 +305,7 @@ class test_regression_ptsa(unittest.TestCase):
         print 'pow_wavelet=',pow_wavelet
 
         from ptsa.wavelet import phase_pow_multi
-        pow_wavelet_ptsa_orig = phase_pow_multi(freqs=np.logspace(np.log10(3), np.log10(180), 8), _dat=eegs,to_return='power')
+        pow_wavelet_ptsa_orig = phase_pow_multi(freqs=np.logspace(np.log10(3), np.log10(180), 8), dat=eegs,to_return='power')
         print 'pow_wavelets_ptsa_orig=',pow_wavelet_ptsa_orig
 
 
