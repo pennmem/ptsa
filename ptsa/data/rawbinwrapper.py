@@ -75,10 +75,10 @@ class RawBinWrapper(BaseWrapper):
             names.append(self._chanfiles[i].split('.')[-1])
         self._channel_info = np.rec.fromarrays(
             [numbers, names], names='number,name')
-                    
+
     def _get_dataroot(self, channel=None):
         # Same dataroot for all channels:
-        return self._dataroot            
+        return self._dataroot
 
     def _get_samplerate(self, channel=None):
         # Same samplerate for all channels:
@@ -88,7 +88,7 @@ class RawBinWrapper(BaseWrapper):
         # get the dimensions of the data
         # must open a valid channel and seek to the end
         if channel is not None:
-            raise NotImplementedError('Channel cannot be specified!') 
+            raise NotImplementedError('Channel cannot be specified!')
         if self._nsamples is None:
             chanfile = open(self._chanfiles[0], 'rb')
             chanfile.seek(0, 2)
@@ -106,7 +106,7 @@ class RawBinWrapper(BaseWrapper):
 
     def _get_channel_info(self):
         return self._channel_info
-    
+
     def _get_annotations(self):
         # no annotations for raw data
         annot = None
@@ -126,7 +126,7 @@ class RawBinWrapper(BaseWrapper):
                     'No params file found in '+str(dataroot)+
                     '. Params files must be in the same directory ' +
                     'as the EEG data and must be named \".params\" ' +
-                    'or \"params.txt\".')        
+                    'or \"params.txt\".')
         # we have a file, so open and process it
         for line in open(param_file,'r').readlines():
             # get the columns by splitting
@@ -139,7 +139,7 @@ class RawBinWrapper(BaseWrapper):
                 'The following fields were supplied:\n' + str(params.keys()))
         # return the params dict
         return params
-        
+
 
     def _load_data(self,channels,event_offsets,dur_samp,offset_samp):
         """
@@ -162,8 +162,6 @@ class RawBinWrapper(BaseWrapper):
                 eegfname = self._dataroot+'.'+self._channel_info['name'][channel]
 
 
-            filesize = os.path.getsize(eegfname)
-            # eegfname = self._dataroot+'.'+self._channel_info['name'][c]
 
             # eegfname = '{}.{:0>3}'.format(self._dataroot,channel)
             if os.path.isfile(eegfname):
@@ -180,14 +178,8 @@ class RawBinWrapper(BaseWrapper):
                 thetime = offset_samp + ev_offset
                 efile.seek(self._nbytes * thetime,0)
 
-                if dur_samp>=0:
-
-                    # read the data
-                    data = efile.read(int(self._nbytes * dur_samp))
-                else:
-
-                    #reading til the end of file
-                    data = efile.read(filesize)
+                # read the data
+                data = efile.read(int(self._nbytes * dur_samp))
 
                 # convert from string to array based on the format
                 # hard codes little endian
