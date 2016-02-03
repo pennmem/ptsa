@@ -61,6 +61,37 @@ class test_regression_ptsa(unittest.TestCase):
 
         self.base_eegs = eeg_reader.read()
 
+    def test_ptsa_event_ordering(self):
+        # --------------------OROG PTSA - one raw bin wrapper per event
+        e_reader = PTSAEventReader(filename=self.e_path, eliminate_events_with_no_eeg=True, use_groupped_rawbinwrapper=False)
+        events = e_reader.read()
+
+        events = events[events.type == 'WORD']
+
+        events = events[self.event_range]
+
+        if not isinstance(events, Events):
+            events = Events(events)
+
+        eegs = events.get_data(channels=['002', '003'], start_time=0.0, end_time=1.6,
+                                         buffer_time=1.0, eoffset='eegoffset', keep_buffer=True,
+                                         eoffset_in_time=False, verbose=True)
+
+        eegs = eegs[:,:,:-1]
+        words_ptsa = eegs['events']['item']
+        print 'words_ptsa=',words_ptsa
+
+
+        words = self.base_eegs['events'].data['item']
+
+
+        print words
+
+        assert_array_equal(np.array(words_ptsa),words)
+
+        assert_array_equal(eegs, self.base_eegs)
+
+
     def test_eeg_read(self):
         base_eegs = self.base_eegs.remove_buffer(duration=1.0)
         eegs = self.eegs.remove_buffer(duration=1.0)
