@@ -78,9 +78,11 @@ class EventDataChopper(PropertiedObject):
         samplerate=samplerate,
         offset_time_array=offset_time_array)
 
-        event_time_axis = np.linspace(-self.buffer_time + self.start_time,
-                                      self.end_time + self.buffer_time ,
-                                      event_chunk_size)
+        # event_time_axis = np.linspace(-self.buffer_time + self.start_time,
+        #                               self.end_time + self.buffer_time ,
+        #                               event_chunk_size)
+
+        event_time_axis = np.arange(event_chunk_size)*(1.0/samplerate)+(self.start_time-self.buffer_time)
 
         data_list = []
 
