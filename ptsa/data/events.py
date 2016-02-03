@@ -287,9 +287,15 @@ class Events(np.recarray):
         srate = eventdata.samplerate
         events = np.concatenate(events).view(self.__class__)
 
-        eventdata_xray = xray.DataArray(eventdata.base.base.base, coords=[cdim,events,tdim], dims=['channels','events','time'])
-        eventdata_xray  = eventdata_xray [:,event_indices_restore_sort_order_array ,:]
-        eventdata_xray.attrs['samplerate'] = srate
+
+        ##################### OK
+        # eventdata_xray = xray.DataArray(eventdata.base.base.base, coords=[cdim,events,tdim], dims=['channels','events','time'])
+        # eventdata_xray  = eventdata_xray [:,event_indices_restore_sort_order_array ,:]
+        # eventdata_xray.attrs['samplerate'] = srate
+        ##################### OK
+
+
+        # eventdata_raw_array_sorted = eventdata.base.base.base[:,event_indices_restore_sort_order_array ,: ]
 
         #ORIGINAL CODE
         # eventdata = TimeSeries(eventdata,
@@ -301,9 +307,19 @@ class Events(np.recarray):
         #                        'time', srate,
         #                        dims=[cdim,Dim(events,'events'),tdim])
 
-        # correct ordering of events axis and of the raw data
-        eventdata = TimeSeries(eventdata_xray.values,'time', srate,dims=[cdim,Dim(eventdata_xray.coords['events'].values,'events'),tdim])
+        ##################### OK
+        # # correct ordering of events axis and of the raw data
+        # eventdata = TimeSeries(eventdata_xray.values,'time', srate,dims=[cdim,Dim(eventdata_xray.coords['events'].values,'events'),tdim])
+        ##################### OK
 
+
+        # NON XRAY CODE
+
+        # eventdata_raw_array_sorted = eventdata_xray
+        # eventdata_raw_array_sorted = eventdata.base.base.base
+        eventdata_raw_array_sorted = eventdata.base.base.base[:,event_indices_restore_sort_order_array ,: ]
+        events_sorted = events[event_indices_restore_sort_order_array]
+        eventdata = TimeSeries(eventdata_raw_array_sorted, 'time', srate,dims=[cdim,Dim(events_sorted,'events'),tdim])
 
 
         end = time.time()
