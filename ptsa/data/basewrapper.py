@@ -274,19 +274,26 @@ class BaseWrapper(object):
         # we need to use xray arrays to do fancy indexing
         if channels.dtype.char=='S':
             try:
-                from xray import DataArray
-                self.channels_xray = DataArray(self.channels.number,coords=[self.channels.name],dims=['name'])
-                self.channels_xray = self.channels_xray.loc[channels]
+                selector_array = [np.where(self.channels.name == channel)[0][0] for channel in channels]
 
-                self.channels_xray=np.rec.fromarrays([self.channels_xray.values,self.channels_xray.coords['name'].values],names='number,name')
+                selected_channels = self.channels[selector_array]
+
+                # from xray import DataArray
+                # self.channels_xray = DataArray(self.channels.number,coords=[self.channels.name],dims=['name'])
+                # self.channels_xray = self.channels_xray.loc[channels]
+                #
+                # self.channels_xray=np.rec.fromarrays([self.channels_xray.values,self.channels_xray.coords['name'].values],names='number,name')
 
             except ImportError:
                 pass
 
-
-            dims = [Dim(self.channels_xray,'channels'),  # can index into channels
+            dims = [Dim(selected_channels,'channels'),  # can index into channels
                     Dim(events,'events'),
                     Dim(time_range,'time')]
+
+            # dims = [Dim(self.channels_xray,'channels'),  # can index into channels
+            #         Dim(events,'events'),
+            #         Dim(time_range,'time')]
 
         else:
 
