@@ -1,20 +1,19 @@
 __author__ = 'm'
 
 try:
-    from xarray import __version__, DataArray
+    from xarray import __version__, DataArray, concat
 except ImportError:
-    from xray import __version__, DataArray
+    from xray import __version__, DataArray, concat
 
 import numpy as np
 from ptsa.data.common import get_axis_index
 from scipy.signal import resample
 
-
 major_x_ver, minor_x_ver, build_x_ver = map(int, __version__.split('.'))
 
-class TimeSeriesX(DataArray):
 
-    def __init__(self,data,
+class TimeSeriesX(DataArray):
+    def __init__(self, data,
                  coords=None,
                  dims=None,
                  name=None,
@@ -23,7 +22,7 @@ class TimeSeriesX(DataArray):
                  fastpath=False
                  ):
 
-        if major_x_ver==0 and minor_x_ver<7:
+        if major_x_ver == 0 and minor_x_ver < 7:
 
             DataArray.__init__(self, data=data,
                                coords=coords,
@@ -51,20 +50,20 @@ class TimeSeriesX(DataArray):
 
         # self['time_axis_index']= get_axis_index(self,axis_name='time')
         print self.dims
-        self['time_axis_index']= -1
+        self['time_axis_index'] = -1
         # self['a'] = 10.0
 
 
-        for i , dim_name in enumerate(self.dims):
+        for i, dim_name in enumerate(self.dims):
             if dim_name == 'time':
                 self['time_axis_index'] = i
                 break
 
 
-    # def __init__(self,**kwds):
-    #     xray.DataArray.__init__(self,**kwds)
-        # self.a=10
-        # self.time_axis_index=get_axis_index(self,axis_name='time')
+                # def __init__(self,**kwds):
+                #     xray.DataArray.__init__(self,**kwds)
+                # self.a=10
+                # self.time_axis_index=get_axis_index(self,axis_name='time')
 
     # @property
     # def time_axis_index(self):
@@ -72,7 +71,7 @@ class TimeSeriesX(DataArray):
     #         self._time_axis_index = get_axis_index(self,axis_name='time')
     #     return self._time_axis_index
 
-    def filtered(self,freq_range,filt_type='stop',order=4):
+    def filtered(self, freq_range, filt_type='stop', order=4):
         """
         Filter the data using a Butterworth filter and return a new
         TimeSeries instance.
@@ -92,10 +91,10 @@ class TimeSeriesX(DataArray):
             A TimeSeries instance with the filtered data.
         """
 
-        from ptsa.filt  import buttfilt
-        time_axis_index = get_axis_index(self,axis_name='time')
+        from ptsa.filt import buttfilt
+        time_axis_index = get_axis_index(self, axis_name='time')
         filtered_array = buttfilt(self.values, freq_range, self['samplerate'].data, filt_type,
-                                       order,axis=time_axis_index)
+                                  order, axis=time_axis_index)
 
         # filtered_array = buttfilt(self.values, freq_range, self.attrs['samplerate'], filt_type,
         #                                order,axis=time_axis_index)
@@ -107,15 +106,13 @@ class TimeSeriesX(DataArray):
 
         filtered_time_series = TimeSeriesX(
             filtered_array,
-            dims = [dim_name for dim_name in self.dims],
-            coords = {coord_name: DataArray(coord.copy()) for coord_name, coord in self.coords.items()}
+            dims=[dim_name for dim_name in self.dims],
+            coords={coord_name: DataArray(coord.copy()) for coord_name, coord in self.coords.items()}
         )
-
 
         filtered_time_series.attrs = self.attrs.copy()
 
         return filtered_time_series
-
 
     def resampled(self, resampled_rate, window=None,
                   loop_axis=None, num_mp_procs=0, pad_to_pow2=False):
@@ -132,12 +129,11 @@ class TimeSeriesX(DataArray):
         # use ResampleFilter instead
         samplerate = self.attrs['samplerate']
 
-
         time_axis = self['time']
         # time_axis_index = get_axis_index(self,axis_name='time')
         time_axis_index = self['time_axis_index'].data
         time_axis_length = np.squeeze(time_axis.shape)
-        new_length = int(np.round(time_axis_length*resampled_rate/float(samplerate)))
+        new_length = int(np.round(time_axis_length * resampled_rate / float(samplerate)))
 
         # print new_length
 
@@ -149,27 +145,24 @@ class TimeSeriesX(DataArray):
         # time_axis = self['time']
 
         resampled_array, new_time_axis = resample(self.values,
-                                         new_length, t=time_axis.values,
-                                         axis=time_axis_index, window=window)
-
+                                                  new_length, t=time_axis.values,
+                                                  axis=time_axis_index, window=window)
 
         # print new_time_axis
 
-        #constructing axes
+        # constructing axes
         coords = []
         for i, dim_name in enumerate(self.dims):
             if i != time_axis_index:
                 coords.append(self.coords[dim_name].copy())
             else:
-                coords.append((dim_name,new_time_axis))
-
+                coords.append((dim_name, new_time_axis))
 
         resampled_time_series = DataArray(resampled_array, coords=coords)
         resampled_time_series['samplerate'] = resampled_rate
         resampled_time_series.attrs['samplerate'] = resampled_rate
 
         return resampled_time_series
-
 
     def remove_buffer(self, duration):
         """
@@ -195,11 +188,32 @@ class TimeSeriesX(DataArray):
             beginning and/or end.
         """
 
-        number_of_buffer_samples =  int(np.ceil(duration*self.attrs['samplerate']))
+        number_of_buffer_samples = int(np.ceil(duration * self.attrs['samplerate']))
         if number_of_buffer_samples > 0:
-            return  self[:,:,number_of_buffer_samples:-number_of_buffer_samples]
+            return self[:, :, number_of_buffer_samples:-number_of_buffer_samples]
 
+    def add_mirror_buffer(self, duration):
+        """
+        Adds mirrors data at both ends of the time series (up to specified length/duration) and appends
+        such buffers at both ends of the series. The new series total time duration is:
+        original duration + 2*duration
+        :param duration: {float} buffer duration in seconde
+        :return: {TimeSeriesX} new time series with added mirrored buffer
+        """
+        samplerate = self['samplerate'].data
+        nb_ = int(np.ceil(samplerate * duration))
 
+        data = self.data
+
+        mirrored_data = np.concatenate(
+            (data[..., 1:nb_ + 1][..., ::-1], data, data[..., -nb_ - 1:-1][..., ::-1]),
+            axis=-1)
+
+        start_time = self['time'].data[0] - duration
+        t_axis = (np.arange(mirrored_data.shape[-1]) * (1.0 / samplerate)) + start_time
+        coords = [self.coords[dim_name] for dim_name in self.dims[:-1]] +[t_axis]
+
+        return TimeSeriesX(mirrored_data, dims=self.dims, coords=coords)
 
     def baseline_corrected(self, base_range):
         """
@@ -223,11 +237,10 @@ class TimeSeriesX(DataArray):
 
         return self - self.isel(time=(self['time'] >= base_range[0]) & (self['time'] <= base_range[1])).mean(dim='time')
 
-if __name__=='__main__':
 
+if __name__ == '__main__':
     # ts = xray.DataArray(data=np.arange(20).reshape(4,5),dims=['channels','time'])
     ts = TimeSeriesX(data=np.arange(20).reshape(4, 5), dims=['channels', 'time'])
     ts2 = TimeSeriesX(data=np.arange(20).reshape(4, 5), dims=['channels', 'time'])
 
-
-    print ts+ts2
+    print ts + ts2
