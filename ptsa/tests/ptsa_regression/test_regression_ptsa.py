@@ -69,6 +69,16 @@ class test_regression_ptsa(unittest.TestCase):
 
         self.base_eegs = eeg_reader.read()
 
+    def test_time_series_mirror(self):
+        duration = 1.0
+        mirrored_buf_eegs = self.base_eegs.add_mirror_buffer(duration=duration)
+
+        samplerate = self.base_eegs['samplerate'].data
+        nb_ = int(np.ceil(samplerate * duration))
+
+        assert_array_equal(self.base_eegs[...,1:nb_+1], mirrored_buf_eegs[...,:nb_][...,::-1])
+        print mirrored_buf_eegs
+
 
     def test_full_session_read(self):
 
