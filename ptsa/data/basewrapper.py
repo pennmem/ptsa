@@ -274,6 +274,7 @@ class BaseWrapper(object):
         # we need to use xray arrays to do fancy indexing
         if channels.dtype.char=='S':
             try:
+                # perhaps we should vectorize it...
                 selector_array = [np.where(self.channels.name == channel)[0][0] for channel in channels]
 
                 selected_channels = self.channels[selector_array]
