@@ -58,7 +58,7 @@ class BaseEventReader(PropertiedObject):
         from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
 
         # extract matlab matrix (called 'events') as numpy structured array
-        struct_array = read_single_matlab_matrix_as_numpy_structured_array(self._filename, 'events')
+        struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.filename, 'events')
 
         evs = struct_array
 
