@@ -16,7 +16,8 @@ class MorletWaveletFilter(PropertiedObject):
         TypeValTuple('freqs', np.ndarray, np.array([], dtype=np.float)),
         TypeValTuple('width', int, 5),
         TypeValTuple('output', str, ''),
-        TypeValTuple('frequency_dim_pos', int, -2)
+        TypeValTuple('frequency_dim_pos', int, -2),
+        TypeValTuple('verbose', bool, True),
     ]
 
     def __init__(self, time_series, **kwds):
@@ -213,8 +214,9 @@ class MorletWaveletFilter(PropertiedObject):
                 self.store(out_idx_tuple,wavelet_pow_array,pow_array_single)
                 self.store(out_idx_tuple,wavelet_phase_array,phase_array_single)
 
+        if self.verbose:
+            print 'total time wavelet loop: ', time.time() - wavelet_start
 
-        print 'total time wavelet loop: ', time.time() - wavelet_start
         return self.build_output_arrays(wavelet_pow_array, wavelet_phase_array,time_axis)
 
 
@@ -358,11 +360,9 @@ def test_2():
 
     from ptsa.data.readers import BaseEventReader
 
-    base_e_reader = BaseEventReader(event_file=e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
+    base_e_reader = BaseEventReader(filename=e_path)
 
-    base_e_reader.read()
-
-    base_events = base_e_reader.get_output()
+    base_events = base_e_reader.read()
 
     base_events = base_events[base_events.type == 'WORD']
 
@@ -371,7 +371,7 @@ def test_2():
 
     from ptsa.data.readers.TalReader import TalReader
     tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
-    tal_reader = TalReader(tal_filename=tal_path)
+    tal_reader = TalReader(filename=tal_path)
     monopolar_channels = tal_reader.get_monopolar_channels()
     bipolar_pairs = tal_reader.get_bipolar_pairs()
 
@@ -392,7 +392,6 @@ def test_2():
                              freqs=np.logspace(np.log10(3), np.log10(180), 2),
                              # freqs=np.array([3.]),
                        output='power',
-                             # resamplerate=50.0
                              )
 
     pow_wavelet, phase_wavelet = wf.filter()
@@ -420,7 +419,7 @@ def test_1():
 
     from ptsa.data.readers import BaseEventReader
 
-    base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
+    base_e_reader = BaseEventReader(filename=e_path)
 
     base_events = base_e_reader.read()
 
