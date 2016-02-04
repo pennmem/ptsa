@@ -190,7 +190,7 @@ class TimeSeriesX(DataArray):
 
         number_of_buffer_samples = int(np.ceil(duration * self.attrs['samplerate']))
         if number_of_buffer_samples > 0:
-            return self[:, :, number_of_buffer_samples:-number_of_buffer_samples]
+            return self[..., number_of_buffer_samples:-number_of_buffer_samples]
 
     def add_mirror_buffer(self, duration):
         """
