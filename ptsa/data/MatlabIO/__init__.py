@@ -132,9 +132,10 @@ def get_np_format(record_array, verbose=False):
         else:
 
             try:
-                arrays = map(lambda dtype_: np.ndarray(shape=(1), dtype=dtype_), formats)
-
-                common_format = np.dtype(np.common_type(*arrays)).str
+                # arrays = map(lambda dtype_: np.ndarray(shape=(1), dtype=dtype_), formats)
+                #
+                # common_format = np.dtype(np.common_type(*arrays)).str
+                common_format = np.find_common_type([],formats)
                 names_list.append(_fieldname)
                 format_list.append(common_format)
 
