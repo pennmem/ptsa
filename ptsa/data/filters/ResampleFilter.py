@@ -32,6 +32,12 @@ class ResampleFilter(PropertiedObject):
     #     # self.round_to_original_timepoints = None
     #     # setattr(self,'round_to_original_timepoints',None)
 
+    def ___syntax_helper(self):
+        self.time_series = None
+        self.resamplerate = None
+        self.time_axis_index = None
+        self.round_to_original_timepoints = None
+
 
     def __init__(self,**kwds):
         '''
