@@ -55,9 +55,14 @@ class EEGReader(PropertiedObject):
         p_reader = ParamsReader(dataroot=dataroot)
         params = p_reader.read()
         samplerate = params['samplerate']
-        start_offset = int(np.ceil(self.start_time * samplerate))
-        end_offset = int(np.ceil(self.end_time * samplerate))
-        buffer_offset = int(np.ceil(self.buffer_time * samplerate))
+        # start_offset = int(np.ceil(self.start_time * samplerate))
+        # end_offset = int(np.ceil(self.end_time * samplerate))
+        # buffer_offset = int(np.ceil(self.buffer_time * samplerate))
+
+        start_offset = int(np.round(self.start_time * samplerate))
+        end_offset = int(np.round(self.end_time * samplerate))
+        buffer_offset = int(np.round(self.buffer_time * samplerate))
+
         return start_offset, end_offset, buffer_offset
 
     def __create_base_raw_readers(self):
@@ -77,7 +82,8 @@ class EEGReader(PropertiedObject):
 
             read_size = end_offset - start_offset + 2 * buffer_offset
 
-            start_offsets = events_with_matched_dataroot.eegoffset - start_offset - buffer_offset
+            # start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
+            start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
 
             brr = BaseRawReader(dataroot=dataroot, channels=self.channels, start_offsets=start_offsets,read_size=read_size)
             raw_readers.append(brr)
