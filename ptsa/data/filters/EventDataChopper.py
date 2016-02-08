@@ -70,7 +70,8 @@ class EventDataChopper(PropertiedObject):
         :return: timeSeriesX object with chopped session
         """
         evs = self.events[self.events.eegfile == self.session_data.attrs['dataroot']]
-        samplerate = self.session_data.attrs['samplerate']
+        # samplerate = self.session_data.attrs['samplerate']
+        samplerate = float(self.session_data['samplerate'])
         offset_time_array = self.session_data['offsets']
 
         event_chunk_size, start_point_shift = self.get_event_chunk_size_and_start_point_shift(
@@ -102,7 +103,8 @@ class EventDataChopper(PropertiedObject):
         ev_concat_data = xr.concat(data_list, dim='events')
         ev_concat_data['events'] = evs
 
-        ev_concat_data.attrs['samplerate'] = samplerate
+        # ev_concat_data.attrs['samplerate'] = samplerate
+        ev_concat_data['samplerate'] = samplerate
         ev_concat_data.attrs['start_time'] = self.start_time
         ev_concat_data.attrs['end_time'] = self.end_time
         ev_concat_data.attrs['buffer_time'] = self.buffer_time
