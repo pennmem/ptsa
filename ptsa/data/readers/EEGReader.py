@@ -6,13 +6,14 @@ from ptsa.data.readers.ParamsReader import ParamsReader
 from ptsa.data.readers.BaseRawReader import BaseRawReader
 import time
 
+
 class EEGReader(PropertiedObject):
     '''
     Reader that knows how to read binary eeg files. It can read chunks of the eeg signal based on events input
     or can read entire session if session_dataroot is non empty
     '''
     _descriptors = [
-        TypeValTuple('channels', np.ndarray, np.array([],dtype='|S3')),
+        TypeValTuple('channels', np.ndarray, np.array([], dtype='|S3')),
         TypeValTuple('start_time', float, 0.0),
         TypeValTuple('end_time', float, 0.0),
         TypeValTuple('buffer_time', float, 0.0),
@@ -36,8 +37,8 @@ class EEGReader(PropertiedObject):
         '''
         self.init_attrs(kwds)
 
-        assert self.start_time <= self.end_time , \
-            'start_time (%s) must be less or equal to end_time(%s) '%(self.start_time,self.end_time)
+        assert self.start_time <= self.end_time, \
+            'start_time (%s) must be less or equal to end_time(%s) ' % (self.start_time, self.end_time)
 
         self.read_fcn = self.read_events_data
         if self.session_dataroot:
@@ -85,7 +86,8 @@ class EEGReader(PropertiedObject):
             # start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
             start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
 
-            brr = BaseRawReader(dataroot=dataroot, channels=self.channels, start_offsets=start_offsets,read_size=read_size)
+            brr = BaseRawReader(dataroot=dataroot, channels=self.channels, start_offsets=start_offsets,
+                                read_size=read_size)
             raw_readers.append(brr)
 
             original_dataroots.append(dataroot)
@@ -102,35 +104,36 @@ class EEGReader(PropertiedObject):
         brr = BaseRawReader(dataroot=self.session_dataroot, channels=self.channels)
         session_array = brr.read()
 
-        offsets_axis=session_array['offsets']
+        offsets_axis = session_array['offsets']
         number_of_time_points = offsets_axis.shape[0]
-        physical_time_array = np.arange(number_of_time_points)*(1.0/session_array.attrs['samplerate'])
+        # samplerate = session_array['samplerate'].data
+        samplerate = float(session_array['samplerate'])
+        physical_time_array = np.arange(number_of_time_points) * (1.0 / samplerate)
 
         cdim = self.channels
         edim = session_array['start_offsets']
         # tdim = np.rec.fromarrays([physical_time_array,offsets_axis.values], names='time,eegoffset')
 
         # session_array = session_array.rename({'start_offsets':'events','offsets':'time'})
-        session_array = session_array.rename({'start_offsets':'events'})
+        session_array = session_array.rename({'start_offsets': 'events'})
 
         session_time_series = TimeSeriesX(session_array.values,
-                                          dims=['channels','events','time'],
+                                          dims=['channels', 'events', 'time'],
                                           coords={
-                            'channels':session_array['channels'],
-                            'events':session_array['events'],
-                            'time':physical_time_array,
-                            'offsets':('time',session_array['offsets']),
-                            'samplerate':session_array['samplerate']
-                            # 'dataroot':self.session_dataroot
+                                              'channels': session_array['channels'],
+                                              'events': session_array['events'],
+                                              'time': physical_time_array,
+                                              'offsets': ('time', session_array['offsets']),
+                                              'samplerate': session_array['samplerate']
+                                              # 'dataroot':self.session_dataroot
 
-                            }
+                                          }
                                           )
         session_time_series.attrs = session_array.attrs.copy()
-        session_time_series.attrs['dataroot']=self.session_dataroot
+        session_time_series.attrs['dataroot'] = self.session_dataroot
         # session_time_series['time']=tdim
 
         return session_time_series
-
 
     def read_events_data(self):
         '''
@@ -141,15 +144,14 @@ class EEGReader(PropertiedObject):
 
         raw_readers, original_dataroots = self.__create_base_raw_readers()
 
-        #used for restoring original order of the events
+        # used for restoring original order of the events
         ordered_indices = np.arange(len(evs))
         event_indices_list = []
         events = []
 
         ts_array_list = []
 
-        for s,(raw_reader,dataroot) in enumerate(zip(raw_readers,original_dataroots)):
-
+        for s, (raw_reader, dataroot) in enumerate(zip(raw_readers, original_dataroots)):
             ind = np.atleast_1d(evs.eegfile == dataroot)
             event_indices_list.append(ordered_indices[ind])
             events.append(evs[ind])
@@ -162,10 +164,12 @@ class EEGReader(PropertiedObject):
         event_indices_restore_sort_order_array = event_indices_array.argsort()
 
         start_extend_time = time.time()
-        #new code
-        eventdata = xr.concat(ts_array_list,dim='start_offsets')
+        # new code
+        eventdata = xr.concat(ts_array_list, dim='start_offsets')
         # tdim = np.linspace(self.start_time-self.buffer_time,self.end_time+self.buffer_time,num=eventdata['offsets'].shape[0])
-        tdim = np.arange(eventdata.shape[-1])*(1.0/eventdata.attrs['samplerate'])+(self.start_time-self.buffer_time)
+        # samplerate=eventdata.attrs['samplerate'].data
+        samplerate = float(eventdata['samplerate'])
+        tdim = np.arange(eventdata.shape[-1]) * (1.0 / samplerate) + (self.start_time - self.buffer_time)
         cdim = eventdata['channels']
         edim = np.concatenate(events).view(np.recarray).copy()
 
@@ -173,18 +177,18 @@ class EEGReader(PropertiedObject):
         # constructing TimeSeries Object
         # eventdata = TimeSeriesX(eventdata.data,dims=['channels','events','time'],coords=[cdim,edim,tdim])
         eventdata = TimeSeriesX(eventdata.data,
-                                dims=['channels','events','time'],
-                                coords={ 'channels':cdim,
-                                            'events':edim,
-                                            'time':tdim,
-                                            'samplerate':eventdata['samplerate']
-                                            }
+                                dims=['channels', 'events', 'time'],
+                                coords={'channels': cdim,
+                                        'events': edim,
+                                        'time': tdim,
+                                        'samplerate': samplerate
+                                        }
                                 )
 
         eventdata.attrs = attrs
 
         # restoring original order of the events
-        eventdata = eventdata[:,event_indices_restore_sort_order_array,:]
+        eventdata = eventdata[:, event_indices_restore_sort_order_array, :]
 
         return eventdata
 
@@ -196,13 +200,11 @@ class EEGReader(PropertiedObject):
         return self.read_fcn()
 
 
-if __name__=='__main__':
-
-
+if __name__ == '__main__':
     e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
     from ptsa.data.readers import BaseEventReader
 
-    base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
+    base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
 
     base_events = base_e_reader.read()
 
@@ -212,11 +214,11 @@ if __name__=='__main__':
     # base_events = base_events[base_events.eegfile == base_events[0].eegfile]
 
     from ptsa.data.readers.TalReader import TalReader
+
     tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
     tal_reader = TalReader(filename=tal_path)
     monopolar_channels = tal_reader.get_monopolar_channels()
     bipolar_pairs = tal_reader.get_bipolar_pairs()
-
 
     # s = time.time()
     # from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
@@ -230,11 +232,13 @@ if __name__=='__main__':
     # #
     s = time.time()
     from ptsa.data.readers import EEGReader
-    eeg_reader = EEGReader(events=base_events, channels=monopolar_channels, start_time=0.0,end_time=1.6, buffer_time=1.0)
+
+    eeg_reader = EEGReader(events=base_events, channels=monopolar_channels, start_time=0.0, end_time=1.6,
+                           buffer_time=1.0)
 
     n_eegs = eeg_reader.read()
 
-    print 'EEGReader total read time = ',time.time()-s
+    print 'EEGReader total read time = ', time.time() - s
     # #
     # #
     # s = time.time()
@@ -254,6 +258,6 @@ if __name__=='__main__':
     # print
 
     from ptsa.data.filters import ButterworthFiler
+
     bf = ButterworthFiler(time_series=n_eegs)
     n_eggs_bf = bf.filter()
-
