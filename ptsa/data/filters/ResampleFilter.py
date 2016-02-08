@@ -63,7 +63,8 @@ class ResampleFilter(PropertiedObject):
         resamples time series
         :return:resampled time series with sampling frequency set to resamplerate
         '''
-        samplerate = self.time_series.attrs['samplerate']
+        # samplerate = self.time_series.attrs['samplerate']
+        samplerate = float(self.time_series['samplerate'])
 
 
         time_axis_length = np.squeeze(self.time_series.coords['time'].shape)
@@ -112,7 +113,7 @@ class ResampleFilter(PropertiedObject):
 
 
         filtered_time_series = xray.DataArray(filtered_array, coords=coords)
-        filtered_time_series.attrs['samplerate'] = self.resamplerate
+        # filtered_time_series.attrs['samplerate'] = self.resamplerate
         filtered_time_series['samplerate'] = self.resamplerate
         return TimeSeriesX(filtered_time_series)
 
