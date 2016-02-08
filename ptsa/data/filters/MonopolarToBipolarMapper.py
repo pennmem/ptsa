@@ -1,10 +1,16 @@
 __author__ = 'm'
 
+
 import numpy as np
 import ptsa.data.common.xr as xr
 
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import TypeValTuple, PropertiedObject
+
+
+import sys
+from memory_profiler import profile
+import time
 
 
 class MonopolarToBipolarMapper(PropertiedObject):
@@ -78,21 +84,23 @@ class MonopolarToBipolarMapper(PropertiedObject):
                           dims=dims_bp,
                           coords=coords_bp)
 
+        ts['samplerate'] = self.time_series['samplerate']
+
         ts.attrs = self.time_series.attrs.copy()
 
         return TimeSeriesX(data=ts)
 
-
-if __name__ == '__main__':
+@profile
+def main_fcn():
     e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
 
     from ptsa.data.readers import BaseEventReader
 
-    base_e_reader = BaseEventReader(event_file=e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
+    base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
 
-    base_e_reader.read()
+    base_events = base_e_reader.read()
 
-    base_events = base_e_reader.get_output()
+
 
     base_events = base_events[base_events.type == 'WORD']
 
@@ -102,19 +110,40 @@ if __name__ == '__main__':
     from ptsa.data.readers.TalReader import TalReader
 
     tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
-    tal_reader = TalReader(tal_filename=tal_path)
+    tal_reader = TalReader(filename=tal_path)
     monopolar_channels = tal_reader.get_monopolar_channels()
     bipolar_pairs = tal_reader.get_bipolar_pairs()
 
     print 'bipolar_pairs=', bipolar_pairs
 
-    from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
 
-    time_series_reader = TimeSeriesEEGReader(events=base_events, start_time=0.0,
-                                             end_time=1.6, buffer_time=1.0, keep_buffer=True)
+    from ptsa.data.readers.EEGReader import EEGReader
+    time.sleep(10)
 
-    base_eegs = time_series_reader.read(channels=monopolar_channels)
+    time_series_reader = EEGReader(events=base_events, channels=monopolar_channels, start_time=0.0,
+                                             end_time=1.6, buffer_time=1.0)
 
+
+    base_eegs = time_series_reader.read()
+
+    time.sleep(10)
     m2b = MonopolarToBipolarMapper(time_series=base_eegs, bipolar_pairs=bipolar_pairs)
-    m2b.filter()
+    ts_filtered = m2b.filter()
+
+    time.sleep(10)
+    del base_eegs
+    del time_series_reader
+
+    print
+
     pass
+
+@profile
+def new_fcn():
+
+    time.sleep(20)
+    print new_fcn
+
+if __name__ == '__main__':
+    main_fcn()
+    new_fcn()
