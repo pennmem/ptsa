@@ -93,7 +93,7 @@ class TimeSeriesX(DataArray):
 
         from ptsa.filt import buttfilt
         time_axis_index = get_axis_index(self, axis_name='time')
-        filtered_array = buttfilt(self.values, freq_range, self['samplerate'].data, filt_type,
+        filtered_array = buttfilt(self.values, freq_range, float(self['samplerate']), filt_type,
                                   order, axis=time_axis_index)
 
         # filtered_array = buttfilt(self.values, freq_range, self.attrs['samplerate'], filt_type,
@@ -127,7 +127,8 @@ class TimeSeriesX(DataArray):
         '''
 
         # use ResampleFilter instead
-        samplerate = self.attrs['samplerate']
+        # samplerate = self.attrs['samplerate']
+        samplerate = float(self['samplerate'])
 
         time_axis = self['time']
         # time_axis_index = get_axis_index(self,axis_name='time')
@@ -160,7 +161,7 @@ class TimeSeriesX(DataArray):
 
         resampled_time_series = DataArray(resampled_array, coords=coords)
         resampled_time_series['samplerate'] = resampled_rate
-        resampled_time_series.attrs['samplerate'] = resampled_rate
+        # resampled_time_series.attrs['samplerate'] = resampled_rate
 
         return resampled_time_series
 
@@ -188,7 +189,8 @@ class TimeSeriesX(DataArray):
             beginning and/or end.
         """
 
-        number_of_buffer_samples = int(np.ceil(duration * self.attrs['samplerate']))
+        # number_of_buffer_samples = int(np.ceil(duration * self.attrs['samplerate']))
+        number_of_buffer_samples = int(np.ceil(duration * float(self['samplerate'])))
         if number_of_buffer_samples > 0:
             return self[..., number_of_buffer_samples:-number_of_buffer_samples]
 
@@ -200,7 +202,7 @@ class TimeSeriesX(DataArray):
         :param duration: {float} buffer duration in seconde
         :return: {TimeSeriesX} new time series with added mirrored buffer
         """
-        samplerate = self['samplerate'].data
+        samplerate = float(self['samplerate'])
         nb_ = int(np.ceil(samplerate * duration))
 
         data = self.data
