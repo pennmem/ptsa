@@ -90,7 +90,8 @@ class MorletWaveletFilter(PropertiedObject):
 
     def construct_output_array(self,array, dims, coords):
         out_array =  xray.DataArray(array, dims=dims,coords=coords)
-        out_array.attrs['samplerate'] = self.time_series.attrs['samplerate']
+        # out_array.attrs['samplerate'] = self.time_series.attrs['samplerate']
+        out_array['samplerate'] = self.time_series['samplerate']
         return out_array
 
     def build_output_arrays(self,wavelet_pow_array, wavelet_phase_array, time_axis):
@@ -142,7 +143,8 @@ class MorletWaveletFilter(PropertiedObject):
 
     def compute_wavelet_ffts(self):
 
-        samplerate = self.time_series.attrs['samplerate']
+        # samplerate = self.time_series.attrs['samplerate']
+        samplerate = float(self.time_series['samplerate'])
 
         freqs = np.atleast_1d(self.freqs)
 
