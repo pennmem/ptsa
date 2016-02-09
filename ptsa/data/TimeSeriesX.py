@@ -42,35 +42,6 @@ class TimeSeriesX(DataArray):
                                fastpath=fastpath
                                )
 
-        # self.time_axis_index = get_axis_index(self,axis_name='time')
-        # self._time_axis_index = None
-        # tai = get_axis_index(self,axis_name='time')
-
-        # self['time_axis_index'] = get_axis_index(self,axis_name='time')
-
-        # self['time_axis_index']= get_axis_index(self,axis_name='time')
-        # print self.dims
-        self['time_axis_index'] = -1
-        # self['a'] = 10.0
-
-
-        for i, dim_name in enumerate(self.dims):
-            if dim_name == 'time':
-                self['time_axis_index'] = i
-                break
-
-
-                # def __init__(self,**kwds):
-                #     xray.DataArray.__init__(self,**kwds)
-                # self.a=10
-                # self.time_axis_index=get_axis_index(self,axis_name='time')
-
-    # @property
-    # def time_axis_index(self):
-    #     if self._time_axis_index is not None:
-    #         self._time_axis_index = get_axis_index(self,axis_name='time')
-    #     return self._time_axis_index
-
     def filtered(self, freq_range, filt_type='stop', order=4):
         """
         Filter the data using a Butterworth filter and return a new
@@ -96,18 +67,18 @@ class TimeSeriesX(DataArray):
         filtered_array = buttfilt(self.values, freq_range, float(self['samplerate']), filt_type,
                                   order, axis=time_axis_index)
 
-        # filtered_array = buttfilt(self.values, freq_range, self.attrs['samplerate'], filt_type,
-        #                                order,axis=time_axis_index)
 
-        # filtered_time_series = xray.DataArray(
-        #     filtered_array,
-        #     coords = [xray.DataArray(coord.copy()) for coord_name, coord in self.coords.items() ]
-        # )
+        coords={}
+
+
+        for coord_name, coord in self.coords.items():
+            if len(coord.shape):
+                coords[coord_name] = coord
 
         filtered_time_series = TimeSeriesX(
             filtered_array,
             dims=[dim_name for dim_name in self.dims],
-            coords={coord_name: DataArray(coord.copy()) for coord_name, coord in self.coords.items()}
+            coords=coords
         )
 
         filtered_time_series.attrs = self.attrs.copy()
@@ -132,36 +103,34 @@ class TimeSeriesX(DataArray):
 
         time_axis = self['time']
         # time_axis_index = get_axis_index(self,axis_name='time')
-        time_axis_index = self['time_axis_index'].data
+        time_axis_index = self.get_axis_num('time')
+
         time_axis_length = np.squeeze(time_axis.shape)
         new_length = int(np.round(time_axis_length * resampled_rate / float(samplerate)))
-
-        # print new_length
-
-        # if self.time_axis_index<0:
-        #     self.time_axis_index = get_axis_index(data_array=self, axis_name='time')
-
-        # time_axis = self.coords[ self.dims[self.time_axis_index] ]
-
-        # time_axis = self['time']
 
         resampled_array, new_time_axis = resample(self.values,
                                                   new_length, t=time_axis.values,
                                                   axis=time_axis_index, window=window)
 
-        # print new_time_axis
 
         # constructing axes
-        coords = []
-        for i, dim_name in enumerate(self.dims):
-            if i != time_axis_index:
-                coords.append(self.coords[dim_name].copy())
+        coords = {}
+        time_axis_name = self.dims[time_axis_index]
+        for coord_name, coord in self.coords.items():
+            if len(coord.shape):
+                coords[coord_name] = coord
             else:
-                coords.append((dim_name, new_time_axis))
+                continue
 
-        resampled_time_series = DataArray(resampled_array, coords=coords)
-        resampled_time_series['samplerate'] = resampled_rate
-        # resampled_time_series.attrs['samplerate'] = resampled_rate
+            if coord_name == time_axis_name:
+                coords[coord_name] = new_time_axis
+
+
+        resampled_time_series = TimeSeriesX(
+            resampled_array,
+            dims=[dim_name for dim_name in self.dims],
+            coords=coords
+        )
 
         return resampled_time_series
 
