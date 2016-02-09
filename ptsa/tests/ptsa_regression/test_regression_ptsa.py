@@ -14,7 +14,8 @@ from ptsa.data.readers.TalReader import TalReader
 from ptsa.data.filters.ButterworthFilter import ButterworthFiler
 from ptsa.data.filters.ResampleFilter import ResampleFilter
 from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
-
+from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.timeseries import TimeSeries
 
 
 # class test_regression_ptsa(unittest.TestCase, EventReadersTestBase):
@@ -46,8 +47,13 @@ class test_regression_ptsa(unittest.TestCase):
         # in case fancy indexing looses Eventness of events we need to create Events object explicitely
         if not isinstance(self.events, Events):
             self.events = Events(self.events)
-        self.eegs = self.events.get_data(channels=['002', '003'], start_time=0.0, end_time=1.6,
-                                         buffer_time=1.0, eoffset='eegoffset', keep_buffer=True,
+
+        start_time = 0.0
+        end_time = 1.6
+        buffer_time = 1.0
+
+        self.eegs = self.events.get_data(channels=['002', '003'], start_time=start_time, end_time=end_time,
+                                         buffer_time=buffer_time, eoffset='eegoffset', keep_buffer=True,
                                          eoffset_in_time=False, verbose=True)
 
         # ---------------- NEW STYLE PTSA -------------------
@@ -65,7 +71,7 @@ class test_regression_ptsa(unittest.TestCase):
         # self.base_events = self.read_base_events()
 
         eeg_reader = EEGReader(events=self.base_events, channels=np.array(['002', '003']),
-                               start_time=0.0, end_time=1.6, buffer_time=1.0)
+                               start_time=start_time, end_time=end_time, buffer_time=buffer_time)
 
         self.base_eegs = eeg_reader.read()
 
@@ -73,7 +79,7 @@ class test_regression_ptsa(unittest.TestCase):
         duration = 1.0
         mirrored_buf_eegs = self.base_eegs.add_mirror_buffer(duration=duration)
 
-        samplerate = self.base_eegs['samplerate'].data
+        samplerate = float(self.base_eegs['samplerate'])
         nb_ = int(np.ceil(samplerate * duration))
 
         assert_array_equal(self.base_eegs[...,1:nb_+1], mirrored_buf_eegs[...,:nb_][...,::-1])
@@ -155,11 +161,18 @@ class test_regression_ptsa(unittest.TestCase):
 
 
     def test_eeg_read(self):
-        base_eegs = self.base_eegs.remove_buffer(duration=1.0)
-        eegs = self.eegs.remove_buffer(duration=1.0)
+        # base_eegs = self.base_eegs.remove_buffer(duration=1.0)
+        # eegs = self.eegs.remove_buffer(duration=1.0)
+
+        base_eegs = self.base_eegs
+        eegs = self.eegs
+
 
         # orig ptsa returns extra stime point that's why eegs[:,:,:-1]
+        # assert_array_equal(eegs[:, :, :-1], base_eegs.data)
         assert_array_equal(eegs[:, :, :-1], base_eegs.data)
+
+
 
     def test_eeg_read_keep_buffer(self):
         # orig ptsa returns extra stime point that's why eegs[:,:,:-1]
@@ -187,6 +200,18 @@ class test_regression_ptsa(unittest.TestCase):
         assert_array_equal(eegs_filtered[:, :, :], base_eegs_filtered.data)
         assert_array_equal(eegs_filtered[:, :, :], base_eegs_filtered_direct.data)
 
+        # checking filtering of just single time series
+        eegs_0_0 = eegs[0,0]
+        eegs_filtered_0_0 = eegs_0_0.filtered([58, 62], filt_type='stop', order=4)
+
+        assert_array_equal(eegs_filtered_0_0, eegs_filtered[0,0])
+
+        base_eegs[0:1,0:1].filtered([58, 62], filt_type='stop', order=4)
+
+
+
+
+
     def test_eeg_resample(self):
         # # orig ptsa returns extra stime point that's why eegs[:,:,:-1]
         eegs = self.eegs[:, :, :-1]
@@ -207,6 +232,7 @@ class test_regression_ptsa(unittest.TestCase):
         assert_array_equal(eegs_resampled, base_eegs_resampled.data)
         assert_array_equal(eegs_resampled, base_eegs_resampled_direct.data)
 
+        base_eegs_resampled_direct_0_0 = base_eegs[0,0].resampled(resampled_rate=100.0)
 
     def test_ts_convenience_fcns(self):
         # # orig ptsa returns extra stime point that's why eegs[:,:,:-1]
@@ -352,6 +378,42 @@ class test_regression_ptsa(unittest.TestCase):
             np.zeros_like(pow_wavelet[freq_num,:,:,500:-500]))
 
 
+    def test_wavelets_synthetic_data(self):
+        samplerate = 1000.
+        frequency = 180.0
+        modulation_frequency = 80.0
+
+        duration = 1.0
+
+        n_points = int(np.round(duration*samplerate))
+        x = np.arange(n_points, dtype=np.float)
+        y = np.sin(x*(2*np.pi*frequency/n_points))
+        y_mod = np.sin(x*(2*np.pi*frequency/n_points))* np.sin(x*(2*np.pi*modulation_frequency/n_points))
+
+        ts = TimeSeriesX(y, dims=['time'], coords=[x])
+        ts['samplerate']=samplerate
+        ts.attrs['samplerate'] = samplerate
+
+        frequencies = [ 10.0, 30.0, 50.0, 80., 120., 180., 250.0 , 300.0, 500.]
+        for frequency  in frequencies:
+            wf = MorletWaveletFilter(time_series=ts,
+                                     freqs=np.array([frequency]),
+                                     output='both',
+                                     frequency_dim_pos=0,
+                                     verbose=True
+                                     )
+
+            pow_wavelet, phase_wavelet = wf.filter()
+
+            from ptsa.wavelet import phase_pow_multi
+
+
+            pow_wavelet_ptsa_orig = phase_pow_multi(freqs=[frequency],samplerates=samplerate, dat=ts.data,to_return='power')
+
+
+            assert_array_almost_equal(
+                (pow_wavelet_ptsa_orig-pow_wavelet)/pow_wavelet_ptsa_orig,
+                np.zeros_like(pow_wavelet), decimal=6)
 
 
 if __name__ == '__main__':
