@@ -236,28 +236,30 @@ if __name__ == '__main__':
     eeg_reader = EEGReader(events=base_events, channels=monopolar_channels, start_time=0.0, end_time=1.6,
                            buffer_time=1.0)
 
+    print 'BEFORE EEG'
     n_eegs = eeg_reader.read()
 
+    print 'AFTER EEG'
     print 'EEGReader total read time = ', time.time() - s
+    # # #
+    # # #
+    # # s = time.time()
+    # # dataroot=base_events[0].eegfile
+    # # from ptsa.data.readers import EEGReader
+    # # session_reader = EEGReader(session_dataroot=dataroot, channels=monopolar_channels)
+    # # session_eegs = session_reader.read()
+    # # print 'SESSION EEGReader total read time = ',time.time()-s
     # #
+    # # s = time.time()
+    # # from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
     # #
-    # s = time.time()
-    # dataroot=base_events[0].eegfile
-    # from ptsa.data.readers import EEGReader
-    # session_reader = EEGReader(session_dataroot=dataroot, channels=monopolar_channels)
-    # session_eegs = session_reader.read()
-    # print 'SESSION EEGReader total read time = ',time.time()-s
+    # # time_series_reader = TimeSeriesSessionEEGReader(events=base_events[0:1], channels=monopolar_channels)
+    # #
+    # # ts = time_series_reader.read()
+    # # print 'TimeSeriesSessionEEGReader total read time = ',time.time()-s
+    # # print
     #
-    # s = time.time()
-    # from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
+    # from ptsa.data.filters import ButterworthFiler
     #
-    # time_series_reader = TimeSeriesSessionEEGReader(events=base_events[0:1], channels=monopolar_channels)
-    #
-    # ts = time_series_reader.read()
-    # print 'TimeSeriesSessionEEGReader total read time = ',time.time()-s
-    # print
-
-    from ptsa.data.filters import ButterworthFiler
-
-    bf = ButterworthFiler(time_series=n_eegs)
-    n_eggs_bf = bf.filter()
+    # bf = ButterworthFiler(time_series=n_eegs)
+    # n_eggs_bf = bf.filter()
