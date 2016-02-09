@@ -6,7 +6,7 @@ from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import get_axis_index
 
 
-class ButterworthFiler(PropertiedObject):
+class ButterworthFilter(PropertiedObject):
     '''
     Applies Butterworth filter to a time series
     '''
@@ -57,12 +57,32 @@ class ButterworthFiler(PropertiedObject):
 
         return filtered_time_series
 
+
+
+from scipy.signal import butter, lfilter
+
+
+def butter_bandpass(lowcut, highcut, fs, order=4):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    # b, a = butter(order, [low, high], btype='band')
+    b, a = butter(order, [low, high], btype='stop')
+    return b, a
+
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=4):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+
+
 if __name__ == '__main__':
     import numpy as np
     from numpy.testing import *
     from ptsa.data.readers import BaseEventReader
     from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
-    from ptsa.data.filters.ButterworthFilter import ButterworthFiler
+    from ptsa.data.filters.ButterworthFilter import ButterworthFilter
     from ptsa.data.readers.TalReader import TalReader
     from ptsa.data.readers import EEGReader
     from ptsa.data.readers import PTSAEventReader
@@ -101,3 +121,31 @@ if __name__ == '__main__':
 
     bw_base_eegs = base_eegs.filtered(freq_range=[58.,62.], filt_type='stop', order=4)
 
+
+    b, a = butter_bandpass(58.,62.,float(base_eegs['samplerate']), 4)
+    y_in = base_eegs[0,0,:].data
+
+
+    y_out = butter_bandpass_filter(y_in, 58.,62.,float(base_eegs['samplerate']), 4)
+
+
+    import matplotlib;
+    matplotlib.use('Qt4Agg')
+
+
+    import matplotlib.pyplot as plt
+    plt.get_current_fig_manager().window.raise_()
+
+
+    # plt.plot(np.arange(y_in.shape[0]),y_in,'k')
+    plt.plot(np.arange(y_out.shape[0]),y_out,'r--')
+
+
+    plt.plot(np.arange(bw_base_eegs[0,0,:].shape[0]),bw_base_eegs[0,0,:],'b--')
+
+
+
+
+    plt.show()
+
+    print

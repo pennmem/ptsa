@@ -5,12 +5,13 @@ from numpy.testing import *
 import unittest
 from ptsa.data.readers import BaseEventReader
 from ptsa.data.readers.EEGReader import EEGReader
-from ptsa.data.filters.ButterworthFilter import ButterworthFiler
+from ptsa.data.filters.ButterworthFilter import ButterworthFilter
 from ptsa.data.filters.ResampleFilter import ResampleFilter
 from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
 from ptsa.data.readers.TalReader import TalReader
 from ptsa.data.readers import EEGReader
 from ptsa.data.filters import EventDataChopper
+
 
 class test_filters(unittest.TestCase):
 
@@ -49,6 +50,7 @@ class test_filters(unittest.TestCase):
 
         session_reader = EEGReader(session_dataroot=dataroot, channels=self.monopolar_channels)
         self.session_eegs = session_reader.read()
+
 
     def test_event_data_chopper(self):
 
@@ -99,6 +101,8 @@ class test_filters(unittest.TestCase):
                                 np.zeros_like(pow_wavelet),
                                 decimal=5
                                 )
+
+
 
 
 if __name__ == '__main__':

@@ -11,7 +11,7 @@ from ptsa.data.readers import BaseEventReader
 from ptsa.data.readers import PTSAEventReader
 from ptsa.data.readers.EEGReader import EEGReader
 from ptsa.data.readers.TalReader import TalReader
-from ptsa.data.filters.ButterworthFilter import ButterworthFiler
+from ptsa.data.filters.ButterworthFilter import ButterworthFilter
 from ptsa.data.filters.ResampleFilter import ResampleFilter
 from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
 from ptsa.data.TimeSeriesX import TimeSeriesX
@@ -191,7 +191,7 @@ class test_regression_ptsa(unittest.TestCase):
         base_eegs = self.base_eegs
         base_eegs_filtered_direct = self.base_eegs.filtered([58, 62], filt_type='stop', order=4)
 
-        b_filter = ButterworthFiler(time_series=base_eegs, freq_range=[58, 62], filt_type='stop', order=4)
+        b_filter = ButterworthFilter(time_series=base_eegs, freq_range=[58, 62], filt_type='stop', order=4)
 
         base_eegs_filtered = b_filter.filter()
 

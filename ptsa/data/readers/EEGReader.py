@@ -259,7 +259,7 @@ if __name__ == '__main__':
     # # print 'TimeSeriesSessionEEGReader total read time = ',time.time()-s
     # # print
     #
-    # from ptsa.data.filters import ButterworthFiler
+    # from ptsa.data.filters import ButterworthFilter
     #
-    # bf = ButterworthFiler(time_series=n_eegs)
+    # bf = ButterworthFilter(time_series=n_eegs)
     # n_eggs_bf = bf.filter()
