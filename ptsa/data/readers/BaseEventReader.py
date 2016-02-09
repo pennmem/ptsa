@@ -124,34 +124,37 @@ if __name__ == '__main__':
     e_path = '/Volumes/rhino_root/data/events/RAM_PS/R1108J_1_events.mat'
     e_path = '/Volumes/rhino_root/data/events/RAM_PS/R1108J_1_events.mat'
     # e_path ='/Users/m/data/events/RAM_FR1/R1056M_events.mat'
+    e_path = join('/Volumes/rhino_root', 'data/events/RAM_FR1/R1062J_events.mat')
 
     e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
 
 
     events = e_reader.read()
 
-    from ptsa.data.readers.TalReader import TalReader
-
-    tal_path = '/Volumes/rhino_root/data/eeg/R1108J_1/tal/R1108J_1_talLocs_database_bipol.mat'
-    tal_reader = TalReader(filename=tal_path)
-    monopolar_channels = tal_reader.get_monopolar_channels()
-    bipolar_pairs = tal_reader.get_bipolar_pairs()
-
-    # ---------------- NEW STYLE PTSA -------------------
-    base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
-
-    base_events = base_e_reader.read()
-
-    base_events = base_events[(base_events.type == 'STIMULATING') | (base_events.type == 'STIM_SINGLE_PULSE')]
-    base_events = base_events[base_events.session == 2]
-
-
-    from ptsa.data.readers.EEGReader import EEGReader
-    eeg_reader = EEGReader(events=base_events, channels=monopolar_channels[0:3],
-                           start_time=-1.1, end_time=-0.1, buffer_time=1.0)
-
-    base_eegs = eeg_reader.read()
-
     print
 
-
+    # from ptsa.data.readers.TalReader import TalReader
+    #
+    # tal_path = '/Volumes/rhino_root/data/eeg/R1108J_1/tal/R1108J_1_talLocs_database_bipol.mat'
+    # tal_reader = TalReader(filename=tal_path)
+    # monopolar_channels = tal_reader.get_monopolar_channels()
+    # bipolar_pairs = tal_reader.get_bipolar_pairs()
+    #
+    # # ---------------- NEW STYLE PTSA -------------------
+    # base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
+    #
+    # base_events = base_e_reader.read()
+    #
+    # base_events = base_events[(base_events.type == 'STIMULATING') | (base_events.type == 'STIM_SINGLE_PULSE')]
+    # base_events = base_events[base_events.session == 2]
+    #
+    #
+    # from ptsa.data.readers.EEGReader import EEGReader
+    # eeg_reader = EEGReader(events=base_events, channels=monopolar_channels[0:3],
+    #                        start_time=-1.1, end_time=-0.1, buffer_time=1.0)
+    #
+    # base_eegs = eeg_reader.read()
+    #
+    # print
+    #
+    #
