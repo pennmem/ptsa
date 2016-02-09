@@ -49,7 +49,7 @@ class TimeSeriesX(DataArray):
         # self['time_axis_index'] = get_axis_index(self,axis_name='time')
 
         # self['time_axis_index']= get_axis_index(self,axis_name='time')
-        print self.dims
+        # print self.dims
         self['time_axis_index'] = -1
         # self['a'] = 10.0
 
