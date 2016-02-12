@@ -16,7 +16,8 @@ class MorletWaveletFilter(PropertiedObject):
         TypeValTuple('freqs', np.ndarray, np.array([], dtype=np.float)),
         TypeValTuple('width', int, 5),
         TypeValTuple('output', str, ''),
-        TypeValTuple('frequency_dim_pos', int, -2),
+        TypeValTuple('frequency_dim_pos', int, 0),
+        # NOTE in this implementation the default position of frequency is -2
         TypeValTuple('verbose', bool, True),
     ]
 
@@ -70,9 +71,8 @@ class MorletWaveletFilter(PropertiedObject):
 
     def compute_power(self, wavelet_coef_array):
         # return wavelet_coef_array.real ** 2 + wavelet_coef_array.imag ** 2, None
-        return np.abs(wavelet_coef_array)**2, None
+        return np.abs(wavelet_coef_array) ** 2, None
         # # wavelet_coef_array.real ** 2 + wavelet_coef_array.imag ** 2, None
-
 
     def compute_phase(self, wavelet_coef_array):
         return None, np.angle(wavelet_coef_array)
@@ -80,46 +80,49 @@ class MorletWaveletFilter(PropertiedObject):
     def compute_power_and_phase(self, wavelet_coef_array):
         return wavelet_coef_array.real ** 2 + wavelet_coef_array.imag ** 2, np.angle(wavelet_coef_array)
 
-    def store(self,idx_tuple,target_array,source_array):
+    def store(self, idx_tuple, target_array, source_array):
         if source_array is not None:
             target_array[idx_tuple] = source_array
-
 
     def get_data_iterator(self):
         return self.all_but_time_iterator(self.time_series)
 
-    def construct_output_array(self,array, dims, coords):
-        out_array =  xray.DataArray(array, dims=dims,coords=coords)
+    def construct_output_array(self, array, dims, coords):
+        out_array = xray.DataArray(array, dims=dims, coords=coords)
         # out_array.attrs['samplerate'] = self.time_series.attrs['samplerate']
         out_array['samplerate'] = self.time_series['samplerate']
         return out_array
 
-    def build_output_arrays(self,wavelet_pow_array, wavelet_phase_array, time_axis):
+    def build_output_arrays(self, wavelet_pow_array, wavelet_phase_array, time_axis):
         wavelet_pow_array_xray = None
         wavelet_phase_array_xray = None
 
         if isinstance(self.time_series, xray.DataArray):
 
-            dims= list(self.time_series.dims[:-1]+('frequency','time',))
+            dims = list(self.time_series.dims[:-1] + ('frequency', 'time',))
 
             transposed_dims = []
 
+            # NOTE all computaitons up till this point assume that frequency position is -2 whereas
+            # the default setting for this filter sets frequency axis index to 0. To avoid unnecessary transpositions
+            # we need to adjust position of the frequency axis in the internal computations
+
             # getting frequency dim position as positive integer
-            self.frequency_dim_pos = (len(dims)+self.frequency_dim_pos) % len(dims)
+            self.frequency_dim_pos = (len(dims) + self.frequency_dim_pos) % len(dims)
             orig_frequency_idx = dims.index('frequency')
 
             if self.frequency_dim_pos != orig_frequency_idx:
-                transposed_dims = dims[:orig_frequency_idx] + dims[orig_frequency_idx+1:]
+                transposed_dims = dims[:orig_frequency_idx] + dims[orig_frequency_idx + 1:]
                 transposed_dims.insert(self.frequency_dim_pos, 'frequency')
 
-            coords = {dim_name:self.time_series.coords[dim_name]  for dim_name  in self.time_series.dims[:-1]}
+            coords = {dim_name: self.time_series.coords[dim_name] for dim_name in self.time_series.dims[:-1]}
             coords['frequency'] = self.freqs
             coords['time'] = time_axis
 
             if wavelet_pow_array is not None:
-                wavelet_pow_array_xray = self.construct_output_array(wavelet_pow_array, dims=dims,coords=coords)
+                wavelet_pow_array_xray = self.construct_output_array(wavelet_pow_array, dims=dims, coords=coords)
             if wavelet_phase_array is not None:
-                wavelet_phase_array_xray = self.construct_output_array(wavelet_phase_array, dims=dims,coords=coords)
+                wavelet_phase_array_xray = self.construct_output_array(wavelet_phase_array, dims=dims, coords=coords)
 
             if wavelet_pow_array_xray is not None:
                 wavelet_pow_array_xray = TimeSeriesX(wavelet_pow_array_xray)
@@ -128,18 +131,14 @@ class MorletWaveletFilter(PropertiedObject):
 
                 wavelet_pow_array_xray.attrs = self.time_series.attrs.copy()
 
-
             if wavelet_phase_array_xray is not None:
                 wavelet_phase_array_xray = TimeSeriesX(wavelet_phase_array_xray)
                 if len(transposed_dims):
-                    wavelet_phase_array_xray =wavelet_phase_array_xray.transpose(*transposed_dims)
+                    wavelet_phase_array_xray = wavelet_phase_array_xray.transpose(*transposed_dims)
 
                 wavelet_phase_array_xray.attrs = self.time_series.attrs.copy()
 
-
             return wavelet_pow_array_xray, wavelet_phase_array_xray
-
-
 
     def compute_wavelet_ffts(self):
 
@@ -153,8 +152,17 @@ class MorletWaveletFilter(PropertiedObject):
 
         num_wavelets = len(wavelets)
 
-        # computting length of the longest wavelet
+        # computing length of the longest wavelet
         s_w = max(map(lambda wavelet: wavelet.shape[0], wavelets))
+
+        time_series_length = self.time_series['time'].shape[0]
+
+        if s_w > self.time_series['time'].shape[0]:
+            raise ValueError(
+                'Time series length (l_ts=%s) is shorter than maximum wavelet length (l_w=%s). '
+                'Please use longer time series or increase lowest wavelet frequency ' %
+                (time_series_length, s_w))
+
         # length of the tie axis of the time series
         s_d = self.time_series['time'].shape[0]
 
@@ -167,14 +175,12 @@ class MorletWaveletFilter(PropertiedObject):
         wavelet_fft_array = np.empty(shape=(num_wavelets, convolution_size_pow2), dtype=np.complex)
         convolution_size_array = np.empty(shape=(num_wavelets), dtype=np.int)
 
-
         # computting wavelet ffts
         for i, wavelet in enumerate(wavelets):
             wavelet_fft_array[i] = fft(wavelet, convolution_size_pow2)
             convolution_size_array[i] = wavelet.shape[0] + s_d - 1
 
         return wavelet_fft_array, convolution_size_array, convolution_size_pow2
-
 
     def filter(self):
 
@@ -199,8 +205,6 @@ class MorletWaveletFilter(PropertiedObject):
             signal_fft = fft(signal, convolution_size_pow2)
 
             for w in xrange(num_wavelets):
-
-
                 signal_wavelet_conv = ifft(wavelet_fft_array[w] * signal_fft)
 
                 # computting trim indices for the wavelet_coeff array
@@ -213,14 +217,13 @@ class MorletWaveletFilter(PropertiedObject):
 
                 pow_array_single, phase_array_single = self.compute_power_and_phase_fcn(wavelet_coef_single_array)
 
-                self.store(out_idx_tuple,wavelet_pow_array,pow_array_single)
-                self.store(out_idx_tuple,wavelet_phase_array,phase_array_single)
+                self.store(out_idx_tuple, wavelet_pow_array, pow_array_single)
+                self.store(out_idx_tuple, wavelet_phase_array, phase_array_single)
 
         if self.verbose:
             print 'total time wavelet loop: ', time.time() - wavelet_start
 
-        return self.build_output_arrays(wavelet_pow_array, wavelet_phase_array,time_axis)
-
+        return self.build_output_arrays(wavelet_pow_array, wavelet_phase_array, time_axis)
 
 
 def test_1_old():
@@ -265,7 +268,7 @@ def test_1_old():
     wf = MorletWaveletFilter(time_series=first_session_data,
                              freqs=np.logspace(np.log10(3), np.log10(180), 2),
                              # freqs=np.array([3.]),
-                       output='power',
+                             output='power',
                              # resamplerate=50.0
                              )
 
@@ -333,7 +336,7 @@ def test_2_old():
     wf = MorletWaveletFilter(time_series=base_eegs,
                              freqs=np.logspace(np.log10(3), np.log10(180), 2),
                              # freqs=np.array([3.]),
-                       output='power',
+                             output='power',
                              # resamplerate=50.0
                              )
 
@@ -341,8 +344,7 @@ def test_2_old():
 
     print 'total time = ', time.time() - start
 
-
-    res_start =time.time()
+    res_start = time.time()
 
     # from ptsa.data.filters.ResampleFilter import ResampleFilter
     # rsf = ResampleFilter (resamplerate=50.0)
@@ -351,8 +353,9 @@ def test_2_old():
 
 
 
-    print 'resample_time=',time.time()-res_start
+    print 'resample_time=', time.time() - res_start
     return pow_wavelet
+
 
 def test_2():
     import time
@@ -393,15 +396,14 @@ def test_2():
     wf = MorletWaveletFilter(time_series=base_eegs,
                              freqs=np.logspace(np.log10(3), np.log10(180), 2),
                              # freqs=np.array([3.]),
-                       output='power',
+                             output='power',
                              )
 
     pow_wavelet, phase_wavelet = wf.filter()
 
     print 'total time = ', time.time() - start
 
-
-    res_start =time.time()
+    res_start = time.time()
 
     # from ptsa.data.filters.ResampleFilter import ResampleFilter
     # rsf = ResampleFilter (resamplerate=50.0)
@@ -410,8 +412,9 @@ def test_2():
 
 
 
-    print 'resample_time=',time.time()-res_start
+    print 'resample_time=', time.time() - res_start
     return pow_wavelet
+
 
 def test_1():
     import time
@@ -436,9 +439,7 @@ def test_1():
     monopolar_channels = tal_reader.get_monopolar_channels()
     bipolar_pairs = tal_reader.get_bipolar_pairs()
 
-
-
-    dataroot=base_events[0].eegfile
+    dataroot = base_events[0].eegfile
     from ptsa.data.readers import EEGReader
     session_reader = EEGReader(session_dataroot=dataroot, channels=monopolar_channels)
     session_eegs = session_reader.read()
@@ -448,7 +449,7 @@ def test_1():
     wf = MorletWaveletFilter(time_series=session_eegs,
                              freqs=np.logspace(np.log10(3), np.log10(180), 2),
                              # freqs=np.array([3.]),
-                       output='power',
+                             output='power',
                              # resamplerate=50.0
                              )
 
@@ -466,24 +467,23 @@ def test_1():
     return chopped_wavelets
 
 
-
 if __name__ == '__main__':
     edcw_1 = test_1()
     edcw_2 = test_2()
 
-    wavelet_1 = edcw_1[0,0,0,500:1300]
-    wavelet_2 = edcw_2[0,0,0,500:1300]
+    wavelet_1 = edcw_1[0, 0, 0, 500:1300]
+    wavelet_2 = edcw_2[0, 0, 0, 500:1300]
 
     import matplotlib;
+
     matplotlib.use('Qt4Agg')
 
-
     import matplotlib.pyplot as plt
+
     plt.get_current_fig_manager().window.raise_()
 
-
-    plt.plot(np.arange(wavelet_1.shape[0])-1,wavelet_1,'k')
-    plt.plot(np.arange(wavelet_2.shape[0])-1,wavelet_2,'r--')
+    plt.plot(np.arange(wavelet_1.shape[0]) - 1, wavelet_1, 'k')
+    plt.plot(np.arange(wavelet_2.shape[0]) - 1, wavelet_2, 'r--')
 
     plt.show()
     #
