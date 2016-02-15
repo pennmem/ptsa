@@ -1,5 +1,6 @@
 __author__ = 'm'
 
+import sys
 import numpy as np
 from numpy.testing import *
 import unittest
@@ -376,6 +377,118 @@ class test_regression_ptsa(unittest.TestCase):
         assert_array_equal(
             (pow_wavelet_ptsa_orig[freq_num,:,:,500:-500]-pow_wavelet[freq_num,:,:,500:-500])/pow_wavelet_ptsa_orig[freq_num,:,:,500:-500],
             np.zeros_like(pow_wavelet[freq_num,:,:,500:-500]))
+
+    def test_wavelets_python_cpp(self):
+        from ptsa.data.filters import MorletWaveletFilterCpp
+        print 'hello'
+
+        wf = MorletWaveletFilter(time_series=self.base_eegs,
+                                 freqs=np.logspace(np.log10(3), np.log10(180), 8),
+                                 output='power',
+                                 )
+
+        pow_wavelet, phase_wavelet = wf.filter()
+
+
+        wf_cpp = MorletWaveletFilterCpp(time_series=self.base_eegs,
+                                 freqs=np.logspace(np.log10(3), np.log10(180), 8),
+                                 output='power',
+                                 )
+
+        pow_wavelet_cpp, phase_wavelet_cpp = wf_cpp.filter()
+
+        decimal = 2
+        freq_num=0
+
+        from scipy.stats import describe
+
+        desc_cpp = describe(pow_wavelet_cpp[freq_num,:,:,500:-500])
+        desc_py = describe(pow_wavelet[freq_num,:,:,500:-500])
+
+        try:
+            assert_array_almost_equal(
+                (pow_wavelet_cpp[freq_num,:,:,500:-500]-pow_wavelet[freq_num,:,:,500:-500])/pow_wavelet_cpp[freq_num,:,:,500:-500],
+                np.zeros_like(pow_wavelet_cpp[freq_num,:,:,500:-500]), decimal=decimal)
+        except AssertionError:
+            print 'WARNING: Cpp and Python wavelets are not within 1%. Will try weaker test '
+
+            mean_min = np.min((desc_cpp.mean-desc_py.mean)/desc_cpp.mean)
+            mean_max = np.max((desc_cpp.mean-desc_py.mean)/desc_cpp.mean)
+            print 'mean_max=',mean_max
+            print 'mean_min=',mean_min
+
+
+            self.assertTrue(np.abs(mean_max)<0.05)
+            self.assertTrue(np.abs(mean_min)<0.05)
+
+
+    def test_wavelets_cpp(self):
+
+
+        eegs = self.eegs[:, :, :-1]
+        base_eegs = self.base_eegs
+
+
+        sys.path.append('/Users/m/src/morlet_git_install')
+        import morlet
+        num_freqs = 8
+        f_min = 3.0
+        f_max = 180.0
+        signal_length = base_eegs.shape[-1]
+        morlet_transform = morlet.MorletWaveletTransform()
+        samplerate = float(base_eegs['samplerate'])
+        morlet_transform.init(5, f_min, f_max, num_freqs, samplerate , signal_length)
+
+        signal = base_eegs[0:1,0:1,:]
+        signal_orig_eegs = eegs[0:1,0:1,:]
+
+        pow_wavelets_cpp = np.empty(shape=(base_eegs.shape[-1]*num_freqs,), dtype=np.float)
+
+        # for i in xrange(num_of_iterations):
+        #     morlet_transform.multiphasevec(signal,powers)
+        morlet_transform.multiphasevec(signal.data.flatten(),pow_wavelets_cpp)
+
+        pow_wavelets_cpp = pow_wavelets_cpp.reshape(8,pow_wavelets_cpp.shape[0]/8)
+
+
+
+        wf = MorletWaveletFilter(time_series=signal,
+                                 freqs=np.logspace(np.log10(f_min), np.log10(f_max), num_freqs),
+                                 output='power',
+                                 frequency_dim_pos=0,
+
+                                 )
+
+        pow_wavelet, phase_wavelet = wf.filter()
+
+
+
+        from ptsa.wavelet import phase_pow_multi
+        pow_wavelet_ptsa_orig = phase_pow_multi(freqs=np.logspace(np.log10(3), np.log10(180), 8), dat=signal_orig_eegs,to_return='power')
+
+
+        freq_num = 0
+
+        decimal = 1
+
+        assert_array_almost_equal(
+            (np.squeeze(pow_wavelet[freq_num,:,:,500:-500])-np.squeeze(pow_wavelet_ptsa_orig[freq_num,:,:,500:-500]))/np.squeeze(pow_wavelet_ptsa_orig[freq_num,:,:,500:-500]),
+            np.zeros_like(np.squeeze(pow_wavelet_ptsa_orig[freq_num,:,:,500:-500])), decimal=decimal)
+
+
+        assert_array_almost_equal(
+            (pow_wavelets_cpp[freq_num,500:-500]-np.squeeze(pow_wavelet[freq_num,:,:,500:-500]))/pow_wavelets_cpp[freq_num,500:-500],
+            np.zeros_like(pow_wavelets_cpp[freq_num,500:-500]), decimal=decimal)
+
+        #
+        assert_array_almost_equal(
+            (pow_wavelets_cpp[freq_num,500:-500]-np.squeeze(pow_wavelet_ptsa_orig[freq_num,:,:,500:-500]))/pow_wavelets_cpp[freq_num,500:-500],
+            np.zeros_like(np.squeeze(pow_wavelet_ptsa_orig[freq_num,:,:,500:-500])), decimal=decimal)
+
+
+
+
+        from ptsa.wavelet import phase_pow_multi
 
 
     def test_wavelets_synthetic_data(self):
