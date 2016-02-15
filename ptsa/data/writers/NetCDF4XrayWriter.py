@@ -2,9 +2,10 @@ __author__ = 'm'
 
 import xray
 import numpy as np
+from ptsa.data.writers import BaseWriter
 
 
-class NetCDF4XrayWriter(object):
+class NetCDF4XrayWriter(BaseWriter):
     def __init__(self, array):
         self.array = array
         self._writer_version = 1
