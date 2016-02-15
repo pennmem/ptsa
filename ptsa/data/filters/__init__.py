@@ -1,3 +1,4 @@
+from BaseFilter import BaseFilter
 from ButterworthFilter import ButterworthFilter
 from MonopolarToBipolarMapper import MonopolarToBipolarMapper
 from MorletWaveletFilter import MorletWaveletFilter

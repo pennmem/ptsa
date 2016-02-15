@@ -8,10 +8,11 @@ from scipy.fftpack import fft, ifft
 
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import TypeValTuple, PropertiedObject
+from ptsa.data.filters import BaseFilter
 from ptsa.wavelet import morlet_multi, next_pow2
 
 
-class MorletWaveletFilter(PropertiedObject):
+class MorletWaveletFilter(PropertiedObject,BaseFilter):
     _descriptors = [
         TypeValTuple('freqs', np.ndarray, np.array([], dtype=np.float)),
         TypeValTuple('width', int, 5),

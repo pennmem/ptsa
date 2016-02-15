@@ -5,8 +5,11 @@ from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import get_axis_index
 
+from ptsa.data.filters import BaseFilter
 
-class ButterworthFilter(PropertiedObject):
+# class ButterworthFilter(PropertiedObject):
+class ButterworthFilter(PropertiedObject,BaseFilter):
+
     '''
     Applies Butterworth filter to a time series
     '''

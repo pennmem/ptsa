@@ -12,8 +12,9 @@ import sys
 from memory_profiler import profile
 import time
 
+from ptsa.data.filters import BaseFilter
 
-class MonopolarToBipolarMapper(PropertiedObject):
+class MonopolarToBipolarMapper(PropertiedObject,BaseFilter):
     """
     Object that takes as an input time series for monopolar electrodes and an array of bipolar pairs and outputs
     Time series where 'channels' axis is replaced by 'bipolar_pairs' axis and the time series data is a difference

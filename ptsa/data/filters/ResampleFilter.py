@@ -6,9 +6,9 @@ from scipy.signal import resample
 
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import TypeValTuple, PropertiedObject
+from ptsa.data.filters import BaseFilter
 
-
-class ResampleFilter(PropertiedObject):
+class ResampleFilter(PropertiedObject,BaseFilter):
 
     '''
     Resample Filter

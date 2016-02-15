@@ -6,8 +6,10 @@ import  ptsa.data.common.xr as xr
 
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.filters import BaseFilter
 
-class EventDataChopper(PropertiedObject):
+
+class EventDataChopper(PropertiedObject,BaseFilter):
     """
     EventDataChopper converts continuous time series of entire session into chunks based on the events specification
     In other words you may read entire eeg session first and then using EventDataChopper
@@ -117,7 +119,7 @@ if __name__ == '__main__':
 
     from ptsa.data.readers import BaseEventReader
 
-    base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
+    base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
 
     base_events = base_e_reader.read()
 
