@@ -5,9 +5,9 @@ from ptsa.data.events import Events
 from ptsa.data.rawbinwrapper import RawBinWrapper
 from BaseEventReader import BaseEventReader
 from ptsa.data.common import TypeValTuple
+from ptsa.data.readers import BaseReader
 
-
-class PTSAEventReader(BaseEventReader):
+class PTSAEventReader(BaseEventReader,BaseReader):
     '''
     Event reader that returns original PTSA Events object with attached rawbinwrappers
     rawbinwrappers are objects that know how to read eeg binary data

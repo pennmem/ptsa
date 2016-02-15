@@ -6,9 +6,9 @@ import numpy as np
 
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.common.xr import DataArray
+from ptsa.data.readers import BaseReader
 
-
-class BaseRawReader(PropertiedObject):
+class BaseRawReader(PropertiedObject,BaseReader):
     '''
     Object that knows how to read binary eeg files
     '''

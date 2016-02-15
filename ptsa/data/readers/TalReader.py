@@ -2,9 +2,10 @@ __author__ = 'm'
 
 import numpy as np
 from ptsa.data.common import TypeValTuple, PropertiedObject
+from ptsa.data.readers import BaseReader
 
 
-class TalReader(PropertiedObject):
+class TalReader(PropertiedObject,BaseReader):
     '''
     Reader that reads tal structs Matlab file and converts it to numpy recarray
     '''

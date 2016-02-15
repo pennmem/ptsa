@@ -2,9 +2,9 @@ __author__ = 'm'
 
 import xray
 import numpy as np
+from ptsa.data.readers import BaseReader
 
-
-class NetCDF4XrayReader(object):
+class NetCDF4XrayReader(BaseReader):
     def __init__(self):
         pass
         self.writer_class_name = 'NetCDFXRayReader'

@@ -1,9 +1,10 @@
 from ptsa.data.common import TypeValTuple, PropertiedObject
+from ptsa.data.readers import BaseReader
 from os.path import *
 import collections
 
 
-class ParamsReader(PropertiedObject):
+class ParamsReader(PropertiedObject,BaseReader):
     '''
     Reader for parameter file (e.g. params.txt)
     '''

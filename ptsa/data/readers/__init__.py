@@ -1,3 +1,4 @@
+from BaseReader import BaseReader
 from BaseEventReader import BaseEventReader
 from EEGReader import EEGReader
 from NetCDF4XrayReader import NetCDF4XrayReader
