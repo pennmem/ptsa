@@ -37,6 +37,7 @@ class EEGReader(PropertiedObject,BaseReader):
         :return:None
         '''
         self.init_attrs(kwds)
+        self.removed_corrupt_events = False
 
         assert self.start_time <= self.end_time, \
             'start_time (%s) must be less or equal to end_time(%s) ' % (self.start_time, self.end_time)
@@ -136,6 +137,9 @@ class EEGReader(PropertiedObject,BaseReader):
 
         return session_time_series
 
+    def removed_bad_data(self):
+        return self.removed_corrupt_events
+
     def read_events_data(self):
         '''
         Reads eeg data for individual event
@@ -152,12 +156,20 @@ class EEGReader(PropertiedObject,BaseReader):
 
         ts_array_list = []
 
+        event_ok_mask_list = []
+
+
         for s, (raw_reader, dataroot) in enumerate(zip(raw_readers, original_dataroots)):
+
+            ts_array, read_ok_mask = raw_reader.read()
+
+            event_ok_mask_list.append(np.all(read_ok_mask,axis=0))
+
             ind = np.atleast_1d(evs.eegfile == dataroot)
             event_indices_list.append(ordered_indices[ind])
             events.append(evs[ind])
 
-            ts_array = raw_reader.read()
+
             ts_array_list.append(ts_array)
 
         event_indices_array = np.hstack(event_indices_list)
@@ -191,7 +203,78 @@ class EEGReader(PropertiedObject,BaseReader):
         # restoring original order of the events
         eventdata = eventdata[:, event_indices_restore_sort_order_array, :]
 
+        event_ok_mask = np.hstack(event_ok_mask_list)
+        event_ok_mask_sorted = event_ok_mask[event_indices_restore_sort_order_array]
+        #removing bad events
+        if np.any(~event_ok_mask_sorted):
+            self.removed_corrupt_events=True
+
+        eventdata = eventdata[:, event_ok_mask_sorted, :]
+
         return eventdata
+
+
+
+
+    # def read_events_data(self):
+    #     '''
+    #     Reads eeg data for individual event
+    #     :return: TimeSeriesX  object (channels x events x time) with data for individual events
+    #     '''
+    #     evs = self.events
+    #
+    #     raw_readers, original_dataroots = self.__create_base_raw_readers()
+    #
+    #     # used for restoring original order of the events
+    #     ordered_indices = np.arange(len(evs))
+    #     event_indices_list = []
+    #     events = []
+    #
+    #     ts_array_list = []
+    #
+    #     for s, (raw_reader, dataroot) in enumerate(zip(raw_readers, original_dataroots)):
+    #         ind = np.atleast_1d(evs.eegfile == dataroot)
+    #         event_indices_list.append(ordered_indices[ind])
+    #         events.append(evs[ind])
+    #
+    #         ts_array = raw_reader.read()
+    #
+    #         read_ok_mask = raw_reader.get_read_ok_mask()
+    #
+    #         ts_array_list.append(ts_array)
+    #
+    #     event_indices_array = np.hstack(event_indices_list)
+    #
+    #     event_indices_restore_sort_order_array = event_indices_array.argsort()
+    #
+    #     start_extend_time = time.time()
+    #     # new code
+    #     eventdata = xr.concat(ts_array_list, dim='start_offsets')
+    #     # tdim = np.linspace(self.start_time-self.buffer_time,self.end_time+self.buffer_time,num=eventdata['offsets'].shape[0])
+    #     # samplerate=eventdata.attrs['samplerate'].data
+    #     samplerate = float(eventdata['samplerate'])
+    #     tdim = np.arange(eventdata.shape[-1]) * (1.0 / samplerate) + (self.start_time - self.buffer_time)
+    #     cdim = eventdata['channels']
+    #     edim = np.concatenate(events).view(np.recarray).copy()
+    #
+    #     attrs = eventdata.attrs.copy()
+    #     # constructing TimeSeries Object
+    #     # eventdata = TimeSeriesX(eventdata.data,dims=['channels','events','time'],coords=[cdim,edim,tdim])
+    #     eventdata = TimeSeriesX(eventdata.data,
+    #                             dims=['channels', 'events', 'time'],
+    #                             coords={'channels': cdim,
+    #                                     'events': edim,
+    #                                     'time': tdim,
+    #                                     'samplerate': samplerate
+    #                                     }
+    #                             )
+    #
+    #     eventdata.attrs = attrs
+    #
+    #     # restoring original order of the events
+    #     eventdata = eventdata[:, event_indices_restore_sort_order_array, :]
+    #
+    #     return eventdata
 
     def read(self):
         '''
@@ -200,67 +283,3 @@ class EEGReader(PropertiedObject,BaseReader):
         '''
         return self.read_fcn()
 
-
-if __name__ == '__main__':
-    e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
-    from ptsa.data.readers import BaseEventReader
-
-    base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
-
-    base_events = base_e_reader.read()
-
-    base_events = base_events[base_events.type == 'WORD']
-
-    # selecting only one session
-    # base_events = base_events[base_events.eegfile == base_events[0].eegfile]
-
-    from ptsa.data.readers.TalReader import TalReader
-
-    tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
-    tal_reader = TalReader(filename=tal_path)
-    monopolar_channels = tal_reader.get_monopolar_channels()
-    bipolar_pairs = tal_reader.get_bipolar_pairs()
-
-    # s = time.time()
-    # from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
-    #
-    # time_series_reader = TimeSeriesEEGReader(events=base_events, start_time=0.0,
-    #                                          end_time=1.6, buffer_time=1.0, keep_buffer=True)
-    #
-    # base_eegs = time_series_reader.read(channels=monopolar_channels)
-    # print 'TimeSeriesEEGReader total read time = ',time.time()-s
-    # #############################################################################################
-    # #
-    s = time.time()
-    from ptsa.data.readers import EEGReader
-
-    eeg_reader = EEGReader(events=base_events, channels=monopolar_channels, start_time=0.0, end_time=1.6,
-                           buffer_time=1.0)
-
-    print 'BEFORE EEG'
-    n_eegs = eeg_reader.read()
-
-    print 'AFTER EEG'
-    print 'EEGReader total read time = ', time.time() - s
-    # # #
-    # # #
-    # # s = time.time()
-    # # dataroot=base_events[0].eegfile
-    # # from ptsa.data.readers import EEGReader
-    # # session_reader = EEGReader(session_dataroot=dataroot, channels=monopolar_channels)
-    # # session_eegs = session_reader.read()
-    # # print 'SESSION EEGReader total read time = ',time.time()-s
-    # #
-    # # s = time.time()
-    # # from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
-    # #
-    # # time_series_reader = TimeSeriesSessionEEGReader(events=base_events[0:1], channels=monopolar_channels)
-    # #
-    # # ts = time_series_reader.read()
-    # # print 'TimeSeriesSessionEEGReader total read time = ',time.time()-s
-    # # print
-    #
-    # from ptsa.data.filters import ButterworthFilter
-    #
-    # bf = ButterworthFilter(time_series=n_eegs)
-    # n_eggs_bf = bf.filter()
