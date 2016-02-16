@@ -36,7 +36,6 @@ class TestReaders(unittest.TestCase):
         for base_event, event in zip(base_events, events):
             self.assertEqual(base_event.eegoffset, event.eegoffset)
 
-
     def test_base_raw_reader(self):
         e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
         base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
@@ -46,7 +45,7 @@ class TestReaders(unittest.TestCase):
         dataroot = base_events[0].eegfile
 
         brr_session = BaseRawReader(dataroot=dataroot, channels=np.array(['002', '003']))
-        array_session,read_ok_mask = brr_session.read()
+        array_session, read_ok_mask = brr_session.read()
 
         eeg_reader = EEGReader(events=base_events, channels=np.array(['002', '003']),
                                start_time=self.start_time, end_time=self.end_time, buffer_time=0.0)
@@ -54,8 +53,7 @@ class TestReaders(unittest.TestCase):
 
         for i in xrange(100):
             offset = base_events[i].eegoffset
-            npt.assert_array_equal(array_session[:,0,offset:offset+100],base_eegs[:,i,:100])
-
+            npt.assert_array_equal(array_session[:, 0, offset:offset + 100], base_eegs[:, i, :100])
 
     def test_eeg_read_incomplete_data(self):
         e_path_incomplete = '/Volumes/rhino_root/data/events/RAM_PS/R1104D_events.mat'
@@ -63,7 +61,6 @@ class TestReaders(unittest.TestCase):
         base_event_reader = BaseEventReader(filename=e_path_incomplete)
 
         base_events = base_event_reader.read()
-
 
         sess_1 = base_events[base_events.session == 1]
         sess_3 = base_events[base_events.session == 3]
@@ -76,7 +73,6 @@ class TestReaders(unittest.TestCase):
 
         shuffled_sess_events = np.hstack((sess_3, sess_7, sess_1, sess_5)).view(np.recarray)
 
-
         eeg_reader = EEGReader(events=shuffled_sess_events, channels=np.array(['002', '003']),
                                start_time=self.start_time, end_time=self.end_time, buffer_time=self.buffer_time)
         base_eegs = eeg_reader.read()
@@ -85,7 +81,6 @@ class TestReaders(unittest.TestCase):
             print 'REMOVED BAD DATA !!!!!!!!!!!!!'
 
         events = base_eegs['events'].data.view(np.recarray)
-
 
         if not isinstance(events, Events):
             events = Events(events)
@@ -103,9 +98,7 @@ class TestReaders(unittest.TestCase):
                                buffer_time=self.buffer_time, eoffset='eegoffset', keep_buffer=True,
                                eoffset_in_time=False, verbose=True)
 
-
         npt.assert_array_equal(eegs[:, :, :-1], base_eegs.data)
-
 
     def test_R1070T_read(self):
         e_path = '/Volumes/rhino_root/data/events/RAM_FR1/R1070T_events.mat'
