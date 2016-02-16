@@ -3,6 +3,7 @@ __author__ = 'm'
 from ptsa.data.readers import BaseEventReader
 from ptsa.data.readers import PTSAEventReader
 from ptsa.data.readers import EEGReader
+from ptsa.data.readers import BaseRawReader
 from ptsa.data.events import Events
 import numpy as np
 import unittest
@@ -35,6 +36,27 @@ class TestReaders(unittest.TestCase):
         for base_event, event in zip(base_events, events):
             self.assertEqual(base_event.eegoffset, event.eegoffset)
 
+
+    def test_base_raw_reader(self):
+        e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
+        base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
+        base_events = base_e_reader.read()
+        base_events = base_events[base_events.type == 'WORD']
+
+        dataroot = base_events[0].eegfile
+
+        brr_session = BaseRawReader(dataroot=dataroot, channels=np.array(['002', '003']))
+        array_session,read_ok_mask = brr_session.read()
+
+        eeg_reader = EEGReader(events=base_events, channels=np.array(['002', '003']),
+                               start_time=self.start_time, end_time=self.end_time, buffer_time=0.0)
+        base_eegs = eeg_reader.read()
+
+        for i in xrange(100):
+            offset = base_events[i].eegoffset
+            npt.assert_array_equal(array_session[:,0,offset:offset+100],base_eegs[:,i,:100])
+
+
     def test_eeg_read_incomplete_data(self):
         e_path_incomplete = '/Volumes/rhino_root/data/events/RAM_PS/R1104D_events.mat'
 
@@ -42,16 +64,6 @@ class TestReaders(unittest.TestCase):
 
         base_events = base_event_reader.read()
 
-        # base_events=base_events[base_events.session==1]
-        # base_events[-1].eegoffset=2000000000000
-        #
-        # base_events[-6].eegoffset=2000000000000
-        #
-        # base_events[-10].eegoffset=2000000000000
-
-        # base_events[base_events.session == 1][-1].eegoffset = 2000000000000
-        # base_events[base_events.session == 1][-6].eegoffset = 2000000000000
-        # base_events[base_events.session == 1][-10].eegoffset = 2000000000000
 
         sess_1 = base_events[base_events.session == 1]
         sess_3 = base_events[base_events.session == 3]
@@ -63,13 +75,6 @@ class TestReaders(unittest.TestCase):
         sess_1[434].eegoffset = 2000000000000
 
         shuffled_sess_events = np.hstack((sess_3, sess_7, sess_1, sess_5)).view(np.recarray)
-
-
-        # base_events[-1].eegoffset=2000000000000
-        #
-        # base_events[-6].eegoffset=2000000000000
-        #
-        # base_events[-10].eegoffset=2000000000000
 
 
         eeg_reader = EEGReader(events=shuffled_sess_events, channels=np.array(['002', '003']),
