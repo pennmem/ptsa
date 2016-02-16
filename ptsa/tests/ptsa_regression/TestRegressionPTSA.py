@@ -19,9 +19,9 @@ from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.timeseries import TimeSeries
 
 
-# class test_regression_ptsa(unittest.TestCase, EventReadersTestBase):
-class test_regression_ptsa(unittest.TestCase):
-    # class test_regression_ptsa(unittest.TestCase):
+# class TestRegressionPTSA(unittest.TestCase, EventReadersTestBase):
+class TestRegressionPTSA(unittest.TestCase):
+    # class TestRegressionPTSA(unittest.TestCase):
     def setUp(self):
         self.event_range = range(0, 30, 1)
         self.e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
@@ -85,6 +85,12 @@ class test_regression_ptsa(unittest.TestCase):
 
         assert_array_equal(self.base_eegs[...,1:nb_+1], mirrored_buf_eegs[...,:nb_][...,::-1])
         print mirrored_buf_eegs
+
+    def test_missing_data_read(self):
+        self.e_path = '/Volumes/rhino_root/data/events/RAM_PS/R1104D_events.mat'
+        base_e_reader = BaseEventReader(filename=self.e_path)
+        base_events = base_e_reader.read()
+        print 'base_events=',base_events
 
 
     def test_full_session_read(self):
@@ -535,7 +541,7 @@ if __name__ == '__main__':
     # if __name__=='__main__':
     #     test_suite = unittest.TestSuite()
     #     # test_suite.addTest(unittest.makeSuite(TestEventRead))
-    #     test_suite.addTest(unittest.makeSuite(test_regression_ptsa))
+    #     test_suite.addTest(unittest.makeSuite(TestRegressionPTSA))
     #
     #     # test_suite.addTest(unittest.makeSuite(test_morlet_multi))
     #
