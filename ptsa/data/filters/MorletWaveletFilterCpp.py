@@ -6,8 +6,6 @@ import ptsa.data.common.xr as xr
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.filters import BaseFilter
-import sys
-sys.path.append('/Users/m/src/morlet_git_clion_install')
 import morlet
 
 
