@@ -37,8 +37,6 @@ class BaseRawReader(PropertiedObject,BaseReader):
 
         self.init_attrs(kwds)
 
-        self.read_ok_mask=None
-
         from ptsa.data.readers import ParamsReader
 
         FileFormat = namedtuple('FileFormat', ['data_size', 'format_string'])
@@ -74,9 +72,6 @@ class BaseRawReader(PropertiedObject,BaseReader):
         eegfname = self.dataroot + '.' + self.channels[0]
         return os.path.getsize(eegfname)
 
-    def get_read_ok_mask(self):
-        return self.read_ok_mask
-
     def read(self):
         '''
 
@@ -93,7 +88,7 @@ class BaseRawReader(PropertiedObject,BaseReader):
         eventdata = np.empty((len(self.channels), len(self.start_offsets), self.read_size),
                              dtype=np.float) * np.nan
 
-        self.read_ok_mask = np.ones(shape=(len(self.channels),len(self.start_offsets)), dtype=np.bool)
+        read_ok_mask = np.ones(shape=(len(self.channels),len(self.start_offsets)), dtype=np.bool)
 
         # loop over channels
         for c, channel in enumerate(self.channels):
@@ -124,7 +119,7 @@ class BaseRawReader(PropertiedObject,BaseReader):
 
                 # make sure we got some data
                 if len(data) < self.read_size:
-                    self.read_ok_mask[c,e]=False
+                    read_ok_mask[c,e]=False
 
                     print(
                         'Cannot read full chunk of data for offset ' + str(start_offset) +
@@ -132,19 +127,6 @@ class BaseRawReader(PropertiedObject,BaseReader):
                 else:
                     # append it to the eventdata
                     eventdata[c, e, :] = data
-
-
-
-
-                # # make sure we got some data
-                # if len(data) < self.read_size:
-                #
-                #     raise IOError(
-                #         'Cannot read full chunk of data for offset ' + str(start_offset) +
-                #         'End of read interval  is outside the bounds of file ' + str(eegfname))
-                #
-                # # append it to the events
-                # eventdata[c, e, :] = data
 
         # multiply by the gain
         eventdata *= self.params_dict['gain']
@@ -160,13 +142,10 @@ class BaseRawReader(PropertiedObject,BaseReader):
                                    }
                               )
 
-        # eventdata['start_offsets'] = self.start_offsets.copy()
-        # eventdata['channels'] = self.channels
-
         from copy import deepcopy
         eventdata.attrs = deepcopy(self.params_dict)
 
-        return eventdata
+        return eventdata, read_ok_mask
 
 
 if __name__ == '__main__':
