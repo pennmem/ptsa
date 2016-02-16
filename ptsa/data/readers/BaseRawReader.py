@@ -37,6 +37,8 @@ class BaseRawReader(PropertiedObject,BaseReader):
 
         self.init_attrs(kwds)
 
+        self.read_ok_mask=None
+
         from ptsa.data.readers import ParamsReader
 
         FileFormat = namedtuple('FileFormat', ['data_size', 'format_string'])
@@ -60,7 +62,7 @@ class BaseRawReader(PropertiedObject,BaseReader):
                 raise RuntimeError('Unsupported format: %s. Allowed format names are: %s' % (
                     format_name, self.file_format_dict.keys()))
         except KeyError:
-            print 'Could not find data format definition in the params file. Wwilll read te file assuming' \
+            print 'Could not find data format definition in the params file. Will read te file assuming' \
                   ' data format is int16'
 
     def get_file_size(self):
@@ -71,6 +73,9 @@ class BaseRawReader(PropertiedObject,BaseReader):
         '''
         eegfname = self.dataroot + '.' + self.channels[0]
         return os.path.getsize(eegfname)
+
+    def get_read_ok_mask(self):
+        return self.read_ok_mask
 
     def read(self):
         '''
@@ -87,6 +92,8 @@ class BaseRawReader(PropertiedObject,BaseReader):
         # allocate space for data
         eventdata = np.empty((len(self.channels), len(self.start_offsets), self.read_size),
                              dtype=np.float) * np.nan
+
+        self.read_ok_mask = np.ones(shape=(len(self.channels),len(self.start_offsets)), dtype=np.bool)
 
         # loop over channels
         for c, channel in enumerate(self.channels):
@@ -117,12 +124,27 @@ class BaseRawReader(PropertiedObject,BaseReader):
 
                 # make sure we got some data
                 if len(data) < self.read_size:
-                    raise IOError(
+                    self.read_ok_mask[c,e]=False
+
+                    print(
                         'Cannot read full chunk of data for offset ' + str(start_offset) +
                         'End of read interval  is outside the bounds of file ' + str(eegfname))
+                else:
+                    # append it to the eventdata
+                    eventdata[c, e, :] = data
 
-                # append it to the events
-                eventdata[c, e, :] = data
+
+
+
+                # # make sure we got some data
+                # if len(data) < self.read_size:
+                #
+                #     raise IOError(
+                #         'Cannot read full chunk of data for offset ' + str(start_offset) +
+                #         'End of read interval  is outside the bounds of file ' + str(eegfname))
+                #
+                # # append it to the events
+                # eventdata[c, e, :] = data
 
         # multiply by the gain
         eventdata *= self.params_dict['gain']
