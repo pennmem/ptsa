@@ -9,7 +9,7 @@ from ptsa.data.common import TypeValTuple, PropertiedObject
 
 
 import sys
-from memory_profiler import profile
+# from memory_profiler import profile
 import time
 
 from ptsa.data.filters import BaseFilter
@@ -91,7 +91,7 @@ class MonopolarToBipolarMapper(PropertiedObject,BaseFilter):
 
         return TimeSeriesX(data=ts)
 
-@profile
+# @profile
 def main_fcn():
     e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
 
@@ -139,7 +139,7 @@ def main_fcn():
 
     pass
 
-@profile
+# @profile
 def new_fcn():
 
     time.sleep(20)
