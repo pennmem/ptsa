@@ -104,8 +104,13 @@ class BaseRawReader(PropertiedObject,BaseReader):
 
             # loop over start offsets
             for e, start_offset in enumerate(self.start_offsets):
-                # seek to the position in the file
+                # rejecting negative offset
+                if start_offset<0:
+                    read_ok_mask[c,e]=False
+                    print('Cannot read from negative offset %d in file %s' % (start_offset,eegfname))
+                    continue
 
+                # seek to the position in the file
                 efile.seek(self.file_format.data_size * start_offset, 0)
 
                 # read the data
