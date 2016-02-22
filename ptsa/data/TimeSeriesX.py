@@ -188,7 +188,7 @@ class TimeSeriesX(DataArray):
         coords['samplerate'] = float(self['samplerate'])
 
 
-        print 'THIS IS COORDS', coords
+
         return TimeSeriesX(mirrored_data, dims=self.dims, coords=coords)
 
     def baseline_corrected(self, base_range):
