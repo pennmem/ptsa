@@ -182,8 +182,13 @@ class TimeSeriesX(DataArray):
 
         start_time = self['time'].data[0] - duration
         t_axis = (np.arange(mirrored_data.shape[-1]) * (1.0 / samplerate)) + start_time
-        coords = [self.coords[dim_name] for dim_name in self.dims[:-1]] +[t_axis]
+        # coords = [self.coords[dim_name] for dim_name in self.dims[:-1]] +[t_axis]
+        coords = {dim_name:self.coords[dim_name] for dim_name in self.dims[:-1]}
+        coords['time'] = t_axis
+        coords['samplerate'] = float(self['samplerate'])
 
+
+        print 'THIS IS COORDS', coords
         return TimeSeriesX(mirrored_data, dims=self.dims, coords=coords)
 
     def baseline_corrected(self, base_range):
