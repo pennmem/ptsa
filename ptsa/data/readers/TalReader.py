@@ -11,6 +11,7 @@ class TalReader(PropertiedObject,BaseReader):
     '''
     _descriptors = [
         TypeValTuple('filename', str, ''),
+        TypeValTuple('struct_name', str, 'bpTalStruct'),
     ]
 
     def __init__(self, **kwds):
@@ -20,6 +21,7 @@ class TalReader(PropertiedObject,BaseReader):
         :param kwds:allowed values are:
         -------------------------------------
         :param filename {str} -  path to tal file
+        :param struct_name {str} -  name of the matlab struct to load
         :return: None
         '''
 
@@ -27,23 +29,6 @@ class TalReader(PropertiedObject,BaseReader):
         self.bipolar_channels=None
 
         self.tal_structs_array = None
-    def read(self):
-        '''
-
-        :return:np.recarray representing tal struct array (originally defined in Matlab file)
-        '''
-
-        from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
-        self.tal_struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.filename,'bpTalStruct')
-
-        # extract bipolar pairs
-        self.bipolar_channels = np.recarray(shape=(len(self.tal_struct_array)), dtype=[('ch0','|S3'),('ch1','|S3')])
-
-        channel_record_array = self.tal_struct_array['channel']
-        for i, channel_array in enumerate(channel_record_array):
-            self.bipolar_channels[i] = tuple(map(lambda x: str(x).zfill(3), channel_array))
-
-        return self.tal_struct_array
 
     def get_bipolar_pairs(self):
         '''
@@ -51,7 +36,10 @@ class TalReader(PropertiedObject,BaseReader):
         :return: numpy recarray where each record has two fields 'ch0' and 'ch1' storing  channel labels.
         '''
         if self.bipolar_channels is None:
-            self.read()
+            if self.tal_struct_array is None:
+                self.read()
+            self.initialize_bipolar_pairs()
+
         return self.bipolar_channels
 
     def get_monopolar_channels(self):
@@ -62,6 +50,29 @@ class TalReader(PropertiedObject,BaseReader):
         bipolar_array = self.get_bipolar_pairs()
         monopolar_set = set(list(bipolar_array['ch0'])+list(bipolar_array['ch1']))
         return np.array(sorted(list(monopolar_set)))
+
+    def initialize_bipolar_pairs(self):
+        # initialize bipolar pairs
+        self.bipolar_channels = np.recarray(shape=(len(self.tal_struct_array)), dtype=[('ch0','|S3'),('ch1','|S3')])
+
+        channel_record_array = self.tal_struct_array['channel']
+        for i, channel_array in enumerate(channel_record_array):
+            self.bipolar_channels[i] = tuple(map(lambda x: str(x).zfill(3), channel_array))
+
+
+    def read(self):
+        '''
+
+        :return:np.recarray representing tal struct array (originally defined in Matlab file)
+        '''
+
+        from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
+        self.tal_struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.filename,self.struct_name)
+
+
+
+        return self.tal_struct_array
+
 
 if __name__=='__main__':
     event_range = range(0, 30, 1)
