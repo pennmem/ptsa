@@ -38,6 +38,7 @@ class EEGReader(PropertiedObject,BaseReader):
         '''
         self.init_attrs(kwds)
         self.removed_corrupt_events = False
+        self.event_ok_mask_sorted = None
 
         assert self.start_time <= self.end_time, \
             'start_time (%s) must be less or equal to end_time(%s) ' % (self.start_time, self.end_time)
@@ -140,11 +141,16 @@ class EEGReader(PropertiedObject,BaseReader):
     def removed_bad_data(self):
         return self.removed_corrupt_events
 
+    def get_event_ok_mask(self):
+        return self.event_ok_mask_sorted
+
     def read_events_data(self):
         '''
         Reads eeg data for individual event
         :return: TimeSeriesX  object (channels x events x time) with data for individual events
         '''
+        self.event_ok_mask_sorted = None  # reset self.event_ok_mask_sorted
+
         evs = self.events
 
         raw_readers, original_dataroots = self.__create_base_raw_readers()
@@ -208,6 +214,7 @@ class EEGReader(PropertiedObject,BaseReader):
         #removing bad events
         if np.any(~event_ok_mask_sorted):
             self.removed_corrupt_events=True
+            self.event_ok_mask_sorted = event_ok_mask_sorted
 
         eventdata = eventdata[:, event_ok_mask_sorted, :]
 
