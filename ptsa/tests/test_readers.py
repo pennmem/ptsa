@@ -2,6 +2,7 @@ __author__ = 'm'
 
 from ptsa.data.readers import BaseEventReader
 from ptsa.data.readers import PTSAEventReader
+from ptsa.data.readers import TalStimOnlyReader
 from ptsa.data.readers import EEGReader
 from ptsa.data.readers import BaseRawReader
 from ptsa.data.events import Events
@@ -138,6 +139,18 @@ class TestReaders(unittest.TestCase):
 
         npt.assert_array_equal(eegs[:, :, :-1], base_eegs.data)
 
+
+    def test_tal_stim_only(self):
+
+        tal_path = '/volumes/rhino_root/data/eeg/R1135E/tal/R1135E_talLocs_database_stimOnly.mat'
+
+        tal_reader = TalStimOnlyReader(filename=tal_path)
+
+        tal = tal_reader.read()
+        print tal
+
+
+
     @unittest.expectedFailure
     def test_eventness(self):
 
@@ -156,4 +169,6 @@ if __name__ == '__main__':
     suite.addTest(TestReaders('test_event_read'))
     suite.addTest(TestReaders('test_eventness'))
     suite.addTest(TestReaders('test_eeg_read'))
+    suite.addTest(TestReaders('test_tal_stim_only'))
+
     unittest.TextTestRunner(verbosity=2).run(suite)
