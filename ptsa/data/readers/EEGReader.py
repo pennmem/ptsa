@@ -105,7 +105,7 @@ class EEGReader(PropertiedObject,BaseReader):
         p_reader = ParamsReader(dataroot=self.session_dataroot)
         params = p_reader.read()
         brr = BaseRawReader(dataroot=self.session_dataroot, channels=self.channels)
-        session_array = brr.read()
+        session_array,read_ok_mask = brr.read()
 
         offsets_axis = session_array['offsets']
         number_of_time_points = offsets_axis.shape[0]
@@ -118,13 +118,34 @@ class EEGReader(PropertiedObject,BaseReader):
         # tdim = np.rec.fromarrays([physical_time_array,offsets_axis.values], names='time,eegoffset')
 
         # session_array = session_array.rename({'start_offsets':'events','offsets':'time'})
-        session_array = session_array.rename({'start_offsets': 'events'})
+
+        # session_array = session_array.rename({'start_offsets': 'events'})
+        #
+        # session_time_series = TimeSeriesX(session_array.values,
+        #                                   dims=['channels', 'events', 'time'],
+        #                                   coords={
+        #                                       'channels': session_array['channels'],
+        #                                       'events': session_array['events'],
+        #                                       'time': physical_time_array,
+        #                                       'offsets': ('time', session_array['offsets']),
+        #                                       'samplerate': session_array['samplerate']
+        #                                       # 'dataroot':self.session_dataroot
+        #
+        #                                   }
+        #                                   )
+        # session_time_series.attrs = session_array.attrs.copy()
+        # session_time_series.attrs['dataroot'] = self.session_dataroot
+        # # session_time_series['time']=tdim
+
+
+
+        # session_array = session_array.rename({'start_offsets': 'events'})
 
         session_time_series = TimeSeriesX(session_array.values,
-                                          dims=['channels', 'events', 'time'],
+                                          dims=['channels', 'start_offsets', 'time'],
                                           coords={
                                               'channels': session_array['channels'],
-                                              'events': session_array['events'],
+                                              'start_offsets': session_array['start_offsets'],
                                               'time': physical_time_array,
                                               'offsets': ('time', session_array['offsets']),
                                               'samplerate': session_array['samplerate']
