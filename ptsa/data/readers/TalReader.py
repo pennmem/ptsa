@@ -36,7 +36,7 @@ class TalReader(PropertiedObject,BaseReader):
         :return: numpy recarray where each record has two fields 'ch0' and 'ch1' storing  channel labels.
         '''
         if self.bipolar_channels is None:
-            if self.tal_struct_array is None:
+            if self.tal_structs_array is None:
                 self.read()
             self.initialize_bipolar_pairs()
 
@@ -67,7 +67,7 @@ class TalReader(PropertiedObject,BaseReader):
         '''
 
         from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
-        self.tal_struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.filename,self.struct_name)
+        self.tal_struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.filename,self.struct_name,verbose=False)
 
 
 
