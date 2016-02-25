@@ -14,6 +14,7 @@ from ptsa.data.readers.EEGReader import EEGReader
 from ptsa.data.readers.TalReader import TalReader
 from ptsa.data.filters.ButterworthFilter import ButterworthFilter
 from ptsa.data.filters.ResampleFilter import ResampleFilter
+from ptsa.data.filters import EventDataChopper
 from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.timeseries import TimeSeries
@@ -495,6 +496,25 @@ class TestRegressionPTSA(unittest.TestCase):
 
 
         from ptsa.wavelet import phase_pow_multi
+
+    def test_event_data_chopper(self):
+
+
+        dataroot=self.base_events[0].eegfile
+        from ptsa.data.readers import EEGReader
+        session_reader = EEGReader(session_dataroot=dataroot, channels=self.monopolar_channels)
+        session_eegs = session_reader.read()
+
+
+        from ptsa.data.filters import EventDataChopper
+        sedc = EventDataChopper(events=self.base_events, session_data=session_eegs, start_time=0.0, end_time=1.6, buffer_time=1.0)
+        chopped_session = sedc.filter()
+
+        from ptsa.data.filters import EventDataChopper
+        sedc_so = EventDataChopper(start_offsets=self.base_events.eegoffset, session_data=session_eegs, start_time=0.0, end_time=1.6, buffer_time=1.0)
+        chopped_session_so = sedc_so.filter()
+
+        assert_array_equal(chopped_session,chopped_session_so)
 
 
     def test_wavelets_synthetic_data(self):
