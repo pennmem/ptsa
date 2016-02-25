@@ -3,7 +3,7 @@ from ButterworthFilter import ButterworthFilter
 from MonopolarToBipolarMapper import MonopolarToBipolarMapper
 from MorletWaveletFilter import MorletWaveletFilter
 from ResampleFilter import ResampleFilter
-from EventDataChopper import EventDataChopper
+from DataChopper import EventDataChopper
 
 try:
     from MorletWaveletFilterCpp import MorletWaveletFilterCpp
