@@ -102,42 +102,13 @@ class EEGReader(PropertiedObject,BaseReader):
         Reads entire session worth of data
         :return: TimeSeriesX object (channels x events x time) with data for entire session the events dimension has length 1
         '''
-        p_reader = ParamsReader(dataroot=self.session_dataroot)
-        params = p_reader.read()
         brr = BaseRawReader(dataroot=self.session_dataroot, channels=self.channels)
         session_array,read_ok_mask = brr.read()
 
         offsets_axis = session_array['offsets']
         number_of_time_points = offsets_axis.shape[0]
-        # samplerate = session_array['samplerate'].data
         samplerate = float(session_array['samplerate'])
         physical_time_array = np.arange(number_of_time_points) * (1.0 / samplerate)
-
-        cdim = self.channels
-        edim = session_array['start_offsets']
-        # tdim = np.rec.fromarrays([physical_time_array,offsets_axis.values], names='time,eegoffset')
-
-        # session_array = session_array.rename({'start_offsets':'events','offsets':'time'})
-
-        # session_array = session_array.rename({'start_offsets': 'events'})
-        #
-        # session_time_series = TimeSeriesX(session_array.values,
-        #                                   dims=['channels', 'events', 'time'],
-        #                                   coords={
-        #                                       'channels': session_array['channels'],
-        #                                       'events': session_array['events'],
-        #                                       'time': physical_time_array,
-        #                                       'offsets': ('time', session_array['offsets']),
-        #                                       'samplerate': session_array['samplerate']
-        #                                       # 'dataroot':self.session_dataroot
-        #
-        #                                   }
-        #                                   )
-        # session_time_series.attrs = session_array.attrs.copy()
-        # session_time_series.attrs['dataroot'] = self.session_dataroot
-        # # session_time_series['time']=tdim
-
-
 
         # session_array = session_array.rename({'start_offsets': 'events'})
 
@@ -155,7 +126,6 @@ class EEGReader(PropertiedObject,BaseReader):
                                           )
         session_time_series.attrs = session_array.attrs.copy()
         session_time_series.attrs['dataroot'] = self.session_dataroot
-        # session_time_series['time']=tdim
 
         return session_time_series
 

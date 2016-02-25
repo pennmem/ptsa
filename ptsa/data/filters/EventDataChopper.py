@@ -35,6 +35,7 @@ class EventDataChopper(PropertiedObject,BaseFilter):
         :param end_time {float} -  read end offset in seconds w.r.t to the eegeffset specified in the events recarray
         :param end_time {float} -  extra buffer in seconds (subtracted from start read and added to end read)
         :param events {np.recarray} - numpy recarray representing events
+        :param startoffsets {np.ndarray} - numpy array with offsets at which chopping should take place
         :param session_datar {str} -  TimeSeriesX object with eeg session data
 
         :return: None
@@ -67,44 +68,6 @@ class EventDataChopper(PropertiedObject,BaseFilter):
 
         return len(selector_array), start_point_shift
 
-    def chop_on_start_offsets(self):
-        samplerate = float(self.session_data['samplerate'])
-        offset_time_array = self.session_data['offsets']
-
-        event_chunk_size, start_point_shift = self.get_event_chunk_size_and_start_point_shift(
-        eegoffset=self.start_offsets[0],
-        samplerate=samplerate,
-        offset_time_array=offset_time_array)
-
-
-        event_time_axis = np.arange(event_chunk_size)*(1.0/samplerate)+(self.start_time-self.buffer_time)
-
-        data_list = []
-
-        for i, eegoffset in enumerate(self.start_offsets):
-
-            start_chop_pos = np.where(offset_time_array >= eegoffset)[0][0]
-            start_chop_pos += start_point_shift
-            selector_array = np.arange(start=start_chop_pos, stop=start_chop_pos + event_chunk_size)
-
-            chopped_data_array = self.session_data.isel(time=selector_array)
-
-            chopped_data_array['time'] = event_time_axis
-            chopped_data_array['events'] = [i]
-
-            data_list.append(chopped_data_array)
-
-        ev_concat_data = xr.concat(data_list, dim='events')
-
-        ev_concat_data['events'] = self.start_offsets
-
-        # ev_concat_data.attrs['samplerate'] = samplerate
-        ev_concat_data['samplerate'] = samplerate
-        ev_concat_data.attrs['start_time'] = self.start_time
-        ev_concat_data.attrs['end_time'] = self.end_time
-        ev_concat_data.attrs['buffer_time'] = self.buffer_time
-        return TimeSeriesX(ev_concat_data)
-
 
     def filter(self):
         """
@@ -131,14 +94,10 @@ class EventDataChopper(PropertiedObject,BaseFilter):
         offset_time_array = self.session_data['offsets']
 
         event_chunk_size, start_point_shift = self.get_event_chunk_size_and_start_point_shift(
-        # eegoffset=evs[0].eegoffset,
         eegoffset=start_offsets[0],
         samplerate=samplerate,
         offset_time_array=offset_time_array)
 
-        # event_time_axis = np.linspace(-self.buffer_time + self.start_time,
-        #                               self.end_time + self.buffer_time ,
-        #                               event_chunk_size)
 
         event_time_axis = np.arange(event_chunk_size)*(1.0/samplerate)+(self.start_time-self.buffer_time)
 
@@ -159,9 +118,6 @@ class EventDataChopper(PropertiedObject,BaseFilter):
 
         ev_concat_data = xr.concat(data_list, dim='start_offsets')
 
-        # if not chop_on_start_offsets_flag:
-        #
-        #     ev_concat_data['events'] = evs
 
         ev_concat_data = ev_concat_data.rename({'start_offsets':chopping_axis_name})
         ev_concat_data[chopping_axis_name] = chopping_axis_data
@@ -172,51 +128,6 @@ class EventDataChopper(PropertiedObject,BaseFilter):
         ev_concat_data.attrs['end_time'] = self.end_time
         ev_concat_data.attrs['buffer_time'] = self.buffer_time
         return TimeSeriesX(ev_concat_data)
-
-        # if len(self.start_offsets):
-        #     return self.chop_on_start_offsets()
-
-        # evs = self.events[self.events.eegfile == self.session_data.attrs['dataroot']]
-        # # samplerate = self.session_data.attrs['samplerate']
-        # samplerate = float(self.session_data['samplerate'])
-        # offset_time_array = self.session_data['offsets']
-        #
-        # event_chunk_size, start_point_shift = self.get_event_chunk_size_and_start_point_shift(
-        # eegoffset=evs[0].eegoffset,
-        # samplerate=samplerate,
-        # offset_time_array=offset_time_array)
-        #
-        # # event_time_axis = np.linspace(-self.buffer_time + self.start_time,
-        # #                               self.end_time + self.buffer_time ,
-        # #                               event_chunk_size)
-        #
-        # event_time_axis = np.arange(event_chunk_size)*(1.0/samplerate)+(self.start_time-self.buffer_time)
-        #
-        # data_list = []
-        #
-        # for i, ev in enumerate(evs):
-        #
-        #     start_chop_pos = np.where(offset_time_array >= ev.eegoffset)[0][0]
-        #     start_chop_pos += start_point_shift
-        #     selector_array = np.arange(start=start_chop_pos, stop=start_chop_pos + event_chunk_size)
-        #
-        #     chopped_data_array = self.session_data.isel(time=selector_array)
-        #
-        #     chopped_data_array['time'] = event_time_axis
-        #     chopped_data_array['events'] = [i]
-        #
-        #     data_list.append(chopped_data_array)
-        #
-        # ev_concat_data = xr.concat(data_list, dim='events')
-        # ev_concat_data['events'] = evs
-        #
-        # # ev_concat_data.attrs['samplerate'] = samplerate
-        # ev_concat_data['samplerate'] = samplerate
-        # ev_concat_data.attrs['start_time'] = self.start_time
-        # ev_concat_data.attrs['end_time'] = self.end_time
-        # ev_concat_data.attrs['buffer_time'] = self.buffer_time
-        # return TimeSeriesX(ev_concat_data)
-
 
 
 if __name__ == '__main__':
