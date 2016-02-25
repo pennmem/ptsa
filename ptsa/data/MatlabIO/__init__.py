@@ -40,7 +40,7 @@ def read_single_matlab_matrix_as_numpy_structured_array(file_name, object_name, 
     array_fd = np.recarray(shape=matlab_matrix_as_python_obj.shape, dtype=format_dict)
 
     populate_record_array(source_array=matlab_matrix_as_python_obj, target_array=array_fd, format_dict=format_dict,
-                          prepend_name='')
+                          prepend_name='',verbose=verbose)
 
     if verbose:
         print array_fd
@@ -99,12 +99,12 @@ def get_np_format(record_array, verbose=False):
     names_list = []
     format_list = []
 
-    record = record_array[0]
+    first_record = record_array[0]
 
     dt = {'names': ['a', 'b'], 'formats': ['<f8', {'names': ['x'], 'formats': ['<f8']}]}
     array_fd = np.recarray(shape=(10,), dtype=dt)
 
-    for _fieldname in record._fieldnames:
+    for _fieldname in first_record._fieldnames:
         formats = []
         for record in record_array:
             format = get_np_type(record, _fieldname)
@@ -124,7 +124,13 @@ def get_np_format(record_array, verbose=False):
                     # if format is not None:
                     #     formats.append(format)
         # print formats
+
+
         if not len(formats):
+            # for record fields for which we could not determine the format we assume it is |S256
+            names_list.append(_fieldname)
+            format_list.append('|S256')
+
             pass
         elif len(formats) == 1:
             names_list.append(_fieldname)
