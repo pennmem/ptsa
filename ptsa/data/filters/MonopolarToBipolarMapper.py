@@ -78,18 +78,29 @@ class MonopolarToBipolarMapper(PropertiedObject,BaseFilter):
         channels_idx = dims_bp.index('channels')
         dims_bp[channels_idx] = 'bipolar_pairs'
 
-        coords_bp = [self.time_series[dim_name].copy() for dim_name in self.time_series.dims]
-        coords_bp[channels_idx] = self.bipolar_pairs
+        # coords_bp = [self.time_series[dim_name].copy() for dim_name in self.time_series.dims]
+        # coords_bp[channels_idx] = self.bipolar_pairs
 
-        ts = xr.DataArray(data=ts0.values - ts1.values,
-                          dims=dims_bp,
-                          coords=coords_bp)
+        coords_bp = {coord_name:coord for coord_name, coord in self.time_series.coords.items()}
+        del coords_bp['channels']
+        coords_bp['bipolar_pairs'] = self.bipolar_pairs
 
+
+        ts = TimeSeriesX(data=ts0.values - ts1.values, dims=dims_bp,coords=coords_bp)
         ts['samplerate'] = self.time_series['samplerate']
 
         ts.attrs = self.time_series.attrs.copy()
+        return ts
 
-        return TimeSeriesX(data=ts)
+        # ts = xr.DataArray(data=ts0.values - ts1.values,
+        #                   dims=dims_bp,
+        #                   coords=coords_bp)
+        #
+        # ts['samplerate'] = self.time_series['samplerate']
+        #
+        # ts.attrs = self.time_series.attrs.copy()
+        #
+        # return TimeSeriesX(data=ts)
 
 # @profile
 def main_fcn():
@@ -119,7 +130,19 @@ def main_fcn():
 
 
     from ptsa.data.readers.EEGReader import EEGReader
-    time.sleep(10)
+
+    sessions = np.unique(base_events.session)
+    dataroot = base_events[0].eegfile
+
+    session_reader = EEGReader(session_dataroot=dataroot, channels=monopolar_channels)
+    session_eegs = session_reader.read()
+
+    m2b = MonopolarToBipolarMapper(time_series=session_eegs, bipolar_pairs=bipolar_pairs)
+    session_bp_eegs = m2b.filter()
+
+
+
+
 
     time_series_reader = EEGReader(events=base_events, channels=monopolar_channels, start_time=0.0,
                                              end_time=1.6, buffer_time=1.0)
@@ -127,11 +150,10 @@ def main_fcn():
 
     base_eegs = time_series_reader.read()
 
-    time.sleep(10)
+
     m2b = MonopolarToBipolarMapper(time_series=base_eegs, bipolar_pairs=bipolar_pairs)
     ts_filtered = m2b.filter()
 
-    time.sleep(10)
     del base_eegs
     del time_series_reader
 
