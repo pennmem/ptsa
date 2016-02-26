@@ -15,7 +15,7 @@ from ptsa.data.filters import DataChopper
 from ptsa.data.filters import MonopolarToBipolarMapper
 
 
-class test_filters(unittest.TestCase):
+class TestFilters(unittest.TestCase):
     def setUp(self):
         self.start_time = -0.5
         self.end_time = 1.6
