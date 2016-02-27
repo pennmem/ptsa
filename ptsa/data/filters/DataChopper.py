@@ -19,7 +19,7 @@ class DataChopper(PropertiedObject,BaseFilter):
 
         TypeValTuple('start_time', float, 0.0),
         TypeValTuple('end_time', float, 0.0),
-        TypeValTuple('buffer_time', float, 1.0),
+        TypeValTuple('buffer_time', float, 0.0),
         TypeValTuple('events', np.recarray, np.recarray((1,), dtype=[('x', int)])),
         TypeValTuple('start_offsets', np.ndarray, np.array([], dtype=int)),
         TypeValTuple('session_data', TimeSeriesX, TimeSeriesX([0.0], dims=['time'])),
