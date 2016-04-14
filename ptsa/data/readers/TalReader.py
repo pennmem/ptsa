@@ -67,17 +67,36 @@ class TalReader(PropertiedObject,BaseReader):
         '''
 
         from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
-        self.tal_struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.filename,self.struct_name,verbose=False)
 
+        struct_names = ['bpTalStruct','subjTalEvents']
+        # struct_names = ['bpTalStruct']
+        if self.struct_name not in struct_names:
+            self.tal_struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.filename, self.struct_name,verbose=False)
 
+            if self.tal_struct_array is not None:
+                return self.tal_struct_array
+            else:
+                raise AttributeError('Could not read tal struct data for the specified struct_name='+self.struct_name)
 
-        return self.tal_struct_array
+        else:
+
+            for sn in struct_names:
+                self.tal_struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.filename,sn,verbose=False)
+                if self.tal_struct_array is not None:
+                    return self.tal_struct_array
+
+        raise AttributeError('Could not read tal struct data. Try specifying struct_name argument :'
+                             '\nTalReader(filename=e_path, struct_name=<name_of_struc_to_read>)')
+
 
 
 if __name__=='__main__':
     event_range = range(0, 30, 1)
     e_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
 
+    # e_path = '/Users/m/data/eeg/TJ010/tal/TJ010_talLocs_database_bipol.mat'
+
+    # tal_reader = TalReader(filename=e_path, struct_name='subjTalEvents')
     tal_reader = TalReader(filename=e_path)
     tal_reader.read()
 
