@@ -1,155 +1,154 @@
 __author__ = 'm'
 
-import numpy as np
-import xray
+from ptsa.data.common.xr import DataArray
 from ptsa.data.common import TypeValTuple, PropertiedObject
+from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.common import get_axis_index
 
+from ptsa.data.filters import BaseFilter
 
-class ButterworthFiler(PropertiedObject):
+# class ButterworthFilter(PropertiedObject):
+class ButterworthFilter(PropertiedObject,BaseFilter):
+
+    '''
+    Applies Butterworth filter to a time series
+    '''
     _descriptors = [
-        TypeValTuple('samplerate', float, -1.0),
+        TypeValTuple('time_series', TimeSeriesX, TimeSeriesX([0.0], dims=['time'])),
         TypeValTuple('order', int, 4),
-        TypeValTuple('freq_range', list, [58,62]),
+        TypeValTuple('freq_range', list, [58, 62]),
         TypeValTuple('filt_type', str, 'stop'),
     ]
 
-
-    def __init__(self,**kwds):
-
-        self.time_series = None
-        self.time_axis = -1
-
-        for option_name, val in kwds.items():
-
-            try:
-                attr = getattr(self,option_name)
-                setattr(self,option_name,val)
-            except AttributeError:
-                print 'Option: '+ option_name+' is not allowed'
-
-
-
-    def set_input(self, time_series):
-        self.time_series = time_series
-
-    def get_output(self):
-        return self.filtered_time_series
-
-
+    def __init__(self, **kwds):
+        '''
+        Constructor
+        :param kwds:allowed values are:
+        -------------------------------------
+        :param time_series  -  TimeSeriesX object
+        :param order -  Butterworth filter order
+        :param freq_range -  array of frequencies [min_freq, max_freq] to filter out
+        :return: None
+        '''
+        self.init_attrs(kwds)
 
     def filter(self):
+        '''
+        Applies Butterwoth filter to input time series and returns filtered TimeSeriesX object
+        :return: TimeSeriesX object
+        '''
 
-        from ptsa.filt  import buttfilt
+        from ptsa.filt import buttfilt
 
-        # find index  of the  axis called 'time'
-        if self.time_axis<0:
-
-            time_index_array = np.where(np.array(self.time_series.dims) == 'time')
-            if len(time_index_array)>0:
-                self.time_axis =time_index_array[0] # picking first index that corresponds to the dimension
-            else:
-                raise RuntimeError("Could not locate 'time' axis in your time series."
-                                   " Make sure to either label appropriate axis of your time series 'time' or specify"
-                                   "time axis explicitely as a non-negative integer '")
-
+        time_axis_index = get_axis_index(self.time_series, axis_name='time')
         filtered_array = buttfilt(self.time_series,
-                                       self.freq_range, self.samplerate, self.filt_type,
-                                       self.order,axis=self.time_axis)
+                                  self.freq_range, float(self.time_series['samplerate']), self.filt_type,
+                                  self.order, axis=time_axis_index)
 
-
-        self.filtered_time_series = xray.DataArray(
+        coords_dict = {coord_name: DataArray(coord.copy()) for coord_name, coord in self.time_series.coords.items()}
+        coords_dict['samplerate'] = self.time_series['samplerate']
+        dims = [dim_name for dim_name in self.time_series.dims]
+        filtered_time_series = TimeSeriesX(
             filtered_array,
-            coords = [xray.DataArray(coord.copy()) for coord_name, coord in self.time_series.coords.items() ]
+            dims=dims,
+            coords=coords_dict
         )
 
-        self.filtered_time_series.attrs['samplerate'] = self.time_series.attrs['samplerate']
-        # l = [xray.DataArray(coord.copy()) for coord_name, coord in self.time_series.coords.items() ]
+        # filtered_time_series.attrs['samplerate'] = self.time_series.attrs['samplerate']
+        # filtered_time_series.attrs['samplerate'] = self.time_series['samplerate']
+        filtered_time_series = TimeSeriesX(filtered_time_series)
 
-        return self.filtered_time_series
+        return filtered_time_series
 
 
 
-# class ButterworthFiler(object):
-#     def __init__(self):
-#         self._filt_type = 'stop'
-#         self._order = 4
-#         self._freq_range = [58, 62]
-#
-#         self.time_series = None
-#         self._samplerate = None
-#         self.time_axis = -1
-#
-#     @property
-#     def samplerate(self):
-#         return self._samplerate
-#
-#     @samplerate.setter
-#     def samplerate(self, val):
-#         self._samplerate = val
-#
-#
-#     @property
-#     def freq_range(self):
-#         return self._freq_range
-#
-#     @freq_range.setter
-#     def freq_range(self, val):
-#         self._freq_range = val
-#
-#     @property
-#     def filt_type(self):
-#         return self._filt_type
-#
-#     @filt_type.setter
-#     def filt_type(self, val):
-#         self._filt_type = val
-#
-#     @property
-#     def order(self):
-#         return self._order
-#
-#     @order.setter
-#     def order(self, val):
-#         self._order = val
-#
-#     def set_input(self, time_series):
-#         self.time_series = time_series
-#
-#     def get_output(self):
-#         return self.filtered_time_series
-#
-#     def filter(self):
-#
-#         from ptsa.filt  import buttfilt
-#
-#         # find index  of the  axis called 'time'
-#         if self.time_axis<0:
-#
-#             time_index_array = np.where(np.array(self.time_series.dims) == 'time')
-#             if len(time_index_array)>0:
-#                 self.time_axis =time_index_array[0] # picking first index that corresponds to the dimension
-#             else:
-#                 raise RuntimeError("Could not locate 'time' axis in your time series."
-#                                    " Make sure to either label appropriate axis of your time series 'time' or specify"
-#                                    "time axis explicitely as a non-negative integer '")
-#
-#         filtered_array = buttfilt(self.time_series,
-#                                        self.freq_range, self.samplerate, self.filt_type,
-#                                        self.order,axis=self.time_axis)
-#
-#
-#         self.filtered_time_series = xray.DataArray(
-#             filtered_array,
-#             coords = [xray.DataArray(coord.copy()) for coord_name, coord in self.time_series.coords.items() ]
-#         )
-#
-#
-#         # l = [xray.DataArray(coord.copy()) for coord_name, coord in self.time_series.coords.items() ]
-#
-#         return self.filtered_time_series
-#
-#         # attrs = self._attrs.copy()
-#         # for k in self._required_attrs.keys():
-#         #     attrs.pop(k,None)
-#         # return TimeSeries(filtered_array,self.tdim, self.samplerate,
-#         #                   dims=self.dims.copy(), **attrs)
+from scipy.signal import butter, lfilter
+
+
+def butter_bandpass(lowcut, highcut, fs, order=4):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    # b, a = butter(order, [low, high], btype='band')
+    b, a = butter(order, [low, high], btype='stop')
+    return b, a
+
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=4):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+
+
+if __name__ == '__main__':
+    import numpy as np
+    from numpy.testing import *
+    from ptsa.data.readers import BaseEventReader
+    from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
+    from ptsa.data.filters.ButterworthFilter import ButterworthFilter
+    from ptsa.data.readers.TalReader import TalReader
+    from ptsa.data.readers import EEGReader
+    from ptsa.data.readers import PTSAEventReader
+    from ptsa.data.events import Events
+
+    e_path = '/Volumes/rhino_root/data/events/RAM_PS/R1108J_1_events.mat'
+    e_path = '/Volumes/rhino_root/data/events/RAM_PS/R1108J_1_events.mat'
+    # e_path ='/Users/m/data/events/RAM_FR1/R1056M_events.mat'
+
+    e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
+
+
+    events = e_reader.read()
+
+    from ptsa.data.readers.TalReader import TalReader
+
+    tal_path = '/Volumes/rhino_root/data/eeg/R1108J_1/tal/R1108J_1_talLocs_database_bipol.mat'
+    tal_reader = TalReader(filename=tal_path)
+    monopolar_channels = tal_reader.get_monopolar_channels()
+    bipolar_pairs = tal_reader.get_bipolar_pairs()
+
+    # ---------------- NEW STYLE PTSA -------------------
+    base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
+
+    base_events = base_e_reader.read()
+
+    base_events = base_events[(base_events.type == 'STIMULATING') ]
+    base_events = base_events[base_events.session == 2]
+
+
+    from ptsa.data.readers.EEGReader import EEGReader
+    eeg_reader = EEGReader(events=base_events, channels=monopolar_channels[0:3],
+                           start_time=-1.1, end_time=-0.1, buffer_time=1.0)
+
+    base_eegs = eeg_reader.read()
+
+    bw_base_eegs = base_eegs.filtered(freq_range=[58.,62.], filt_type='stop', order=4)
+
+
+    b, a = butter_bandpass(58.,62.,float(base_eegs['samplerate']), 4)
+    y_in = base_eegs[0,0,:].data
+
+
+    y_out = butter_bandpass_filter(y_in, 58.,62.,float(base_eegs['samplerate']), 4)
+
+
+    import matplotlib;
+    matplotlib.use('Qt4Agg')
+
+
+    import matplotlib.pyplot as plt
+    plt.get_current_fig_manager().window.raise_()
+
+
+    # plt.plot(np.arange(y_in.shape[0]),y_in,'k')
+    plt.plot(np.arange(y_out.shape[0]),y_out,'r--')
+
+
+    plt.plot(np.arange(bw_base_eegs[0,0,:].shape[0]),bw_base_eegs[0,0,:],'b--')
+
+
+
+
+    plt.show()
+
+    print

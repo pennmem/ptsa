@@ -346,7 +346,7 @@ def fconv_multi(in1, in2, mode='full'):
 
 
 
-def phase_pow_multi(freqs, _dat,  samplerates=None, widths=5,
+def phase_pow_multi(freqs, dat,  samplerates=None, widths=5,
                     to_return='both', time_axis=-1,
                     conv_dtype=np.complex64, freq_name='freqs',
                     **kwargs):
@@ -402,12 +402,6 @@ def phase_pow_multi(freqs, _dat,  samplerates=None, widths=5,
     dimension is for the frequencies and is inserted as the first
     dimension.
     """
-    from xray import DataArray
-
-    if isinstance(_dat,DataArray):
-        dat=_dat.values
-    else:
-        dat=_dat
 
     dat_is_ts = False # is dat a TimeSeries instance?
     if isinstance(dat,TimeSeries):

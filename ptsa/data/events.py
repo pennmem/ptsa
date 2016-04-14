@@ -1,5 +1,5 @@
-#emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
-#ex: set sts=4 ts=4 sw=4 et:
+# emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
+# ex: set sts=4 ts=4 sw=4 et:
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
 #
 #   See the COPYING file distributed along with the PTSA package for the
@@ -9,10 +9,11 @@
 
 # global imports
 import numpy as np
-from timeseries import TimeSeries,Dim
-import xray
+from timeseries import TimeSeries, Dim
+import time
 
-#import pdb
+
+# import pdb
 
 class Events(np.recarray):
     """
@@ -24,14 +25,14 @@ class Events(np.recarray):
     # def __new__(subtype, shape, dtype=None, buf=None, offset=0, strides=None,
     #             formats=None, names=None, titles=None,
     #             byteorder=None, aligned=False):
-    
+
     # def __new__(*args,**kwargs):
     #     return np.recarray.__new__(*args,**kwargs)
 
     def __new__(subtype, data):
         return data.view(subtype)
-        
-    def remove_fields(self,*fields_to_remove):
+
+    def remove_fields(self, *fields_to_remove):
         """
         Return a new instance of the recarray with specified fields
         removed.
@@ -51,7 +52,7 @@ class Events(np.recarray):
         # loop over fields, keeping if not matching fieldName
         for field in self.dtype.names:
             # don't add the field if in fields_to_remove list
-            #if sum(map(lambda x: x==field,fields_to_remove)) == 0:
+            # if sum(map(lambda x: x==field,fields_to_remove)) == 0:
             if not field in fields_to_remove:
                 # append the data
                 arrays.append(self[field])
@@ -60,9 +61,9 @@ class Events(np.recarray):
         # return the new Events
         if len(arrays) == 0:
             arrays.append([])
-        return np.rec.fromarrays(arrays,names=','.join(names)).view(self.__class__)
-        
-    def add_fields(self,**fields):
+        return np.rec.fromarrays(arrays, names=','.join(names)).view(self.__class__)
+
+    def add_fields(self, **fields):
         """
         Add fields from the keyword args provided and return a new
         instance.
@@ -86,228 +87,43 @@ class Events(np.recarray):
 
         # list of current dtypes to which new dtypes will be added:
         # new_dtype = [(name,self[name].dtype) for name in self.dtype.names]
-        
+
         # sequence of arrays and names from starting recarray
-        #arrays = map(lambda x: self[x], self.dtype.names)
+        # arrays = map(lambda x: self[x], self.dtype.names)
         arrays = [self[x] for x in self.dtype.names]
         names = ','.join(self.dtype.names)
-        
+
         # loop over the kwargs of field
-        for name,data in fields.iteritems():
+        for name, data in fields.iteritems():
             # see if already there, error if so
             if self.dtype.fields.has_key(name):
                 # already exists
-                raise ValueError('Field "'+name+'" already exists.')
-            
+                raise ValueError('Field "' + name + '" already exists.')
+
             # append the array and name
-            if(isinstance(data,np.dtype)|
-               isinstance(data,type)|isinstance(data,str)):
+            if (isinstance(data, np.dtype) |
+                    isinstance(data, type) | isinstance(data, str)):
                 # add empty array the length of the data
-                arrays.append(np.empty(len(self),data))
+                arrays.append(np.empty(len(self), data))
             else:
                 # add the data as an array
                 arrays.append(data)
 
             # add the name
-            if len(names)>0:
+            if len(names) > 0:
                 # append ,
-                names = names+','
+                names = names + ','
             # append the name
-            names = names+name
+            names = names + name
         # return the new Events
-        return np.rec.fromarrays(arrays,names=names).view(self.__class__)
+        return np.rec.fromarrays(arrays, names=names).view(self.__class__)
 
-    # def get_data_xray(self,channels,start_time,end_time,buffer_time=0.0,
-    #              resampled_rate=None,
-    #              filt_freq=None,filt_type='stop',filt_order=4,
-    #              keep_buffer=False,esrc='esrc',eoffset='eoffset',
-    #              loop_axis=None,num_mp_procs=0,
-    #              eoffset_in_time=True,**kwds):
-    #     """
-    #     Return the requested range of data for each event by using the
-    #     proper data retrieval mechanism for each event.
-    #
-    #     Parameters
-    #     ----------
-    #     channels: {list,int,None}
-    #         Channels from which to load data.
-    #     start_time: {float}
-    #         Start of epoch to retrieve (in time-unit of the data).
-    #     end_time: {float}
-    #         End of epoch to retrieve (in time-unit of the data).
-    #     buffer_time: {float},optional
-    #         Extra buffer to add on either side of the event in order
-    #         to avoid edge effects when filtering (in time unit of the
-    #         data).
-    #     resampled_rate: {float},optional
-    #         New samplerate to resample the data to after loading.
-    #     filt_freq: {array_like},optional
-    #         The range of frequencies to filter (depends on the filter
-    #         type.)
-    #     filt_type = {scipy.signal.band_dict.keys()},optional
-    #         Filter type.
-    #     filt_order = {int},optional
-    #         The order of the filter.
-    #     keep_buffer: {boolean},optional
-    #         Whether to keep the buffer when returning the data.
-    #     esrc : {string},optional
-    #         Name for the field containing the source for the time
-    #         series data corresponding to the event.
-    #     eoffset: {string},optional
-    #         Name for the field containing the offset (in seconds) for
-    #         the event within the specified source.
-    #     eoffset_in_time: {boolean},optional
-    #         If True, the unit of the event offsets is taken to be
-    #         time (unit of the data), otherwise samples.
-    #     verbose: {bool} turns on verbose printout of the function -
-    #         e.g. timing information will be output to the screen
-    #
-    #     Returns
-    #     -------
-    #     A TimeSeries instance with dimensions (channels,events,time).
-    #     """
-    #     import time
-    #     start = time.time()
-    #
-    #     verbose = False
-    #     try:
-    #         verbose = kwds['verbose']
-    #     except LookupError:
-    #         pass
-    #
-    #     # check for necessary fields
-    #     if not (esrc in self.dtype.names and
-    #             eoffset in self.dtype.names):
-    #         raise ValueError(esrc+' and '+eoffset+' must be valid fieldnames '+
-    #                          'specifying source and offset for the data.')
-    #
-    #     events = []
-    #
-    #     newdat_list = []
-    #
-    #     # speed up by getting unique event sources first
-    #     #ORIGINAL CODE - the order of usources is basically undefined because np.unique will sort according to
-    #     # self[esrs] hash. This  means that order of newdat arrays will depend on the memory assignment of RawBinaryWrapper
-    #     # if more than one binary wrappers are present in the events (i.e. in self)
-    #     usources = np.unique(self[esrc])
-    #
-    #     # # NEW CODE
-    #     # usources_sorted = np.unique(self[esrc])
-    #     #
-    #     # usources_unsorted = self[esrc]
-    #     #
-    #     # usources, idx = np.unique(self[esrc], return_index=True)
-    #     #
-    #     # # usources = usources[np.sort(idx)]
-    #     #
-    #     # usources = usources_unsorted[np.sort(idx)]
-    #
-    #     # loop over unique sources
-    #
-    #     ordered_indices = np.arange(len(self))
-    #
-    #     event_indices_list = []
-    #
-    #
-    #     eventdata = None
-    #     for s,src in enumerate(usources):
-    #         # get the eventOffsets from that source
-    #         ind = np.atleast_1d(self[esrc]==src)
-    #
-    #         event_indices_list.append(ordered_indices[ind])
-    #
-    #
-    #
-    #         if verbose:
-    #             if not s%10:
-    #                 print 'Reading event %d'%s
-    #         if len(ind) == 1:
-    #             event_offsets=self[eoffset]
-    #             events.append(self)
-    #         else:
-    #             event_offsets = self[ind][eoffset]
-    #             events.append(self[ind])
-    #
-    #         #print "Loading %d events from %s" % (ind.sum(),src)
-    #         # get the timeseries for those events
-    #         newdat = src.get_event_data_xray(channels,
-    #                                     event_offsets,
-    #                                     start_time,
-    #                                     end_time,
-    #                                     buffer_time,
-    #                                     resampled_rate,
-    #                                     filt_freq,
-    #                                     filt_type,
-    #                                     filt_order,
-    #                                     keep_buffer,
-    #                                     loop_axis,
-    #                                     num_mp_procs,
-    #                                     eoffset,
-    #                                     eoffset_in_time)
-    #
-    #         newdat_list.append(newdat)
-    #         #ORIGINAL CODE
-    #         # if eventdata is None:
-    #         #     eventdata = newdat
-    #         # else:
-    #         #     eventdata = eventdata.extend(newdat,axis=1)
-    #
-    #
-    #
-    #     event_indices_array = np.hstack(event_indices_list)
-    #
-    #     event_indices_restore_sort_order_array = event_indices_array.argsort()
-    #
-    #
-    #     # new code
-    #     start_extend_time = time.time()
-    #     eventdata = newdat_list[0]
-    #     eventdata = eventdata.extend(newdat_list[1:],axis=1)
-    #     end_extend_time = time.time()
-    #
-    #
-    #     # concatenate (must eventually check that dims match)
-    #     # ORIGINAL CODE
-    #     tdim = eventdata['time']
-    #     cdim = eventdata['channels']
-    #     srate = eventdata.samplerate
-    #     events = np.concatenate(events).view(self.__class__)
-    #
-    #     eventdata_xray = xray.DataArray(eventdata.base.base.base, coords=[cdim,events,tdim], dims=['channels','events','time'])
-    #     eventdata_xray  = eventdata_xray [:,event_indices_restore_sort_order_array ,:]
-    #
-    #     #ORIGINAL CODE
-    #     # eventdata = TimeSeries(eventdata,
-    #     #                        'time', srate,
-    #     #                        dims=[cdim,Dim(events,'events'),tdim])
-    #
-    #     # wrong ordering of the events axds but ok ordering of the raw data ### RESTORE PREVOUS
-    #     # eventdata = TimeSeries(eventdata_xray.values,
-    #     #                        'time', srate,
-    #     #                        dims=[cdim,Dim(events,'events'),tdim])
-    #
-    #     # correct ordering of events axis and of the raw data
-    #     eventdata = TimeSeries(eventdata_xray.values,'time', srate,dims=[cdim,Dim(eventdata_xray.coords['events'].values,'events'),tdim])
-    #
-    #
-    #
-    #     end = time.time()
-    #     if verbose:
-    #         print 'get_data tuntime=',(end - start), 's'
-    #         print 'extend_time = =',(end_extend_time - start_extend_time), 's'
-    #
-    #     return eventdata
-
-
-
-    
-
-    def get_data(self,channels,start_time,end_time,buffer_time=0.0,
+    def get_data(self, channels, start_time, end_time, buffer_time=0.0,
                  resampled_rate=None,
-                 filt_freq=None,filt_type='stop',filt_order=4,
-                 keep_buffer=False,esrc='esrc',eoffset='eoffset',
-                 loop_axis=None,num_mp_procs=0,
-                 eoffset_in_time=True,**kwds):
+                 filt_freq=None, filt_type='stop', filt_order=4,
+                 keep_buffer=False, esrc='esrc', eoffset='eoffset',
+                 loop_axis=None, num_mp_procs=0,
+                 eoffset_in_time=True, **kwds):
         """
         Return the requested range of data for each event by using the
         proper data retrieval mechanism for each event.
@@ -350,6 +166,8 @@ class Events(np.recarray):
         Returns
         -------
         A TimeSeries instance with dimensions (channels,events,time).
+        or
+        A TimeSeries instance with dimensions (channels,events,time) and xray.DataArray with dimensions (channels,events,time)
         """
         import time
         start = time.time()
@@ -360,10 +178,16 @@ class Events(np.recarray):
         except LookupError:
             pass
 
+        return_both = False
+        try:
+            return_both = kwds['return_both']
+        except LookupError:
+            pass
+
         # check for necessary fields
         if not (esrc in self.dtype.names and
-                eoffset in self.dtype.names):
-            raise ValueError(esrc+' and '+eoffset+' must be valid fieldnames '+
+                        eoffset in self.dtype.names):
+            raise ValueError(esrc + ' and ' + eoffset + ' must be valid fieldnames ' +
                              'specifying source and offset for the data.')
 
         events = []
@@ -371,49 +195,33 @@ class Events(np.recarray):
         newdat_list = []
 
         # speed up by getting unique event sources first
-        #ORIGINAL CODE - the order of usources is basically undefined because np.unique will sort according to
+        # ORIGINAL CODE - the order of usources is basically undefined because np.unique will sort according to
         # self[esrs] hash. This  means that order of newdat arrays will depend on the memory assignment of RawBinaryWrapper
         # if more than one binary wrappers are present in the events (i.e. in self)
         usources = np.unique(self[esrc])
-
-        # # NEW CODE
-        # usources_sorted = np.unique(self[esrc])
-        #
-        # usources_unsorted = self[esrc]
-        #
-        # usources, idx = np.unique(self[esrc], return_index=True)
-        #
-        # # usources = usources[np.sort(idx)]
-        #
-        # usources = usources_unsorted[np.sort(idx)]
-
-        # loop over unique sources
 
         ordered_indices = np.arange(len(self))
 
         event_indices_list = []
 
-
-        eventdata = None
-        for s,src in enumerate(usources):
+        # loop over unique sources
+        for s, src in enumerate(usources):
             # get the eventOffsets from that source
-            ind = np.atleast_1d(self[esrc]==src)
+            ind = np.atleast_1d(self[esrc] == src)
 
             event_indices_list.append(ordered_indices[ind])
 
-
-
             if verbose:
-                if not s%10:
-                    print 'Reading event %d'%s
+                if not s % 10:
+                    print 'Reading event %d' % s
             if len(ind) == 1:
-                event_offsets=self[eoffset]
+                event_offsets = self[eoffset]
                 events.append(self)
             else:
                 event_offsets = self[ind][eoffset]
                 events.append(self[ind])
 
-            #print "Loading %d events from %s" % (ind.sum(),src)
+            # print "Loading %d events from %s" % (ind.sum(),src)
             # get the timeseries for those events
             newdat = src.get_event_data(channels,
                                         event_offsets,
@@ -431,54 +239,32 @@ class Events(np.recarray):
                                         eoffset_in_time)
 
             newdat_list.append(newdat)
-            #ORIGINAL CODE
-            # if eventdata is None:
-            #     eventdata = newdat
-            # else:
-            #     eventdata = eventdata.extend(newdat,axis=1)
-
-
 
         event_indices_array = np.hstack(event_indices_list)
 
         event_indices_restore_sort_order_array = event_indices_array.argsort()
 
-
         # new code
         start_extend_time = time.time()
         eventdata = newdat_list[0]
-        eventdata = eventdata.extend(newdat_list[1:],axis=1)
+        eventdata = eventdata.extend(newdat_list[1:], axis=1)
         end_extend_time = time.time()
 
-
         # concatenate (must eventually check that dims match)
-        # ORIGINAL CODE
         tdim = eventdata['time']
         cdim = eventdata['channels']
         srate = eventdata.samplerate
         events = np.concatenate(events).view(self.__class__)
 
-        eventdata_xray = xray.DataArray(eventdata.base.base.base, coords=[cdim,events,tdim], dims=['channels','events','time'])
-        eventdata_xray  = eventdata_xray [:,event_indices_restore_sort_order_array ,:]
-
-        #ORIGINAL CODE
-        # eventdata = TimeSeries(eventdata,
-        #                        'time', srate,
-        #                        dims=[cdim,Dim(events,'events'),tdim])
-
-        # wrong ordering of the events axds but ok ordering of the raw data ### RESTORE PREVOUS
-        # eventdata = TimeSeries(eventdata_xray.values,
-        #                        'time', srate,
-        #                        dims=[cdim,Dim(events,'events'),tdim])
-
-        # correct ordering of events axis and of the raw data
-        eventdata = TimeSeries(eventdata_xray.values,'time', srate,dims=[cdim,Dim(eventdata_xray.coords['events'].values,'events'),tdim])
-
-
+        # restoring original event ordering
+        eventdata_raw_array_sorted = eventdata.base.base.base[:, event_indices_restore_sort_order_array, :]
+        events_sorted = events[event_indices_restore_sort_order_array]
+        eventdata = TimeSeries(eventdata_raw_array_sorted, 'time', srate,
+                               dims=[cdim, Dim(events_sorted, 'events'), tdim])
 
         end = time.time()
         if verbose:
-            print 'get_data tuntime=',(end - start), 's'
-            print 'extend_time = =',(end_extend_time - start_extend_time), 's'
+            print 'get_data tuntime=', (end - start), 's'
+            print 'extend_time = =', (end_extend_time - start_extend_time), 's'
 
         return eventdata

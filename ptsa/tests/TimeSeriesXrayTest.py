@@ -21,12 +21,14 @@ def attach_rawbinwrappers(evs):
     for eegfile in eegfiles:
         eeg_file_path = str(eegfile)
 
-            # join(prefix, str(pathlib.Path(str(eegfile)).parts[1:]))
+        # join(prefix, str(pathlib.Path(str(eegfile)).parts[1:]))
         raw_bin_wrapper = RawBinWrapper(eeg_file_path)
         inds = np.where(evs.eegfile == eegfile)[0]
         for i in inds:
             evs[i]['esrc'] = raw_bin_wrapper
     return evs
+
+
 # self.subject_path = str(pathlib.Path(eeg_file_path).parts[:-2])
 
 # attaching
@@ -37,11 +39,9 @@ def attach_rawbinwrappers(evs):
 
 
 
-d = np.arange(120).reshape(4,3,10)
-
+d = np.arange(120).reshape(4, 3, 10)
 
 channels = ['002', '003', '004', '005']
-
 
 from ptsa.data.readers import BaseEventReader
 
@@ -51,8 +51,6 @@ base_e_reader = BaseEventReader(event_file=e_path, eliminate_events_with_no_eeg=
 base_events = base_e_reader.read()
 
 base_events = base_events[base_events.type == 'WORD']
-
-
 
 base_e_reader_ptsa = BaseEventReader(event_file=e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
 base_events_ptsa = base_e_reader_ptsa.read()
@@ -65,79 +63,74 @@ base_events_ptsa = attach_rawbinwrappers(base_events_ptsa)
 print base_events_ptsa
 
 base_ev_data_ptsa, base_ev_data_xray = base_events_ptsa.get_data(channels=channels, start_time=0.0, end_time=1.6,
-                                        buffer_time=1.0, eoffset='eegoffset', keep_buffer=True, eoffset_in_time=False,verbose=True)
+                                                                 buffer_time=1.0, eoffset='eegoffset', keep_buffer=True,
+                                                                 eoffset_in_time=False, verbose=True, return_both=True)
 
 
 # casting data DataArray into TimeSeriesXray
 base_ev_data_xray = TimeSeriesXray(base_ev_data_xray)
 
 
-#baseline_corrected test
+# baseline_corrected test
 
-corrected_base_ev_data_ptsa = base_ev_data_ptsa.baseline_corrected((0.0,0.2))
+corrected_base_ev_data_ptsa = base_ev_data_ptsa.baseline_corrected((0.0, 0.2))
 
-corrected_base_ev_data_xray = base_ev_data_xray.baseline_corrected((0.0,0.2))
+corrected_base_ev_data_xray = base_ev_data_xray.baseline_corrected((0.0, 0.2))
 
 
 # remove buffer test
 no_buffer_base_ev_data_ptsa = base_ev_data_ptsa.remove_buffer(1.0)
 no_buffer_base_ev_data_xray = base_ev_data_xray.remove_buffer(1.0)
 
-
-no_buffer_dataset = xray.Dataset({'no_buffer':no_buffer_base_ev_data_xray})
-
+no_buffer_dataset = xray.Dataset({'no_buffer': no_buffer_base_ev_data_xray})
 
 from ptsa.data.writers.NetCDF4XrayWriter import NetCDF4XrayWriter
+
 nc4_writer = NetCDF4XrayWriter(no_buffer_base_ev_data_xray)
 nc4_writer.write('no_buffer_base_ev_data_xray_new.nc')
 
-
 from ptsa.data.readers.NetCDF4XrayReader import NetCDF4XrayReader
+
 nc4_reader = NetCDF4XrayReader()
 array = nc4_reader.read('no_buffer_base_ev_data_xray_new.nc')
 
 print array['events']
 
-
 sys.exit()
 
 a = no_buffer_base_ev_data_xray
-a['events']=np.arange(len(a['events']))
-a['channels']=np.arange(len(a['channels']))
+a['events'] = np.arange(len(a['events']))
+a['channels'] = np.arange(len(a['channels']))
 # a['channels']=np.arange(len(a['channels']))
 # a['events']=np.arange(len(a['events']))
 print a
-nb = xray.Dataset({'no_buffer':a})
+nb = xray.Dataset({'no_buffer': a})
 nb.to_netcdf('no_buffer.nc')
-
-
-
 
 print 'EXITING AFTER BUFFER TEST'
 import sys
+
 sys.exit(0)
 
-#filtered_test
+# filtered_test
 
-base_ev_data_ptsa_filtered = base_ev_data_ptsa.filtered([58,62],filt_type='stop',order=4)
+base_ev_data_ptsa_filtered = base_ev_data_ptsa.filtered([58, 62], filt_type='stop', order=4)
 
-base_ev_data_xray_filtered = base_ev_data_xray.filtered([58,62],filt_type='stop',order=4)
+base_ev_data_xray_filtered = base_ev_data_xray.filtered([58, 62], filt_type='stop', order=4)
 
-#resample test
+# resample test
 import time
+
 s = time.time()
 print 'starting resampling'
-base_ev_data_ptsa_resampled =  base_ev_data_ptsa_filtered.resampled(50)
+base_ev_data_ptsa_resampled = base_ev_data_ptsa_filtered.resampled(50)
 f = time.time()
-print 'finished resampleing base_ev_data_ptsa_resampled time= ',f-s
-
+print 'finished resampleing base_ev_data_ptsa_resampled time= ', f - s
 
 s = time.time()
-base_ev_data_xray_resampled =  base_ev_data_xray_filtered.resampled(50)
+base_ev_data_xray_resampled = base_ev_data_xray_filtered.resampled(50)
 f = time.time()
-print 'finished resampleing base_ev_data_xray_resampled time= ',f-s
-
-
+print 'finished resampleing base_ev_data_xray_resampled time= ', f - s
 
 print
 # ts = TimeSeriesXray(ts_ev_data)

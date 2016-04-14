@@ -1,15 +1,12 @@
 __author__ = 'm'
 
-from ptsa.data.RawBinWrapperXray import RawBinWrapperXray
-
 from collections import OrderedDict
 
 import numpy as np
-
 import xray
 
+from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import TypeValTuple, PropertiedObject
-
 
 class EventDataChopper(PropertiedObject):
     _descriptors = [
@@ -23,13 +20,7 @@ class EventDataChopper(PropertiedObject):
 
     def __init__(self, **kwds):
 
-        for option_name, val in kwds.items():
-
-            try:
-                attr = getattr(self, option_name)
-                setattr(self, option_name, val)
-            except AttributeError:
-                print 'Option: ' + option_name + ' is not allowed'
+        self.init_attrs(kwds)
 
     def get_event_chunk_size_and_start_point_shift(self, ev, samplerate, offset_time_array):
         # figuring out read size chunk and shift w.r.t to eegoffset
@@ -72,7 +63,7 @@ class EventDataChopper(PropertiedObject):
             shape = None
 
             for i, ev in enumerate(evs):
-                print ev.eegoffset
+                # print ev.eegoffset
                 start_chop_pos = np.where(offset_time_array >= ev.eegoffset)[0][0]
                 start_chop_pos += start_point_shift
                 selector_array = np.arange(start=start_chop_pos, stop=start_chop_pos + event_chunk_size)
@@ -86,7 +77,7 @@ class EventDataChopper(PropertiedObject):
 
                 data_list.append(chopped_data_array)
 
-                print i
+                # print i
 
             ev_concat_data = xray.concat(data_list, dim='events')
 
@@ -98,7 +89,7 @@ class EventDataChopper(PropertiedObject):
             ev_concat_data.attrs['event_duration'] = self.event_duration
             ev_concat_data.attrs['buffer'] = self.buffer
 
-            event_data_dict[eegfile_name] = ev_concat_data
+            event_data_dict[eegfile_name] = TimeSeriesX(ev_concat_data)
 
             break  # REMOVE THIS
 
@@ -110,21 +101,19 @@ if __name__ == '__main__':
 
     from ptsa.data.readers import BaseEventReader
 
-    base_e_reader = BaseEventReader(event_file=e_path, eliminate_events_with_no_eeg=True, use_ptsa_events_class=False)
+    base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
 
-    base_e_reader.read()
-
-    base_events = base_e_reader.get_output()
+    base_events = base_e_reader.read()
 
     base_events = base_events[base_events.type == 'WORD']
 
     from ptsa.data.readers.TalReader import TalReader
 
     tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
-    tal_reader = TalReader(tal_filename=tal_path)
+    tal_reader = TalReader(filename=tal_path)
     monopolar_channels = tal_reader.get_monopolar_channels()
 
-    from ptsa.data.readers.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
+    from ptsa.data.experimental.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
 
     time_series_reader = TimeSeriesSessionEEGReader(events=base_events, channels=['002', '003', '004', '005'])
     # time_series_reader = TimeSeriesSessionEEGReader(events=base_events, channels=monopolar_channels)
@@ -132,7 +121,7 @@ if __name__ == '__main__':
 
     print ts_dict
 
-    from ptsa.data.filters.EventDataChopper import EventDataChopper
+    from ptsa.data.experimental.EventDataChopper import EventDataChopper
 
     edc = EventDataChopper(events=base_events, event_duration=1.6, buffer=1.0, data_dict=ts_dict)
     ev_data_dict = edc.filter()
@@ -143,7 +132,6 @@ if __name__ == '__main__':
     # edc = EventDataChopper(events=base_events, event_duration=1.6,buffer=1.0,session_data_dict=ts_dict)
     # ev_data_dict = edc.filter()
     # print ev_data_dict
-    import sys
 
     # wavelets
 

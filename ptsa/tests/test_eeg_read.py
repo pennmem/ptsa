@@ -1,8 +1,8 @@
 __author__ = 'm'
 
-import numpy as np
-from numpy.testing import *
 import unittest
+
+from numpy.testing import *
 # from unittest import *
 
 from EventReadersTestBase import EventReadersTestBase
@@ -29,7 +29,7 @@ class TestEEGRead(unittest.TestCase, EventReadersTestBase):
                                buffer_time=1.0, eoffset='eegoffset', keep_buffer=False,
                                eoffset_in_time=False, verbose=True)
 
-        from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
+        from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
 
         time_series_reader = TimeSeriesEEGReader(base_events)
 
@@ -61,7 +61,7 @@ class TestEEGRead(unittest.TestCase, EventReadersTestBase):
         # NEW READERS
         base_events = self.read_base_events()
 
-        from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
+        from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
 
         time_series_reader = TimeSeriesEEGReader(events=base_events, start_time=0.0,
                                                  end_time=1.6, buffer_time=1.0, keep_buffer=True)
@@ -92,7 +92,7 @@ class TestEEGRead(unittest.TestCase, EventReadersTestBase):
 
 
         # New style reading
-        from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
+        from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
 
         time_series_reader = TimeSeriesEEGReader(events=base_events, start_time=0.0,
                                                  end_time=1.6, buffer_time=1.0, keep_buffer=True)
@@ -101,10 +101,10 @@ class TestEEGRead(unittest.TestCase, EventReadersTestBase):
 
         base_eegs = time_series_reader.get_output()
 
-        from ptsa.data.filters.ButterworthFilter import ButterworthFiler
-        b_filter = ButterworthFiler(time_series=base_eegs, samplerate=base_eegs.attrs['samplerate'],
-                                    freq_range=[58, 62], filt_type='stop',
-                                    order=4)
+        from ptsa.data.filters.ButterworthFilter import ButterworthFilter
+        b_filter = ButterworthFilter(time_series=base_eegs, samplerate=base_eegs.attrs['samplerate'],
+                                     freq_range=[58, 62], filt_type='stop',
+                                     order=4)
 
 
         base_eegs_filtered = b_filter.filter()
@@ -137,7 +137,7 @@ class TestEEGRead(unittest.TestCase, EventReadersTestBase):
 
 
         # New style reading
-        from ptsa.data.readers.TimeSeriesEEGReader import TimeSeriesEEGReader
+        from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
 
         time_series_reader = TimeSeriesEEGReader(events=base_events, start_time=0.0,
                                                  end_time=1.6, buffer_time=1.0, keep_buffer=True)

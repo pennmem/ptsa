@@ -2,14 +2,20 @@ __author__ = 'm'
 
 import xray
 import numpy as np
+from ptsa.data.readers import BaseReader
 
-
-class NetCDF4XrayReader(object):
+class NetCDF4XrayReader(BaseReader):
     def __init__(self):
         pass
+        self.writer_class_name = 'NetCDFXRayReader'
+        self.writer_version = 1
 
     def read(self, filename):
         ds = xray.open_dataset(filename)
+
+        if ds['__writerclass__'] != self.writer_class_name or ds['__version__'] != self.writer_version:
+            print '\n\n*****WARNING*****: this reader may not be able to properly read dataset written with writer %s version:  %s \n\n' % (
+            ds['__writerclass__'].values, ds['__version__'].values)
 
         array = xray.DataArray(ds['array'])
 
@@ -23,7 +29,7 @@ class NetCDF4XrayReader(object):
 
     def reconstruct_axis(self, ds, axis_name):
         # axis_element_names = filter(lambda x : x.startswith('axis__'+axis_name), ds.dims)
-        axis_identifier_str = 'axis__' + axis_name
+        axis_identifier_str = '__axis__' + axis_name
         axis_element_names = filter(lambda dim_name: dim_name.startswith(axis_identifier_str), list(ds.dims))
 
         axis_size = len(ds[axis_element_names[0]].values)
