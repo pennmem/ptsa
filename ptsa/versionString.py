@@ -11,5 +11,5 @@
 
 # !!!!!!!!!!!!
 # Be sure to update the version before a release
-vstr = '0.0.1'
+vstr = '1.0.0'
 
