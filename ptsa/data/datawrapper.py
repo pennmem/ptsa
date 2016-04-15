@@ -73,7 +73,7 @@ class DataWrapper(object):
         eventdata = TimeSeries(np.asarray(eventdata),
                                dims,
                                tdim='time',
-                               self.samplerate)
+                               samplerate=self.samplerate)
 
         return eventdata
 

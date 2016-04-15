@@ -147,7 +147,7 @@ class RawBinaryEEG(DataWrapper):
         eventdata = TimeSeries(np.array(eventdata),
                                dims,
                                tdim='time',
-                               self.samplerate)
+                               samplerate=self.samplerate)
 
         # multiply by the gain
 	eventdata *= self.gain

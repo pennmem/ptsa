@@ -6,8 +6,9 @@ import ptsa.data.common.xr as xr
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.filters import BaseFilter
-import morlet
-
+# from ptsa.extensions import morlet
+# from ptsa.extensions.morlet.morlet import MorletWaveletTransform
+from ptsa.extensions import MorletWaveletTransform
 
 
 class MorletWaveletFilterCpp(PropertiedObject,BaseFilter):
@@ -126,7 +127,8 @@ class MorletWaveletFilterCpp(PropertiedObject,BaseFilter):
 
         num_wavelets = self.freqs.shape[0]
         powers=np.empty(shape=(time_axis_size*num_wavelets,), dtype=np.float)
-        morlet_transform = morlet.MorletWaveletTransform(self.width, self.freqs, samplerate, time_axis_size)
+        # morlet_transform = morlet.MorletWaveletTransform(self.width, self.freqs, samplerate, time_axis_size)
+        morlet_transform = MorletWaveletTransform(self.width, self.freqs, samplerate, time_axis_size)
 
 
         wavelet_start = time.time()
