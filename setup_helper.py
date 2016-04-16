@@ -90,7 +90,7 @@ def check_dependencies():
     if compiler.find_library_file(lib_dirs,'fftw3'):
         print 'FOUND FFTW3 library'
     else:
-        print 'FOUND FFTW3 library'
+        print 'DID NOT FIND FFTW3 LIBRARY - WILL BUILD FROM SOURCE'
         build_third_party_libs()
 
 
@@ -123,6 +123,11 @@ def build_third_party_libs():
     orig_dir = os.getcwd()
 
     os.chdir(fftw_src_dir)
+
+    # add -fPIC c and cpp flags
+    os.environ['CFLAGS']='-fPIC'
+    os.environ['CPPFLAGS'] = '-fPIC'
+    os.environ['CXXFLAGS'] = '-fPIC'
 
     call(['./configure','--prefix='+join(third_party_install_dir)])
     call(['make'])
