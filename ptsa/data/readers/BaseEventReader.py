@@ -15,6 +15,7 @@ class BaseEventReader(PropertiedObject,BaseReader):
     _descriptors = [
         TypeValTuple('filename', str, ''),
         TypeValTuple('eliminate_events_with_no_eeg', bool, True),
+        TypeValTuple('eliminate_nans', bool, True),
         TypeValTuple('use_reref_eeg', bool, False),
     ]
     def __init__(self,**kwds):
@@ -24,7 +25,8 @@ class BaseEventReader(PropertiedObject,BaseReader):
         :param kwds:allowed values are:
         -------------------------------------
         :param filename {str} -  path to event file
-        :param eliminate_events_with_no_eeg {bool} - flag to automatically remov events woth no eegfile (default True)
+        :param eliminate_events_with_no_eeg {bool} - flag to automatically remove events with no eegfile (default True)
+        :param eliminate_nans {bool} - flag to automatically replace nans in the event structs with -999 (default True)
         :param use_reref_eeg {bool} -  flag that changes eegfiles to point reref eegs. Default is False and eegs read
         are nonreref ones
 
@@ -84,6 +86,22 @@ class BaseEventReader(PropertiedObject,BaseReader):
         if not self.use_reref_eeg:
             evs = self.correct_eegfile_field(evs)
 
+        if self.eliminate_nans:
+            # this is
+            evs = self.replace_nans(evs)
+
+        return evs
+
+    def replace_nans(self,evs, replacement_val=-999):
+
+        for descr in evs.dtype.descr:
+            field_name = descr[0]
+
+            try:
+                nan_selector = np.isnan(evs[field_name])
+                evs[field_name][nan_selector]=replacement_val
+            except TypeError:
+                pass
         return evs
 
     def find_data_dir_prefix(self):

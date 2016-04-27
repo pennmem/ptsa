@@ -83,6 +83,7 @@ class TestFilters(unittest.TestCase):
         for i, bp in enumerate(bipolar_pairs):
             e0 = self.base_eegs.sel(channels=bp[0])
             e1 = self.base_eegs.sel(channels=bp[1])
+            # res = e0.__sub__(e1)
             assert_array_equal(e0 - e1, bp_base_eegs[i])
 
     def test_monopolar_to_bipolar_filter_and_data_chopper(self):
