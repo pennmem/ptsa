@@ -9,7 +9,13 @@ import numpy as np
 from ptsa.data.common import get_axis_index
 from scipy.signal import resample
 
-major_x_ver, minor_x_ver, build_x_ver = map(int, __version__.split('.'))
+def to_int(x):
+    try:
+        return int(x)
+    except:
+        return -999
+
+major_x_ver, minor_x_ver, build_x_ver = map(to_int, __version__.split('.'))
 
 
 class TimeSeriesX(DataArray):
