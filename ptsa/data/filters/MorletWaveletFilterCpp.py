@@ -92,6 +92,10 @@ class MorletWaveletFilterCpp(PropertiedObject,BaseFilter):
             coords['frequency'] = self.freqs
             coords['time'] = time_axis
 
+            if 'offsets' in self.time_series.coords.keys():
+                coords['offsets'] = ('time',  self.time_series['offsets'])
+
+
             if wavelet_pow_array is not None:
                 wavelet_pow_array_xray = self.construct_output_array(wavelet_pow_array, dims=dims, coords=coords)
             if wavelet_phase_array is not None:
