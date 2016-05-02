@@ -86,6 +86,28 @@ class TestFilters(unittest.TestCase):
             # res = e0.__sub__(e1)
             assert_array_equal(e0 - e1, bp_base_eegs[i])
 
+
+    # def test_monopolar_to_bipolar_filter(self):
+    #     m2b = MonopolarToBipolarMapper(time_series=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
+    #     bp_base_eegs = m2b.filter()
+    #
+    #     import xarray as xr
+    #
+    #     bipolar_pairs = bp_base_eegs['bipolar_pairs'].data
+    #     for i, bp in enumerate(bipolar_pairs):
+    #         e0 = self.base_eegs.sel(channels=bp[0])
+    #         e1 = self.base_eegs.sel(channels=bp[1])
+    #
+    #         evs = e0.events.data
+    #
+    #         ep0 = xr.DataArray(np.arange(30),dims=['events'],coords={'events':e0.events.data})
+    #         ep1 = xr.DataArray(np.arange(30)+1,dims=['events'],coords={'events':e1.events.data})
+    #
+    #         print ep0-ep1
+    #         break
+
+
+
     def test_monopolar_to_bipolar_filter_and_data_chopper(self):
         dataroot = self.base_events[0].eegfile
 

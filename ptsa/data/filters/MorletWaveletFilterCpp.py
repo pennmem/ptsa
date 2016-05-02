@@ -132,8 +132,12 @@ class MorletWaveletFilterCpp(PropertiedObject,BaseFilter):
         num_wavelets = self.freqs.shape[0]
         powers=np.empty(shape=(time_axis_size*num_wavelets,), dtype=np.float)
         # morlet_transform = morlet.MorletWaveletTransform(self.width, self.freqs, samplerate, time_axis_size)
-        morlet_transform = MorletWaveletTransform(self.width, self.freqs, samplerate, time_axis_size)
 
+        # using overloaded constructor
+        # morlet_transform = MorletWaveletTransform(self.width, self.freqs, samplerate, time_axis_size)
+        # # using init fcn
+        morlet_transform = MorletWaveletTransform()
+        morlet_transform.init_flex(self.width, self.freqs, samplerate, time_axis_size)
 
         wavelet_start = time.time()
 
