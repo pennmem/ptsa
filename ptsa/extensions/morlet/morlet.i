@@ -14,6 +14,7 @@ import_array();
 
 %apply (double* IN_ARRAY1, size_t DIM1) {(double *signal, size_t signal_len)};
 %apply (double* INPLACE_ARRAY1, size_t DIM1) {(double *powers, size_t power_len)};
+%apply (double* INPLACE_ARRAY1, size_t DIM1) {(double *phases, size_t phase_len)};
 %apply (double* IN_ARRAY1, size_t DIM1) {(double *freqs, size_t nf )};
 
 %include "morlet.h"

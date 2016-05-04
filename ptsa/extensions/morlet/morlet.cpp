@@ -250,6 +250,39 @@ void MorletWaveletTransform::multiphasevec_powers(double *signal, double *powers
     }
 }
 
-void MorletWaveletTransform::multiphasevec(double *signal, size_t signal_len, double *powers, size_t power_len) {
-    multiphasevec_powers(signal, powers);
+void MorletWaveletTransform::multiphasevec_powers_and_phases(double *signal, double *powers, double *phases) {
+    memcpy(signal_buf, signal, signal_len_ * sizeof(double));
+
+    size_t last_len = 0;
+    size_t plan = 0;
+    for (MorletWaveFFT *wavelet = morlet_wave_ffts; wavelet < morlet_wave_ffts + n_freqs; ++wavelet) {
+        size_t len = wavelet->len;
+        if (len != last_len) {
+            last_len = len;
+            fftw_execute(plan_for_signal[plan]);
+            ++plan;
+        }
+
+        // construct product
+        product_with_herm_fft(len, wavelet->fft, fft_buf, prod_buf);
+
+        // inverse fft
+        fftw_execute(plan_for_inverse_transform[plan - 1]);
+
+        // retrieve powers
+        size_t first_idx = (wavelet->nt - 1) / 2;
+        for (size_t i = first_idx; i < first_idx + signal_len_; ++i) {
+            result_buf[i][0] /= len;
+            result_buf[i][1] /= len;
+            *(powers++) = result_buf[i][0] * result_buf[i][0] + result_buf[i][1] * result_buf[i][1];
+            *(phases++) = atan2(result_buf[i][1], result_buf[i][0]);
+        }
+    }
+}
+
+void MorletWaveletTransform::multiphasevec(double *signal, size_t signal_len, double *powers, size_t power_len, double* phases, size_t phase_len) {
+    if (phases==NULL)
+        multiphasevec_powers(signal, powers);
+    else
+        multiphasevec_powers_and_phases(signal, powers, phases);
 }
