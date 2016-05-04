@@ -19,7 +19,7 @@ morlet_module = Extension('ptsa.extensions.morlet._morlet',
                           swig_opts=['-c++'],
                           include_dirs=[join(get_third_party_install_dir(), 'include'), numpy.get_include()],
                           library_dirs=[join(get_third_party_install_dir(), 'lib')],
-                          # extra_compile_args=['-fPIC'],
+                          extra_compile_args=['-std=c++11'],
                           libraries=['fftw3'],
 
                           )
