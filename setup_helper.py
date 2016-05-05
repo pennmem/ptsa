@@ -125,9 +125,9 @@ def build_third_party_libs():
     os.chdir(fftw_src_dir)
 
     # add -fPIC c and cpp flags
-    os.environ['CFLAGS']='-fPIC'
-    os.environ['CPPFLAGS'] = '-fPIC'
-    os.environ['CXXFLAGS'] = '-fPIC'
+    os.environ['CFLAGS']='-fPIC -O3'
+    os.environ['CPPFLAGS'] = '-fPIC -O3'
+    os.environ['CXXFLAGS'] = '-fPIC -O3'
 
     call(['./configure','--prefix='+join(third_party_install_dir)])
     call(['make'])
