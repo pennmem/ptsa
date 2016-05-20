@@ -17,6 +17,7 @@ class BaseEventReader(PropertiedObject,BaseReader):
         TypeValTuple('eliminate_events_with_no_eeg', bool, True),
         TypeValTuple('eliminate_nans', bool, True),
         TypeValTuple('use_reref_eeg', bool, False),
+        TypeValTuple('common_root', str, 'data/events')
     ]
     def __init__(self,**kwds):
         '''
@@ -118,13 +119,12 @@ class BaseEventReader(PropertiedObject,BaseReader):
         :return: data directory prefix
         '''
 
-        common_root = 'data/events'
-        prefix = find_dir_prefix(path_with_prefix=self._filename, common_root=common_root)
+        prefix = find_dir_prefix(path_with_prefix=self._filename, common_root=self.common_root)
         if not prefix:
             raise RuntimeError(
-                'Could not determine prefix from: %s using common_root: %s' % (self._filename, common_root))
+                'Could not determine prefix from: %s using common_root: %s' % (self._filename, self.common_root))
 
-        return find_dir_prefix(self._filename, 'data/events')
+        return find_dir_prefix(self._filename, self.common_root)
 
 
 if __name__ == '__main__':
