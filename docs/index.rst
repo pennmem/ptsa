@@ -31,4 +31,5 @@ Contents:
    :maxdepth: 1
 
    installation
+   tutorial
 
