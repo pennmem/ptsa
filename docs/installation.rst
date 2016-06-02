@@ -129,11 +129,39 @@ directory of your python distribution
 
 Assuming everything went OK , at this point you should have PTSA distribution ready to run.
 
+Uninstalling PTSA
+-------------------
+
+To uninstall PTSA you need to locate PTSA installation directory. As a convention most Python packages (including PTSA)
+are installed into `site-packages` directory. Locating this directory is quire easy in Python:
+Open Python console and type the following:
+
+.. code-block:: bash
+
+    import site; print site.getsitepackages()
+
+In my case the output was:
+
+``['/Users/m/miniconda/envs/ram/lib/python2.7/site-packages', '/Users/m/miniconda/envs/ram/lib/site-python']``
+
+As you can see the first list element (``site-packages``) is the location where PTSA is installed. Go there and remove
+the following directories:
+
+- ptsa
+- dimarray
+
+In addition you may removee ``ptsa-xxx.egg-info`` file that contains mptsa installation metadata.
+
 
 .. _`Reinstalling PTSA`:
 
 Reinstalling PTSA
 -------------------
+
+.. note::
+
+    It is no longer necessary to cleanup build directories before reinstalling PTSA
+
 
 Before you reinstall PTSA you should remove previous build files (C/C++ compiler outputs). To do so go to
 
