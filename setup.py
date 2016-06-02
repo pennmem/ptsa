@@ -3,8 +3,7 @@ from setup_helper import *
 root_dir = dirname(abspath(__file__))
 
 
-
-
+clean_previous_build()
 check_dependencies()
 swig_third_party()
 

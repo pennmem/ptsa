@@ -9,9 +9,13 @@ import os
 from os.path import *
 import sys
 import shutil
+from glob import glob
+
 from subprocess import call
 
 root_dir = dirname(abspath(__file__))
+build_subdir = 'build'
+
 
 sys.path.append(join(root_dir,'ptsa'))
 
@@ -20,8 +24,8 @@ sys.path.append(join(root_dir,'ptsa'))
 fftw_name = 'fftw-3.3.4'
 fftw_tar = fftw_name+'.tar.gz'
 
-third_party_build_dir = join(root_dir,'build/third_party_build')
-third_party_install_dir = join(root_dir,'build/third_party_install')
+third_party_build_dir = join(root_dir,build_subdir,'third_party_build')
+third_party_install_dir = join(root_dir,build_subdir,'third_party_install')
 
 python_executable = sys.executable
 
@@ -42,6 +46,23 @@ def get_third_party_build_dir():
 
 def get_third_party_install_dir():
     return third_party_install_dir
+
+
+def clean_previous_build():
+    """
+    This function removes previous build dirs that were
+    used to build c/c++ extension modules
+    :return: None
+    """
+
+
+    dirs = glob(join(root_dir,build_subdir,'*'))
+    dirs.remove(third_party_build_dir)
+    dirs.remove(third_party_install_dir)
+
+    for d in dirs:
+        shutil.rmtree(d)
+
 
 
 def check_dependencies():
