@@ -100,24 +100,6 @@ It is a good idea to learn this technique of selecting array elements.
 Now that we know how to make basic  ``TimeSeriesX`` object, let us explore few operations that come handy
 when analysing EEG signals
 
-Mean
-~~~~~~
-
-To compute mean array of teh time series along the specified axis type:
-
-.. code-block:: python
-
-    mean_ts = ts.mean(dim='time')
-
-The output will be
-
-.. code-block:: bash
-
-    <xray.TimeSeriesX ()>
-    array(5.96)
-
-
-Clearly, we have one dimensional time series so the output array has only one element.
 
 Multi-dimensional TimeSeriesX
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -214,19 +196,132 @@ the output is as expected:
     and then xr will refer to ``xarrat`` or ``xray`` toolkits. This weay you do not have to worry too much
     wheather you are working with ``xarray`` or its predecessor ``xray``
 
+Mean
+~~~~~~
+
+To compute mean array of teh time series along the specified axis type:
+
+.. code-block:: python
+
+    mean_tsm = tsm.mean(dim='time')
+
+The output will be
+
+.. code-block:: python
+
+    array([  6. ,  18.5])
+    Coordinates:
+      * bp_pairs  (bp_pairs) |S32 'LPOG2-LPOG10' 'LPOG2-LPOG9'
+
+As you can see TimeSeriesX syntax is quite expressive and clean making it easier to remember which axis we use for
+aggregation operations. For example if we were to compute mean along ``bp_pairs`` axis
+the output woudl look as follows:
 
 
+.. code-block:: python
 
+    mean_tsm = tsm.mean(dim='bp_pairs')
 
+.. code-block:: python
 
-
-
-
-
-
+    <xray.DataArray (time: 25)>
+    array([  6.25,   6.75,   7.25,   7.75,   8.25,   8.75,   9.25,   9.75,
+            10.25,  10.75,  11.25,  11.75,  12.25,  12.75,  13.25,  13.75,
+            14.25,  14.75,  15.25,  15.75,  16.25,  16.75,  17.25,  17.75,
+            18.25])
+    Coordinates:
+      * time     (time) int64 0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 ...
 
 
 Min/Max
 ~~~~~~~~
 
-To find min max
+To find min/max along given axis we do the following:
+
+.. code-block:: python
+
+    min_tsm = tsm.min(dim='time')
+
+and the result is :
+
+.. code-block:: python
+
+    <xray.DataArray (bp_pairs: 2)>
+    array([  0. ,  12.5])
+    Coordinates:
+      * bp_pairs  (bp_pairs) |S32 'LPOG2-LPOG10' 'LPOG2-LPOG9'
+
+Obviously for max operation you woudl replace ``min`` with ``max`` in the above code.
+I will leave this challenging exercise for you to complete by the end of the quarter.
+
+
+Standard Deviation
+~~~~~~~~~~~~~~~~~~~~
+Finding standard deviation is easy as well
+
+.. code-block:: python
+
+    std_tsm = tsm.min(dim='time')
+
+with output being
+
+.. code-block:: python
+
+    <xray.DataArray (bp_pairs: 2)>
+    array([ 3.60555128,  3.60555128])
+    Coordinates:
+      * bp_pairs  (bp_pairs) |S32 'LPOG2-LPOG10' 'LPOG2-LPOG9'
+
+
+Transposing axes in TimeSeriesX
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Quite often you will find it very convenient to rearrange the order of axes in your multi-dimmensional array.
+TimeSeriesX makes it very easy:
+
+.. code-block:: python
+
+    swapaxes_tsm = tsm.transpose('time','bp_pairs')
+
+All you have to do is to call ``transpose`` function and list names of all dimensions in the desired order. Take a look:
+
+.. code-block:: python
+
+    <xray.DataArray (time: 25, bp_pairs: 2)>
+    array([[  0. ,  12.5],
+           [  0.5,  13. ],
+           [  1. ,  13.5],
+           [  1.5,  14. ],
+           [  2. ,  14.5],
+           [  2.5,  15. ],
+           [  3. ,  15.5],
+           [  3.5,  16. ],
+           [  4. ,  16.5],
+           [  4.5,  17. ],
+           [  5. ,  17.5],
+           [  5.5,  18. ],
+           [  6. ,  18.5],
+           [  6.5,  19. ],
+           [  7. ,  19.5],
+           [  7.5,  20. ],
+           [  8. ,  20.5],
+           [  8.5,  21. ],
+           [  9. ,  21.5],
+           [  9.5,  22. ],
+           [ 10. ,  22.5],
+           [ 10.5,  23. ],
+           [ 11. ,  23.5],
+           [ 11.5,  24. ],
+           [ 12. ,  24.5]])
+    Coordinates:
+      * time      (time) int64 0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 ...
+      * bp_pairs  (bp_pairs) |S32 'LPOG2-LPOG10' 'LPOG2-LPOG9'
+
+
+Other useful aggregation operations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Since ``TimeseriesX`` is a subclass of ``xarray.DataArray``, you can use all sorts of aggregation operations
+that ``xarray.DataArray`` provides. For a full list of those please consult
+`Computation with  DataArray <http://xarray.pydata.org/en/stable/computation.html>`__ or
+`xarray API <http://xarray.pydata.org/en/stable/api.html>`__
