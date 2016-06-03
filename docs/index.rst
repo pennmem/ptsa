@@ -32,4 +32,5 @@ Contents:
 
    installation
    tutorial
+   ramdata
 
