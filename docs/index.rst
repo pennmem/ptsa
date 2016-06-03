@@ -21,7 +21,8 @@ Writers (still under development) will output data in several formats (currently
 take as an input ``TimeSeriesX`` object and output diffrent ``TimeSeriesX`` object. Most of the tasks
 related to EEG analysis will rely on using those 3 categories of PTSA objects.
 
-
+If you'd like to learn Python via series of statistics tutorials look no further than
+`introduction to computational statistics in Python <http://people.duke.edu/~ccc14/sta-663-2016/>`__
 
 
 

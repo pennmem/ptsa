@@ -10,6 +10,7 @@ To master PTSA you need to learn few standard packages that scientific Python re
  1. numpy (`Check out this numpy tutorial <https://docs.scipy.org/doc/numpy-dev/user/quickstart.html>`__)
  2. xarray (`Full xarray documentation <http://xarray.pydata.org/en/stable/>`__)
  3. a little bit of scipy (`Scipy tutorial <http://docs.scipy.org/doc/scipy/reference/tutorial/>`__)
+ 4. Stats refresher `introduction to computational statistics in Python <http://people.duke.edu/~ccc14/sta-663-2016/>`__
 
 Because most of the PTSA functionality builds on ``xarray.DataArray`` class it is highly recommended
 you familiarize yourself with xarray. Here is a list of minimum recommended reading
