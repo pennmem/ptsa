@@ -11,11 +11,20 @@ analysis of EEG signals using Python. PTSA builds on xarray functionality
 and provides several convenience tools that significantly simplify analysis of the EEG data..
 
 To use all features provided by PTSA you will need to install several dependencies:
-xarray, scipy, numpy, PyWavelets and make sure you have working c/c++ compiler on your machine when you install PTSA
+xarray, scipy, numpy, PyWavelets and make sure you have working C/C++ compiler on your machine when you install PTSA
 
-The main object that you will be interacting in PTSA is called ``TimeSeriesX``
-(**X** in ``TimeSeriesX`` signifies the fact that ``TimeSeriesX`` is a subclass of ``xarray.DataArray``).
-Besides, PTSA has 3 main categories of objects: readers, writers, filters. Readers ,
+The main object that you will be using in the new PTSA API is called ``TimeSeriesX``. ``TimeSeriesX`` is built on
+top of ``xarray.DataArray``. ``xarray.DataArray``, defined in the ``xarray`` Python package, represents N-D arrays.
+Because ``TimeSeriesX`` is a subclass of ``xarray.DataArray`` it has all the functionality of ``xarray.DataArray``
+in addition to new functions it defines, used specifically in EEG data analysis.
+
+.. note::
+    In legacy versions of PTSA the object representing time series is called ``TimeSeries`` and is built on
+    top of custom-written ``dimarray`` module. To keep the old analysis code written for older PTSA versions running,
+    we prepended letter **X** to the object representing time-series in the new PTSA , hence the name ``TimeSeriesX``.
+
+
+Besides ``TimeSeriesX``, PTSA has 3 main categories of objects: readers, writers, filters. Readers ,
 read various data formats (e.g eeg files, bipolar electrodes files etc..) to make input operations as smooth as possible.
 Writers (still under development) will output data in several formats (currently only NetCDF output is supported). Filters
 take as an input ``TimeSeriesX`` object and output diffrent ``TimeSeriesX`` object. Most of the tasks
