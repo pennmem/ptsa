@@ -43,4 +43,5 @@ Contents:
    installation
    tutorial
    ramdata
+   filters
 
