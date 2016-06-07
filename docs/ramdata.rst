@@ -53,3 +53,142 @@ when we print events to the screen we will get the following output:
 
 Indicating that the event object is in fact ``numpy.recarray``
 
+Reading Electrode Information using TalReader
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To read electrode information thayt is stored in the so called tal_structs we will use ``TalReader`` object.
+We first import TalReader:
+
+.. code-block:: python
+
+    from ptsa.data.readers import TalReader
+
+Next we specify path to the actual ``.mat`` file containing information about electrodes ,
+construct ``tal_reader`` object and call ``read`` function to initiate reading of the ``tal_structs`` file.
+
+.. code-block:: python
+
+    tal_path = '/Volumes/rhino_root/data/eeg/R1111M/tal/R1111M_talLocs_database_bipol.mat'
+    tal_reader = TalReader(filename=tal_path)
+    tal_structs = tal_reader.read()
+
+
+The ``read`` function returns ``numpy.recarray``  populated with electrode information:
+
+.. code-block:: python
+
+    Out[77]:
+    rec.array([ ('R1111M', array([1, 2]), 'LPOG1-LPOG2', 'LPOG', -67.6431, -19.84015, -17.08995, 'Left Cerebrum',
+    'Temporal Lobe', 'Middle Temporal Gyrus', 'Gray Matter', 'Brodmann area 21', '[]', 'lsag', '1-2', 'G', 8.22266263809965
+    ...
+
+
+This is not the most infromative output so it is best to first check what columns are available in the ``tal_structs``:
+
+.. code-block:: python
+
+    print tal_structs.dtype.names
+
+for which you get an output
+
+.. code-block:: python
+
+    ('subject',
+     'channel',
+     'tagName',
+     'grpName',
+     'x',
+     'y',
+     'z',
+     'Loc1',
+     'Loc2',
+     'Loc3',
+     'Loc4',
+     'Loc5',
+     'Loc6',
+     'Montage',
+     'eNames',
+     'eType',
+     'bpDistance',
+     'avgSurf',
+     'indivSurf',
+     'locTag')
+
+
+At this point we can print single columns e.g. ``channel`` and ``tagName``
+
+
+.. code-block:: python
+
+     print tal_structs[['channel','tagName']]
+
+that outputs
+
+.. code-block:: python
+
+     rec.array([(array([1, 2]), 'LPOG1-LPOG2'), (array([1, 9]), 'LPOG1-LPOG9'),
+     (array([2, 3]), 'LPOG2-LPOG3'), (array([ 2, 10]), 'LPOG2-LPOG10'),
+     (array([3, 4]), 'LPOG3-LPOG4'), (array([ 3, 11]), 'LPOG3-LPOG11'),
+     (array([4, 5]), 'LPOG4-LPOG5'), (array([ 4, 12]), 'LPOG4-LPOG12'),
+     (array([5, 6]), 'LPOG5-LPOG6'), (array([ 5, 13]), 'LPOG5-LPOG13'),
+     (array([6, 7]), 'LPOG6-LPOG7'), (array([ 6, 14]), 'LPOG6-LPOG14'),
+     ...
+
+
+``TalReader`` also provides two convenience functions ``get_monopolar_channels``  and `` get_bipolar_pairs``
+that extract a list of individual channel numbers and a list of bipolar pairs.
+
+.. code-block:: python
+
+    monopolar_channels = tal_reader.get_monopolar_channels()
+    bipolar_pairs = tal_reader.get_bipolar_pairs()
+
+.. note::
+    You can also extract bipolar pairs by typing:
+
+    .. code-block:: python
+
+        tal_structs['channel']
+
+
+Reading EEG time series using EEGReader
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To read EEG time series' associated with events we typically use ``EEGReader``. Here is the syntax:
+
+.. code-block:: python
+
+    from ptsa.data.readers import EEGReader
+    eeg_reader = EEGReader(events=base_events, channels=monopolar_channels,
+                           start_time=0.0, end_time=1.6, buffer_time=1.0)
+
+    base_eegs = eeg_reader.read()
+
+After importing ``EEGReader`` we pass the following objects to ``EEGReader`` constructor:
+- ``events`` - this is the array of events (read using ``BaseEventReader``) for which we want to obtain eeg time series'
+- ``channels`` -  and array of monopolar channels (NOT bipolar pairs) for which we want eeg signals
+- ``start_time`` - offset in seconds relative the the onset of event at which we start reading EEG signal
+- ``end_time`` - offset in seconds relative the the onset of event at which we stop reading EEG signal
+- ``buffer`` - time interval in seconds which determines how much extra data will be added to each eeg signal segment
+
+Here is the output:
+
+.. code-block:: python
+
+    <xray.TimeSeriesX (channels: 100, events: 1020, time: 1800)>
+    array([[[ 3467.059196,  3471.312604,  3473.970984, ...,  3580.306184,
+              3581.901212,  3588.813   ],
+            [ 3609.548364,  3609.548364,  3612.73842 , ...,  3368.16746 ,
+              3351.153828,  3343.710364],
+            [ 3444.728804,  3449.513888,  3454.298972, ...,  3513.315008,
+              3519.163444,  3512.251656],
+            ...,
+            [ 3404.321428,  3404.853104,  3410.70154 , ...,  3164.535552,
+              3163.4722  ,  3157.623764],
+            [ 3175.700748,  3156.028736,  3167.725608, ...,  3151.775328,
+              3142.20516 ,  3147.52192 ],
+            [ 3128.91326 ,  3136.8884  ,  3134.761696, ...,  3286.289356,
+              3263.958964,  3272.46578 ]],
+
+
+
