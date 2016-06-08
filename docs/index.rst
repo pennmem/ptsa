@@ -33,6 +33,10 @@ related to EEG analysis will rely on using those 3 categories of PTSA objects.
 If you'd like to learn Python via series of statistics tutorials look no further than
 `introduction to computational statistics in Python <http://people.duke.edu/~ccc14/sta-663-2016/>`__
 
+.. tip::
+
+    If you'd like to see PTSA in action check the following self-contained tutorial:
+    `Computing classifier of good memory using RAM Data  <https://github.com/maciekswat/ptsa_new/blob/master/ptsa/tests/test_classifier_notebook-R1111M-presentation.ipynb>`__
 
 
 Contents:
