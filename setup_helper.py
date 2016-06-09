@@ -35,6 +35,7 @@ print 'PYTHON LIB=',  distutils.sysconfig.get_python_lib(standard_lib=True)
 print distutils.sysconfig.get_python_inc()
 print distutils.sysconfig.get_python_version()
 
+
 def get_version_str():
     import versionString
 
@@ -66,6 +67,7 @@ def clean_previous_build():
 
 
 def check_dependencies():
+
     try:
         import numpy
     except ImportError:
@@ -79,6 +81,7 @@ def check_dependencies():
         print 'scipy is required to build PTSA. Please install scipy before proceeding'
 
         sys.exit(1)
+
 
 
     try:
@@ -98,11 +101,13 @@ def check_dependencies():
         except ImportError:
             print 'xarray (aka xray) is required to build PTSA. Please install xarray before proceeding'
 
-        sys.exit(1)
+            sys.exit(1)
+
 
     swig_executable = distutils.spawn.find_executable('swig')
     if not swig_executable:
         raise OSError('Missing cmake - please install swig to proceed (www.swig.org)')
+
 
 
     compiler=distutils.ccompiler.new_compiler()
@@ -157,6 +162,7 @@ def build_third_party_libs():
 
 def swig_third_party():
     call(['swig','-python','-outdir', 'morlet', 'morlet.i'])
+
 
 check_dependencies()
 swig_third_party()

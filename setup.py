@@ -1,5 +1,18 @@
 from setup_helper import *
 
+from distutils.command.build import build
+
+# see recipe http://stackoverflow.com/questions/12491328/python-distutils-not-include-the-swig-generated-module
+
+class CustomBuild(build):
+    sub_commands = [
+        ('build_ext', build.has_ext_modules),
+        ('build_py', build.has_pure_modules),
+        ('build_clib', build.has_c_libraries),
+        ('build_scripts', build.has_scripts),
+    ]
+
+
 root_dir = dirname(abspath(__file__))
 
 
@@ -38,6 +51,7 @@ ext_modules.append(edf_ext)
 
 
 setup(name='ptsa',
+      cmdclass={'build': CustomBuild},
       version=get_version_str(),
       maintainer=['Per B. Sederberg', 'Maciek Swat'],
       maintainer_email=['psederberg@gmail.com','maciekswat@gmail.com'],
