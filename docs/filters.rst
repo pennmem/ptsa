@@ -61,3 +61,36 @@ you will get
            ('003', '004'), ('003', '011'), ('004', '005'), ('004', '012'),
 
 
+ButterworthFilter
+~~~~~~~~~~~~~~~~~
+
+To use Butterworth filtering inside PTSA you have two choices: use ``ButterworthFilter`` object and passing
+``TimeSeriesX`` object to it or use a convenience function inside ``TimeSeriesX`` object.
+
+Let's us start by showing first ``ButterworthFilter``:
+
+
+.. code-block:: python
+
+    from ptsa.data.filters import ButterworthFilter
+    b_filter = ButterworthFilter(time_series=bp_eegs, freq_range=[58., 62.], filt_type='stop', order=4)
+    bp_eegs_filtered = b_filter.filter()
+
+
+Here we create ButterworthFilter object (after importing it from PTSA's ``filters`` package) and specify
+filter parameters: we specify frequency range that we want to filter out
+(to remove frequencies we set ``filt_type`` to ``'stop'``) and specify filter order (here it is 4)
+
+As before, once the filter object is initialized we call ``filter`` function to get the result
+(filtered ``TimeSeriesX``).
+
+If you prefer you may use alternative way of running Butterworth filter on a ``TimeSeriesX`` by calling ``filtered``
+function on a ``TimeseriesX`` object
+
+.. code-block:: python
+
+    bp_eegs_filtered_1 = bp_eegs.filtered(freq_range=[58., 62.], filt_type='stop', order=4)
+
+
+
+
