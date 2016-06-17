@@ -92,6 +92,3 @@ public:
 private:
     std::vector<double> array;
 };
-
-
-

@@ -29,7 +29,7 @@ morlet_dir = join(root_dir,'ptsa','extensions','morlet')
 if sys.platform.startswith('darwin'):
     extra_compile_args=['-std=c++11','-stdlib=libc++','-mmacosx-version-min=10.7']
 else:
-    extra_compile_args=['-std=c++11','-stdlib=libc++']
+    extra_compile_args=['-std=c++11']
 
 
 morlet_module = Extension('ptsa.extensions.morlet._morlet',
@@ -88,5 +88,3 @@ setup(name='ptsa',
                 ],
       py_modules=['ptsa.extensions.morlet']
       )
-
-
