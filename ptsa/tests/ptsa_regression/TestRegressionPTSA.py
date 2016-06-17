@@ -396,7 +396,6 @@ class TestRegressionPTSA(unittest.TestCase):
 
         pow_wavelet, phase_wavelet = wf.filter()
 
-
         wf_cpp = MorletWaveletFilterCpp(time_series=self.base_eegs,
                                  freqs=np.logspace(np.log10(3), np.log10(180), 8),
                                  output='power',
@@ -427,6 +426,32 @@ class TestRegressionPTSA(unittest.TestCase):
 
             self.assertTrue(np.abs(mean_max)<0.05)
             self.assertTrue(np.abs(mean_min)<0.05)
+
+
+    def test_wavelets_multicore(self):
+        from ptsa.data.filters import MorletWaveletFilterCpp
+        print 'hello'
+
+
+        wf_cpp_multi = MorletWaveletFilterCpp(time_series=self.base_eegs,
+                                 freqs=np.logspace(np.log10(3), np.log10(180), 8),
+                                 output='both',
+                                 cpus=8
+                                 )
+
+        pow_wavelet_multi, phase_wavelet_multi = wf_cpp_multi.filter()
+
+        wf_cpp = MorletWaveletFilterCpp(time_series=self.base_eegs,
+                                 freqs=np.logspace(np.log10(3), np.log10(180), 8),
+                                 output='both',
+                                 cpus=1
+                                 )
+
+        pow_wavelet, phase_wavelet= wf_cpp.filter()
+
+        assert_array_equal(pow_wavelet_multi,pow_wavelet)
+        assert_array_equal(phase_wavelet_multi,phase_wavelet)
+
 
 
     def test_wavelets_cpp(self):
