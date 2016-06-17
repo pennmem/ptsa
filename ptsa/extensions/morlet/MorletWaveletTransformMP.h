@@ -16,7 +16,7 @@ private:
     unsigned int cpus = 1;
     unsigned int num_freq = -1;
 
-    std::vector<std::shared_ptr<MorletWaveletTransform>> mwt_vec;
+    std::vector<std::shared_ptr<MorletWaveletTransform> > mwt_vec;
 
     size_t signal_len = -1;
     size_t num_signals = -1;
