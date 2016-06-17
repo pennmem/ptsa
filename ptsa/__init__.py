@@ -22,6 +22,7 @@ PTSA - The Python Time-Series Analysis toolbox.
 #__all__ = [data,filter,plotting,wavelet]
 
 packages = ('ptsa',
+            'ptsa.extensions',
             'ptsa.tests',
             'ptsa.data',
             'ptsa.data.tests',

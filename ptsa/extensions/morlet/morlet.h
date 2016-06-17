@@ -2,10 +2,17 @@
 // Created by busygin on 1/11/16.
 //
 
-#ifndef MORLET_MORLET_H
-#define MORLET_MORLET_H
+#pragma once
 
 #include <fftw3.h>
+#include <cmath>
+#include <complex>
+#include "enums.h"
+#include <functional>
+#include <map>
+
+#include <iostream>
+
 
 class MorletWaveFFT {
 public:
@@ -23,8 +30,14 @@ public:
 
 class MorletWaveletTransform {
 public:
-    size_t n_freqs=0;
-    MorletWaveFFT *morlet_wave_ffts=NULL;
+    typedef std::function<void(MorletWaveletTransform *, double, double, double *&, double *&,std::complex<double> *&)> Fcn_t;
+
+
+public:
+
+
+    size_t n_freqs = 0;
+    MorletWaveFFT *morlet_wave_ffts = NULL;
 
     size_t signal_len_;
 
@@ -34,33 +47,23 @@ public:
     fftw_complex *result_buf = NULL;
 
     size_t n_plans = 0;
-    fftw_plan *plan_for_signal =NULL;
+    fftw_plan *plan_for_signal = NULL;
     fftw_plan *plan_for_inverse_transform = NULL;
 
-//    MorletWaveletTransform() : n_freqs(0), morlet_wave_ffts(NULL), signal_buf(NULL), fft_buf(NULL), prod_buf(NULL),
-//                               result_buf(NULL), n_plans(0), plan_for_signal(NULL), plan_for_inverse_transform(NULL) { }
 
     MorletWaveletTransform();
+
     MorletWaveletTransform(size_t width, double *freqs, size_t nf, double sample_freq, size_t signal_len);
-    MorletWaveletTransform(size_t width, double low_freq, double high_freq, size_t nf, double sample_freq, size_t signal_len);
+
+    MorletWaveletTransform(size_t width, double low_freq, double high_freq, size_t nf, double sample_freq,
+                           size_t signal_len);
 
     ~MorletWaveletTransform();
 
-//    ~MorletWaveletTransform() {
-//        if (n_freqs) {
-//            delete[] morlet_wave_ffts;
-//            fftw_free(signal_buf);
-//            fftw_free(fft_buf);
-//            fftw_free(prod_buf);
-//            fftw_free(result_buf);
-//            for (size_t i = 0; i < n_plans; ++i) {
-//                fftw_destroy_plan(plan_for_signal[i]);
-//                fftw_destroy_plan(plan_for_inverse_transform[i]);
-//            }
-//            delete[] plan_for_signal;
-//            delete[] plan_for_inverse_transform;
-//        }
-//    }
+
+    std::function<void(MorletWaveletTransform *, double, double, double *&, double *&, std::complex<double> *&)>
+            phase_and_pow_fcn = &MorletWaveletTransform::wv_pow;
+
 
     void init(size_t width, double low_freq, double high_freq, size_t nf, double sample_freq, size_t signal_len);
 
@@ -71,8 +74,55 @@ public:
 
     void multiphasevec_powers_and_phases(double *signal, double *powers, double *phases);
 
+    void wavelet_pow_phase(double *signal, double *powers, double *phases, std::complex<double> *wavelets);
+
+    void wavelet_pow_phase_py(double *signal, size_t signal_len, double *powers, size_t power_len, double *phases,
+                              size_t phase_len, std::complex<double> *wavelets, size_t wavelet_len);
+
+
+    void set_output_type(OutputType output_type) {
+        auto mitr = output_type_2_fcn_map.find(output_type);
+        if (mitr != output_type_2_fcn_map.end()) {
+            phase_and_pow_fcn = mitr->second;
+        }
+    }
+
+    void wv_pow(double r, double i, double *&powers, double *&phase, std::complex<double> *&wavelets) {
+        *(powers++) = r * r + i * i;
+    }
+
+    void wv_phase(double r, double i, double *&powers, double *&phase, std::complex<double> *&wavelets) {
+
+        *(phase++) = atan2(i, r);
+
+    }
+
+    void wv_both(double r, double i, double *&powers, double *&phase, std::complex<double> *&wavelets) {
+        wv_pow(r, i, powers, phase, wavelets);
+        wv_phase(r, i, powers, phase, wavelets);
+    }
+
+    void wv_complex(double r, double i, double *&powers, double *&phase, std::complex<double> *&wavelet_complex) {
+        *(wavelet_complex++) = std::complex<double>(r, i);
+    }
+
+
+    void multiphasevec_c(double *signal, std::complex<double> *wavelets);
+
     // this is to make numpy interface possible
-    void multiphasevec(double *signal, size_t signal_len, double *powers, size_t power_len, double* phases=NULL, size_t phase_len=0);
+    void multiphasevec(double *signal, size_t signal_len, double *powers, size_t power_len, double *phases = NULL,
+                       size_t phase_len = 0);
+
+    void multiphasevec_complex(double *signal, size_t signal_len, std::complex<double> *wavelets, size_t wavelet_len);
+
+private:
+    std::map<OutputType, Fcn_t> output_type_2_fcn_map{
+            {OutputType::POWER,   &MorletWaveletTransform::wv_pow},
+            {OutputType::PHASE,   &MorletWaveletTransform::wv_phase},
+            {OutputType::BOTH,    &MorletWaveletTransform::wv_both},
+            {OutputType::COMPLEX, &MorletWaveletTransform::wv_complex},
+    };
+
+
 };
 
-#endif //MORLET_MORLET_H

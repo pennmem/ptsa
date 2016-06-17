@@ -9,6 +9,8 @@
 #include "morlet.h"
 #include "log_space.h"
 #include <iostream>
+#include <functional>
+
 
 using namespace std;
 
@@ -26,7 +28,6 @@ size_t nextpow2(size_t v) {
 
 
 size_t MorletWaveFFT::init(size_t width, double freq, size_t win_size, double sample_freq) {
-
     double dt = 1.0 / sample_freq;
     double sf = freq / width;
     double st = 1.0 / (2.0 * M_PI * sf);
@@ -90,6 +91,7 @@ MorletWaveletTransform::~MorletWaveletTransform() {
         delete[] plan_for_signal;
         delete[] plan_for_inverse_transform;
     }
+
 }
 
 
@@ -250,7 +252,18 @@ void MorletWaveletTransform::multiphasevec_powers(double *signal, double *powers
     }
 }
 
-void MorletWaveletTransform::multiphasevec_powers_and_phases(double *signal, double *powers, double *phases) {
+void MorletWaveletTransform::wavelet_pow_phase_py(double *signal, size_t signal_len,
+                          double *powers, size_t power_len,
+                          double *phases , size_t phase_len,
+                          std::complex<double> * wavelets, size_t wavelet_len
+){
+
+    this->wavelet_pow_phase(signal,powers,phases,wavelets);
+}
+
+
+void MorletWaveletTransform::wavelet_pow_phase(double *signal, double *powers, double *phases,std::complex<double> * wavelets){
+
     memcpy(signal_buf, signal, signal_len_ * sizeof(double));
 
     size_t last_len = 0;
@@ -274,8 +287,67 @@ void MorletWaveletTransform::multiphasevec_powers_and_phases(double *signal, dou
         for (size_t i = first_idx; i < first_idx + signal_len_; ++i) {
             result_buf[i][0] /= len;
             result_buf[i][1] /= len;
+            phase_and_pow_fcn(this, result_buf[i][0],result_buf[i][1],powers,phases,wavelets);
+        }
+    }
+}
+
+
+void MorletWaveletTransform::multiphasevec_powers_and_phases(double *signal, double *powers, double *phases) {
+    memcpy(signal_buf, signal, signal_len_ * sizeof(double));
+
+//    cerr<<"THIS IS multiphasevec_powers_and_phases"<<endl;
+
+    size_t last_len = 0;
+    size_t plan = 0;
+    for (MorletWaveFFT *wavelet = morlet_wave_ffts; wavelet < morlet_wave_ffts + n_freqs; ++wavelet) {
+        size_t len = wavelet->len;
+        if (len != last_len) {
+            last_len = len;
+            fftw_execute(plan_for_signal[plan]);
+            ++plan;
+        }
+
+        // construct product
+        product_with_herm_fft(len, wavelet->fft, fft_buf, prod_buf);
+
+        // inverse fft
+        fftw_execute(plan_for_inverse_transform[plan - 1]);
+
+        // retrieve powers and phases
+        size_t first_idx = (wavelet->nt - 1) / 2;
+        for (size_t i = first_idx; i < first_idx + signal_len_; ++i) {
+            result_buf[i][0] /= len;
+            result_buf[i][1] /= len;
             *(powers++) = result_buf[i][0] * result_buf[i][0] + result_buf[i][1] * result_buf[i][1];
             *(phases++) = atan2(result_buf[i][1], result_buf[i][0]);
+        }
+    }
+}
+
+void MorletWaveletTransform::multiphasevec_c(double *signal, std::complex<double> *wavelets) {
+    memcpy(signal_buf, signal, signal_len_ * sizeof(double));
+
+    size_t last_len = 0;
+    size_t plan = 0;
+    for (MorletWaveFFT *wavelet = morlet_wave_ffts; wavelet < morlet_wave_ffts + n_freqs; ++wavelet) {
+        size_t len = wavelet->len;
+        if (len != last_len) {
+            last_len = len;
+            fftw_execute(plan_for_signal[plan]);
+            ++plan;
+        }
+
+        // construct product
+        product_with_herm_fft(len, wavelet->fft, fft_buf, prod_buf);
+
+        // inverse fft
+        fftw_execute(plan_for_inverse_transform[plan - 1]);
+
+        // retrieve wavelets
+        size_t first_idx = (wavelet->nt - 1) / 2;
+        for (size_t i = first_idx; i < first_idx + signal_len_; ++i) {
+            *(wavelets++) = std::complex<double>(result_buf[i][0]/len, result_buf[i][1]/len);
         }
     }
 }
@@ -285,4 +357,8 @@ void MorletWaveletTransform::multiphasevec(double *signal, size_t signal_len, do
         multiphasevec_powers(signal, powers);
     else
         multiphasevec_powers_and_phases(signal, powers, phases);
+}
+
+void MorletWaveletTransform::multiphasevec_complex(double *signal, size_t signal_len, std::complex<double> *wavelets, size_t wavelet_len) {
+    multiphasevec_c(signal, wavelets);
 }
