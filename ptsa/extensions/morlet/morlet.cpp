@@ -101,13 +101,13 @@ void MorletWaveletTransform::init_flex(size_t width, double *freqs, size_t nf, d
                                        size_t signal_len) {
 
 
-    cerr << "got freq array size " << nf << endl;
-    cout << "got freq array size " << nf << endl;
+//    cerr << "got freq array size " << nf << endl;
+//    cout << "got freq array size " << nf << endl;
 
-    for (size_t i=0 ; i < nf; ++i ){
-        cerr<<"freqs["<<i<<"]="<<freqs[i]<<endl;
-
-    }
+//    for (size_t i=0 ; i < nf; ++i ){
+//        cerr<<"freqs["<<i<<"]="<<freqs[i]<<endl;
+//
+//    }
 
     signal_len_ = signal_len;
     n_freqs = nf;
