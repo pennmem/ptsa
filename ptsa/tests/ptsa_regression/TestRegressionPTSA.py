@@ -242,6 +242,32 @@ class TestRegressionPTSA(unittest.TestCase):
 
         base_eegs_resampled_direct_0_0 = base_eegs[0,0].resampled(resampled_rate=100.0)
 
+    def test_wavelets_resample(self):
+        eegs = self.eegs[:, :, :-1]
+        base_eegs = self.base_eegs
+
+        wf = MorletWaveletFilter(time_series=base_eegs,
+                                 freqs=np.logspace(np.log10(3), np.log10(180), 8),
+                                 output='power',
+                                 frequency_dim_pos=0,
+                                 )
+
+        pow_wavelet, phase_wavelet = wf.filter()
+
+        resample_filter = ResampleFilter(time_series=pow_wavelet, resamplerate=100.0)
+        pow_wavelet_resampled = resample_filter.filter()
+
+        print pow_wavelet_resampled
+
+        pow_wavelet_resampled_direct = pow_wavelet.resampled(resampled_rate=100.0)
+
+        print pow_wavelet_resampled_direct
+
+        # from ptsa.wavelet import phase_pow_multi
+        # pow_wavelet_ptsa_orig = phase_pow_multi(freqs=np.logspace(np.log10(3), np.log10(180), 8), dat=eegs,to_return='power')
+        # print 'pow_wavelets_ptsa_orig=',pow_wavelet_ptsa_orig
+
+
     def test_ts_convenience_fcns(self):
         # # orig ptsa returns extra stime point that's why eegs[:,:,:-1]
         eegs = self.eegs[:, :, :-1]
@@ -431,7 +457,7 @@ class TestRegressionPTSA(unittest.TestCase):
     def test_wavelets_multicore(self):
         from ptsa.data.filters import MorletWaveletFilterCpp
         print 'hello'
-
+        print sys.path
 
         wf_cpp_multi = MorletWaveletFilterCpp(time_series=self.base_eegs,
                                  freqs=np.logspace(np.log10(3), np.log10(180), 8),
