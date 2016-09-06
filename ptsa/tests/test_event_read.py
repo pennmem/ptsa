@@ -1,6 +1,6 @@
 __author__ = 'm'
 
-
+import sys
 from ptsa.data.readers import BaseEventReader
 from ptsa.data.readers import PTSAEventReader
 from ptsa.data.events import Events
@@ -17,6 +17,9 @@ class TestEventRead(unittest.TestCase,EventReadersTestBase):
     def setUp(self):
         self.event_range = range(0,30,1)
         self.e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
+
+        if sys.platform.startswith('win'):
+            self.e_path = 'D:/data/events/RAM_FR1/R1060M_events.mat'
 
 
     def test_event_read(self):

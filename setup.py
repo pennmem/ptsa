@@ -32,15 +32,30 @@ else:
     extra_compile_args=['-std=c++11']
 
 
+morlet_mp_include_dirs = ''
+morlet_mp_lib_dirs = ''
+if sys.platform.startswith('win'):
+    morlet_mp_include_dirs = [get_third_party_install_dir(), numpy.get_include()]
+    morlet_mp_lib_dirs = [get_third_party_install_dir()]
+    morlet_mp_libs=['libfftw3-3']
+else:
+    morlet_mp_include_dirs = [join(get_third_party_install_dir(), 'include'), numpy.get_include()]
+    morlet_mp_lib_dirs = [join(get_third_party_install_dir(), 'lib')]
+    morlet_mp_libs=['fftw3']
+    
+    
 morlet_module = Extension('ptsa.extensions.morlet._morlet',
                           sources=[join(morlet_dir, 'morlet.cpp'),
                                    join(morlet_dir,'MorletWaveletTransformMP.cpp'),
                                    join(morlet_dir, 'morlet.i')],
                           swig_opts=['-c++'],
-                          include_dirs=[join(get_third_party_install_dir(), 'include'), numpy.get_include()],
-                          library_dirs=[join(get_third_party_install_dir(), 'lib')],
-                          extra_compile_args=extra_compile_args,
-                          libraries=['fftw3'],
+                          include_dirs=morlet_mp_include_dirs,
+                          library_dirs=morlet_mp_lib_dirs,
+                           
+                          # include_dirs=[join(get_third_party_install_dir(), 'include'), numpy.get_include()],
+                          # library_dirs=[join(get_third_party_install_dir(), 'lib')],
+                          # extra_compile_args=extra_compile_args,
+                          libraries=morlet_mp_libs,
 
                           )
 

@@ -64,7 +64,14 @@ def clean_previous_build():
     for d in dirs:
         shutil.rmtree(d)
 
-
+def copytree_custom(src, dst, symlinks=False, ignore=None):
+    for item in os.listdir(src):
+        s = os.path.join(src, item)
+        d = os.path.join(dst, item)
+        if os.path.isdir(s):
+            shutil.copytree(s, d, symlinks, ignore)
+        else:
+            shutil.copy2(s, d)
 
 def check_dependencies():
 
@@ -113,12 +120,41 @@ def check_dependencies():
     compiler=distutils.ccompiler.new_compiler()
     lib_dirs=[join(third_party_install_dir,'lib')]
 
-    if compiler.find_library_file(lib_dirs,'fftw3'):
-        print 'FOUND FFTW3 library'
+    if sys.platform.startswith('win'):
+        build_third_party_libs_win()
     else:
-        print 'DID NOT FIND FFTW3 LIBRARY - WILL BUILD FROM SOURCE'
-        build_third_party_libs()
+        if compiler.find_library_file(lib_dirs,'fftw3'):
+            print 'FOUND FFTW3 library'
+        else:
+            print 'DID NOT FIND FFTW3 LIBRARY - WILL BUILD FROM SOURCE'
+            build_third_party_libs()
 
+def build_third_party_libs_win():
+
+    try:
+        shutil.rmtree(third_party_build_dir)
+    except OSError:
+        pass
+
+    try:
+        shutil.rmtree(third_party_install_dir)
+    except OSError:
+        pass
+
+    try:
+        os.makedirs(third_party_install_dir)
+    except OSError:
+        pass
+
+    try:
+        os.makedirs(third_party_build_dir)
+    except OSError:
+        pass
+
+
+    copytree_custom(join(root_dir,'third_party','fftw'),third_party_install_dir )
+    
+    
 
 def build_third_party_libs():
     try:

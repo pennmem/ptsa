@@ -8,8 +8,8 @@ __author__ = 'm'
 numpy_type_dict = {
     type(int()): '<i8',
     type(long()): '<i8',
-    type(np.float128()): '<f16',
-    type(np.complex256()): '<c32',
+    # type(np.float128()): '<f16',
+    # type(np.complex256()): '<c32',
     type(complex()): '<c16',
     type(str()): '|S1',
     type(unicode()): '|U1',
