@@ -4,6 +4,9 @@ from distutils.command.build import build
 
 # see recipe http://stackoverflow.com/questions/12491328/python-distutils-not-include-the-swig-generated-module
 
+# for windows install see http://stackoverflow.com/questions/2817869/error-unable-to-find-vcvarsall-bat
+
+
 class CustomBuild(build):
     sub_commands = [
         ('build_ext', build.has_ext_modules),

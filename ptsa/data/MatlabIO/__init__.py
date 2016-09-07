@@ -1,22 +1,58 @@
 from MatlabIO import *
 import scipy.io as sio
 import numpy as np
-
+import sys
 __author__ = 'm'
 
 # mapping from python type specification (scipy loadmat will report those) to numpy dtype string abbreviation
-numpy_type_dict = {
-    type(int()): '<i8',
-    type(long()): '<i8',
-    # type(np.float128()): '<f16',
-    # type(np.complex256()): '<c32',
-    type(complex()): '<c16',
-    type(str()): '|S1',
-    type(unicode()): '|U1',
-    type(bool()): '|b1',
-    type(float()): '<f8',
 
-}
+
+if sys.platform.startswith('win'):
+
+    numpy_type_dict = {
+        type(int()): '<i8',
+        type(long()): '<i8',
+        # type(np.float128()): '<f16',
+        # type(np.complex256()): '<c32',
+        type(complex()): '<c16',
+        type(str()): '|S1',
+        type(unicode()): '|U1',
+        type(bool()): '|b1',
+        type(float()): '<f8',
+    }
+
+else:
+    numpy_type_dict = {
+        type(int()): '<i8',
+        type(long()): '<i8',
+        type(np.float128()): '<f16',
+        type(np.complex256()): '<c32',
+        type(complex()): '<c16',
+        type(str()): '|S1',
+        type(unicode()): '|U1',
+        type(bool()): '|b1',
+        type(float()): '<f8',
+    }
+
+
+# numpy_type_dict = {}
+#
+# def add_np_type(type_dict, typename,np_sym):
+#     try:
+#         type_dict[typename]=numpy_sym
+#     except:
+#         return
+#
+# add_np_type(type_dict=numpy_type_dict,typename=type(int()),np_sym='<i8')
+# add_np_type(type_dict=numpy_type_dict,typename=type(long()),np_sym='<i8')
+# add_np_type(type_dict=numpy_type_dict,typename=type(np.float128()),np_sym='<f16')
+# add_np_type(type_dict=numpy_type_dict,typename=type(np.complex256()),np_sym='<c32')
+# add_np_type(type_dict=numpy_type_dict,typename=type(np.complex()),np_sym='<c16')
+# add_np_type(type_dict=numpy_type_dict,typename=type(str()),np_sym='|S1')
+# add_np_type(type_dict=numpy_type_dict,typename=type(unicode()),np_sym='|U1')
+# add_np_type(type_dict=numpy_type_dict,typename=type(bool()),np_sym='|b1')
+# add_np_type(type_dict=numpy_type_dict,typename=type(float()),np_sym='|f8')
+
 
 
 def read_single_matlab_matrix_as_numpy_structured_array(file_name, object_name, verbose=False):
