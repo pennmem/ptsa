@@ -1,6 +1,7 @@
 import os
 import json
 import copy
+from ptsa.data.common import pathlib
 
 class IndexReader(object):
     """
@@ -9,29 +10,39 @@ class IndexReader(object):
     specific methods subject(), experiment(), session() or montage().
     """
 
-    PROTOCOLS = ('r1', 'ltp')
-
     FIELDS = (('protocols', '{protocol}'),
               ('subjects', '{subject}'),
               ('experiments', '{experiment}'),
               ('sessions', '{session}'),)
 
-    DB_ROOT='/'
-
-    def __init__(self, *protocols):
+    def __init__(self, index_file):
         """
         Constructor.
-        Reads from self.DB_ROOT/protocol for each protocol passed in
+        Reads from the passed in index file, and appends the root of the index files to anything that
+        appears to be a path
         :param protocols: 'r1', 'ltp'
         """
-        if protocols:
-            self.protocols = protocols
-        else:
-            self.protocols = self.PROTOCOLS
+        self.protocols_root = os.path.dirname(index_file)
+        self.index_file = index_file
+        self.index = json.load(open(index_file))
+        self._prepend_db_root(self.protocols_root, self.index)
 
-        self.index_files = [os.path.join(self.DB_ROOT, 'protocols', '{}.json'.format(protocol)) for protocol in self.protocols]
-        indexes = [json.load(open(index_file)) for index_file in self.index_files]
-        self.index = reduce(self._merge, indexes, {})
+    @classmethod
+    def _prepend_db_root(cls, protocols_root, index):
+        """
+        Prepends the protocols_root onto elements of index that contain the basename of protocols_root and look
+        like paths.
+        """
+        protocols_basename = os.path.basename(protocols_root)
+        for k, v in index.items():
+            if isinstance(v, dict):
+                cls._prepend_db_root(protocols_root, v)
+            elif isinstance(v, basestring):
+                v_path = pathlib.Path(str(v))
+                root = str(v_path.parts[0])
+                if root == protocols_basename:
+                    index[k] = os.path.join(protocols_root, str(v_path.parts[1:]))
+
 
     @classmethod
     def _merge(cls, index1, index2):
@@ -176,8 +187,8 @@ class IndexReader(object):
         return sorted(montages)
 
 if __name__ == '__main__':
-    IndexReader.DB_ROOT = '/Volumes/db_root'
-    reader = IndexReader('r1')
+    reader = IndexReader('/Volumes/db_root/protocols/r1.json')
     print reader.aggregate_values('sessions', subject='R1093J', experiment='PS2')
     print reader.aggregate_values('subjects', experiment='FR3')
     print reader.aggregate_values('experiments', subject='R1001P')
+    print reader.aggregate_values('task_events', subject='R1001P', experiment='FR1')
