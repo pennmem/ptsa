@@ -3,7 +3,7 @@ import json
 import copy
 from ptsa.data.common import pathlib
 
-class IndexReader(object):
+class JsonIndexReader(object):
     """
     Reads from one of the top level indexing files (r1.json, ltp.json)
     Allows for aggregation of values across any field with any constraint through the use of aggregateValues() or the
