@@ -139,13 +139,26 @@ class JsonIndexReader(object):
                 out.add(index_i[field])
         return out
 
+    def get_value(self, field, **kwargs):
+        """
+        Gets a single field from the dictionary tree. Raises a KeyError if the field is not found, or there
+        are multiple entries for the field with the specified constraints
+        :param field: the name of the field to retrieve
+        :param kwargs: constraints (e.g. subject='R1001P', session=0, experiment='FR3')
+        :return: the value requested
+        """
+        values = self._aggregate_values(self.index, field, **kwargs)
+        if len(values) != 1:
+            raise ValueError("Expected 1 value for {}, found {}".format(field, len(values)))
+        return list(values)[0]
+
     def aggregate_values(self, field, **kwargs):
         """
         Aggregates values across different experiments, subjects, sessions, etc.
         Allows you to specify constraints for the query (e.g. subject='R1001P', experiment='FR1')
         :param field: The field to aggregate -- can be a leaf or internal node of the json tree.
         :param kwargs: Constraints -- subject='R1001P', experiment='FR1', etc.
-        :return:
+        :return: a set of all of the fields that were found
         """
         return self._aggregate_values(self.index, field, **kwargs)
 
@@ -187,8 +200,8 @@ class JsonIndexReader(object):
         return sorted(montages)
 
 if __name__ == '__main__':
-    reader = IndexReader('/Volumes/db_root/protocols/r1.json')
+    reader = JsonIndexReader('/Volumes/db_root/protocols/r1.json')
     print reader.aggregate_values('sessions', subject='R1093J', experiment='PS2')
     print reader.aggregate_values('subjects', experiment='FR3')
     print reader.aggregate_values('experiments', subject='R1001P')
-    print reader.aggregate_values('task_events', subject='R1001P', experiment='FR1')
+    print reader.get_value('task_events', subject='R1001P', experiment='FR1', session=0)
