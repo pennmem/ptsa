@@ -105,6 +105,8 @@ class JsonIndexReader(object):
                     indxs.extend(indx[f_k].values())
             indexes = indxs
         for kwarg_f, kwarg_v in kwargs.items():
+            if len(indexes) == 0:
+                break
             if kwarg_f in indexes[0]:
                 for i, index in enumerate(indexes):
                     if str(index[kwarg_f]) != str(kwarg_v):
@@ -118,6 +120,8 @@ class JsonIndexReader(object):
         sub_indexes = {}
         is_leaf = True
         for key, value in cls.FIELDS:
+            if not these_indexes or not key in these_indexes[0]:
+                continue
             sub_indexes = [indx[key] for indx in these_indexes]
             if key == field:
                 is_leaf=False
@@ -136,7 +140,8 @@ class JsonIndexReader(object):
                 out.update(set(index_i.keys()))
         else:
             for index_i in these_indexes:
-                out.add(index_i[field])
+                if field in index_i:
+                    out.add(index_i[field])
         return out
 
     def get_value(self, field, **kwargs):
@@ -192,16 +197,11 @@ class JsonIndexReader(object):
         :param kwargs: e.g. subject='R1001P', experiment='FR1', session=0
         :return: list of montages
         """
-        localizations = self.aggregate_values('localization', **kwargs)
-        montages = []
-        for localization in localizations:
-            for montage in self.aggregate_values('montage', localization=localization, **kwargs):
-                montages.append('{}.{}'.format(localization, montage))
-        return sorted(montages)
+        return sorted(list(self.aggregate_values('montage', **kwargs)))
 
 if __name__ == '__main__':
-    reader = JsonIndexReader('/Volumes/db_root/protocols/r1.json')
-    print reader.aggregate_values('sessions', subject='R1093J', experiment='PS2')
-    print reader.aggregate_values('subjects', experiment='FR3')
+    reader = JsonIndexReader('/Users/iped/rhino_mount/data/eeg/protocols/r1.json')
+    print reader.aggregate_values('sessions', subject='R1093J', experiment='FR1')
+    print reader.aggregate_values('subjects', experiment='PAL2')
     print reader.aggregate_values('experiments', subject='R1001P')
     print reader.get_value('task_events', subject='R1001P', experiment='FR1', session=0)
