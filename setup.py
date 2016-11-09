@@ -26,6 +26,8 @@ ext_modules = []
 
 morlet_dir = join(root_dir,'ptsa','extensions','morlet')
 
+circ_stat_dir = join(root_dir,'ptsa','extensions','circular_stat')
+
 if sys.platform.startswith('darwin'):
     extra_compile_args=['-std=c++11','-stdlib=libc++','-mmacosx-version-min=10.7']
 else:
@@ -44,6 +46,18 @@ morlet_module = Extension('ptsa.extensions.morlet._morlet',
 
                           )
 
+circ_stat_module = Extension('ptsa.extensions.circular_stat._circular_stat',
+                          sources=[join(circ_stat_dir, 'circular_stat.cpp'),
+                                   join(circ_stat_dir, 'circular_stat.i')],
+                          swig_opts=['-c++'],
+                          include_dirs=[join(get_third_party_install_dir(), 'include'), numpy.get_include()],
+                          library_dirs=[join(get_third_party_install_dir(), 'lib')],
+                          extra_compile_args=extra_compile_args,
+                          libraries=['fftw3'],
+
+                          )
+
+
 edf_ext = Extension("ptsa.data.edf.edf",
                     sources = ["ptsa/data/edf/edf.c",
                                "ptsa/data/edf/edfwrap.c",
@@ -55,6 +69,7 @@ edf_ext = Extension("ptsa.data.edf.edf",
 
 
 ext_modules.append(morlet_module)
+ext_modules.append(circ_stat_module)
 ext_modules.append(edf_ext)
 
 
