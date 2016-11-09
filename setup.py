@@ -84,6 +84,7 @@ setup(name='ptsa',
       packages=[
                 'ptsa',
                 'ptsa.extensions.morlet',
+                'ptsa.extensions.circular_stat',
                 'ptsa.tests',
                 'ptsa.tests.ptsa_regression',
                 'ptsa.data',
@@ -101,5 +102,5 @@ setup(name='ptsa',
                 'dimarray',
                 'dimarray.tests'
                 ],
-      py_modules=['ptsa.extensions.morlet']
+      py_modules=['ptsa.extensions.morlet','ptsa.extensions.circular_stat']
       )
