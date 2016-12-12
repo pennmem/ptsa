@@ -3,7 +3,7 @@ import numpy as np
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.filters import BaseFilter
-from ptsa.extensions import MorletWaveletTransformMP
+from ptsa.extensions import MorletWaveletTransformMP,MorletWaveletTransformMP_tp
 from ptsa.extensions import morlet
 
 
@@ -50,7 +50,8 @@ class MorletWaveletFilterCpp(PropertiedObject, BaseFilter):
                                                  dtype=np.complex)
 
         # mt = morlet.MorletWaveletTransformMP(self.cpus)
-        mt = MorletWaveletTransformMP(self.cpus)
+        # mt = MorletWaveletTransformMP(self.cpus)
+        mt = MorletWaveletTransformMP_tp(self.cpus)
 
 
         time_series_reshaped = self.time_series.data.reshape(np.prod(self.time_series.shape[:-1]),
@@ -131,6 +132,9 @@ class MorletWaveletFilterCpp(PropertiedObject, BaseFilter):
             final_dims = (wavelet_complex_ts.dims[-2],) + wavelet_complex_ts.dims[:-2] + (wavelet_complex_ts.dims[-1],)
 
             wavelet_complex_ts = wavelet_complex_ts.transpose(*final_dims)
+
+        if self.verbose:
+            print 'CPP total time wavelet loop: ', time.time() - s
 
         if wavelet_complex_ts is not None:
             return wavelet_complex_ts, None

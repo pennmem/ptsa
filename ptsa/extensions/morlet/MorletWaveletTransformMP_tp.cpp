@@ -16,7 +16,7 @@ using namespace std;
 MorletWaveletTransformMP_tp ::MorletWaveletTransformMP_tp (unsigned int cpus) : cpus(cpus) {
 
     array.assign(1000000, 0.0);
-    
+
     threadpool_ptr = std::make_shared<ThreadPool>(cpus);
 
 }
@@ -109,7 +109,7 @@ int MorletWaveletTransformMP_tp ::compute_wavelets_worker_fcn(unsigned int threa
     }
 
     return 0;
-    
+
 }
 
 // void MorletWaveletTransformMP_tp ::compute_wavelets_threads() {
@@ -133,7 +133,7 @@ int MorletWaveletTransformMP_tp ::compute_wavelets_worker_fcn(unsigned int threa
 
 
 void MorletWaveletTransformMP_tp ::compute_wavelets_threads() {
-    
+
         // ThreadPool pool(4);
     // std::vector< std::future<int> > results;
 
@@ -148,33 +148,24 @@ void MorletWaveletTransformMP_tp ::compute_wavelets_threads() {
         // );
     // }
 
-    
 
     std::vector< std::future<int> > results;
 
-    
 
-        for (unsigned int i = 0; i < cpus; ++i) {
-            results.emplace_back(        
-                threadpool_ptr->enqueue(
-                    [=] { return compute_wavelets_worker_fcn(i); }
-                )            
-            );
-            
-        }
-     
-    //barrier     
+    for (unsigned int i = 0; i < cpus; ++i) {
+        results.emplace_back(
+            threadpool_ptr->enqueue(
+                [=] { return compute_wavelets_worker_fcn(i); }
+            )
+        );
+
+    }
+
+    //barrier
     for(auto && result: results){
          result.get();
     }
-    
-            
 
-   
-
-    
-
-    
 }
 
 
