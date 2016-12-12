@@ -3,7 +3,7 @@ import numpy as np
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.filters import BaseFilter
-from ptsa.extensions import MorletWaveletTransformMP,MorletWaveletTransformMP_tp
+from ptsa.extensions import MorletWaveletTransformMP
 from ptsa.extensions import morlet
 
 
@@ -51,7 +51,7 @@ class MorletWaveletFilterCpp(PropertiedObject, BaseFilter):
 
         # mt = morlet.MorletWaveletTransformMP(self.cpus)
         # mt = MorletWaveletTransformMP(self.cpus)
-        mt = MorletWaveletTransformMP_tp(self.cpus)
+        mt = MorletWaveletTransformMP(self.cpus)
 
 
         time_series_reshaped = self.time_series.data.reshape(np.prod(self.time_series.shape[:-1]),

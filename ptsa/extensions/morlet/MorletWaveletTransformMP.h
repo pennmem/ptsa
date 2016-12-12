@@ -9,6 +9,7 @@
 #include <complex>
 
 class MorletWaveletTransform;
+class ThreadPool;
 
 class MorletWaveletTransformMP {
 private:
@@ -17,6 +18,7 @@ private:
     unsigned int num_freq = -1;
 
     std::vector<std::shared_ptr<MorletWaveletTransform> > mwt_vec;
+    std::shared_ptr<ThreadPool> threadpool_ptr;
 
     size_t signal_len = -1;
     size_t num_signals = -1;
@@ -35,7 +37,7 @@ private:
 
 public:
 
-    MorletWaveletTransformMP(unsigned int cpus = 1);
+    MorletWaveletTransformMP (unsigned int cpus = 1);
 
 
     void set_num_freq(unsigned int num_freq) {
@@ -79,7 +81,7 @@ public:
 
     void prepare_run();
 
-    void compute_wavelets_worker_fcn(unsigned int thread_no);
+    int compute_wavelets_worker_fcn(unsigned int thread_no);
 
     void compute_wavelets_threads();
 

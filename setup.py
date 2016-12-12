@@ -65,7 +65,6 @@ else:
 morlet_module = Extension('ptsa.extensions.morlet._morlet',
                           sources=[join(morlet_dir, 'morlet.cpp'),
                                    join(morlet_dir, 'MorletWaveletTransformMP.cpp'),
-                                   join(morlet_dir, 'MorletWaveletTransformMP_tp.cpp'),
                                    join(morlet_dir, 'morlet.i')],
                           swig_opts=['-c++'],
                           include_dirs=morlet_mp_include_dirs,
