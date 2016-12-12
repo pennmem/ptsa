@@ -7,17 +7,21 @@
 #include <thread>
 #include <list>
 #include <cmath>
+#include<ThreadPool.h>
+
 #include "morlet.h"
 
 using namespace std;
 
-MorletWaveletTransformMP::MorletWaveletTransformMP(unsigned int cpus) : cpus(cpus) {
+MorletWaveletTransformMP::MorletWaveletTransformMP (unsigned int cpus) : cpus(cpus) {
 
     array.assign(1000000, 0.0);
 
+    threadpool_ptr = std::make_shared<ThreadPool>(cpus);
+
 }
 
-void MorletWaveletTransformMP::prepare_run() {
+void MorletWaveletTransformMP ::prepare_run() {
 
     for (unsigned int i = 0; i < cpus; ++i) {
         mwt_vec.push_back(shared_ptr<MorletWaveletTransform>(new MorletWaveletTransform));
@@ -35,7 +39,7 @@ void MorletWaveletTransformMP::prepare_run() {
 }
 
 
-void MorletWaveletTransformMP::compute_wavelets_worker_fcn(unsigned int thread_no) {
+int MorletWaveletTransformMP ::compute_wavelets_worker_fcn(unsigned int thread_no) {
 
 //    cerr << "\n\n\n INSIDE compute_wavelets_worker_fcn" << endl;
     auto &mwt = mwt_vec[thread_no];
@@ -104,23 +108,62 @@ void MorletWaveletTransformMP::compute_wavelets_worker_fcn(unsigned int thread_n
 
     }
 
+    return 0;
+
 }
 
-void MorletWaveletTransformMP::compute_wavelets_threads() {
+// void MorletWaveletTransformMP ::compute_wavelets_threads() {
 
-//    cerr << "THREADED FUNCTION" << endl;
+// //    cerr << "THREADED FUNCTION" << endl;
 
-    std::list<std::thread> thread_list;
+    // std::list<std::thread> thread_list;
+    // for (unsigned int i = 0; i < cpus; ++i) {
+// //        thread_list.push_back(std::thread([=] { process_wavelets_out_threads(i); }));
+        // thread_list.push_back(std::thread([=] { compute_wavelets_worker_fcn(i); }));
+
+    // }
+
+    // for (auto &t: thread_list) {
+
+        // t.join();
+
+    // }
+
+// }
+
+
+void MorletWaveletTransformMP ::compute_wavelets_threads() {
+
+        // ThreadPool pool(4);
+    // std::vector< std::future<int> > results;
+
+    // for(int i = 0; i < 8; ++i) {
+        // results.emplace_back(
+            // pool.enqueue([i] {
+                // std::cout << "hello " << i << std::endl;
+                // std::this_thread::sleep_for(std::chrono::seconds(1));
+                // std::cout << "world " << i << std::endl;
+                // return i*i;
+            // })
+        // );
+    // }
+
+
+    std::vector< std::future<int> > results;
+
+
     for (unsigned int i = 0; i < cpus; ++i) {
-//        thread_list.push_back(std::thread([=] { process_wavelets_out_threads(i); }));
-        thread_list.push_back(std::thread([=] { compute_wavelets_worker_fcn(i); }));
+        results.emplace_back(
+            threadpool_ptr->enqueue(
+                [=] { return compute_wavelets_worker_fcn(i); }
+            )
+        );
 
     }
 
-    for (auto &t: thread_list) {
-
-        t.join();
-
+    //barrier
+    for(auto && result: results){
+         result.get();
     }
 
 }

@@ -6,7 +6,6 @@
 #include "MorletWaveletTransformMP.h"
 #include "enums.h"
 #include <complex>
-
 %}
 
 %include "numpy.i"
