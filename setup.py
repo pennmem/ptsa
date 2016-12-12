@@ -5,6 +5,7 @@ from distutils.command.build import build
 # see recipe http://stackoverflow.com/questions/12491328/python-distutils-not-include-the-swig-generated-module
 
 # for windows install see http://stackoverflow.com/questions/2817869/error-unable-to-find-vcvarsall-bat
+# for visual studio compilation you need to SET VS90COMNTOOLS=%VS140COMNTOOLS%
 
 
 class CustomBuild(build):
@@ -28,6 +29,7 @@ swig_third_party()
 ext_modules = []
 
 morlet_dir = join(root_dir,'ptsa','extensions','morlet')
+extensions_dir = join(root_dir,'ptsa','extensions')
 
 if sys.platform.startswith('darwin'):
     extra_compile_args=['-std=c++11','-stdlib=libc++','-mmacosx-version-min=10.7']
@@ -38,11 +40,11 @@ else:
 morlet_mp_include_dirs = ''
 morlet_mp_lib_dirs = ''
 if sys.platform.startswith('win'):
-    morlet_mp_include_dirs = [get_third_party_install_dir(), numpy.get_include()]
+    morlet_mp_include_dirs = [get_third_party_install_dir(), numpy.get_include(), join(extensions_dir,'ThreadPool')]
     morlet_mp_lib_dirs = [get_third_party_install_dir()]
     morlet_mp_libs=['libfftw3-3']
 else:
-    morlet_mp_include_dirs = [join(get_third_party_install_dir(), 'include'), numpy.get_include()]
+    morlet_mp_include_dirs = [join(get_third_party_install_dir(), 'include'), numpy.get_include(),join(extensions_dir,'ThreadPool')]
     morlet_mp_lib_dirs = [join(get_third_party_install_dir(), 'lib')]
     morlet_mp_libs=['fftw3']
     
@@ -50,6 +52,7 @@ else:
 morlet_module = Extension('ptsa.extensions.morlet._morlet',
                           sources=[join(morlet_dir, 'morlet.cpp'),
                                    join(morlet_dir,'MorletWaveletTransformMP.cpp'),
+                                   join(morlet_dir,'MorletWaveletTransformMP_tp.cpp'),
                                    join(morlet_dir, 'morlet.i')],
                           swig_opts=['-c++'],
                           include_dirs=morlet_mp_include_dirs,

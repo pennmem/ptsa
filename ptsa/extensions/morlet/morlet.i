@@ -4,6 +4,7 @@
 #define SWIG_FILE_WITH_INIT
 #include "morlet.h"
 #include "MorletWaveletTransformMP.h"
+#include "MorletWaveletTransformMP_tp.h"
 #include "enums.h"
 #include <complex>
 
@@ -39,5 +40,6 @@ import_array();
 %include "enums.h"
 %include "morlet.h"
 %include "MorletWaveletTransformMP.h"
+%include "MorletWaveletTransformMP_tp.h"
 
 // %clear(double *signal_array, size_t num_signals, size_t signal_len);
