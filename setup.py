@@ -58,7 +58,7 @@ else:
     morlet_mp_lib_dirs = [join(get_third_party_install_dir(), 'lib')]
     fftw_lib = 'fftw3'
     fftw_install_dir = get_third_party_install_dir()
-    fftw_lib_abspath = join(fftw_install_dir, 'lib'+fftw_lib+'.so')
+    fftw_lib_abspath = join(fftw_install_dir,'lib', 'lib'+fftw_lib+'.a')
 
     morlet_mp_libs = [fftw_lib]
 
@@ -72,7 +72,7 @@ morlet_module = Extension('ptsa.extensions.morlet._morlet',
 
                           # include_dirs=[join(get_third_party_install_dir(), 'include'), numpy.get_include()],
                           # library_dirs=[join(get_third_party_install_dir(), 'lib')],
-                          # extra_compile_args=extra_compile_args,
+                          extra_compile_args=extra_compile_args,
                           libraries=morlet_mp_libs,
 
                           )
