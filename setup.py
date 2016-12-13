@@ -49,20 +49,20 @@ elif sys.platform.startswith('win'):
 else:
     extra_compile_args = ['-std=c++11']
 
-morlet_mp_include_dirs = ''
-morlet_mp_lib_dirs = ''
+extra_include_dirs = ''
+extra_lib_dirs = ''
 if sys.platform.startswith('win'):
-    morlet_mp_include_dirs = [get_third_party_install_dir(), numpy.get_include(), join(extensions_dir, 'ThreadPool')]
-    morlet_mp_lib_dirs = [get_third_party_install_dir()]
+    extra_include_dirs = [get_third_party_install_dir(), numpy.get_include(), join(extensions_dir, 'ThreadPool')]
+    extra_lib_dirs = [get_third_party_install_dir()]
     fftw_lib = 'libfftw3-3'
     fftw_install_dir = get_third_party_install_dir()
     fftw_lib_abspath = join(fftw_install_dir, fftw_lib+'.dll')
 
     fftw_libs = [fftw_lib]
 else:
-    morlet_mp_include_dirs = [join(get_third_party_install_dir(), 'include'), numpy.get_include(),
-                              join(extensions_dir, 'ThreadPool')]
-    morlet_mp_lib_dirs = [join(get_third_party_install_dir(), 'lib')]
+    extra_include_dirs = [join(get_third_party_install_dir(), 'include'), numpy.get_include(),
+                          join(extensions_dir, 'ThreadPool')]
+    extra_lib_dirs = [join(get_third_party_install_dir(), 'lib')]
     fftw_lib = 'fftw3'
     fftw_install_dir = get_third_party_install_dir()
     fftw_lib_abspath = join(fftw_install_dir,'lib', 'lib'+fftw_lib+'.a')
@@ -74,8 +74,8 @@ morlet_module = Extension('ptsa.extensions.morlet._morlet',
                                    join(morlet_dir, 'MorletWaveletTransformMP.cpp'),
                                    join(morlet_dir, 'morlet.i')],
                           swig_opts=['-c++'],
-                          include_dirs=morlet_mp_include_dirs,
-                          library_dirs=morlet_mp_lib_dirs,
+                          include_dirs=extra_include_dirs,
+                          library_dirs=extra_lib_dirs,
 
                           # include_dirs=[join(get_third_party_install_dir(), 'include'), numpy.get_include()],
                           # library_dirs=[join(get_third_party_install_dir(), 'lib')],
@@ -85,15 +85,15 @@ morlet_module = Extension('ptsa.extensions.morlet._morlet',
                           )
 
 circ_stat_module = Extension('ptsa.extensions.circular_stat._circular_stat',
-                          sources=[join(circ_stat_dir, 'circular_stat.cpp'),
+                             sources=[join(circ_stat_dir, 'circular_stat.cpp'),
                                    join(circ_stat_dir, 'circular_stat.i')],
-                          swig_opts=['-c++'],
-                          include_dirs=morlet_mp_include_dirs,
-                          library_dirs=morlet_mp_lib_dirs,
-                          extra_compile_args=extra_compile_args,
-                          libraries=fftw_libs,
+                             swig_opts=['-c++'],
+                             include_dirs=extra_include_dirs,
+                             library_dirs=extra_lib_dirs,
+                             extra_compile_args=extra_compile_args,
+                             libraries=fftw_libs,
 
-                          )
+                             )
 
 
 edf_ext = Extension("ptsa.data.edf.edf",
