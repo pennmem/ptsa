@@ -148,8 +148,8 @@ void MorletWaveletTransformMP ::compute_wavelets_threads() {
         // );
     // }
 
-    cerr<<"compute_wavelets_threads - threadpool"<<endl;
-    cerr<<"cpus="<<cpus<<endl;
+//    cerr<<"compute_wavelets_threads - threadpool"<<endl;
+//    cerr<<"cpus="<<cpus<<endl;
     std::vector< std::future<int> > results;
 
 
