@@ -58,7 +58,7 @@ if sys.platform.startswith('win'):
     fftw_install_dir = get_third_party_install_dir()
     fftw_lib_abspath = join(fftw_install_dir, fftw_lib+'.dll')
 
-    morlet_mp_libs = [fftw_lib]
+    fftw_libs = [fftw_lib]
 else:
     morlet_mp_include_dirs = [join(get_third_party_install_dir(), 'include'), numpy.get_include(),
                               join(extensions_dir, 'ThreadPool')]
@@ -67,7 +67,7 @@ else:
     fftw_install_dir = get_third_party_install_dir()
     fftw_lib_abspath = join(fftw_install_dir,'lib', 'lib'+fftw_lib+'.a')
 
-    morlet_mp_libs = [fftw_lib]
+    fftw_libs = [fftw_lib]
 
 morlet_module = Extension('ptsa.extensions.morlet._morlet',
                           sources=[join(morlet_dir, 'morlet.cpp'),
@@ -80,7 +80,7 @@ morlet_module = Extension('ptsa.extensions.morlet._morlet',
                           # include_dirs=[join(get_third_party_install_dir(), 'include'), numpy.get_include()],
                           # library_dirs=[join(get_third_party_install_dir(), 'lib')],
                           extra_compile_args=extra_compile_args,
-                          libraries=morlet_mp_libs,
+                          libraries=fftw_libs,
 
                           )
 
@@ -88,10 +88,10 @@ circ_stat_module = Extension('ptsa.extensions.circular_stat._circular_stat',
                           sources=[join(circ_stat_dir, 'circular_stat.cpp'),
                                    join(circ_stat_dir, 'circular_stat.i')],
                           swig_opts=['-c++'],
-                          include_dirs=[join(get_third_party_install_dir(), 'include'), numpy.get_include()],
-                          library_dirs=[join(get_third_party_install_dir(), 'lib')],
+                          include_dirs=morlet_mp_include_dirs,
+                          library_dirs=morlet_mp_lib_dirs,
                           extra_compile_args=extra_compile_args,
-                          libraries=['fftw3'],
+                          libraries=fftw_libs,
 
                           )
 
@@ -146,6 +146,11 @@ setup(name='ptsa',
 copy(
     src=fftw_lib_abspath,
     dst=join(get_python_lib(),'ptsa','extensions','morlet')
+)
+
+copy(
+    src=fftw_lib_abspath,
+    dst=join(get_python_lib(),'ptsa','extensions','circular_stat')
 )
 
 
