@@ -8,6 +8,7 @@
 #include "enums.h"
 #include <complex>
 
+
 class MorletWaveletTransform;
 class ThreadPool;
 
