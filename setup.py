@@ -39,6 +39,8 @@ extensions_dir = join(root_dir, 'ptsa', 'extensions')
 
 if sys.platform.startswith('darwin'):
     extra_compile_args = ['-std=c++11', '-stdlib=libc++', '-mmacosx-version-min=10.7']
+elif sys.platform.startswith('win'):
+    extra_compile_args = []
 else:
     extra_compile_args = ['-std=c++11']
 
@@ -58,7 +60,7 @@ else:
     morlet_mp_lib_dirs = [join(get_third_party_install_dir(), 'lib')]
     fftw_lib = 'fftw3'
     fftw_install_dir = get_third_party_install_dir()
-    fftw_lib_abspath = join(fftw_install_dir, 'lib'+fftw_lib+'.so')
+    fftw_lib_abspath = join(fftw_install_dir,'lib', 'lib'+fftw_lib+'.a')
 
     morlet_mp_libs = [fftw_lib]
 
@@ -72,7 +74,7 @@ morlet_module = Extension('ptsa.extensions.morlet._morlet',
 
                           # include_dirs=[join(get_third_party_install_dir(), 'include'), numpy.get_include()],
                           # library_dirs=[join(get_third_party_install_dir(), 'lib')],
-                          # extra_compile_args=extra_compile_args,
+                          extra_compile_args=extra_compile_args,
                           libraries=morlet_mp_libs,
 
                           )

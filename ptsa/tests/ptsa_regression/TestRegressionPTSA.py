@@ -405,7 +405,7 @@ class TestRegressionPTSA(unittest.TestCase):
         wf_cpp = MorletWaveletFilterCpp(time_series=self.base_eegs,
                                  freqs=np.logspace(np.log10(3), np.log10(180), 8),
                                  output='power',
-                                 cpus=2
+                                 cpus=1
                                  )
 
         pow_wavelet_cpp, phase_wavelet_cpp = wf_cpp.filter()
@@ -467,8 +467,8 @@ class TestRegressionPTSA(unittest.TestCase):
         eegs = self.eegs[:, :, :-1]
         base_eegs = self.base_eegs
 
-        if not sys.platform.startswith('win'):
-            sys.path.append('/Users/m/src/morlet_git_install')
+        # if not sys.platform.startswith('win'):
+        #     sys.path.append('/Users/m/src/morlet_git_install')
         import ptsa.extensions.morlet as morlet
         num_freqs = 8
         f_min = 3.0
