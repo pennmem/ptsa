@@ -40,6 +40,8 @@ ext_modules = []
 morlet_dir = join(root_dir, 'ptsa', 'extensions', 'morlet')
 extensions_dir = join(root_dir, 'ptsa', 'extensions')
 
+circ_stat_dir = join(root_dir,'ptsa','extensions','circular_stat')
+
 if sys.platform.startswith('darwin'):
     extra_compile_args = ['-std=c++11', '-stdlib=libc++', '-mmacosx-version-min=10.7']
 elif sys.platform.startswith('win'):
@@ -82,6 +84,18 @@ morlet_module = Extension('ptsa.extensions.morlet._morlet',
 
                           )
 
+circ_stat_module = Extension('ptsa.extensions.circular_stat._circular_stat',
+                          sources=[join(circ_stat_dir, 'circular_stat.cpp'),
+                                   join(circ_stat_dir, 'circular_stat.i')],
+                          swig_opts=['-c++'],
+                          include_dirs=[join(get_third_party_install_dir(), 'include'), numpy.get_include()],
+                          library_dirs=[join(get_third_party_install_dir(), 'lib')],
+                          extra_compile_args=extra_compile_args,
+                          libraries=['fftw3'],
+
+                          )
+
+
 edf_ext = Extension("ptsa.data.edf.edf",
                     sources=["ptsa/data/edf/edf.c",
                              "ptsa/data/edf/edfwrap.c",
@@ -91,6 +105,7 @@ edf_ext = Extension("ptsa.data.edf.edf",
                                    ('_LARGEFILE_SOURCE', None)])
 
 ext_modules.append(morlet_module)
+ext_modules.append(circ_stat_module)
 ext_modules.append(edf_ext)
 
 setup(name='ptsa',
@@ -102,28 +117,27 @@ setup(name='ptsa',
       ext_modules=ext_modules,
       # package_dir={},
       packages=[
-          'ptsa',
-          'ptsa.extensions.morlet',
-          'ptsa.tests',
-          'ptsa.tests.ptsa_regression',
-          'ptsa.data',
-          'ptsa.data.readers',
-          'ptsa.data.MatlabIO',
-          'ptsa.data.common',
-          'ptsa.data.filters',
-          'ptsa.data.readers',
-          'ptsa.data.writers',
-          'ptsa.data.tests',
-          'ptsa.data.edf',
-          'ptsa.plotting',
-          'ptsa.plotting.tests',
-          'ptsa.stats',
-          'dimarray',
-          'dimarray.tests'
-      ],
-
-      py_modules=['ptsa.extensions.morlet']
-
+                'ptsa',
+                'ptsa.extensions.morlet',
+                'ptsa.extensions.circular_stat',
+                'ptsa.tests',
+                'ptsa.tests.ptsa_regression',
+                'ptsa.data',
+                'ptsa.data.readers',
+                'ptsa.data.MatlabIO',
+                'ptsa.data.common',
+                'ptsa.data.filters',
+                'ptsa.data.readers',
+                'ptsa.data.writers',
+                'ptsa.data.tests',
+                'ptsa.data.edf',
+                'ptsa.plotting',
+                'ptsa.plotting.tests',
+                'ptsa.stats',
+                'dimarray',
+                'dimarray.tests'
+                ],
+      py_modules=['ptsa.extensions.morlet','ptsa.extensions.circular_stat']
       )
 
 

@@ -198,6 +198,7 @@ def build_third_party_libs():
 
 def swig_third_party():
     call(['swig','-python','-outdir', 'morlet', 'morlet.i'])
+    call(['swig','-python','-outdir', 'circular_stat', 'circular_stat.i'])
 
 
 check_dependencies()
@@ -207,3 +208,4 @@ import numpy
 
 ext_modules = []
 morlet_dir = join(root_dir,'ptsa','extensions','morlet')
+circular_stat_dir = join(root_dir,'ptsa','extensions','circular_stat')

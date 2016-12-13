@@ -1,6 +1,7 @@
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
 from os.path import *
+import json
 import collections
 
 
@@ -34,13 +35,14 @@ class ParamsReader(PropertiedObject,BaseReader):
         else:
             raise IOError('Could not find params file using dataroot: %s or using direct path:%s'%(self.dataroot,self.filename))
 
-        Converter = collections.namedtuple('Converter', ['convert', 'name'])
-        self.param_to_convert_fcn = {
-            'samplerate': Converter(convert=float, name='samplerate'),
-            'gain': Converter(convert=float, name='gain'),
-            'format': Converter(convert=lambda s: s.replace("'", "").replace('"', ''), name='format'),
-            'dataformat': Converter(convert=lambda s: s.replace("'", "").replace('"', ''), name='format')
-        }
+        if splitext(self.filename)[-1] == '.txt':
+            Converter = collections.namedtuple('Converter', ['convert', 'name'])
+            self.param_to_convert_fcn = {
+                'samplerate': Converter(convert=float, name='samplerate'),
+                'gain': Converter(convert=float, name='gain'),
+                'format': Converter(convert=lambda s: s.replace("'", "").replace('"', ''), name='format'),
+                'dataformat': Converter(convert=lambda s: s.replace("'", "").replace('"', ''), name='format')
+            }
 
     def locate_params_file(self, dataroot):
         """
@@ -55,13 +57,33 @@ class ParamsReader(PropertiedObject,BaseReader):
             if isfile(param_file):
                 return param_file
 
+        param_file = join(dirname(dataroot), '..', 'sources.json')
+        if isfile(param_file):
+            return param_file
+
 
         raise IOError('No params file found in ' + str(dir) +
                       '. Params files must be in the same directory ' +
                       'as the EEG data and must be named .params ' +
-                      'or params.txt.')
+                      'or params.txt, or in the directory above and '
+                      'named sources.json')
 
     def read(self):
+        if splitext(self.filename)[-1] == '.txt':
+            return self.read_txt()
+        else:
+            return self.read_json()
+
+    def read_json(self):
+        json_params = json.load(open(self.filename))[basename(self.dataroot)]
+        params = {}
+        params['samplerate'] = json_params['sample_rate']
+        params['gain'] = 1
+        params['format'] = json_params['data_format']
+        params['dataformat'] = json_params['data_format']
+        return params
+
+    def read_txt(self):
         """
         Parses param file
         :return: {dict} dictionary with param file content
@@ -87,15 +109,20 @@ class ParamsReader(PropertiedObject,BaseReader):
 
 
 if __name__ == '__main__':
-    p_path = '/Users/m/data/eeg/R1060M/eeg.noreref/params.txt'
-    from ptsa.data.readers.ParamsReader import ParamsReader
+    # p_path = '/Users/m/data/eeg/R1060M/eeg.noreref/params.txt'
+    # from ptsa.data.readers.ParamsReader import ParamsReader
+    #
+    # p_reader = ParamsReader(filename=p_path)
+    # params = p_reader.read()
+    # print params
+    #
+    #
+    # dataroot = '/Users/m/data/eeg/R1060M/eeg.noreref/R1060M_01Aug15_0805'
+    # p_reader = ParamsReader(dataroot=dataroot)
+    # params = p_reader.read()
+    # print params
 
-    p_reader = ParamsReader(filename=p_path)
-    params = p_reader.read()
-    print params
-
-
-    dataroot = '/Users/m/data/eeg/R1060M/eeg.noreref/R1060M_01Aug15_0805'
+    dataroot = '/Volumes/db_root/protocols/r1/subjects/R1001P/experiments/FR1/sessions/0/ephys/current_processed/noreref/R1001P_FR1_0_12Oct14_1034'
     p_reader = ParamsReader(dataroot=dataroot)
     params = p_reader.read()
     print params

@@ -3,6 +3,10 @@ __author__ = 'm'
 from os.path import *
 import numpy as np
 import re
+import json
+import unicodedata
+import os
+from collections import defaultdict
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
 from ptsa.data.common.path_utils import find_dir_prefix
@@ -56,8 +60,39 @@ class BaseEventReader(PropertiedObject,BaseReader):
             ev.eegfile = re.sub(data_dir_bad, data_dir_good, ev.eegfile)
         return events
 
-
     def read(self):
+        if os.path.splitext(self.filename)[-1] == '.json':
+            return self.read_json()
+        else:
+            return self.read_matlab()
+
+    def read_json(self):
+
+        if self.use_reref_eeg:
+            raise NotImplementedError('Reref from JSON not implemented')
+
+        evs = self.from_json(self.filename)
+
+        if self.eliminate_events_with_no_eeg:
+            # eliminating events that have no eeg file
+            indicator = np.empty(len(evs), dtype=bool)
+            indicator[:] = False
+
+            for i, ev in enumerate(evs):
+                # MAKE THIS CHECK STRONGER
+                indicator[i] = (len(str(evs[i].eegfile)) > 3)
+
+            evs = evs[indicator]
+
+        if 'eegfile' in evs.dtype.names:
+            eeg_dir = os.path.join(os.path.dirname(self.filename), '..', '..', 'ephys', 'current_processed', 'noreref')
+            eeg_dir = os.path.abspath(eeg_dir)
+            for ev in evs:
+                ev.eegfile = os.path.join(eeg_dir, ev.eegfile)
+
+        return evs
+
+    def read_matlab(self):
         '''
         Reads Matlab event file and returns corresponging np.recarray. Path to the eegfile is changed
         w.r.t original Matlab code to account for the following:
@@ -134,30 +169,160 @@ class BaseEventReader(PropertiedObject,BaseReader):
         return find_dir_prefix(self._filename, self.common_root)
 
 
+
+
+    ### TODO: CLEAN UP, COMMENT
+
+    @classmethod
+    def get_element_dtype(cls, element):
+        if isinstance(element, dict):
+            return cls.mkdtype(element)
+        elif isinstance(element, int):
+            return 'int64'
+        elif isinstance(element, (str, unicode)):
+            return 'S256'
+        elif isinstance(element, bool):
+            return 'b'
+        elif isinstance(element, float):
+            return 'float64'
+        elif isinstance(element, list):
+            return cls.get_element_dtype(element[0])
+        else:
+            raise Exception('Could not convert type %s' % type(element))
+
+    @classmethod
+    def mkdtype(cls, d):
+        if isinstance(d, list):
+            dtype = cls.mkdtype(d[0])
+            return dtype
+        dtype = []
+
+        for k, v in d.items():
+            dtype.append((str(k), cls.get_element_dtype(v)))
+
+        return np.dtype(dtype)
+
+    @classmethod
+    def from_json(cls, json_filename):
+        d = json.load(open(json_filename))
+        return cls.from_dict(d)
+
+    @classmethod
+    def from_dict(cls, d):
+        if not isinstance(d, list):
+            d = [d]
+
+        list_names = []
+
+        for k, v in d[0].items():
+            if isinstance(v, list):
+                list_names.append(k)
+
+        list_info = defaultdict(lambda *_: {'len': 0, 'dtype': None})
+
+        for entry in d:
+            for k in list_names:
+                list_info[k]['len'] = max(list_info[k]['len'], len(entry[k]))
+                if not list_info[k]['dtype'] and len(entry[k]) > 0:
+                    if isinstance(entry[k][0], dict):
+                        list_info[k]['dtype'] = cls.mkdtype(entry[k][0])
+                    else:
+                        list_info[k]['dtype'] = cls.get_element_dtype(entry[k])
+
+        dtypes = []
+        for k, v in d[0].items():
+            if not k in list_info:
+                dtypes.append((str(k), cls.get_element_dtype(v)))
+            else:
+                dtypes.append((str(k), list_info[k]['dtype'], list_info[k]['len']))
+
+        if dtypes:
+            arr = np.zeros(len(d), dtypes).view(np.recarray)
+            cls.copy_values(d, arr, list_info)
+        else:
+            arr = np.array([])
+        return arr.view(np.recarray)
+
+    @classmethod
+    def copy_values(cls, dict_list, rec_arr, list_info=None):
+        if len(dict_list) == 0:
+            return
+
+        dict_fields = {}
+        for k, v, in dict_list[0].items():
+            if isinstance(v, dict):
+                dict_fields[k] = [inner_dict[k] for inner_dict in dict_list]
+
+        for i, sub_dict in enumerate(dict_list):
+            for k, v in sub_dict.items():
+                if k in dict_fields or list_info and k in list_info:
+                    continue
+
+                if isinstance(v, dict):
+                    cls.copy_values([v], rec_arr[i][k])
+                elif isinstance(v, basestring):
+                    rec_arr[i][k] = cls.strip_accents(v)
+                else:
+                    rec_arr[i][k] = v
+
+        for i, sub_dict in enumerate(dict_list):
+            for k, v in sub_dict.items():
+                if list_info and k in list_info:
+                    arr = np.zeros(list_info[k]['len'], list_info[k]['dtype'])
+                    if len(v) > 0:
+                        if isinstance(v[0], dict):
+                            cls.copy_values(v, arr)
+                        else:
+                            for j, element in enumerate(v):
+                                arr[j] = element
+
+                    rec_arr[i][k] = arr.view(np.recarray)
+
+        for k, v in dict_fields.items():
+            cls.copy_values(v, rec_arr[k])
+
+    @classmethod
+    def strip_accents(cls, s):
+        try:
+            return str(''.join(c for c in unicodedata.normalize('NFD', unicode(s))
+                               if unicodedata.category(c) != 'Mn'))
+        except UnicodeError:  # If accents can't be converted, just remove them
+            return str(re.sub(r'[^A-Za-z0-9 -_.]', '', s))
+
+
 if __name__ == '__main__':
 
-
-
-    from ptsa.data.MatlabIO import *
-
-    # d = deserialize_objects_from_matlab_format('/Volumes/rhino_root/home2/yezzyat/R1108J_1_sess2_rawEEG_chans1_2.mat', 'ye')
-    d = deserialize_objects_from_matlab_format('/Volumes/rhino_root/home2/yezzyat/R1060M_FR1_sess0_rawEEG_chans2_3.mat', 'ye')
-
-    print d
-
-    from BaseEventReader import BaseEventReader
-    # e_path = join('/Volumes/rhino_root', 'data/events/RAM_FR1/R1060M_math.mat')
-    e_path = '/Volumes/rhino_root/data/events/RAM_PS/R1108J_1_events.mat'
-    e_path = '/Volumes/rhino_root/data/events/RAM_PS/R1108J_1_events.mat'
-    # e_path ='/Users/m/data/events/RAM_FR1/R1056M_events.mat'
-    e_path = join('/Volumes/rhino_root', 'data/events/RAM_FR1/R1062J_events.mat')
-
-    e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
-
-
+    e_path = '/Volumes/db_root/protocols/r1/subjects/R1001P/experiments/FR1/sessions/0/behavioral/current_processed/task_events.json'
+    e_reader = BaseEventReader(filename=e_path)
     events = e_reader.read()
 
-    print
+    from ptsa.data.readers import EEGReader
+
+    eeg_reader = EEGReader(events=events, channels=np.array(['006']), start_time = 0., end_time=1.6, buffer_time=1.0)
+    base_eeg = eeg_reader.read()
+    print base_eeg
+
+    #
+    # from ptsa.data.MatlabIO import *
+    #
+    # # d = deserialize_objects_from_matlab_format('/Volumes/rhino_root/home2/yezzyat/R1108J_1_sess2_rawEEG_chans1_2.mat', 'ye')
+    # d = deserialize_objects_from_matlab_format('/Volumes/rhino_root/home2/yezzyat/R1060M_FR1_sess0_rawEEG_chans2_3.mat', 'ye')
+    #
+    # print d
+    #
+    # from BaseEventReader import BaseEventReader
+    # # e_path = join('/Volumes/rhino_root', 'data/events/RAM_FR1/R1060M_math.mat')
+    # e_path = '/Volumes/rhino_root/data/events/RAM_PS/R1108J_1_events.mat'
+    # e_path = '/Volumes/rhino_root/data/events/RAM_PS/R1108J_1_events.mat'
+    # # e_path ='/Users/m/data/events/RAM_FR1/R1056M_events.mat'
+    # e_path = join('/Volumes/rhino_root', 'data/events/RAM_FR1/R1062J_events.mat')
+    #
+    # e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
+    #
+    #
+    # events = e_reader.read()
+    #
+    # print
 
     # from ptsa.data.readers.TalReader import TalReader
     #
