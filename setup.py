@@ -39,6 +39,8 @@ extensions_dir = join(root_dir, 'ptsa', 'extensions')
 
 if sys.platform.startswith('darwin'):
     extra_compile_args = ['-std=c++11', '-stdlib=libc++', '-mmacosx-version-min=10.7']
+elif sys.platform.startswith('win'):
+    extra_compile_args = []
 else:
     extra_compile_args = ['-std=c++11']
 
