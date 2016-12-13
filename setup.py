@@ -17,6 +17,9 @@ from distutils.command.build import build
 # for visual studio compilation you need to SET VS90COMNTOOLS=%VS140COMNTOOLS%
 
 
+# When running from and IDE e.g. PyCharm , you may need to copy extensions .so (.pyd) to source extension directory.
+# Or set path accordingly
+
 class CustomBuild(build):
     sub_commands = [
         ('build_ext', build.has_ext_modules),
