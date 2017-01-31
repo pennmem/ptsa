@@ -46,7 +46,7 @@ extensions_dir = join(root_dir, 'ptsa', 'extensions')
 circ_stat_dir = join(root_dir,'ptsa','extensions','circular_stat')
 
 if sys.platform.startswith('darwin'):
-    extra_compile_args = ['-std=c++11', '-stdlib=libc++', '-mmacosx-version-min=10.7']
+    extra_compile_args = ['-std=c++11', '-stdlib=libc++', '-mmacosx-version-min=10.8']
 elif sys.platform.startswith('win'):
     extra_compile_args = []
 else:
