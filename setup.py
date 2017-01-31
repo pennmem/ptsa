@@ -16,7 +16,7 @@ from distutils.command.build import build
 
 # for windows install see http://stackoverflow.com/questions/2817869/error-unable-to-find-vcvarsall-bat
 # for visual studio compilation you need to SET VS90COMNTOOLS=%VS140COMNTOOLS%
-if "win" in sys.platform:
+if sys.platform.startswith("win"):
     os.environ["VS90COMNTOOLS"] = os.environ["VS140COMNTOOLS"]
 
 
