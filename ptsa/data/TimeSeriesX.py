@@ -86,6 +86,7 @@ class TimeSeriesX(DataArray):
             dims=[dim_name for dim_name in self.dims],
             coords=coords
         )
+        filtered_time_series['samplerate']=self['samplerate']
 
         filtered_time_series.attrs = self.attrs.copy()
 

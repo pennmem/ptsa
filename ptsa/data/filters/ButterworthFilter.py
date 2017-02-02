@@ -10,8 +10,18 @@ from ptsa.data.filters import BaseFilter
 # class ButterworthFilter(PropertiedObject):
 class ButterworthFilter(PropertiedObject,BaseFilter):
 
-    '''
+    r'''
     Applies Butterworth filter to a time series
+
+    :param kwds: allowed values are:
+    ------------------------------
+    :param time_series 
+         TimeSeriesX object
+    :param order
+         Butterworth filter order
+    :param freq_range{list-like}
+       Array [min_freq, max_freq] describing the filter range
+    :return :None
     '''
     _descriptors = [
         TypeValTuple('time_series', TimeSeriesX, TimeSeriesX([0.0], dims=['time'])),
@@ -57,6 +67,9 @@ class ButterworthFilter(PropertiedObject,BaseFilter):
         # filtered_time_series.attrs['samplerate'] = self.time_series.attrs['samplerate']
         # filtered_time_series.attrs['samplerate'] = self.time_series['samplerate']
         filtered_time_series = TimeSeriesX(filtered_time_series)
+
+        filtered_time_series.attrs = self.time_series.attrs.copy()
+
 
         return filtered_time_series
 

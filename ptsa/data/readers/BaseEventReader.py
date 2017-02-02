@@ -24,15 +24,15 @@ class BaseEventReader(PropertiedObject,BaseReader):
         TypeValTuple('common_root', str, 'data/events')
     ]
     def __init__(self,**kwds):
-        '''
+        r'''
         Constructor:
 
-        :param kwds:allowed values are:
+        :param kwds: allowed values are\:
         -------------------------------------
-        :param filename {str} -  path to event file
-        :param eliminate_events_with_no_eeg {bool} - flag to automatically remove events with no eegfile (default True)
-        :param eliminate_nans {bool} - flag to automatically replace nans in the event structs with -999 (default True)
-        :param use_reref_eeg {bool} -  flag that changes eegfiles to point reref eegs. Default is False and eegs read
+        :param filename {str}: path to event file
+        :param eliminate_events_with_no_eeg {bool}: flag to automatically remove events with no eegfile (default True)
+        :param eliminate_nans {bool}: flag to automatically replace nans in the event structs with -999 (default True)
+        :param use_reref_eeg {bool}: flag that changes eegfiles to point reref eegs. Default is False and eegs read
         are nonreref ones
 
         :return: None
