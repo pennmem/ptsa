@@ -53,8 +53,8 @@ class MorletWaveletFilterCpp(PropertiedObject, BaseFilter):
         mt = MorletWaveletTransformMP(self.cpus)
 
 
-        time_series_reshaped = self.time_series.data.reshape(np.prod(self.time_series.shape[:-1]),
-                                                             self.time_series.shape[-1])
+        time_series_reshaped = np.ascontiguousarray(self.time_series.data.reshape(np.prod(self.time_series.shape[:-1]),
+                                                             self.time_series.shape[-1]),self.time_series.data.dtype)
         if self.output == 'power':
             mt.set_output_type(morlet.POWER)
         if self.output == 'phase':
