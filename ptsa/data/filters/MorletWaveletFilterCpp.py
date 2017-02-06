@@ -50,6 +50,7 @@ class MorletWaveletFilterCpp(PropertiedObject, BaseFilter):
                                                  dtype=np.complex)
 
         # mt = morlet.MorletWaveletTransformMP(self.cpus)
+        # mt = MorletWaveletTransformMP(self.cpus)
         mt = MorletWaveletTransformMP(self.cpus)
 
 
@@ -131,6 +132,9 @@ class MorletWaveletFilterCpp(PropertiedObject, BaseFilter):
             final_dims = (wavelet_complex_ts.dims[-2],) + wavelet_complex_ts.dims[:-2] + (wavelet_complex_ts.dims[-1],)
 
             wavelet_complex_ts = wavelet_complex_ts.transpose(*final_dims)
+
+        if self.verbose:
+            print 'CPP total time wavelet loop: ', time.time() - s
 
         if wavelet_complex_ts is not None:
             return wavelet_complex_ts, None

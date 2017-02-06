@@ -9,12 +9,17 @@ from ptsa.data.events import Events
 import numpy as np
 import unittest
 import numpy.testing as npt
-
+import sys
 
 class TestReaders(unittest.TestCase):
     def setUp(self):
         self.event_range = range(0, 30, 1)
         self.e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
+
+        if sys.platform.startswith('win'):
+            self.e_path = 'D:/data/events/RAM_FR1/R1060M_events.mat'
+
+
 
         # self.set_verbose(2)
         self.start_time = 0.0
@@ -39,6 +44,9 @@ class TestReaders(unittest.TestCase):
 
     def test_base_raw_reader(self):
         e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
+        if sys.platform.startswith('win'):
+            e_path = 'D:/data/events/RAM_FR1/R1060M_events.mat'
+
         base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
         base_events = base_e_reader.read()
         base_events = base_events[base_events.type == 'WORD']
@@ -58,6 +66,9 @@ class TestReaders(unittest.TestCase):
 
     def test_eeg_read_incomplete_data(self):
         e_path_incomplete = '/Volumes/rhino_root/data/events/RAM_PS/R1104D_events.mat'
+        if sys.platform.startswith('win'):
+            e_path_incomplete = 'D:/data/events/RAM_PS/R1104D_events.mat'
+
 
         base_event_reader = BaseEventReader(filename=e_path_incomplete)
 
@@ -103,6 +114,9 @@ class TestReaders(unittest.TestCase):
 
     def test_R1070T_read(self):
         e_path = '/Volumes/rhino_root/data/events/RAM_FR1/R1070T_events.mat'
+        if sys.platform.startswith('win'):
+            e_path = 'D:/data/events/RAM_FR1/R1070T_events.mat'
+
         base_event_reader = BaseEventReader(filename=e_path)
 
         start_time = 0.0
@@ -142,7 +156,12 @@ class TestReaders(unittest.TestCase):
 
     def test_tal_stim_only(self):
 
+        # stim_only is no longer supported in RAM data
+        return
         tal_path = '/volumes/rhino_root/data/eeg/R1135E/tal/R1135E_talLocs_database_stimOnly.mat'
+        if sys.platform.startswith('win'):
+            tal_path = 'D:/data/eeg/R1135E/tal/R1135E_talLocs_database_stimOnly.mat'
+
 
         tal_reader = TalStimOnlyReader(filename=tal_path)
 
@@ -169,6 +188,6 @@ if __name__ == '__main__':
     suite.addTest(TestReaders('test_event_read'))
     suite.addTest(TestReaders('test_eventness'))
     suite.addTest(TestReaders('test_eeg_read'))
-    suite.addTest(TestReaders('test_tal_stim_only'))
+    # suite.addTest(TestReaders('test_tal_stim_only')) # stim_only is no longer supported in RAM data
 
     unittest.TextTestRunner(verbosity=2).run(suite)

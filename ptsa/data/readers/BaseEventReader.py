@@ -11,6 +11,7 @@ from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
 from ptsa.data.common.path_utils import find_dir_prefix
 from ptsa.data.common import pathlib
+import sys
 
 class BaseEventReader(PropertiedObject,BaseReader):
     '''
@@ -46,8 +47,14 @@ class BaseEventReader(PropertiedObject,BaseReader):
         :param events: np.recarray representing events. One of hte field of this array should be eegfile
         :return:
         '''
-        data_dir_bad = r'/data.*/' + events[0].subject + r'/eeg'
-        data_dir_good = r'/data/eeg/' + events[0].subject + r'/eeg'
+
+        if sys.platform.startswith('win'):
+            data_dir_bad = r'\\data.*\\' + events[0].subject + r'\\eeg'
+            data_dir_good = r'\\data\\eeg\\' + events[0].subject + r'\\eeg'
+        else:
+            data_dir_bad = r'/data.*/' + events[0].subject + r'/eeg'
+            data_dir_good = r'/data/eeg/' + events[0].subject + r'/eeg'
+
         for ev in events:
             ev.eegfile = ev.eegfile.replace('eeg.reref', 'eeg.noreref')
             ev.eegfile = re.sub(data_dir_bad, data_dir_good, ev.eegfile)

@@ -28,6 +28,10 @@ class TestRegressionPTSA(unittest.TestCase):
         self.e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
         self.tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
 
+        if sys.platform.startswith('win'):
+            self.e_path = 'D:/data/events/RAM_FR1/R1060M_events.mat'
+            self.tal_path = 'D:/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
+
         # --------------- TAL STRUCTS READ
         tal_reader = TalReader(filename=self.tal_path)
         self.monopolar_channels = tal_reader.get_monopolar_channels()
@@ -89,6 +93,8 @@ class TestRegressionPTSA(unittest.TestCase):
 
     def test_missing_data_read(self):
         self.e_path = '/Volumes/rhino_root/data/events/RAM_PS/R1104D_events.mat'
+        if sys.platform.startswith('win'):
+            self.e_path = 'D:/data/events/RAM_PS/R1104D_events.mat'
         base_e_reader = BaseEventReader(filename=self.e_path)
         base_events = base_e_reader.read()
         print 'base_events=',base_events
@@ -425,6 +431,7 @@ class TestRegressionPTSA(unittest.TestCase):
         wf_cpp = MorletWaveletFilterCpp(time_series=self.base_eegs,
                                  freqs=np.logspace(np.log10(3), np.log10(180), 8),
                                  output='power',
+                                 cpus=1
                                  )
 
         pow_wavelet_cpp, phase_wavelet_cpp = wf_cpp.filter()
@@ -486,9 +493,9 @@ class TestRegressionPTSA(unittest.TestCase):
         eegs = self.eegs[:, :, :-1]
         base_eegs = self.base_eegs
 
-
-        sys.path.append('/Users/m/src/morlet_git_install')
-        import morlet
+        # if not sys.platform.startswith('win'):
+        #     sys.path.append('/Users/m/src/morlet_git_install')
+        import ptsa.extensions.morlet as morlet
         num_freqs = 8
         f_min = 3.0
         f_max = 180.0

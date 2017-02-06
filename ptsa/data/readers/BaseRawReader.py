@@ -82,7 +82,7 @@ class BaseRawReader(PropertiedObject,BaseReader):
         '''
 
         if self.read_size < 0:
-            self.read_size = self.get_file_size() / self.file_format.data_size
+            self.read_size = int(self.get_file_size() / self.file_format.data_size)
 
         # allocate space for data
         eventdata = np.empty((len(self.channels), len(self.start_offsets), self.read_size),

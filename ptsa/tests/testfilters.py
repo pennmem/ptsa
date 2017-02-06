@@ -13,7 +13,7 @@ from ptsa.data.readers.TalReader import TalReader
 from ptsa.data.readers import EEGReader
 from ptsa.data.filters import DataChopper
 from ptsa.data.filters import MonopolarToBipolarMapper
-
+import sys
 
 class TestFilters(unittest.TestCase):
     def setUp(self):
@@ -23,8 +23,13 @@ class TestFilters(unittest.TestCase):
 
         self.event_range = range(0, 30, 1)
         self.e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
-
         tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
+
+        if sys.platform.startswith('win'):
+            self.e_path = 'D:/data/events/RAM_FR1/R1060M_events.mat'
+            tal_path = 'D:/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
+
+
         tal_reader = TalReader(filename=tal_path)
         self.monopolar_channels = tal_reader.get_monopolar_channels()
         self.bipolar_pairs = tal_reader.get_bipolar_pairs()
