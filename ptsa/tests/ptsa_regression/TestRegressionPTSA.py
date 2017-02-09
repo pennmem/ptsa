@@ -431,7 +431,7 @@ class TestRegressionPTSA(unittest.TestCase):
         wf_cpp = MorletWaveletFilterCpp(time_series=self.base_eegs,
                                  freqs=np.logspace(np.log10(3), np.log10(180), 8),
                                  output='power',
-                                 cpus=1
+                                 cpus=4
                                  )
 
         pow_wavelet_cpp, phase_wavelet_cpp = wf_cpp.filter()
