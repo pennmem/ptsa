@@ -1,3 +1,4 @@
+import os
 from setup_helper import *
 
 # used to determine location of site-packages
@@ -15,6 +16,8 @@ from distutils.command.build import build
 
 # for windows install see http://stackoverflow.com/questions/2817869/error-unable-to-find-vcvarsall-bat
 # for visual studio compilation you need to SET VS90COMNTOOLS=%VS140COMNTOOLS%
+if "win" in sys.platform:
+    os.environ["VS90COMNTOOLS"] = os.environ["VS140COMNTOOLS"]
 
 
 # When running from and IDE e.g. PyCharm , you may need to copy extensions .so (.pyd) to source extension directory.
