@@ -5,7 +5,8 @@ Interacting with RAM Data
 
 Even though PTSA is a general Python framework for time series analysis, it has some built-in
 modules that facilitate working with various formats of EEG data and associated experimental data.
-In this section we will see how to efficiently ready and process data store in formats used byt DARPA RAM project.
+In this section we will see how to efficiently ready and process data store in formats used by the
+ DARPA RAM project.
 
 Let's start by looking at how to read experimental events stored in Matlab Format. The class we will use is called
 ``BaseEventReader``.
@@ -53,10 +54,57 @@ when we print events to the screen we will get the following output:
 
 Indicating that the event object is in fact ``numpy.recarray``
 
+
+Finding Paths using JsonIndexReader
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+While one can always specify the path to the events structure by hand, PTSA has a class
+``JsonIndexReader`` that tracks this information. The location of the various event files 
+is kept in JSON format, in `/protocols/r1.json`, and ``JsonIndexReader`` allows one to 
+query the index by property. 
+
+We build the reader with:
+
+.. code-block:: python
+
+    jr = JsonIndexReader('/protocols/r1.json')
+
+To get the location of the event files for subject R1111M from the FR1 experiment, 
+we _____:
+
+.. code-block:: python
+
+    event_paths = jr.aggregate_values('all_events',subject='R1111M',experiment='FR1')
+
+The `aggregate_values` method returns the set of all fields in the JSON index that match
+the keyword arguments. The most useful keyword arguments are 'subject', 'experiment', and 'session'.
+
+Since With the paths in hand, we can load the events using the BaseEventReader discussed above:
+
+.. code-block:: python
+
+    events = [BaseEventReader(filename=path).read() for path in sorted(event_paths)]
+
+which will return a list of event structures. The call to ``sorted()`` ensures that 
+the events are read in order of session. To collapse the list into a single array, 
+we call :py:func:`numpy.concatenate()`:
+
+.. code-block:: python
+
+   events =  numpy.concatenate(events)
+
+To access the fields of the array as though they were attributes, we need to convert it 
+to a record array:
+
+.. code-block:: python
+
+  events = events.view(numpy.recarray)
+
+and now the events structure is exactly as described in the previous section.  
+
 Reading Electrode Information using TalReader
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To read electrode information thayt is stored in the so called tal_structs we will use ``TalReader`` object.
+To read electrode information that is stored in the so called tal_structs we will use ``TalReader`` object.
 We first import TalReader:
 
 .. code-block:: python
