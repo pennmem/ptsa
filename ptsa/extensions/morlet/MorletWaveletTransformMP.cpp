@@ -90,7 +90,6 @@ int MorletWaveletTransformMP ::compute_wavelets_worker_fcn(unsigned int thread_n
 //    cerr << "idx_start=" << idx_start << " idx_stop=" << idx_stop << endl;
 //    cerr << "wavelet_phase_array=" << wavelet_phase_array << endl;
 
-
     for (size_t sig_num = idx_start; sig_num < idx_stop; ++sig_num) {
         size_t idx_signal = index(sig_num, 0, signal_len);
         auto signal = signal_array + idx_signal;
