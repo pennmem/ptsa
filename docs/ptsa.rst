@@ -1,12 +1,12 @@
 PTSA API
-============
+********
 
-Contents\:
------------
+
+Contents:
+=========
 
 .. toctree::
-
-    ptsa.data
-    ptsa.plotting
-    ptsa.stats
-
+  ptsa.data
+  ptsa.plotting
+  ptsa.stats
+  ptsa.extensions
