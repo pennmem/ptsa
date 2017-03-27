@@ -74,18 +74,18 @@ class test_classifier(unittest.TestCase):
         pow_wavelet, phase_wavelet = wf.filter()
 
         pow_wavelet = pow_wavelet.remove_buffer(duration=1.0)
-        print pow_wavelet
+        print(pow_wavelet)
         np.log10(pow_wavelet.data, out=pow_wavelet.data)
-        print pow_wavelet
+        print(pow_wavelet)
         mean_powers = pow_wavelet.mean(dim='time')
-        print mean_powers
+        print(mean_powers)
 
 
 
 
         # sess_pow_mat_post[ev,i,:] = np.nanmean(pow_ev_stripped, axis=1)
 
-        print
+        print()
 
 
 if __name__ == '__main__':

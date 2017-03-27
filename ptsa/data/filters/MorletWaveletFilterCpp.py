@@ -32,7 +32,7 @@ class MorletWaveletFilterCpp(PropertiedObject, BaseFilter):
         samplerate = float(self.time_series['samplerate'])
 
         wavelet_dims = self.time_series.shape[:-1] + (self.freqs.shape[0],)
-        print wavelet_dims
+        print(wavelet_dims)
 
         powers_reshaped = np.array([[]], dtype=np.float)
         phases_reshaped = np.array([[]], dtype=np.float)
@@ -96,7 +96,7 @@ class MorletWaveletFilterCpp(PropertiedObject, BaseFilter):
         # wavelets_final = powers_reshaped.reshape( wavelet_dims+(self.time_series.shape[-1],) )
 
 
-        coords = {k: v for k, v in self.time_series.coords.items()}
+        coords = {k: v for k, v in list(self.time_series.coords.items())}
         coords['frequency'] = self.freqs
 
         powers_ts = None
@@ -134,7 +134,7 @@ class MorletWaveletFilterCpp(PropertiedObject, BaseFilter):
             wavelet_complex_ts = wavelet_complex_ts.transpose(*final_dims)
 
         if self.verbose:
-            print 'CPP total time wavelet loop: ', time.time() - s
+            print('CPP total time wavelet loop: ', time.time() - s)
 
         if wavelet_complex_ts is not None:
             return wavelet_complex_ts, None

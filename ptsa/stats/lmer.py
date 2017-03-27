@@ -147,7 +147,7 @@ class LMER():
             factors = {}
         # add in missingarg for any potential factor not provided
         for k in df.dtype.names:
-            if isinstance(df[k][0],str) and not factors.has_key(k):
+            if isinstance(df[k][0],str) and k not in factors:
                 factors[k] = MissingArg
                 
         for f in factors:
@@ -544,20 +544,20 @@ def _eval_model(model_id, perm=None, boot=None):
         tvals_null,log_likes_null = zip(*res_null)
         log_likes_null = np.concatenate(log_likes_null)
 
-        print "Like Ratio: ", 2*(log_likes.sum() - log_likes_null.sum())
-        print "Like Ratio Scaled: ", 2*(np.dot(log_likes,ss[ss>0.0]/_ss) - 
-                                        np.dot(log_likes_null,ss[ss>0.0]/_ss))
-        print "Like Ratio Comb: ", np.dot(2*(log_likes-log_likes_null),ss[ss>0.0]/_ss)
+        print("Like Ratio: ", 2*(log_likes.sum() - log_likes_null.sum()))
+        print("Like Ratio Scaled: ", 2*(np.dot(log_likes,ss[ss>0.0]/_ss) - 
+                                        np.dot(log_likes_null,ss[ss>0.0]/_ss)))
+        print("Like Ratio Comb: ", np.dot(2*(log_likes-log_likes_null),ss[ss>0.0]/_ss))
 
         ll_null_boot = np.vstack(ll_null_boot)
         ll_full_boot = np.vstack(ll_full_boot)
 
         lr = 2*(log_likes-log_likes_null)
         lr_boot = 2*(ll_full_boot-ll_null_boot)
-        print "Like Boot: ", np.dot(lr_boot, ss[ss>0.0]/_ss)
+        print("Like Boot: ", np.dot(lr_boot, ss[ss>0.0]/_ss))
         sscale = ss/ss.sum()
         mg = np.dot([((lr_boot[:,ii]-lr[ii])>0).sum() for ii in range(20)],sscale)
-        print "prop: ", mg/float(mm._num_null_boot)
+        print("prop: ", mg/float(mm._num_null_boot))
         1/0
 
     # # get the term names (skip the intercept)
@@ -708,7 +708,7 @@ class MELD(object):
         self._re_group = re_group
         if isinstance(ind_data, dict):
             # groups are the keys
-            self._groups = np.array(ind_data.keys())
+            self._groups = np.array(list(ind_data.keys()))
         else:
             # groups need to be extracted from the recarray
             self._groups = np.unique(ind_data[re_group])
@@ -856,14 +856,14 @@ class MELD(object):
 
         # clean up memmapping files
         if self._memmap:
-            for g in self._M.keys():
+            for g in list(self._M.keys()):
                 try:
                     filename = self._M[g].filename 
                     del self._M[g]
                     os.remove(filename)
                 except OSError:
                     pass
-            for g in self._D.keys():
+            for g in list(self._D.keys()):
                 try:
                     filename = self._D[g].filename 
                     del self._D[g]
@@ -873,7 +873,7 @@ class MELD(object):
 
         # clean self out of global model list
         global _global_meld
-        if _global_meld and _global_meld.has_key(my_id):
+        if _global_meld and my_id in _global_meld:
             del _global_meld[my_id]
 
 
@@ -1115,7 +1115,7 @@ if __name__ == '__main__':
 
     # data with observations in first dimension and features on the remaining
     dep_data = np.random.rand(len(s),*nfeat)
-    print 'Data shape:',dep_data.shape
+    print('Data shape:',dep_data.shape)
 
     # now with signal
     # add in some signal
@@ -1161,12 +1161,12 @@ if __name__ == '__main__':
     # #print "BR num sig:",[(n,(me.fdr_boot[n]<=.05).sum())
     # #                     for n in brs.dtype.names]
 
-    print
-    print "Now with signal!"
-    print "----------------"
-    print "Terms:",me_s.terms
-    print "t-vals:",me_s.t_terms
-    print "term p-vals:",me_s.pvals
+    print()
+    print("Now with signal!")
+    print("----------------")
+    print("Terms:",me_s.terms)
+    print("t-vals:",me_s.t_terms)
+    print("term p-vals:",me_s.pvals)
     #brs_s = me_s.boot_ratio
     #print "Bootstrap ratio shape:",brs_s.shape
     #print "BR num sig:",[(n,(me_s.fdr_boot[n]<=.05).sum())

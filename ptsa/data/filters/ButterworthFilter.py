@@ -55,7 +55,7 @@ class ButterworthFilter(PropertiedObject,BaseFilter):
                                   self.freq_range, float(self.time_series['samplerate']), self.filt_type,
                                   self.order, axis=time_axis_index)
 
-        coords_dict = {coord_name: DataArray(coord.copy()) for coord_name, coord in self.time_series.coords.items()}
+        coords_dict = {coord_name: DataArray(coord.copy()) for coord_name, coord in list(self.time_series.coords.items())}
         coords_dict['samplerate'] = self.time_series['samplerate']
         dims = [dim_name for dim_name in self.time_series.dims]
         filtered_time_series = TimeSeriesX(
@@ -164,4 +164,4 @@ if __name__ == '__main__':
 
     plt.show()
 
-    print
+    print()

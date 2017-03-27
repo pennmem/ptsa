@@ -10,11 +10,11 @@ try:
     from MorletWaveletFilterCppLegacy import MorletWaveletFilterCppLegacy
 
 except ImportError as ie:
-    print 'Could not import MorletWaveletFilterCppLegacy (single-core C++ version of MorletWaveletFilter): '+ str(ie)
-    print 'You can still use MorletWaveletFilter'
+    print('Could not import MorletWaveletFilterCppLegacy (single-core C++ version of MorletWaveletFilter): '+ str(ie))
+    print('You can still use MorletWaveletFilter')
 
 try:
     from MorletWaveletFilterCpp import MorletWaveletFilterCpp
 except ImportError as ie:
-    print 'Could not import MorletWaveletFilterCpp (multi-core C++ version of MorletWaveletFilter): '+ str(ie)
-    print 'You can still use MorletWaveletFilter'
+    print('Could not import MorletWaveletFilterCpp (multi-core C++ version of MorletWaveletFilter): '+ str(ie))
+    print('You can still use MorletWaveletFilter')

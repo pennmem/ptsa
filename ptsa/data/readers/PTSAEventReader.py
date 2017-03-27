@@ -90,7 +90,7 @@ class PTSAEventReader(BaseEventReader,BaseReader):
                 if self.attach_rawbinwrapper:
                     ev.esrc = RawBinWrapper(ev.eegfile)
             except TypeError:
-                print 'skipping event with eegfile=', ev.eegfile
+                print('skipping event with eegfile=', ev.eegfile)
                 pass
 
 
@@ -105,4 +105,4 @@ if __name__ == '__main__':
     events = e_reader.read()
 
 
-    print events
+    print(events)

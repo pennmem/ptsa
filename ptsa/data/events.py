@@ -94,9 +94,9 @@ class Events(np.recarray):
         names = ','.join(self.dtype.names)
 
         # loop over the kwargs of field
-        for name, data in fields.iteritems():
+        for name, data in fields.items():
             # see if already there, error if so
-            if self.dtype.fields.has_key(name):
+            if name in self.dtype.fields:
                 # already exists
                 raise ValueError('Field "' + name + '" already exists.')
 
@@ -213,7 +213,7 @@ class Events(np.recarray):
 
             if verbose:
                 if not s % 10:
-                    print 'Reading event %d' % s
+                    print('Reading event %d' % s)
             if len(ind) == 1:
                 event_offsets = self[eoffset]
                 events.append(self)
@@ -264,7 +264,7 @@ class Events(np.recarray):
 
         end = time.time()
         if verbose:
-            print 'get_data tuntime=', (end - start), 's'
-            print 'extend_time = =', (end_extend_time - start_extend_time), 's'
+            print('get_data tuntime=', (end - start), 's')
+            print('extend_time = =', (end_extend_time - start_extend_time), 's')
 
         return eventdata

@@ -75,7 +75,7 @@ class TimeSeriesXray(xray.DataArray):
 
         filtered_time_series = TimeSeriesXray(
             filtered_array,
-            coords = [xray.DataArray(coord.copy()) for coord_name, coord in self.coords.items() ]
+            coords = [xray.DataArray(coord.copy()) for coord_name, coord in list(self.coords.items()) ]
         )
 
 
@@ -213,7 +213,7 @@ base_events_ptsa = Events(base_events_ptsa)
 
 base_events_ptsa = attach_rawbinwrappers(base_events_ptsa)
 
-print base_events_ptsa
+print(base_events_ptsa)
 
 base_ev_data_ptsa, base_ev_data_xray = base_events_ptsa.get_data(channels=channels, start_time=0.0, end_time=1.6,
                                         buffer_time=1.0, eoffset='eegoffset', keep_buffer=True, eoffset_in_time=False,verbose=True, return_both=True)
@@ -248,7 +248,7 @@ from ptsa.data.readers.NetCDF4XrayReader import NetCDF4XrayReader
 nc4_reader = NetCDF4XrayReader()
 array = nc4_reader.read('no_buffer_base_ev_data_xray_new.nc')
 
-print array['events']
+print(array['events'])
 
 
 

@@ -125,7 +125,7 @@ class BaseWrapperXray(BaseWrapper):
         if isinstance(channels, dict):
             # turn into indices
             ch_info = self.channels
-            key = channels.keys()[0]
+            key = list(channels.keys())[0]
             channels = [np.nonzero(ch_info[key] == c)[0][0] for c in channels[key]]
         elif isinstance(channels, str):
             # find that channel by name
@@ -242,7 +242,7 @@ class BaseWrapperXray(BaseWrapper):
             if isinstance(channels, dict):
                 # turn into indices
                 ch_info = self.channels
-                key = channels.keys()[0]
+                key = list(channels.keys())[0]
                 channels = [np.nonzero(ch_info[key]==c)[0][0] for c in channels[key]]
             elif isinstance(channels, str):
                 # find that channel by name

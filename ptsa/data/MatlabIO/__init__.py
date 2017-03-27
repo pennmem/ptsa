@@ -79,7 +79,7 @@ def read_single_matlab_matrix_as_numpy_structured_array(file_name, object_name, 
                           prepend_name='',verbose=verbose)
 
     if verbose:
-        print array_fd
+        print(array_fd)
 
     return array_fd
 
@@ -102,18 +102,18 @@ def get_np_type(record, _fieldname, verbose=False):
         if not attr_shape[0]:
             return None
 
-        if attr_dtype.kind in kind_2_type.keys():
+        if attr_dtype.kind in list(kind_2_type.keys()):
 
             format = (kind_2_type[attr_dtype.kind], attr_shape)
             return format
         else:
-            print 'COULD NOT FIGURE OUT TYPE FOR ', _fieldname
+            print('COULD NOT FIGURE OUT TYPE FOR ', _fieldname)
             # format_list.append(format)
 
     else:
         attr_dtype = np.array([attr]).dtype
         attr_dtype_kind = attr_dtype.kind
-        if attr_dtype_kind in kind_2_type.keys():
+        if attr_dtype_kind in list(kind_2_type.keys()):
             return kind_2_type[attr_dtype_kind]
         elif attr_dtype_kind == 'O':
             # print 'got object'
@@ -124,7 +124,7 @@ def get_np_type(record, _fieldname, verbose=False):
                 return format_dict
 
             if verbose:
-                print 'got format:', format_dict
+                print('got format:', format_dict)
                 # print
         else:
 
@@ -184,12 +184,12 @@ def get_np_format(record_array, verbose=False):
                 # numpy_type_abbreviation = np.dtype(np.common_type(np.array(formats))).str
 
             except TypeError:
-                print 'COULD NOT FIGURE OUT FORMAT FOR: ' + _fieldname
+                print('COULD NOT FIGURE OUT FORMAT FOR: ' + _fieldname)
             pass
 
     if verbose:
-        print names_list
-        print format_list
+        print(names_list)
+        print(format_list)
 
     # fd = {'names':names_list,'formats':format_list}
     return {'names': names_list, 'formats': format_list}
@@ -217,7 +217,7 @@ def populate_record_array(source_array, target_array, format_dict, prepend_name=
                     pass
 
     if verbose:
-        print target_array
+        print(target_array)
 
 
 def deserialize_objects_from_matlab_format(file_name, *object_names):
@@ -241,10 +241,10 @@ def deserialize_objects_from_matlab_format(file_name, *object_names):
 
     if len(object_names_not_found):
 
-        print 'WARNING: Could not retrieve the following objects:'
+        print('WARNING: Could not retrieve the following objects:')
 
         for object_name in object_names_not_found:
-            print object_name
+            print(object_name)
 
     return object_dict
 

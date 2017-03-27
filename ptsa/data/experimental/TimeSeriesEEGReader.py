@@ -53,7 +53,7 @@ class TimeSeriesEEGReader(PropertiedObject):
                     self.samplerate = data_params['samplerate']
 
             except TypeError:
-                print 'skipping event with eegfile=',evs.eegfile
+                print('skipping event with eegfile=',evs.eegfile)
                 pass
 
         raw_bin_wrappers = np.array(raw_bin_wrappers, dtype=np.dtype(RawBinWrapperXray))
@@ -278,21 +278,21 @@ if __name__=='__main__':
 
     eegfile_names = eegfile_names [eeg_file_names_sorter]
 
-    print eegfile_names
+    print(eegfile_names)
 
 
     base_events_0 = base_events[base_events.eegfile==eegfile_names[0]]
 
 
-    print base_events_0
+    print(base_events_0)
 
     master_event_0 = base_events_0[[0]] # using fancy indexing to force return of the array
     master_event__1 = base_events_0[[-1]] # using fancy indexing to force return of the array
 
 
 
-    print 'master_event_0=',master_event_0
-    print 'master_event__1=',master_event__1
+    print('master_event_0=',master_event_0)
+    print('master_event__1=',master_event__1)
 
     from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
 
@@ -304,7 +304,7 @@ if __name__=='__main__':
 
 
 
-    print ts
+    print(ts)
 
     samplerate = ts.attrs['samplerate']
     ev_duration = 1.6
@@ -315,10 +315,10 @@ if __name__=='__main__':
 
     ev_data_list = []
     for i, ev  in enumerate(base_events_0):
-        print ev.eegoffset
+        print(ev.eegoffset)
         start_offset = ev.eegoffset-int(np.ceil(buffer*samplerate))
         end_offset = ev.eegoffset+int(np.ceil((ev_duration+buffer)*samplerate))
-        print "start_offset,end_offset, size=",start_offset,end_offset,end_offset-start_offset
+        print("start_offset,end_offset, size=",start_offset,end_offset,end_offset-start_offset)
         # eegoffset_time_array = ts['time'].values['eegoffset']
         selector_array = np.where( (eegoffset_time_array>=start_offset)& (eegoffset_time_array<end_offset))[0]
 
@@ -332,7 +332,7 @@ if __name__=='__main__':
         ev_data_list.append(ev_array)
         # ev_data_list.append(ts[:,:,selector_array].values)
 
-        print i
+        print(i)
         # print ev_array
         if i ==2:
             break
@@ -345,7 +345,7 @@ if __name__=='__main__':
     # eventdata = xray.concat(ev_data_list,dim='events')
 
 
-    print eventdata
+    print(eventdata)
 
 
 

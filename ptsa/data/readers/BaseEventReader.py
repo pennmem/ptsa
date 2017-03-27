@@ -197,7 +197,7 @@ class BaseEventReader(PropertiedObject,BaseReader):
             return dtype
         dtype = []
 
-        for k, v in d.items():
+        for k, v in list(d.items()):
             dtype.append((str(k), cls.get_element_dtype(v)))
 
         return np.dtype(dtype)
@@ -214,7 +214,7 @@ class BaseEventReader(PropertiedObject,BaseReader):
 
         list_names = []
 
-        for k, v in d[0].items():
+        for k, v in list(d[0].items()):
             if isinstance(v, list):
                 list_names.append(k)
 
@@ -230,7 +230,7 @@ class BaseEventReader(PropertiedObject,BaseReader):
                         list_info[k]['dtype'] = cls.get_element_dtype(entry[k])
 
         dtypes = []
-        for k, v in d[0].items():
+        for k, v in list(d[0].items()):
             if not k in list_info:
                 dtypes.append((str(k), cls.get_element_dtype(v)))
             else:
@@ -249,12 +249,12 @@ class BaseEventReader(PropertiedObject,BaseReader):
             return
 
         dict_fields = {}
-        for k, v, in dict_list[0].items():
+        for k, v, in list(dict_list[0].items()):
             if isinstance(v, dict):
                 dict_fields[k] = [inner_dict[k] for inner_dict in dict_list]
 
         for i, sub_dict in enumerate(dict_list):
-            for k, v in sub_dict.items():
+            for k, v in list(sub_dict.items()):
                 if k in dict_fields or list_info and k in list_info:
                     continue
 
@@ -266,7 +266,7 @@ class BaseEventReader(PropertiedObject,BaseReader):
                     rec_arr[i][k] = v
 
         for i, sub_dict in enumerate(dict_list):
-            for k, v in sub_dict.items():
+            for k, v in list(sub_dict.items()):
                 if list_info and k in list_info:
                     arr = np.zeros(list_info[k]['len'], list_info[k]['dtype'])
                     if len(v) > 0:
@@ -278,7 +278,7 @@ class BaseEventReader(PropertiedObject,BaseReader):
 
                     rec_arr[i][k] = arr.view(np.recarray)
 
-        for k, v in dict_fields.items():
+        for k, v in list(dict_fields.items()):
             cls.copy_values(v, rec_arr[k])
 
     @classmethod
@@ -300,7 +300,7 @@ if __name__ == '__main__':
 
     eeg_reader = EEGReader(events=events, channels=np.array(['006']), start_time = 0., end_time=1.6, buffer_time=1.0)
     base_eeg = eeg_reader.read()
-    print base_eeg
+    print(base_eeg)
 
     #
     # from ptsa.data.MatlabIO import *

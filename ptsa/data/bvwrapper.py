@@ -13,7 +13,7 @@ from basewrapper import BaseWrapper
 # global imports
 import numpy as np
 import os.path
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 import io
 
 class BVWrapper(BaseWrapper):

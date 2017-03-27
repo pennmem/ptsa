@@ -1,3 +1,7 @@
+.DS_Store
+.cache/
+.idea/
+*.egg-info
 *.orig
 *~
 *.py[co]

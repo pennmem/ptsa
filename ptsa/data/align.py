@@ -45,18 +45,18 @@ def times_to_offsets(eeg_times, beh_times, ev_times, blen=10, tolerance=.0015):
             #print i,
         else:
             # no good, so say we're skipping
-            print '.', #(np.abs((bt-btimes[-1])-(eeg_times[j]-etimes[-1]))),
-    print
+            print('.', end=' ') #(np.abs((bt-btimes[-1])-(eeg_times[j]-etimes[-1]))),
+    print()
     # convert to arrays
     etimes = np.array(etimes)
     btimes = np.array(btimes)
-    print "Num. matching: ", len(etimes) #,len(btimes)
+    print("Num. matching: ", len(etimes)) #,len(btimes)
     #plot(etimes,btimes,'o')
 
     # fit a line to convert between behavioral and eeg times
     A = np.vstack([btimes, np.ones(len(btimes))]).T
     m, c = np.linalg.lstsq(A, etimes)[0]
-    print "Slope and Offset: ", m ,c
+    print("Slope and Offset: ", m ,c)
 
     # convert to get eoffsets
     eoffsets = ev_times*m + c

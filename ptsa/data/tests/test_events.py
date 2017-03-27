@@ -307,7 +307,7 @@ class test_Events(TestCase):
         self.assertTrue(test_a.shape==test_b.shape)
         assert_array_equal(np.sort(test_a.dtype.names),
                            np.sort(test_b.dtype.names))
-        for f,v in test_a.dtype.fields.iteritems():
+        for f,v in test_a.dtype.fields.items():
             if f!='a':
                 assert_array_equal(test_a[f],test_b[f])
             self.assertTrue(test_a.dtype[f]==test_b.dtype[f])
@@ -318,7 +318,7 @@ class test_Events(TestCase):
         test_b = tst.test1x.view(Events).add_fields(y=y,z=z)
         assert_array_equal(np.sort(test_a.dtype.names),
                            np.sort(test_b.dtype.names))
-        for f,v in test_a.dtype.fields.iteritems():
+        for f,v in test_a.dtype.fields.items():
             assert_array_equal(test_a[f],test_b[f])
             self.assertTrue(test_a.dtype[f]==test_b.dtype[f])
         for field in test_a.dtype.names:
@@ -343,7 +343,7 @@ class test_Events(TestCase):
         test_b = tst.test2sox.view(Events).add_fields(y=y,z=z)
         assert_array_equal(np.sort(test_a.dtype.names),
                            np.sort(test_b.dtype.names))
-        for f,v in test_a.dtype.fields.iteritems():
+        for f,v in test_a.dtype.fields.items():
             assert_array_equal(test_a[f],test_b[f])
             self.assertTrue(test_a.dtype[f]==test_b.dtype[f])
         for field in test_a.dtype.names:
@@ -359,7 +359,7 @@ class test_Events(TestCase):
         test_b = tst.test2so.view(Events).add_fields(x=x,y=y,z=z)
         assert_array_equal(np.sort(test_a.dtype.names),
                            np.sort(test_b.dtype.names))
-        for f,v in test_a.dtype.fields.iteritems():
+        for f,v in test_a.dtype.fields.items():
             assert_array_equal(test_a[f],test_b[f])
             self.assertTrue(test_a.dtype[f]==test_b.dtype[f])
 

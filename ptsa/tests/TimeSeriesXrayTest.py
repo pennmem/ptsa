@@ -60,7 +60,7 @@ base_events_ptsa = Events(base_events_ptsa)
 
 base_events_ptsa = attach_rawbinwrappers(base_events_ptsa)
 
-print base_events_ptsa
+print(base_events_ptsa)
 
 base_ev_data_ptsa, base_ev_data_xray = base_events_ptsa.get_data(channels=channels, start_time=0.0, end_time=1.6,
                                                                  buffer_time=1.0, eoffset='eegoffset', keep_buffer=True,
@@ -94,7 +94,7 @@ from ptsa.data.readers.NetCDF4XrayReader import NetCDF4XrayReader
 nc4_reader = NetCDF4XrayReader()
 array = nc4_reader.read('no_buffer_base_ev_data_xray_new.nc')
 
-print array['events']
+print(array['events'])
 
 sys.exit()
 
@@ -103,11 +103,11 @@ a['events'] = np.arange(len(a['events']))
 a['channels'] = np.arange(len(a['channels']))
 # a['channels']=np.arange(len(a['channels']))
 # a['events']=np.arange(len(a['events']))
-print a
+print(a)
 nb = xray.Dataset({'no_buffer': a})
 nb.to_netcdf('no_buffer.nc')
 
-print 'EXITING AFTER BUFFER TEST'
+print('EXITING AFTER BUFFER TEST')
 import sys
 
 sys.exit(0)
@@ -122,17 +122,17 @@ base_ev_data_xray_filtered = base_ev_data_xray.filtered([58, 62], filt_type='sto
 import time
 
 s = time.time()
-print 'starting resampling'
+print('starting resampling')
 base_ev_data_ptsa_resampled = base_ev_data_ptsa_filtered.resampled(50)
 f = time.time()
-print 'finished resampleing base_ev_data_ptsa_resampled time= ', f - s
+print('finished resampleing base_ev_data_ptsa_resampled time= ', f - s)
 
 s = time.time()
 base_ev_data_xray_resampled = base_ev_data_xray_filtered.resampled(50)
 f = time.time()
-print 'finished resampleing base_ev_data_xray_resampled time= ', f - s
+print('finished resampleing base_ev_data_xray_resampled time= ', f - s)
 
-print
+print()
 # ts = TimeSeriesXray(ts_ev_data)
 #
 # ###################################################################################################################

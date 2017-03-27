@@ -207,7 +207,7 @@ class TimeSeries(DimArray):
                                        freq_range,self.samplerate,filt_type,
                                        order,axis=self.taxis)
         attrs = self._attrs.copy()
-        for k in self._required_attrs.keys():
+        for k in list(self._required_attrs.keys()):
             attrs.pop(k,None)
         return TimeSeries(filtered_array,self.tdim, self.samplerate,
                           dims=self.dims.copy(), **attrs)
@@ -333,14 +333,14 @@ class TimeSeries(DimArray):
         # set the time dimension
         newdims = self.dims.copy()
         attrs = self.dims[self.taxis]._attrs.copy()
-        for k in self.dims[self.taxis]._required_attrs.keys():
+        for k in list(self.dims[self.taxis]._required_attrs.keys()):
             attrs.pop(k,None)
         newdims[self.taxis] = Dim(new_time_range,
                                   self.dims[self.taxis].name,
                                   **attrs)
 
         attrs = self._attrs.copy()
-        for k in self._required_attrs.keys():
+        for k in list(self._required_attrs.keys()):
             attrs.pop(k,None)
         return TimeSeries(newdat, self.tdim, resampled_rate,
                           dims=newdims, **attrs)
@@ -375,7 +375,7 @@ class TimeSeries(DimArray):
 
         # return a new timeseries
         attrs = self._attrs.copy()
-        for k in self._required_attrs.keys():
+        for k in list(self._required_attrs.keys()):
             attrs.pop(k,None)
         return TimeSeries(new_dat,self.tdim, self.samplerate,
                           dims=self.dims.copy(), **attrs)

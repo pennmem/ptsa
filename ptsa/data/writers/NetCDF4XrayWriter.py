@@ -24,9 +24,9 @@ class NetCDF4XrayWriter(BaseWriter):
             if self.array[dim_name].dtype.fields is None:  # indicates simple type, not a recarray
                 coords_dict['__axis__' + dim_name] = self.array[dim_name].values
             else:
-                for field, dtype_tuple in self.array[dim_name].dtype.fields.items():
+                for field, dtype_tuple in list(self.array[dim_name].dtype.fields.items()):
                     if self.array[dim_name].values[field].dtype.char == 'O':
-                        print 'WE ARE NOT STORING VARIABLES OF TYPE=OBJECT IN THIS WRITER '
+                        print('WE ARE NOT STORING VARIABLES OF TYPE=OBJECT IN THIS WRITER ')
                         continue
                     dtype = dtype_tuple[0]
                     coords_dict['__axis__' + dim_name + '__' + field] = self.array[dim_name].values[field]

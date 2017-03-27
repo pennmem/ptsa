@@ -34,7 +34,7 @@ class MatlabIO(object):
         a_dict={}
         self.fill_dict(a_dict)
 
-        print a_dict
+        print(a_dict)
         sio.savemat(name, a_dict)
 
 
@@ -45,7 +45,7 @@ class MatlabIO(object):
         # print res
         # print '\n\n\n'
 
-        for attr_name, attr_val in res.items():
+        for attr_name, attr_val in list(res.items()):
             if not(attr_name .startswith('__') and attr_name .endswith('__')):
                 # print 'attr_name=',attr_name
                     # , ' val=', val, 'type =', type(val)

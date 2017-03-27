@@ -39,13 +39,13 @@ class RawBinWrapper(BaseWrapper):
         self._params = self._get_params(dataroot)
 
         # set what we can get from the params 
-        if self._params.has_key('samplerate'):
+        if 'samplerate' in self._params:
             self._samplerate = self._params['samplerate']
-        if self._params.has_key('format'):
+        if 'format' in self._params:
             self._format = self._params['format']
-        if self._params.has_key('dataformat'):
+        if 'dataformat' in self._params:
             self._format = self._params['dataformat']
-        if self._params.has_key('gain'):
+        if 'gain' in self._params:
             self._gain = self._params['gain']
 
         # set the nBytes and format str
@@ -133,10 +133,10 @@ class RawBinWrapper(BaseWrapper):
             cols = line.strip().split()
             # set the params
             params[cols[0]] = eval(string.join(cols[1:]))
-        if (not params.has_key('samplerate')) or (not params.has_key('gain')):
+        if ('samplerate' not in params) or ('gain' not in params):
             raise ValueError(
                 'Params file must contain samplerate and gain!\n' +
-                'The following fields were supplied:\n' + str(params.keys()))
+                'The following fields were supplied:\n' + str(list(params.keys())))
         # return the params dict
         return params
 

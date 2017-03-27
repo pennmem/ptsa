@@ -100,4 +100,4 @@ if __name__=='__main__':
     tal_reader = TalReader(filename=e_path)
     tal_reader.read()
 
-    print tal_reader.get_monopolar_channels()
+    print(tal_reader.get_monopolar_channels())

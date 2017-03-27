@@ -38,13 +38,13 @@ class RawBinaryEEG(DataWrapper):
         self.params = self._getParams(dataroot)
 
         # set what we can from the params 
-        if self.params.has_key('samplerate'):
+        if 'samplerate' in self.params:
             self.samplerate = self.params['samplerate']
-        if self.params.has_key('format'):
+        if 'format' in self.params:
             self.format = self.params['format']
-        if self.params.has_key('dataformat'):
+        if 'dataformat' in self.params:
             self.format = self.params['dataformat']
-        if self.params.has_key('gain'):
+        if 'gain' in self.params:
             self.gain = self.params['gain']
 
         # set the nBytes and format str
@@ -162,7 +162,7 @@ def createEventsFromMatFile(matfile):
     # load the mat file
     mat = loadmat(matfile)
 
-    if 'events' not in mat.keys():
+    if 'events' not in list(mat.keys()):
         raise "\nError processing the Matlab file: %s\n" + \
               "This file must contain an events structure" + \
               "with the name \"events\" (case sensitive)!\n" +\
