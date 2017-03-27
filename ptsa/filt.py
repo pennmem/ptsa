@@ -79,7 +79,7 @@ def decimate(x, q, n=None, ftype='iir', axis=-1):
     """
 
     if type(q) != type(1):
-        raise TypeError, "q should be an integer"
+        raise TypeError("q should be an integer")
 
     if n is None:
         if ftype == 'fir':
@@ -150,11 +150,11 @@ def filtfilt(b,a,x):
     edge=ntaps*3
 
     if x.ndim != 1:
-        raise ValueError, "Filtflit is only accepting 1 dimension arrays."
+        raise ValueError("Filtflit is only accepting 1 dimension arrays.")
 
     #x must be bigger than edge
     if x.size < edge:
-        raise ValueError, "Input vector needs to be bigger than 3 * max(len(a),len(b)."
+        raise ValueError("Input vector needs to be bigger than 3 * max(len(a),len(b).")
 
 
     if len(a)!=len(b):
@@ -186,7 +186,7 @@ def filtfilt2(b,a,x,axis=-1):
 
     #x must be bigger than edge
     if x.shape[axis] < edge:
-        raise ValueError, "Input vector needs to be bigger than 3 * max(len(a),len(b)."
+        raise ValueError("Input vector needs to be bigger than 3 * max(len(a),len(b).")
 
     # fill out b if necessary
     if len(a)!=len(b):
