@@ -1370,33 +1370,33 @@ axes_msg =\
  **The axes may be specified as strings (dimension names).**
 
 """
-DimArray.all.im_func.func_doc = axis_msg+np.ndarray.all.__doc__
-DimArray.any.im_func.func_doc = axis_msg+np.ndarray.any.__doc__
-DimArray.argmax.im_func.func_doc = axis_msg+np.ndarray.argmax.__doc__
-DimArray.argmin.im_func.func_doc = axis_msg+np.ndarray.argmin.__doc__
-DimArray.argsort.im_func.func_doc = axis_msg+np.ndarray.argsort.__doc__
-DimArray.compress.im_func.func_doc = axis_msg+np.ndarray.compress.__doc__
-DimArray.cumprod.im_func.func_doc = axis_msg+np.ndarray.cumprod.__doc__
-DimArray.cumsum.im_func.func_doc = axis_msg+np.ndarray.cumsum.__doc__
-DimArray.max.im_func.func_doc = axis_msg+np.ndarray.max.__doc__
-DimArray.mean.im_func.func_doc = axis_msg+np.ndarray.mean.__doc__
-DimArray.min.im_func.func_doc = axis_msg+np.ndarray.min.__doc__
-DimArray.nanmean.im_func.func_doc = axis_msg_aa+AttrArray.nanmean.__doc__
-DimArray.nanstd.im_func.func_doc = axis_msg_aa+AttrArray.nanstd.__doc__
-DimArray.nanvar.im_func.func_doc = axis_msg_aa+AttrArray.nanvar.__doc__
-DimArray.prod.im_func.func_doc = axis_msg+np.ndarray.prod.__doc__
-DimArray.ptp.im_func.func_doc = axis_msg+np.ndarray.ptp.__doc__
-DimArray.sort.im_func.func_doc = axis_msg+np.ndarray.sort.__doc__
-DimArray.std.im_func.func_doc = axis_msg+np.ndarray.std.__doc__
-DimArray.sum.im_func.func_doc = axis_msg+np.ndarray.sum.__doc__
-DimArray.swapaxes.im_func.func_doc = axes_msg+np.ndarray.swapaxes.__doc__
-DimArray.take.im_func.func_doc = axis_msg+np.ndarray.take.__doc__
-DimArray.transpose.im_func.func_doc = axes_msg+np.ndarray.transpose.__doc__
-DimArray.var.im_func.func_doc = axis_msg+np.ndarray.var.__doc__
+DimArray.all.__doc__ = axis_msg+np.ndarray.all.__doc__
+DimArray.any.__doc__ = axis_msg+np.ndarray.any.__doc__
+DimArray.argmax.__doc__ = axis_msg+np.ndarray.argmax.__doc__
+DimArray.argmin.__doc__ = axis_msg+np.ndarray.argmin.__doc__
+DimArray.argsort.__doc__ = axis_msg+np.ndarray.argsort.__doc__
+DimArray.compress.__doc__ = axis_msg+np.ndarray.compress.__doc__
+DimArray.cumprod.__doc__ = axis_msg+np.ndarray.cumprod.__doc__
+DimArray.cumsum.__doc__ = axis_msg+np.ndarray.cumsum.__doc__
+DimArray.max.__doc__ = axis_msg+np.ndarray.max.__doc__
+DimArray.mean.__doc__ = axis_msg+np.ndarray.mean.__doc__
+DimArray.min.__doc__ = axis_msg+np.ndarray.min.__doc__
+DimArray.nanmean.__doc__ = axis_msg_aa+AttrArray.nanmean.__doc__
+DimArray.nanstd.__doc__ = axis_msg_aa+AttrArray.nanstd.__doc__
+DimArray.nanvar.__doc__ = axis_msg_aa+AttrArray.nanvar.__doc__
+DimArray.prod.__doc__ = axis_msg+np.ndarray.prod.__doc__
+DimArray.ptp.__doc__ = axis_msg+np.ndarray.ptp.__doc__
+DimArray.sort.__doc__ = axis_msg+np.ndarray.sort.__doc__
+DimArray.std.__doc__ = axis_msg+np.ndarray.std.__doc__
+DimArray.sum.__doc__ = axis_msg+np.ndarray.sum.__doc__
+DimArray.swapaxes.__doc__ = axes_msg+np.ndarray.swapaxes.__doc__
+DimArray.take.__doc__ = axis_msg+np.ndarray.take.__doc__
+DimArray.transpose.__doc__ = axes_msg+np.ndarray.transpose.__doc__
+DimArray.var.__doc__ = axis_msg+np.ndarray.var.__doc__
 
 # Methods that return DimArrays and do not take an axis argument:
-DimArray.nonzero.im_func.func_doc = np.ndarray.nonzero.__doc__
-DimArray.squeeze.im_func.func_doc = np.ndarray.squeeze.__doc__
+DimArray.nonzero.__doc__ = np.ndarray.nonzero.__doc__
+DimArray.squeeze.__doc__ = np.ndarray.squeeze.__doc__
 
 
 # Methods that return AttrArrays: Prefic docstring with warning!
@@ -1407,10 +1407,10 @@ cast_msg =\
  **Some attributes may no longer be valid after this Method is applied!**
 
 """
-DimArray.diagonal.im_func.func_doc = cast_msg+np.ndarray.diagonal.__doc__
-DimArray.flatten.im_func.func_doc = cast_msg+np.ndarray.flatten.__doc__
-DimArray.ravel.im_func.func_doc = cast_msg+np.ndarray.ravel.__doc__
-DimArray.repeat.im_func.func_doc = cast_msg+np.ndarray.repeat.__doc__
-DimArray.reshape.im_func.func_doc = cast_msg+np.ndarray.reshape.__doc__
+DimArray.diagonal.__doc__ = cast_msg+np.ndarray.diagonal.__doc__
+DimArray.flatten.__doc__ = cast_msg+np.ndarray.flatten.__doc__
+DimArray.ravel.__doc__ = cast_msg+np.ndarray.ravel.__doc__
+DimArray.repeat.__doc__ = cast_msg+np.ndarray.repeat.__doc__
+DimArray.reshape.__doc__ = cast_msg+np.ndarray.reshape.__doc__
 #DimArray.resize.im_func.func_doc = cast_msg+np.ndarray.resize.__doc__
-DimArray.trace.im_func.func_doc = cast_msg+np.ndarray.trace.__doc__
+DimArray.trace.__doc__ = cast_msg+np.ndarray.trace.__doc__
