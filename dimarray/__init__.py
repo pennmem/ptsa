@@ -7,5 +7,5 @@
 #
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
 
-from dimarray import DimArray,Dim
-from attrarray import AttrArray
+from .dimarray import DimArray, Dim
+from .attrarray import AttrArray

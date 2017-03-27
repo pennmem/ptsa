@@ -11,7 +11,7 @@ import numpy as np
 import copy as copylib
 import re
 
-from attrarray import AttrArray
+from .attrarray import AttrArray
 
 ###############################
 # New dimensioned array class
@@ -54,7 +54,7 @@ class Dim(AttrArray):
     [1 2 3]
     """
     _required_attrs = {'name':str}
-    
+
     def __new__(cls, data, name=None, dtype=None, copy=False, **kwargs):
         if name is None:
             # if 'name' is not specified see if data already has a
@@ -84,7 +84,7 @@ class Dim(AttrArray):
         # if the array is 0-D, make it 1-D:
         elif dim.ndim == 0:
             dim.shape = (1,)
-        
+
         #if dim.shape[0] != np.unique(np.asarray(dim)).shape[0]:
         #    raise ValueError("Data for Dim objects must be unique!")
 
@@ -99,7 +99,7 @@ class DimIndex(tuple):
         res = tuple.__new__(typ, ind)
         res._bool_ind = bool_ind
         return res
-    
+
     def __and__(self, other):
         # compare each bool
         # check other is DimIndex
@@ -131,11 +131,11 @@ class DimSelect(Dim):
     _required_attrs = {'name':str,
                        '_parent_dim_shapes':list,
                        '_parent_dim_index':int}
-    
+
     def __new__(cls, dim, parent_dim_shapes, parent_dim_index):
 
         # verify that dim is a Dim instance
-        
+
         # set the kwargs to have what we need
         kwargs = {}
         kwargs['name'] = dim.name
@@ -231,7 +231,7 @@ class DimSelect(Dim):
         Index into elements along the dimension.
         """
         # get starting indicies
-        ind = [np.ones(shape, dtype=np.bool) 
+        ind = [np.ones(shape, dtype=np.bool)
                for shape in self._parent_dim_shapes]
 
         # make sure 1d
@@ -252,7 +252,7 @@ class DimSelect(Dim):
 class DimArray(AttrArray):
     """
     DimArray(data, dims=None, dtype=None, copy=False, **kwargs)
-    
+
     A DimArray (short for Dimensioned Array) is a child class of
     AttrArray with the constraints that each instance and have a dims
     attribute which specifies the dimensions as an array of Dim
@@ -265,7 +265,7 @@ class DimArray(AttrArray):
     beyond normal ndarrays.  These include the ability to refer to
     dimensions by name and to select subsets of the data based on
     complex queries using the dimension names.
-    
+
     Parameters
     ----------
     data : array_like
@@ -288,10 +288,10 @@ class DimArray(AttrArray):
     >>> data = da.DimArray(np.random.rand(5,3),[dim1,dim2])
     >>> data
     DimArray([[ 0.59645979,  0.92462876,  0.76882167],
-           [ 0.3581822 ,  0.57873905,  0.76889117],   
-           [ 0.40272846,  0.69372032,  0.59006832],   
-           [ 0.69862889,  0.68334188,  0.10891802],   
-           [ 0.14111733,  0.97454223,  0.73193147]])  
+           [ 0.3581822 ,  0.57873905,  0.76889117],
+           [ 0.40272846,  0.69372032,  0.59006832],
+           [ 0.69862889,  0.68334188,  0.10891802],
+           [ 0.14111733,  0.97454223,  0.73193147]])
     >>> data.dims
     array([[0 1 2 3 4], ['a' 'b' 'c']], dtype=object)
     >>> data['Dim1']
@@ -370,7 +370,7 @@ class DimArray(AttrArray):
             # got to make sure data is array-type
             data = np.asanyarray(data)
             data_shape = data.shape
-        
+
         # see how to process dims
         if dims is None:
             # fill with default values
@@ -388,7 +388,7 @@ class DimArray(AttrArray):
 
         # make new AttrArray parent class
         dimarray = AttrArray(data,dtype=dtype,copy=copy,**kwargs)
-        
+
         # View as DimArray and return:
         return dimarray.view(cls)
 
@@ -430,14 +430,14 @@ class DimArray(AttrArray):
             # make sure it is unique
             #if d.shape[0] != np.unique(np.asarray(d)).shape[0]:
             #    raise ValueError("Data for Dim objects must be unique!")
-        
+
         # Ensure that the lengths of the Dim instances match the array shape:
         if self.shape != tuple([len(d) for d in self.dims]):
             raise AttributeError("The length of the dims must match the shape" +
                                  " of the DimArray!\nDimArray shape: "+
                                  str(self.shape)+"\nShape of the dims:\n"+
                                  str(tuple([len(d) for d in self.dims])))
-        
+
         # Ensure unique dimension names (this will fail if not all Dims)
         if len(np.unique(self.dim_names)) != len(self.dim_names):
             raise AttributeError("Dimension names must be unique!\nnames: "+
@@ -454,7 +454,7 @@ class DimArray(AttrArray):
             raise AttributeError("Dimension names can only contain "+
                                  "alphanumeric characters and underscores, "+
                                  "and cannot begin with a number\nnames: "+
-                                 str(self.dim_names))        
+                                 str(self.dim_names))
 
     def _select_ind(self, *args, **kwargs):
         """
@@ -471,7 +471,7 @@ class DimArray(AttrArray):
         for arg in args:
             # arg must be a string
             if not isinstance(arg,str):
-                raise TypeError('All args must be strings, ' + 
+                raise TypeError('All args must be strings, ' +
                                 'but you passed: ' + str(type(arg)))
 
             # process the arg string
@@ -491,7 +491,7 @@ class DimArray(AttrArray):
 
                     # get the new index
                     newind = eval(filterStr)
-                    
+
                     # apply it to the proper dimension index
                     ind[d] = ind[d] & newind
 
@@ -508,14 +508,14 @@ class DimArray(AttrArray):
 
                     # break this loop to continue the next
                     break
-                    
+
             # if we get to here, the provided string did not specify
             # any dimensions
             if not found_dim:
                 # XXX eventually this should be a custom exception
                 raise ValueError("The provided filter string did not specify "+
                                  "any valid dimensions: "+str(filterStr))
-            
+
         # loop over the kwargs (the other way to filter)
         for key,value in kwargs.iteritems():
             if key in self.dim_names:
@@ -548,12 +548,12 @@ class DimArray(AttrArray):
             index = self.find(*index)
 
         # perform the set
-        AttrArray.__setitem__(self, index, obj)            
+        AttrArray.__setitem__(self, index, obj)
 
     def __getitem__(self, index):
         # process whether we using fancy string-based indices
         remove_dim = np.zeros(len(self.dims), dtype=np.bool)
-        
+
         if isinstance(index,str):
             # see if it's just a single dimension name
             res = self._dim_namesRE.search(index)
@@ -575,7 +575,7 @@ class DimArray(AttrArray):
 
         # try block to ensure the _skip_dim_check flag gets reset
         # in the following finally block
-        try: 
+        try:
             # skip the dim check b/c we're going to fiddle with them
             self._skip_dim_check = True
             ret = AttrArray.__getitem__(self,index)
@@ -598,7 +598,7 @@ class DimArray(AttrArray):
                            len(ind)==0 for ind in indlist]):
                 # don't remove any b/c we selected nothing anyway
                 remove_dim[:] = False
-                
+
             # loop over the indlist, slicing the dimensions
             i = -1
             for ind in indlist:
@@ -664,21 +664,21 @@ class DimArray(AttrArray):
                 ret = ret[ind]
 
         return ret
-    
+
     def __getslice__(self,i,j):
-        try: 
+        try:
             # skip the dim check b/c we're going to fiddle with them
             self._skip_dim_check = True
-            ret = AttrArray.__getslice__(self,i,j)           
+            ret = AttrArray.__getslice__(self,i,j)
         finally:
             # reset the _skip_dim_check flag:
             self._skip_dim_check = False
         ret.dims[0] = ret.dims[0].__getslice__(i,j)
         return ret
-    
+
     def find(self,*args,**kwargs):
         """
-        Returns a tuple of index arrays for the selected conditions. 
+        Returns a tuple of index arrays for the selected conditions.
 
         There are three different ways to specify a filterstring
         illustrated in the examples.
@@ -813,7 +813,7 @@ class DimArray(AttrArray):
         # Create the new data:
         split_dat = split(self.view(AttrArray),bins,axis=dim)
         new_dat = np.array([function(x,axis=dim,**kwargs) for x in split_dat])
-        
+
         # Now the dimensions of the array need be re-arranged in the correct
         # order:
         dim_order = np.arange(len(new_dat.shape))
@@ -822,7 +822,7 @@ class DimArray(AttrArray):
         dim_order[dim+1:len(new_dat.shape)] = np.arange(dim+1,
                                                         len(new_dat.shape))
         new_dat = new_dat.transpose(dim_order)
-        
+
         # Create and return new DimArray object:
         new_dims = copylib.deepcopy(self.dims)
         new_dims[dim] = new_dim
@@ -856,20 +856,20 @@ class DimArray(AttrArray):
                              " list/array of labels of the same length as " +
                              "bins.\n bins: " + str(bins) + "\n bin_labels: " +
                              str(bin_labels))
-        
+
         new_dim = Dim(data=new_dim_dat,name=self.dim_names[dim])
-        
+
         # Create the new data:
         # We need to transpose the data array so that dim is the first
         # dimension. We store the new order of dimensions in totrans:
         totrans = range(len(self.shape))
         totrans[0] = dim
         totrans[dim] = 0
-        
+
         # Now we are ready to do the transpose:
         tmpdata = self.copy()
         tmpdata = np.transpose(tmpdata.view(np.ndarray),totrans)
-        
+
         # Now loop through each bin applying the function and concatenate the
         # data:
         new_dat = None
@@ -879,10 +879,10 @@ class DimArray(AttrArray):
                 new_dat = bindata[np.newaxis,:]
             else:
                 new_dat = np.r_[new_dat,bindata[np.newaxis,:]]
-        
+
         # transpose back:
         new_dat = new_dat.transpose(totrans)
-        
+
         # Create and return new DimArray object:
         new_dims = copylib.deepcopy(self.dims)
         new_dims[dim] = new_dim
@@ -896,7 +896,7 @@ class DimArray(AttrArray):
         """
         Return a copy of the data with dimension (specified by axis)
         binned as specified.
-                        
+
         Parameters
         ----------
         axis : int
@@ -932,16 +932,16 @@ class DimArray(AttrArray):
             number of bins (this parameter is only applicable when
             bins is an integer specifying the number of bins). When
             True, the function numpy.split is used, when False the
-            function numpy.array_split is used.                       
+            function numpy.array_split is used.
         kwargs : keyword arguments, optional
             Optional key word arguments to be passed on to function.
-        
+
         Returns
         -------
         binned : DimArray
             A new DimArray instance in which one of the dimensions is
             binned as specified.
-        
+
         Examples
         --------
         >>> import numpy as np
@@ -1036,13 +1036,13 @@ class DimArray(AttrArray):
         dim_names_deviations = [np.sum(d.dim_names!=self.dim_names) for d in data]
         if np.sum(dim_names_deviations)>0:
             raise ValueError('Names of the dimensions do not match!')
-                
+
         # make sure all dims except for the extended one match:
         #COMMENTED OUT SANITY CHECK THAT IS OVERZEALOUS
         # dim_deviations = [np.sum(d.dims!=self.dims) for d in data]
         # if np.sum(dim_deviations)>1:
         #     raise ValueError('Dimensions do not match!')
-                
+
         # add the current DimArray to the beginning of list:
         data.insert(0,self)
 
@@ -1054,7 +1054,7 @@ class DimArray(AttrArray):
         # functions rather than the DimArray functions):
         data = [d.view(AttrArray) for d in data]
         #dim_names = [d.name for dat in data for d in dat.dims]
-        
+
         new_dat = np.concatenate(data,axis=axis)
         new_dims = copylib.deepcopy(self.dims)
         new_dims[axis] = Dim(np.concatenate(conc_dims),self.dim_names[axis])
@@ -1068,7 +1068,7 @@ class DimArray(AttrArray):
         # result.__array_finalize__(self)
         # # update dims & return:
         # result.dims[axis] = Dim(np.concatenate(conc_dims),self.dim_names[axis])
-        # return result.view(self.__class__)        
+        # return result.view(self.__class__)
 
     def add_dim(self, dim):
         """
@@ -1097,11 +1097,11 @@ class DimArray(AttrArray):
         ----------
         axis : str
             The name of a dimension.
-            
+
         Returns
         -------
         The axis number corresponding to the dimension name.
-        If axis is not a string, it is returned unchanged.        
+        If axis is not a string, it is returned unchanged.
         """
         if isinstance(axis,str):
             # must convert to index dim
@@ -1130,7 +1130,7 @@ class DimArray(AttrArray):
         else:
             dim_name = self.dim_names[axis]
         return dim_name
-    
+
     def _ret_func(self, ret, axis):
         """
         Return function output for functions that take an axis
@@ -1143,27 +1143,27 @@ class DimArray(AttrArray):
             # pop the dim
             ret.dims = ret.dims[np.arange(len(ret.dims))!=axis]
             return ret.view(self.__class__)
-    
-    
+
+
     def all(self, axis=None, out=None):
         axis = self.get_axis(axis)
         ret = self.view(AttrArray).all(axis=axis, out=out)
         return self._ret_func(ret,axis)
-    
+
     def any(self, axis=None, out=None):
         axis = self.get_axis(axis)
         ret = self.view(AttrArray).any(axis=axis, out=out)
-        return self._ret_func(ret,axis)        
+        return self._ret_func(ret,axis)
 
     def argmax(self, axis=None, out=None):
         axis = self.get_axis(axis)
         ret = self.view(AttrArray).argmax(axis=axis, out=out)
-        return self._ret_func(ret,axis)        
+        return self._ret_func(ret,axis)
 
     def argmin(self, axis=None, out=None):
         axis = self.get_axis(axis)
         ret = self.view(AttrArray).argmin(axis=axis, out=out)
-        return self._ret_func(ret,axis)        
+        return self._ret_func(ret,axis)
 
     def argsort(self, axis=-1, kind='quicksort', order=None):
         if axis is None:
@@ -1320,7 +1320,7 @@ class DimArray(AttrArray):
             ret.dims[axis] = ret.dims[axis].take(indices, axis=0,
                                                  out=out, mode=mode)
             return ret.view(self.__class__)
-        
+
     def trace(self, *args, **kwargs):
         return self.view(AttrArray).trace(*args, **kwargs)
 
@@ -1334,7 +1334,7 @@ class DimArray(AttrArray):
                 ret = self.view(AttrArray).transpose(*axes)
                 # ret.dims = [ret.dims[a] for a in axes]
                 ret.dims = ret.dims[axes]
-                return ret.view(self.__class__)     
+                return ret.view(self.__class__)
         ret = self.view(AttrArray).transpose()
         # ret.dims.reverse()
         ret.dims = ret.dims[-1::-1]
@@ -1370,33 +1370,33 @@ axes_msg =\
  **The axes may be specified as strings (dimension names).**
 
 """
-DimArray.all.im_func.func_doc = axis_msg+np.ndarray.all.__doc__            
-DimArray.any.im_func.func_doc = axis_msg+np.ndarray.any.__doc__            
-DimArray.argmax.im_func.func_doc = axis_msg+np.ndarray.argmax.__doc__            
-DimArray.argmin.im_func.func_doc = axis_msg+np.ndarray.argmin.__doc__            
-DimArray.argsort.im_func.func_doc = axis_msg+np.ndarray.argsort.__doc__            
-DimArray.compress.im_func.func_doc = axis_msg+np.ndarray.compress.__doc__            
-DimArray.cumprod.im_func.func_doc = axis_msg+np.ndarray.cumprod.__doc__            
-DimArray.cumsum.im_func.func_doc = axis_msg+np.ndarray.cumsum.__doc__            
-DimArray.max.im_func.func_doc = axis_msg+np.ndarray.max.__doc__            
-DimArray.mean.im_func.func_doc = axis_msg+np.ndarray.mean.__doc__            
-DimArray.min.im_func.func_doc = axis_msg+np.ndarray.min.__doc__            
-DimArray.nanmean.im_func.func_doc = axis_msg_aa+AttrArray.nanmean.__doc__            
-DimArray.nanstd.im_func.func_doc = axis_msg_aa+AttrArray.nanstd.__doc__            
-DimArray.nanvar.im_func.func_doc = axis_msg_aa+AttrArray.nanvar.__doc__            
-DimArray.prod.im_func.func_doc = axis_msg+np.ndarray.prod.__doc__            
-DimArray.ptp.im_func.func_doc = axis_msg+np.ndarray.ptp.__doc__            
-DimArray.sort.im_func.func_doc = axis_msg+np.ndarray.sort.__doc__            
-DimArray.std.im_func.func_doc = axis_msg+np.ndarray.std.__doc__            
-DimArray.sum.im_func.func_doc = axis_msg+np.ndarray.sum.__doc__            
-DimArray.swapaxes.im_func.func_doc = axes_msg+np.ndarray.swapaxes.__doc__            
-DimArray.take.im_func.func_doc = axis_msg+np.ndarray.take.__doc__            
-DimArray.transpose.im_func.func_doc = axes_msg+np.ndarray.transpose.__doc__            
-DimArray.var.im_func.func_doc = axis_msg+np.ndarray.var.__doc__            
+DimArray.all.im_func.func_doc = axis_msg+np.ndarray.all.__doc__
+DimArray.any.im_func.func_doc = axis_msg+np.ndarray.any.__doc__
+DimArray.argmax.im_func.func_doc = axis_msg+np.ndarray.argmax.__doc__
+DimArray.argmin.im_func.func_doc = axis_msg+np.ndarray.argmin.__doc__
+DimArray.argsort.im_func.func_doc = axis_msg+np.ndarray.argsort.__doc__
+DimArray.compress.im_func.func_doc = axis_msg+np.ndarray.compress.__doc__
+DimArray.cumprod.im_func.func_doc = axis_msg+np.ndarray.cumprod.__doc__
+DimArray.cumsum.im_func.func_doc = axis_msg+np.ndarray.cumsum.__doc__
+DimArray.max.im_func.func_doc = axis_msg+np.ndarray.max.__doc__
+DimArray.mean.im_func.func_doc = axis_msg+np.ndarray.mean.__doc__
+DimArray.min.im_func.func_doc = axis_msg+np.ndarray.min.__doc__
+DimArray.nanmean.im_func.func_doc = axis_msg_aa+AttrArray.nanmean.__doc__
+DimArray.nanstd.im_func.func_doc = axis_msg_aa+AttrArray.nanstd.__doc__
+DimArray.nanvar.im_func.func_doc = axis_msg_aa+AttrArray.nanvar.__doc__
+DimArray.prod.im_func.func_doc = axis_msg+np.ndarray.prod.__doc__
+DimArray.ptp.im_func.func_doc = axis_msg+np.ndarray.ptp.__doc__
+DimArray.sort.im_func.func_doc = axis_msg+np.ndarray.sort.__doc__
+DimArray.std.im_func.func_doc = axis_msg+np.ndarray.std.__doc__
+DimArray.sum.im_func.func_doc = axis_msg+np.ndarray.sum.__doc__
+DimArray.swapaxes.im_func.func_doc = axes_msg+np.ndarray.swapaxes.__doc__
+DimArray.take.im_func.func_doc = axis_msg+np.ndarray.take.__doc__
+DimArray.transpose.im_func.func_doc = axes_msg+np.ndarray.transpose.__doc__
+DimArray.var.im_func.func_doc = axis_msg+np.ndarray.var.__doc__
 
 # Methods that return DimArrays and do not take an axis argument:
-DimArray.nonzero.im_func.func_doc = np.ndarray.nonzero.__doc__            
-DimArray.squeeze.im_func.func_doc = np.ndarray.squeeze.__doc__            
+DimArray.nonzero.im_func.func_doc = np.ndarray.nonzero.__doc__
+DimArray.squeeze.im_func.func_doc = np.ndarray.squeeze.__doc__
 
 
 # Methods that return AttrArrays: Prefic docstring with warning!
@@ -1409,8 +1409,8 @@ cast_msg =\
 """
 DimArray.diagonal.im_func.func_doc = cast_msg+np.ndarray.diagonal.__doc__
 DimArray.flatten.im_func.func_doc = cast_msg+np.ndarray.flatten.__doc__
-DimArray.ravel.im_func.func_doc = cast_msg+np.ndarray.ravel.__doc__            
-DimArray.repeat.im_func.func_doc = cast_msg+np.ndarray.repeat.__doc__            
-DimArray.reshape.im_func.func_doc = cast_msg+np.ndarray.reshape.__doc__  
-#DimArray.resize.im_func.func_doc = cast_msg+np.ndarray.resize.__doc__            
-DimArray.trace.im_func.func_doc = cast_msg+np.ndarray.trace.__doc__            
+DimArray.ravel.im_func.func_doc = cast_msg+np.ndarray.ravel.__doc__
+DimArray.repeat.im_func.func_doc = cast_msg+np.ndarray.repeat.__doc__
+DimArray.reshape.im_func.func_doc = cast_msg+np.ndarray.reshape.__doc__
+#DimArray.resize.im_func.func_doc = cast_msg+np.ndarray.resize.__doc__
+DimArray.trace.im_func.func_doc = cast_msg+np.ndarray.trace.__doc__
