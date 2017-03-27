@@ -157,4 +157,4 @@ copy(
 )
 
 
-print 'SETUP COMPLETE'
+print('SETUP COMPLETE')

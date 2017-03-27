@@ -29,11 +29,11 @@ third_party_install_dir = join(root_dir,build_subdir,'third_party_install')
 
 python_executable = sys.executable
 
-print 'python_executable=',python_executable
+print(('python_executable=',python_executable))
 
-print 'PYTHON LIB=',  distutils.sysconfig.get_python_lib(standard_lib=True)
-print distutils.sysconfig.get_python_inc()
-print distutils.sysconfig.get_python_version()
+print('PYTHON LIB=',  distutils.sysconfig.get_python_lib(standard_lib=True))
+print(distutils.sysconfig.get_python_inc())
+print(distutils.sysconfig.get_python_version())
 
 
 def get_version_str():
@@ -78,14 +78,14 @@ def check_dependencies():
     try:
         import numpy
     except ImportError:
-        print 'numpy is required to build PTSA. Please install numpy before proceeding'
+        print('numpy is required to build PTSA. Please install numpy before proceeding')
         sys.exit(1)
 
 
     try:
         import scipy
     except ImportError:
-        print 'scipy is required to build PTSA. Please install scipy before proceeding'
+        print('scipy is required to build PTSA. Please install scipy before proceeding')
 
         sys.exit(1)
 
@@ -94,9 +94,9 @@ def check_dependencies():
     try:
         import pywt
     except ImportError:
-        print 'pywt is required to build PTSA. Please install pywt before proceeding. ' \
+        print('pywt is required to build PTSA. Please install pywt before proceeding. ' \
               'you may try runnig the following command from your shell:' \
-              'pip install PyWavelets'
+              'pip install PyWavelets')
 
         sys.exit(1)
 
@@ -106,7 +106,7 @@ def check_dependencies():
         try:
             import xray
         except ImportError:
-            print 'xarray (aka xray) is required to build PTSA. Please install xarray before proceeding'
+            print('xarray (aka xray) is required to build PTSA. Please install xarray before proceeding')
 
             sys.exit(1)
 
@@ -124,9 +124,9 @@ def check_dependencies():
         build_third_party_libs_win()
     else:
         if compiler.find_library_file(lib_dirs,'fftw3'):
-            print 'FOUND FFTW3 library'
+            print('FOUND FFTW3 library')
         else:
-            print 'DID NOT FIND FFTW3 LIBRARY - WILL BUILD FROM SOURCE'
+            print('DID NOT FIND FFTW3 LIBRARY - WILL BUILD FROM SOURCE')
             build_third_party_libs()
 
 def build_third_party_libs_win():
