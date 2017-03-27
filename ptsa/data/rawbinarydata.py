@@ -8,9 +8,9 @@
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
 
 # local imports
-from datawrapper import DataWrapper
-from events import Events,TsEvents
-from timeseries import TimeSeries,Dim
+from .datawrapper import DataWrapper
+from .events import Events,TsEvents
+from .timeseries import TimeSeries,Dim
 
 # global imports
 import numpy as np

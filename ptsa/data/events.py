@@ -9,7 +9,7 @@
 
 # global imports
 import numpy as np
-from timeseries import TimeSeries, Dim
+from .timeseries import TimeSeries, Dim
 import time
 
 

@@ -1,4 +1,4 @@
-from MatlabIO import *
+from .MatlabIO import *
 import scipy.io as sio
 import numpy as np
 import sys

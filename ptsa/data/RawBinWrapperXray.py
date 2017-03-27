@@ -17,7 +17,7 @@ import struct
 import os
 from glob import glob
 
-from BaseWrapperXray import BaseWrapperXray
+from .BaseWrapperXray import BaseWrapperXray
 
 
 class RawBinWrapperXray(BaseWrapperXray):

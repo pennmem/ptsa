@@ -13,9 +13,9 @@ import numpy as np
 from scipy.special import sinc
 
 
-from helper import reshape_to_2d, reshape_from_2d, repeat_to_match_dims
+from .helper import reshape_to_2d, reshape_from_2d, repeat_to_match_dims
 
-from filtfilt import filtfilt as filtfilt_future
+from .filtfilt import filtfilt as filtfilt_future
 
 import pdb
 

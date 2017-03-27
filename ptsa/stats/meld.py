@@ -54,8 +54,8 @@ else:
     r_model_matrix = rstats.model_matrix
 
 # load ptsa clustering
-import cluster
-from stat_helper import fdr_correction
+from . import cluster
+from .stat_helper import fdr_correction
 
 # deal with warnings for bootstrap
 import warnings

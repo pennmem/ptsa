@@ -10,8 +10,8 @@
 # global imports
 import numpy as np
 
-from timeseries import TimeSeries,Dim
-from basewrapper import BaseWrapper
+from .timeseries import TimeSeries,Dim
+from .basewrapper import BaseWrapper
 
 #import pdb
 

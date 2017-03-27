@@ -1,1 +1,1 @@
-from TestRegressionPTSA import TestRegressionPTSA
+from .TestRegressionPTSA import TestRegressionPTSA

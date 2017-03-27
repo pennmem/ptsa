@@ -15,7 +15,7 @@
 import numpy as np
 from xray import DataArray
 
-from basewrapper import BaseWrapper
+from .basewrapper import BaseWrapper
 
 
 class BaseWrapperXray(BaseWrapper):

@@ -9,7 +9,7 @@
 
 # local imports
 #from events import Events,TsEvents
-from timeseries import TimeSeries,Dim
+from .timeseries import TimeSeries,Dim
 
 # global imports
 import numpy as np

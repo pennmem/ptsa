@@ -54,7 +54,7 @@ else:
 #import pandas.rpy.common as com
 
 # load ptsa clustering
-import cluster
+from . import cluster
 
 
 def lmer_feature(formula_str, dat, perms=None, 

@@ -12,7 +12,7 @@
 from scipy import linalg
 from scipy.signal import lfilter
 import numpy as np
-from _arraytools import axis_slice, axis_reverse, odd_ext, even_ext, const_ext
+from ._arraytools import axis_slice, axis_reverse, odd_ext, even_ext, const_ext
 
 
 def lfilter_zi(b, a):

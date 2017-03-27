@@ -3,7 +3,7 @@ __author__ = 'm'
 import numpy as np
 from ptsa.data.events import Events
 from ptsa.data.rawbinwrapper import RawBinWrapper
-from BaseEventReader import BaseEventReader
+from .BaseEventReader import BaseEventReader
 from ptsa.data.common import TypeValTuple
 from ptsa.data.readers import BaseReader
 
@@ -95,7 +95,7 @@ class PTSAEventReader(BaseEventReader,BaseReader):
 
 
 if __name__ == '__main__':
-    from PTSAEventReader import PTSAEventReader
+    from .PTSAEventReader import PTSAEventReader
 
     # e_path = join('/Volumes/rhino_root', 'data/events/RAM_FR1/R1060M_events.mat')
     e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'

@@ -11,8 +11,8 @@
 import numpy as np
 
 from dimarray import Dim
-from timeseries import TimeSeries
-from basewrapper import BaseWrapper
+from .timeseries import TimeSeries
+from .basewrapper import BaseWrapper
 
 #import pdb
 

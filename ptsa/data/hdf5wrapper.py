@@ -12,8 +12,8 @@ import numpy as np
 import h5py
 
 # local imports
-from basewrapper import BaseWrapper
-from timeseries import TimeSeries
+from .basewrapper import BaseWrapper
+from .timeseries import TimeSeries
 
 class HDF5Wrapper(BaseWrapper):
     """

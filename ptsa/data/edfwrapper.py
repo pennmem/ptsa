@@ -8,10 +8,10 @@
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
 
 # local imports
-from basewrapper import BaseWrapper
-from edf import read_samples, read_number_of_samples
-from edf import read_samplerate, read_annotations
-from edf import read_number_of_signals
+from .basewrapper import BaseWrapper
+from .edf import read_samples, read_number_of_samples
+from .edf import read_samplerate, read_annotations
+from .edf import read_number_of_signals
 # global imports
 import numpy as np
 import os.path

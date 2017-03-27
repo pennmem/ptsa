@@ -6,7 +6,7 @@ from numpy.testing import *
 import unittest
 # from unittest import *
 
-from EventReadersTestBase import EventReadersTestBase
+from .EventReadersTestBase import EventReadersTestBase
 from ptsa.data.events import Events
 from ptsa.data.readers import BaseEventReader
 from ptsa.data.readers import PTSAEventReader

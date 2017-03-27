@@ -14,7 +14,7 @@ Version management module.
 from distutils.version import StrictVersion
 
 ## !!!!!
-import versionString
+from . import versionString
 #vstr = open('versionString.txt').readline().strip()
 ## !!!!!
 
