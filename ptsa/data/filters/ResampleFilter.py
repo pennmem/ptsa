@@ -1,7 +1,7 @@
 __author__ = 'm'
 
 import numpy as np
-import xray
+import xarray as xray
 from scipy.signal import resample
 
 from ptsa.data.TimeSeriesX import TimeSeriesX
