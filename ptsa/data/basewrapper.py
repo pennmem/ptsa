@@ -32,14 +32,14 @@ class BaseWrapper(object):
         channel : {None,int,str}
             If specified, an integer or (if appropriate for a given data format)
             a string label specifying the channel.
-        
+
         Returns
         -------
         samplerate : {float}
             Samplerate for the specified channel.
         """
         raise NotImplementedError
-    
+
     def _get_nsamples(self,channel=None):
         """
         Returns the number of samples for a dataset or given channel.
@@ -49,25 +49,25 @@ class BaseWrapper(object):
         channel : {None,int,str}
             If specified, an integer or (if appropriate for a given data format)
             a string label specifying the channel.
-        
+
         Returns
         -------
         nsamples : {float}
             Number of samples for the dataset or specified channel.
         """
         raise NotImplementedError
-    
+
     def _get_nchannels(self):
         """
         Returns the number of channels in a dataset.
-        
+
         Returns
         -------
         nchannels : {int}
             Number of channels.
         """
         raise NotImplementedError
-    
+
     def _get_annotations(self):
         """
         Returns the annotations associated with the dataset.
@@ -78,14 +78,14 @@ class BaseWrapper(object):
             Annotations
         """
         raise NotImplementedError
-        
+
     def _set_annotations(self, annotations):
         """
         Set the annotations associated with the dataset.
 
         """
         raise NotImplementedError
-        
+
     def _get_channel_info(self):
         """
         Returns the channel info associated with the dataset.
@@ -96,18 +96,18 @@ class BaseWrapper(object):
             Channel information (e.g., names, locations, etc...)
         """
         # generate recarray of channel info based on nchannels
-        return np.rec.fromarrays(zip(*[(i+1,'Ch%d'%(i+1)) 
+        return np.rec.fromarrays(zip(*[(i+1,'Ch%d'%(i+1))
                                        for i in range(self.nchannels)]),
                                  names='number,name')
         #raise NotImplementedError
-        
+
     def _set_channel_info(self, channel_info):
         """
         Set the channel info associated with the dataset.
 
         """
         raise NotImplementedError
-        
+
     def _load_data(self,channels,event_offsets,dur_samp,offset_samp):
         """
         Method for loading data that each child wrapper class must
@@ -139,12 +139,12 @@ class BaseWrapper(object):
         """
         """
         raise NotImplementedError
-        
+
     def set_channel_data(self, channel, data):
         """
         """
         raise NotImplementedError
-            
+
     def get_event_data(self,channels,events,
                        start_time,end_time,buffer_time=0.0,
                        resampled_rate=None,
@@ -183,7 +183,7 @@ class BaseWrapper(object):
             The order of the filter.
         keep_buffer: {boolean},optional
             Whether to keep the buffer when returning the data.
-        eoffset_in_time: {boolean},optional        
+        eoffset_in_time: {boolean},optional
             If True, the unit of the event offsets is taken to be
             time (unit of the data), otherwise samples.
         """
@@ -204,7 +204,7 @@ class BaseWrapper(object):
         else:
             raise ValueError(eoffset+' must be a valid fieldname '+
                              'specifying the offset for the data.')
-        
+
         # Sanity checks:
         if(dur<0):
             raise ValueError('Duration must not be negative! '+
@@ -218,7 +218,7 @@ class BaseWrapper(object):
             # convert to samples
             event_offsets = np.atleast_1d(np.int64(
                 np.round(event_offsets*self.samplerate)))
-        
+
         # set event durations from rate
         # get the samplesize
         samplesize = 1./self.samplerate
@@ -234,7 +234,7 @@ class BaseWrapper(object):
         #dur_samp = int(np.ceil((dur - samplesize*.5)/samplesize))
         dur_samp = (int(np.ceil((dur+offset - samplesize*.5)/samplesize)) -
                     offset_samp + 1)
-        
+
         # add in the buffer
         dur_samp += 2*buf_samp
         offset_samp -= buf_samp
@@ -316,24 +316,23 @@ class BaseWrapper(object):
                                'time',
                                self.samplerate,dims=dims)
 
-	# filter if desired
-	if not(filt_freq is None):
-	    # filter that data
+        # filter if desired
+        if not(filt_freq is None):
+            # filter that data
             eventdata = eventdata.filtered(filt_freq,
-                                           filt_type=filt_type,
-                                           order=filt_order)
+                                        filt_type=filt_type,
+                                        order=filt_order)
 
-	# resample if desired
-	if (not(resampled_rate is None) and
-            not(resampled_rate == eventdata.samplerate)):
-	    # resample the data
+        # resample if desired
+        if (resampled_rate is not None) and (resampled_rate != eventdata.samplerate):
+            # resample the data
             eventdata = eventdata.resampled(resampled_rate,
                                             loop_axis=loop_axis,
                                             num_mp_procs=num_mp_procs)
 
-        # remove the buffer and set the time range
-	if buf > 0 and not(keep_buffer):
-	    # remove the buffer
+            # remove the buffer and set the time range
+        if buf > 0 and not keep_buffer:
+            # remove the buffer
             eventdata = eventdata.remove_buffer(buf)
 
         # return the timeseries
@@ -359,7 +358,7 @@ class BaseWrapper(object):
         samp_end = samp_start + (dur_samp-1)*samplesize
         time_range = np.linspace(samp_start,samp_end,dur_samp)
 
-	# make it a timeseries
+    # make it a timeseries
         dims = [Dim(self.channels[channels],'channels'),
                 Dim(time_range,'time')]
         data = TimeSeries(np.asarray(data),
@@ -367,7 +366,7 @@ class BaseWrapper(object):
                           self.samplerate,dims=dims)
 
         return data
-    
+
     # class properties
     samplerate = property(lambda self: self._get_samplerate())
     nsamples = property(lambda self: self._get_nsamples())

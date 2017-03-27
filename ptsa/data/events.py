@@ -78,11 +78,11 @@ class Events(np.recarray):
         Returns
         -------
         New Events instance with the specified new fields.
-        
+
         Examples
         --------
         events.add_fields(name1=array1, name2=dtype('i4'))
-        
+
         """
 
         # list of current dtypes to which new dtypes will be added:

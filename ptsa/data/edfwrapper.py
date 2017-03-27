@@ -75,10 +75,10 @@ class EdfWrapper(BaseWrapper):
         """        
         """
         # allocate for data
-	eventdata = np.empty((len(channels),len(event_offsets),dur_samp),
+        eventdata = np.empty((len(channels),len(event_offsets),dur_samp),
                              dtype=np.float64)*np.nan
 
-	# loop over events
+        # loop over events
         # PBS: eventually move this to the cython file
         for c, channel in enumerate(channels):
             for e, ev_offset in enumerate(event_offsets):

@@ -100,7 +100,7 @@ def times_to_offsets_old(eeg_times, eeg_offsets, beh_times,
     """
     pulse_ms = eeg_times
     annot_ms = eeg_offsets
-    
+
     # pick beginning and end (needle in haystack)
     s_ind = None
     e_ind = None
@@ -144,7 +144,7 @@ def times_to_offsets_old(eeg_times, eeg_offsets, beh_times,
 
     return offsets
 
-    
+
 def align_pyepl(wrappedfile, eeglog, events, annot_id='S255', 
                 channel_for_sr=0, 
                 window=100, thresh_ms=10,
@@ -161,7 +161,7 @@ def align_pyepl(wrappedfile, eeglog, events, annot_id='S255',
 
     if(not isinstance(wrappedfile,BaseWrapper)):
         raise ValueError('BaseWrapper instance required!')
-    
+
     # point to wrapper
     w = wrappedfile
 

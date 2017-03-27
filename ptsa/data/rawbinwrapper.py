@@ -197,7 +197,7 @@ class RawBinWrapper(BaseWrapper):
                 eventdata[c, e, :] = data
 
         # multiply by the gain
-    	eventdata *= self._gain
+        eventdata *= self._gain
 
         return eventdata
 

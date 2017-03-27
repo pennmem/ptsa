@@ -78,7 +78,7 @@ class RawBinWrapperXray(BaseWrapperXray):
             names.append(self._chanfiles[i].split('.')[-1])
         self._channel_info = np.rec.fromarrays(
             [numbers, names], names='number,name')
-                    
+
     def _get_dataroot(self, channel=None):
         # Same dataroot for all channels:
         return self._dataroot            
@@ -109,7 +109,7 @@ class RawBinWrapperXray(BaseWrapperXray):
 
     def _get_channel_info(self):
         return self._channel_info
-    
+
     def _get_annotations(self):
         # no annotations for raw data
         annot = None
@@ -142,15 +142,15 @@ class RawBinWrapperXray(BaseWrapperXray):
                 'The following fields were supplied:\n' + str(list(params.keys())))
         # return the params dict
         return params
-        
+
     def get_eeg_file_name_for_channel(self,channel):
 
-            if isinstance(channel, basestring):
-                eegfname = self._dataroot+'.'+channel
-            else:
-                eegfname = self._dataroot+'.'+self._channel_info['name'][channel]
+        if isinstance(channel, basestring):
+            eegfname = self._dataroot+'.'+channel
+        else:
+            eegfname = self._dataroot+'.'+self._channel_info['name'][channel]
 
-            return eegfname
+        return eegfname
 
     def _load_all_data(self,channels,start_offset, end_offset=-1):
         """
@@ -166,7 +166,7 @@ class RawBinWrapperXray(BaseWrapperXray):
 
         # loop over channels
         for c, channel in enumerate(channels):
-            # determine the file
+        # determine the file
 
             eegfname = self.get_eeg_file_name_for_channel(channel)
 
@@ -196,7 +196,7 @@ class RawBinWrapperXray(BaseWrapperXray):
             eventdata[c, 0, :] = data
 
         # multiply by the gain
-    	eventdata *= self._gain
+        eventdata *= self._gain
 
         return eventdata
         #     # loop over events
@@ -286,6 +286,6 @@ class RawBinWrapperXray(BaseWrapperXray):
                 eventdata[c, e, :] = data
 
         # multiply by the gain
-    	eventdata *= self._gain
+        eventdata *= self._gain
 
         return eventdata

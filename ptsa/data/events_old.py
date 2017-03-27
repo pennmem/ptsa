@@ -39,7 +39,7 @@ class Events(np.recarray):
                         str(self._required_fields[req_field])+
                         '. Provided dtype was '+str(self[req_field].dtype))                             
         return self
-    
+
     def remove_fields(self,*fields_to_remove):
         """
         Return a new instance of the array with specified fields
@@ -74,23 +74,23 @@ class Events(np.recarray):
         instance.  To add an empty field, pass a dtype as the array.
 
         addFields(name1=array1, name2=dtype('i4'))
-        
+
         """
 
         # list of current dtypes to which new dtypes will be added:
         # new_dtype = [(name,self[name].dtype) for name in self.dtype.names]
-        
+
         # sequence of arrays and names from starting recarray
         arrays = map(lambda x: self[x], self.dtype.names)
         names = ','.join(self.dtype.names)
-        
+
         # loop over the kwargs of field
         for name,data in fields.items():
             # see if already there, error if so
             if name in self.dtype.fields:
                 # already exists
                 raise ValueError('Field "'+name+'" already exists.')
-            
+
             # append the array and name
             if(isinstance(data,np.dtype)|
                isinstance(data,type)|isinstance(data,str)):
@@ -120,7 +120,7 @@ class Events(np.recarray):
             # reset the _skip_dim_check flag:
             self._skip_field_check = False
         return ret
-            
+
     def __getslice__(self,i,j):
         try: 
             # skip the field check
@@ -163,7 +163,7 @@ class TsEvents(Events):
     """
 
     _required_fields = {'tssrc':BaseWrapper,'tsoffset':int}
-        
+
     # def get_data(self,channel,dur,offset,buf,resampled_rate=None,
     #              filt_freq=None,filt_type='stop',
     #              filt_order=4,keep_buffer=False):
@@ -176,9 +176,9 @@ class TsEvents(Events):
         (events,time) for the data and also some information about the
         data returned.
         """
-	# get ready to load dat
-	eventdata = None
-        
+        # get ready to load dat
+        eventdata = None
+
         # events = self.data
 
         # speed up by getting unique event sources first
@@ -188,7 +188,7 @@ class TsEvents(Events):
         for src in usources:
             # get the eventOffsets from that source
             ind = np.atleast_1d(self['tssrc']==src)
-            
+
             if len(ind) == 1:
                 src_events=self
             else:
@@ -222,5 +222,5 @@ class TsEvents(Events):
             eventdata = TimeSeries(np.atleast_2d(np.array(None)),
                                    samplerate=None,tdim='time',dims=dims)
         return eventdata
-    
+
 

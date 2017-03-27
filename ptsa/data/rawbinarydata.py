@@ -71,38 +71,38 @@ class RawBinaryEEG(DataWrapper):
             if not os.path.isfile(paramFile):
                 #raise "file not found"  # fix this
                 return params
-        
+
         # we have a file, so open and process it
         for line in open(paramFile,'r').readlines():
             # get the columns by splitting
             cols = line.strip().split()
             # set the params
             params[cols[0]] = eval(string.join(cols[1:]))
-        
+
         # return the params dict
         return params
-        
+
 
     def _load_timeseries(self,channel,eventOffsets,dur_samp,offset_samp):
         """
-        
+
         """
 
         # determine the file
-	eegfname = '%s.%03i' % (self.dataroot,channel)
-	if os.path.isfile(eegfname):
-	    efile = open(eegfname,'rb')
-	else:
-	    # try unpadded lead
-	    eegfname = '%s.%i' % (self.dataroot,channel)
-	    if os.path.isfile(eegfname):
-		efile = open(eegfname,'rb')
-	    else:
-		raise IOError('EEG file not found for channel %i and file root %s\n' 
-			      % (channel,self.dataroot))
-                
-	# loop over events
-	eventdata = []
+        eegfname = '%s.%03i' % (self.dataroot,channel)
+        if os.path.isfile(eegfname):
+            efile = open(eegfname,'rb')
+        else:
+            # try unpadded lead
+            eegfname = '%s.%i' % (self.dataroot,channel)
+            if os.path.isfile(eegfname):
+                efile = open(eegfname,'rb')
+            else:
+                raise IOError('EEG file not found for channel %i and file root %s\n' 
+                              % (channel,self.dataroot))
+
+        # loop over events
+        eventdata = []
 
         # # get the eventOffsets
         # if isinstance(eventInfo,TsEvents):
@@ -110,34 +110,34 @@ class RawBinaryEEG(DataWrapper):
         # else:
         #     eventOffsets = eventInfo
         # eventOffsets = np.asarray(eventOffsets)
-	# if len(eventOffsets.shape)==0:
-	#     eventOffsets = [eventOffsets]
-	for evOffset in eventOffsets:
-	    # seek to the position in the file
-	    thetime = offset_samp+evOffset
-	    efile.seek(self.nBytes*thetime,0)
+        # if len(eventOffsets.shape)==0:
+        #     eventOffsets = [eventOffsets]
+        for evOffset in eventOffsets:
+            # seek to the position in the file
+            thetime = offset_samp+evOffset
+            efile.seek(self.nBytes*thetime,0)
 
-	    # read the data
-	    data = efile.read(int(self.nBytes*dur_samp))
+            # read the data
+            data = efile.read(int(self.nBytes*dur_samp))
 
-	    # convert from string to array based on the format
-	    # hard codes little endian
-	    data = np.array(struct.unpack('<'+str(len(data)/self.nBytes)+self.fmtStr,data))
+            # convert from string to array based on the format
+            # hard codes little endian
+            data = np.array(struct.unpack('<'+str(len(data)/self.nBytes)+self.fmtStr,data))
 
-	    # make sure we got some data
-	    if len(data) < dur_samp:
-		raise IOError('Event with offset %d is outside the bounds of file %s.\n'
-			      % (evOffset,eegfname))
+            # make sure we got some data
+            if len(data) < dur_samp:
+                raise IOError('Event with offset %d is outside the bounds of file %s.\n'
+                              % (evOffset,eegfname))
 
-	    # append it to the events
-	    eventdata.append(data)
+            # append it to the events
+            eventdata.append(data)
 
         # calc the time range
         sampStart = offset_samp*samplesize
         sampEnd = sampStart + (dur_samp-1)*samplesize
         timeRange = np.linspace(sampStart,sampEnd,dur_samp)
 
-	# make it a timeseries
+        # make it a timeseries
         if isinstance(eventInfo,TsEvents):
             dims = [Dim('event', eventInfo.data, 'event'),
                     Dim('time',timeRange)]
@@ -150,9 +150,9 @@ class RawBinaryEEG(DataWrapper):
                                samplerate=self.samplerate)
 
         # multiply by the gain
-	eventdata *= self.gain
+        eventdata *= self.gain
 
-	
+
         return eventdata
 
 
@@ -167,54 +167,54 @@ def createEventsFromMatFile(matfile):
               "This file must contain an events structure" + \
               "with the name \"events\" (case sensitive)!\n" +\
               "(All other content of the file is ignored.)" % matfile 
-    
+
     # get num events
     numEvents = len(mat['events'])
 
     # determine the fieldnames and formats
     fields = mat['events'][0]._fieldnames
-    
+
     # create list with array for each field
     data = []
     hasEEGInfo = False
     for f,field in enumerate(fields):
-	# handle special cases
-	if field == 'eegfile':
-	    # we have eeg info
-	    hasEEGInfo = True
+        # handle special cases
+        if field == 'eegfile':
+            # we have eeg info
+            hasEEGInfo = True
 
-	    # get unique files
-	    eegfiles = np.unique(map(lambda x: str(x.eegfile),mat['events']))
-	    
-	    # make dictionary of data wrapers for the eeg files
-	    efile_dict = {}
-	    for eegfile in eegfiles:
-		efile_dict[eegfile] = RawBinaryEEG(eegfile)
+            # get unique files
+            eegfiles = np.unique(map(lambda x: str(x.eegfile),mat['events']))
 
-	    # Handle when the eegfile field is blank
-	    efile_dict[''] = None
-	
-	    # set the eegfile to the correct data wrapper
-	    newdat = np.array(map(lambda x: efile_dict[str(x.__getattribute__(field))],
-				 mat['events']))
-			
-	    # change field name to eegsrc
-	    fields[f] = 'eegsrc'
-	else:
-	    # get the data in normal fashion
-	    newdat = np.array(map(lambda x: x.__getattribute__(field),mat['events']))
+            # make dictionary of data wrapers for the eeg files
+            efile_dict = {}
+            for eegfile in eegfiles:
+                efile_dict[eegfile] = RawBinaryEEG(eegfile)
 
-	# append the data
-	data.append(newdat)
+            # Handle when the eegfile field is blank
+            efile_dict[''] = None
+
+            # set the eegfile to the correct data wrapper
+            newdat = np.array(map(lambda x: efile_dict[str(x.__getattribute__(field))],
+                                 mat['events']))
+
+            # change field name to eegsrc
+            fields[f] = 'eegsrc'
+        else:
+            # get the data in normal fashion
+            newdat = np.array(map(lambda x: x.__getattribute__(field),mat['events']))
+
+        # append the data
+        data.append(newdat)
 
     # allocate for new array
     newrec = np.rec.fromarrays(data,names=fields)
 
     # see if process into DataArray or Events
     if hasEEGInfo:
-	newrec = TsEvents(newrec)
+        newrec = TsEvents(newrec)
     else:
-	newrec = Events(newrec)
+        newrec = Events(newrec)
 
     return newrec
 
