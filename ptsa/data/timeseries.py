@@ -32,7 +32,7 @@ class TimeSeries(DimArray):
     time dimension and associated sample rate).  It also provides
     methods for manipulating the time dimension, such as resampling
     and filtering the data.
-    
+
     Parameters
     ----------
     data : {array_like}
@@ -102,10 +102,10 @@ class TimeSeries(DimArray):
                 'Samplerate must be positive! Provided value: '+
                 str(samplerate))
         ts.samplerate = samplerate
-        
+
         # convert to TimeSeries and return:
         return ts.view(cls)
-    
+
     def __setattr__(self, name, value):
         # ensure that tdim is a valid dimension name:
         if name == 'tdim':
@@ -144,15 +144,13 @@ class TimeSeries(DimArray):
             return ret.view(DimArray)
         else:
             return ret.view(self.__class__)
-    
-        
-    def remove_buffer(self, duration):
-	"""
-        Remove the desired buffer duration (in seconds) and reset the
-	time range.
 
-        Parameter
-        ---------
+
+    def remove_buffer(self, duration):
+        """Remove the desired buffer duration (in seconds) and reset the time range.
+
+        Parameters
+        ----------
         duration : {int,float,({int,float},{int,float})}
             The duration to be removed. The units depend on the samplerate:
             E.g., if samplerate is specified in Hz (i.e., samples per second),
@@ -162,26 +160,26 @@ class TimeSeries(DimArray):
             A single number causes the specified duration to be removed from the
             beginning and end. A 2-tuple can be passed in to specify different
             durations to be removed from the beginning and the end respectively.
-            
+
         Returns
         -------
         ts : {TimeSeries}
             A TimeSeries instance with the requested durations removed from the
             beginning and/or end.
         """
-	# see if we need to remove anything
+        # see if we need to remove anything
         duration = np.atleast_1d(duration)
         if len(duration) != 2:
             duration = duration.repeat(2)
         num_samp = np.round(self.samplerate * duration)
         # ensure that the number of samples are >= 0:
-	if np.any(num_samp<0):
+        if np.any(num_samp<0):
             raise ValueError('Duration must not be negative!'+
                              'Provided values: '+str(duration))
-        # remove the buffer from the data
-        return self.take(range(int(num_samp[0]),
-                               self.shape[self.taxis]-int(num_samp[1])),
-                         self.taxis)
+            # remove the buffer from the data
+            return self.take(range(int(num_samp[0]),
+                                   self.shape[self.taxis]-int(num_samp[1])),
+                             self.taxis)
 
     def filtered(self,freq_range,filt_type='stop',order=4):
         """
@@ -253,13 +251,13 @@ class TimeSeries(DimArray):
         if pad_to_pow2:
             padded_length = 2**next_pow2(len(time_range))
             padded_new_length = int(np.round(padded_length*resampled_rate/self.samplerate))
-            time_range = np.hstack([time_range, 
+            time_range = np.hstack([time_range,
                                     (np.arange(1,padded_length-len(time_range)+1)*np.diff(time_range[-2:]))+time_range[-1]])
 
         if loop_axis is None:
             # just do standard method on all data at once
             if pad_to_pow2:
-                newdat,new_time_range = resample(pad_to_next_pow2(np.asarray(self),axis=self.taxis), 
+                newdat,new_time_range = resample(pad_to_next_pow2(np.asarray(self),axis=self.taxis),
                                                  padded_new_length, t=time_range,
                                                  axis=self.taxis, window=window)
             else:
@@ -355,7 +353,7 @@ class TimeSeries(DimArray):
         Parameters
         ----------
         base_range: {tuple}
-            Tuple specifying the start and end time range (inclusive) 
+            Tuple specifying the start and end time range (inclusive)
             for the baseline.
 
         Returns
@@ -379,4 +377,4 @@ class TimeSeries(DimArray):
             attrs.pop(k,None)
         return TimeSeries(new_dat,self.tdim, self.samplerate,
                           dims=self.dims.copy(), **attrs)
-        
+
