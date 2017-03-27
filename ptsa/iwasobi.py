@@ -28,7 +28,7 @@ class IWASOBI():
         self.ar_max = ar_max
         self.rmax = rmax
         self.eps0 = eps0
-        
+
     def __call__(self, data):
 
         x = data
@@ -41,13 +41,13 @@ class IWASOBI():
         Xmean=x.astype(np.float64).mean(1)
         # x=x-Xmean*ones(1,N);  %%%%%%%%%  removing the sample mean
         x = np.subtract(x.astype(np.float64).T,Xmean).T
-        
+
         # T=length(x(1,:))-AR_order;
         T = N-self.ar_max
-        
+
         # C0=corr_est(x,T,AR_order);
         C0 = self.corr_est(x.astype(np.float64),T,self.ar_max)
-        
+
         # for k=2:AR_order+1
         #     ik=d*(k-1);
         #     C0(:,ik+1:ik+d)=0.5*(C0(:,ik+1:ik+d)+C0(:,ik+1:ik+d)');
@@ -59,12 +59,12 @@ class IWASOBI():
         # [Winit Ms] = uwajd(C0,20); %%% compute initial separation
         #                                %%% using uniform weights
         Winit,Ms = self.uwajd(C0,20)
- 
+
         # %conver
         # %t1 = cputime-time_start;
         # W=Winit;
         W = Winit.copy()
-        
+
         # for in = 1:num_iterations
         #     [H ARC]=weights(Ms,rmax,eps0);
         #     [W Ms]=wajd(C0,H,W,5);
@@ -73,10 +73,10 @@ class IWASOBI():
             H,ARC = self.weights(Ms,self.rmax,self.eps0)
             W,Ms = self.wajd(C0,H,W,5)
 
-            
+
         # ISR=CRLB4(ARC)/N;
         ISR = self.CRLB4(ARC)/np.float(N)
-        
+
         # %t1 = [t1 cputime-time_start];
         # signals=W*x+(W*Xmean)*ones(1,N);
         signals = np.add(np.dot(W,x).T,np.dot(W,Xmean)).T
@@ -114,7 +114,7 @@ class IWASOBI():
             C.append(np.linalg.inv(A))
 
         return np.concatenate(C,axis=1)
-            
+
         # # phi(2*K,1:M)=0;
         # phi[2*K-1,:M] = 0
         # # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -197,7 +197,7 @@ class IWASOBI():
 
         # AR = zeros(M,d);
         AR = np.zeros((M,d))
-        
+
         # for id=1:d
         for id in xrange(d):
             # AR(:,id)=[1; -toeplitz(R(1:M-1,id),R(1:M-1,id)')\R(2:M,id)];
@@ -245,7 +245,7 @@ class IWASOBI():
         #   end
         if a.shape[0] == 1:
             a = a.T
-            
+
         #   [p m] = size(a);    % pocet vektoru koef.AR modelu
         p,m = a.shape
         #   alfa = a;
@@ -392,13 +392,13 @@ class IWASOBI():
         """
         # [M K]=size(ARC);
         M,K = ARC.shape
-        
+
         # Rs=ar2r(ARC);
         Rs = self.ar2r(ARC)
-        
+
         # sum_Rs_s=zeros(K,K);
         sum_Rs_s = np.zeros((K,K))
-        
+
         # for s=0:M-1
         #     for t=0:M-1
         #         sum_Rs_s=sum_Rs_s+(ARC(s+1,:).*ARC(t+1,:))'*Rs(abs(s-t)+1,:);
@@ -702,7 +702,7 @@ class IWASOBI():
         # end %%%%%%%%%%% of for
         # end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% of wajd
         return W_est,Ms
-                                                                     
+
 
 def iwasobi(data, ar_max=10, rmax=0.99, eps0=5.0e-7):
     """

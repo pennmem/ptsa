@@ -28,7 +28,7 @@ def gen_perms(dat, group_var, nperms):
 
     # set the base permutation indices for each unique group
     p_ind = {u:np.arange(len(grpind[u])) for u in ugrp}
-    
+
     # start with actual data
     perms = [np.arange(len(dat))]
 
@@ -64,7 +64,7 @@ def ttest_ind_z_one_sided(X,Y):
 
     # convert the p to a z
     z = norm.ppf(p)
-    
+
     return z
 
 

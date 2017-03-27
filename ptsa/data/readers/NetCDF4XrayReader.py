@@ -1,6 +1,6 @@
 __author__ = 'm'
 
-import xray
+import xarray
 import numpy as np
 from ptsa.data.readers import BaseReader
 
@@ -11,13 +11,13 @@ class NetCDF4XrayReader(BaseReader):
         self.writer_version = 1
 
     def read(self, filename):
-        ds = xray.open_dataset(filename)
+        ds = xarray.open_dataset(filename)
 
         if ds['__writerclass__'] != self.writer_class_name or ds['__version__'] != self.writer_version:
             print('\n\n*****WARNING*****: this reader may not be able to properly read dataset written with writer %s version:  %s \n\n' % (
             ds['__writerclass__'].values, ds['__version__'].values))
 
-        array = xray.DataArray(ds['array'])
+        array = xarray.DataArray(ds['array'])
 
         # reconstructing axes
         for axis_name in ds['axis_names'].values:

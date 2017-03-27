@@ -136,9 +136,9 @@ class TimeSeriesXray(xray.DataArray):
 
 
     def remove_buffer(self, duration):
-	"""
+        """
         Remove the desired buffer duration (in seconds) and reset the
-	time range.
+        time range.
 
         Parameter
         ---------

@@ -62,7 +62,7 @@ def lmer_feature(formula_str, dat, perms=None,
     """
     Run LMER on a number of permutations of the predicted data.
 
-    
+
     """
     # get the perm_var
     perm_var = formula_str.split('~')[0].strip()
@@ -80,9 +80,9 @@ def lmer_feature(formula_str, dat, perms=None,
                         if (k in factors) or isinstance(dat[k][0],str) 
                         else dat[k]) 
                      for k in dat.dtype.names})
-    
+
     #rdf = com.convert_to_r_dataframe(pd.DataFrame(dat),strings_as_factors=True)
-    
+
 
     # get the column index
     col_ind = list(rdf.colnames).index(perm_var)
@@ -149,7 +149,7 @@ class LMER():
         for k in df.dtype.names:
             if isinstance(df[k][0],str) and k not in factors:
                 factors[k] = MissingArg
-                
+
         for f in factors:
             if factors[f] is None:
                 factors[f] = MissingArg
@@ -215,7 +215,7 @@ class LMER():
             except:
                 continue
                 #tvals.append(np.array([np.nan]))
-            
+
             # save the model
             if self._ms is None:
                 self._ms = ms
@@ -314,7 +314,7 @@ def sparse_stable_svd(R, nboot=50):
 
     # calc the original SVD
     U, s, Vh = np.linalg.svd(np.concatenate(R), full_matrices=False)
-    
+
     # do the boots
     rVs = []
     for i in range(len(boots)):
@@ -323,12 +323,12 @@ def sparse_stable_svd(R, nboot=50):
         rmat = procrustes(U,Ub)
 
         rVs.append(np.dot(rmat,np.dot(diagsvd(sb,len(sb),len(sb)),Vhb)))
-        
+
     # get the bootstrap ratios
     rVs = np.array(rVs)
     Vs = np.dot(diagsvd(s,len(s),len(s)),Vh)
     boot_ratio = Vs/rVs.std(0)
-    
+
     # pass the boot ratios through fdrtool to pick stable features
     fachist = np.histogram(boot_ratio.flatten(),bins=500)
     peak = fachist[1][fachist[0]==np.max(fachist[0])][0]
@@ -468,7 +468,7 @@ def _eval_model(model_id, perm=None, boot=None):
     else:
         run_null = False
         mer_null = mm._mer_null
-    
+
     # loop over LVs performing LMER
     #Dw = []
     res = []
@@ -731,7 +731,7 @@ class MELD(object):
             else:
                 # index into it with ind_ind
                 row_ind = row_mask[ind_ind]
-            
+
             # extract that group's A,M,O
             # first save the observations (rows of A)
             self._O[g] = ind_data[ind_ind][row_ind]
@@ -769,7 +769,7 @@ class MELD(object):
 
             # reshape M, so we don't have to do it repeatedly
             self._M[g] = self._D[g].copy() #dep_data[ind].reshape((dep_data[ind].shape[0],-1))
-                
+
             # normalize M
             if use_norm:
                 self._M[g] -= self._M[g].mean(0)
@@ -779,7 +779,7 @@ class MELD(object):
             rdf = DataFrame({k:(FactorVector(self._O[g][k]) 
                                 if k in factors else self._O[g][k]) 
                              for k in self._O[g].dtype.names})
-            
+
             # model spec as data frame
             ms = r['data.frame'](r_model_matrix(Formula(fe_formula), data=rdf))
 
@@ -1030,9 +1030,9 @@ class MELD(object):
         for i in range(1,len(ind)):
             if pvals[names[ind[i]]] < pvals[names[ind[i-1]]]:
                 pvals[names[ind[i]]] = pvals[names[ind[i-1]]]
-            
+
         return pvals
-        
+
     @property
     def boot_ratio(self):
         """Return the bootstrap ratio for each feature.
@@ -1082,7 +1082,7 @@ class MELD(object):
 
             # append the qvals
             qv[good_ind] = np.array(results.rx('qval'))
-            
+
             qvals.append(qv.reshape(self._feat_shape))
 
         # convert to recarray
@@ -1128,7 +1128,7 @@ if __name__ == '__main__':
     import scipy.ndimage
     dep_data = scipy.ndimage.gaussian_filter(dep_data, [0,1,1])
     dep_data_s = scipy.ndimage.gaussian_filter(dep_data_s, [0,1,1])
-    
+
 
     # # run without signal
     # # set up the lmer_pht

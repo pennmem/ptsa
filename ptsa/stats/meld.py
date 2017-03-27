@@ -95,7 +95,7 @@ class LMER():
         for k in df.dtype.names:
             if isinstance(df[k][0],str) and k not in factors:
                 factors[k] = MissingArg
-                
+
         for f in factors:
             if factors[f] is None:
                 factors[f] = MissingArg
@@ -160,7 +160,7 @@ class LMER():
             except:
                 continue
                 #tvals.append(np.array([np.nan]))
-            
+
             # save the model
             if self._ms is None:
                 self._ms = ms
@@ -258,7 +258,7 @@ def _eval_model(model_id, perm=None):
 
     # turn R into array
     R_nocat = np.array(R)
-    
+
     # zero invariant features
     feat_mask = np.isnan(R)
     R_nocat[feat_mask] = 0.0
@@ -271,7 +271,7 @@ def _eval_model(model_id, perm=None):
     else:
         # turn to Z
         R_nocat = np.arctanh(R_nocat)
-                
+
     # pick only stable features
     # NOTE: R_nocat is no longer R, it's either TFCE or Z
     Rtbr = pick_stable_features(R_nocat, nboot=mm._feat_nboot)
@@ -320,7 +320,7 @@ def _eval_model(model_id, perm=None):
         mer = None
     else:
         mer = mm._mer
-    
+
     # loop over LVs performing LMER
     res = []
     for i in range(len(Vh)):
@@ -393,7 +393,7 @@ def _eval_model(model_id, perm=None):
     if perm is None:
         # return tvals, tfs, and R for actual non-permuted data
         out = (ts,tfs,_R,feat_mask,_ss,mer)
-    
+
     else:
         # return the tvals for the terms
         out = (ts,tfs,~feat_mask[0])
@@ -514,7 +514,7 @@ class MELD(object):
             else:
                 # index into it with ind_ind
                 row_ind = row_mask[ind_ind]
-            
+
             # extract that group's A,M,O
             # first save the observations (rows of A)
             self._O[g] = ind_data[ind_ind][row_ind]
@@ -556,7 +556,7 @@ class MELD(object):
 
             # reshape M, so we don't have to do it repeatedly
             self._M[g] = self._D[g].copy() 
-            
+
             # normalize M
             if use_norm:
                 self._M[g] -= self._M[g].mean(0)
@@ -566,7 +566,7 @@ class MELD(object):
             rdf = DataFrame({k:(FactorVector(self._O[g][k])
                                 if k in factors else self._O[g][k])
                              for k in self._O[g].dtype.names})
-            
+
             # model spec as data frame
             ms = r['data.frame'](r_model_matrix(Formula(fe_formula), data=rdf))
 
@@ -773,7 +773,7 @@ class MELD(object):
         pfts = np.rec.fromarrays(pfts, names=','.join(names))
         return pfts
 
-    
+
 
 if __name__ == '__main__':
     np.random.RandomState(seed = 42)
@@ -790,7 +790,7 @@ if __name__ == '__main__':
     use_ranks = False
     smoothed = False
     memmap = False
-    
+
     s = np.concatenate([np.array(['subj%02d'%i]*nobs) for i in range(nsubj)])
     beh = np.concatenate([np.array([1]*(nobs/2) + [0]*(nobs/2)) 
                           for i in range(nsubj)])
@@ -811,7 +811,7 @@ if __name__ == '__main__':
         for j in range(2):
             dep_data_s[:,4,i+j] += (ind_data['beh'] * (i+1)/50.)
             dep_data_s[:,5,i+j] += (ind_data['beh'] * (i+1)/50.)
-    
+
     # smooth the data
     if smoothed:
         import scipy.ndimage

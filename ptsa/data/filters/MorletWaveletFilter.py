@@ -3,7 +3,7 @@ __author__ = 'm'
 import time
 
 import numpy as np
-import xray
+import xarray as xray
 from scipy.fftpack import fft, ifft
 
 from ptsa.data.TimeSeriesX import TimeSeriesX

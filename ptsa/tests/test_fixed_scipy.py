@@ -22,7 +22,7 @@ class TestFixed_Scipy(TestCase):
         assert_equal(len(x),len(y))
         # Test if complete wavelet is less than incomplete wavelet:
         assert_array_less(x,y)
-        
+
         x = wavelets.morlet(10,50,complete=False)
         y = wavelets.morlet(10,50,complete=True)
         # For large widths complete and incomplete wavelets should be
@@ -35,13 +35,13 @@ class TestFixed_Scipy(TestCase):
                      1.73752399e-09 -9.84327394e-25j])
         y = wavelets.morlet(3,w=2,complete=True)
         assert_array_almost_equal(x,y)
-        
+
         x = N.array([2.00947715e-09 +9.84327394e-25j,
                      7.51125544e-01 +0.00000000e+00j,
                      2.00947715e-09 -9.84327394e-25j])
         y = wavelets.morlet(3,w=2,complete=False)
         assert_array_almost_equal(x,y,decimal=2)
-        
+
         x = wavelets.morlet(10000,s=4,complete=True)
         y = wavelets.morlet(20000,s=8,complete=True)[5000:15000]
         assert_array_almost_equal(x,y,decimal=2)

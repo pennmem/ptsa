@@ -96,7 +96,7 @@ def topoplot(values=None, labels=None, sensors=None, axes=None,
         a=plt.subplot(1,1,1, aspect='equal')
 
     plt.axis(axis_props)
-    
+
     if True: # head should be plotted
         # deal with the head props
         hprops = default_head_props.copy()
@@ -145,13 +145,13 @@ def topoplot(values=None, labels=None, sensors=None, axes=None,
         rightear_x,rightear_y=pol2cart(rightear_polar_angle,
                                        rightear_polar_radius)
         leftear_x,leftear_y=pol2cart(leftear_polar_angle,leftear_polar_radius)
-        
+
         # Move ears with head:
         rightear_x = rightear_x + center[0]
         rightear_y = rightear_y + center[1]
         leftear_x = leftear_x + center[0]
         leftear_y = leftear_y + center[1]
-        
+
         ear_right = plt.Line2D(rightear_x,rightear_y,color=hprops['head_linecolor'],
                                linewidth=hprops['ear_linewidth'],
                                solid_joinstyle='round',
@@ -160,7 +160,7 @@ def topoplot(values=None, labels=None, sensors=None, axes=None,
                               linewidth=hprops['ear_linewidth'],
                               solid_joinstyle='round',
                               solid_capstyle='round')
-        
+
         a.add_artist(head)
         a.add_artist(nose)
         a.add_artist(ear_right)
@@ -171,7 +171,7 @@ def topoplot(values=None, labels=None, sensors=None, axes=None,
             plt.xlim(-radius*1.2+center[0],radius*1.2+center[0])
             plt.ylim(-radius*1.2+center[1],radius*1.2+center[1]) 
         return("No sensor locations specified!")
-    
+
     # Convert & rotate sensor locations:
     angles=sensors[0]
     angles=angles+nose_dir
@@ -181,7 +181,7 @@ def topoplot(values=None, labels=None, sensors=None, axes=None,
     radii = radii*(radius/0.5)
     # plotting radius is determined by largest sensor radius:
     plot_radius = max(radii)*(1.0+plot_radius_buffer)
-    
+
     # convert electrode locations to cartesian coordinates for plotting:
     x,y = pol2cart(angles,radii)
     x = x + center[0]
@@ -203,7 +203,7 @@ def topoplot(values=None, labels=None, sensors=None, axes=None,
         for i in range(len(labels)):
             a.text(x[i],y[i],labels[i],**lprops)
 
-        
+
     if values is None:
         return #('No values to plot specified!')
     if np.size(values) != np.size(sensors,1):
@@ -257,19 +257,19 @@ def topoplot(values=None, labels=None, sensors=None, axes=None,
         # no mask which results in showing interpolated values for the
         # square surrounding the head.
         pass
-    
+
     # calc the grid
     zi = griddata((x,y),z,(xi,yi),method='cubic')
 
     # If no colormap is specified, use default colormap:
     if cmap is None:
         cmap = plt.get_cmap()
-        
+
     # make contours
     cprops = default_contour_props.copy()
     if not contour_props is None:
         cprops.update(contour_props)
-    
+
     if np.any(cprops['linewidths'] > 0):
         plt.contour(xi,yi,zi,contours,**cprops)
 

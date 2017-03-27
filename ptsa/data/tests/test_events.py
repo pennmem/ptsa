@@ -363,7 +363,7 @@ class test_Events(TestCase):
             assert_array_equal(test_a[f],test_b[f])
             self.assertTrue(test_a.dtype[f]==test_b.dtype[f])
 
-        
+
     def test_get_data(self):
         # get data directly from the wrapper
         ed = self.aw.get_event_data(3,self.eoffsets,.5,-.1,.25)

@@ -23,7 +23,7 @@ def buttfilt(dat,freq_range,sample_rate,filt_type,order,axis=-1):
     """Wrapper for a Butterworth filter.
 
     """
-    
+
     # make sure dat is an array
     dat = asarray(dat)
 
@@ -59,7 +59,7 @@ def buttfilt(dat,freq_range,sample_rate,filt_type,order,axis=-1):
 
 def decimate(x, q, n=None, ftype='iir', axis=-1):
     """Downsample the signal x by an integer factor q, using an order n filter
-    
+
     By default, an order 8 Chebyshev type I filter is used or a 30 point FIR 
     filter with hamming window if ftype is 'fir'.
 
@@ -72,7 +72,7 @@ def decimate(x, q, n=None, ftype='iir', axis=-1):
              'fir' filter)
         ftype -- type of the filter; can be 'iir' or 'fir'
         axis -- the axis along which the filter should be applied
-    
+
     Outputs:
         y -- the downsampled signal
 
@@ -170,7 +170,7 @@ def filtfilt(b,a,x):
     # both are needed for filtfilt
 
     (y,zf)=lfilter(b,a,s,-1,zi*s[0])
-    
+
     (y,zf)=lfilter(b,a,flipud(y),-1,zi*y[-1])
 
     return flipud(y[edge-1:-edge+1])
@@ -198,7 +198,7 @@ def filtfilt2(b,a,x,axis=-1):
     #Grow the signal to have edges for stabilizing 
     #the filter with inverted replicas of the signal
     #s=r_[2*x[0]-x[edge:1:-1],x,2*x[-1]-x[-1:-edge:-1]]
-    
+
     bRange = range(edge,1,-1)
     sBeg = 2*x.take([0],axis).repeat(len(bRange),axis) - x.take(bRange,axis)
     eRange = range(-1,-edge,-1)
@@ -222,7 +222,7 @@ def filtfilt2(b,a,x,axis=-1):
     # flip it back
     y = y.take(range(y.shape[axis]-1,-1,-1),axis)
     return y.take(range(edge-1,y.shape[axis]-edge+1),axis)
-    
+
 
 # if __name__=='__main__':
 

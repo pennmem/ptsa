@@ -100,9 +100,9 @@ def tsZtransPow(freqs,tseries,zTrans=True,log=True,width=5,resample=None,
     # z transform using reshapedims to make the arrays compatible:
     powerAll.data = powerAll.data - zmean.data.reshape(reshapedims)
     powerAll.data = powerAll.data / zstd.data.reshape(reshapedims)
-    
+
     if to_return == 'both':
         return phaseAll,powerAll,(zmean,zstd)
     else:
         return powerAll,(zmean,zstd)
-        
+

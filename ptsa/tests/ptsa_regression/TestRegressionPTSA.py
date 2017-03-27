@@ -319,7 +319,7 @@ class TestRegressionPTSA(unittest.TestCase):
         argsort_eegs = eegs.argsort(axis='time')
         argsort_base_eegs = np.argsort(base_eegs,axis=base_eegs.get_axis_num('time'))
         assert_array_equal(argsort_eegs, argsort_base_eegs)
-                
+
         # could not get compress to work using timeseries.compress method 
         # compress_eegs = eegs.compress(condition=[0,2], axis='time')
         # compress_base_eegs = np.compress(condition=[0,1], a=base_eegs.data, axis=base_eegs.get_axis_num('channels'))
@@ -356,16 +356,16 @@ class TestRegressionPTSA(unittest.TestCase):
         take_eegs = eegs.take(indices=[2,4,6,8],axis='events')
         take_base_eegs = base_eegs.isel(events=[2,4,6,8])
         assert_array_equal(take_eegs , take_base_eegs)
-        
+
         trace_eegs = eegs.trace(offset=0, axis1=0,axis2=2)
         trace_base_eegs = np.trace(base_eegs, offset=0, axis1=base_eegs.get_axis_num('channels'),
                                    axis2=base_eegs.get_axis_num('time'))
         assert_array_equal(trace_eegs , trace_base_eegs)
-        
+
         var_eegs = eegs.var(axis='time')
         var_base_eegs = base_eegs.var(dim='time')
         assert_array_equal(var_eegs, var_base_eegs)
-        
+
     def test_wavelets(self):
         eegs = self.eegs[:, :, :-1]
         base_eegs = self.base_eegs

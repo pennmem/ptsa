@@ -143,7 +143,7 @@ def sparse_dim_connectivity(dim_con):
 
     # reshape them
     dind = [ind[i].reshape((nelements,1)) for i in range(ind.shape[0])]
-    
+
     # fill the rows and columns
     rows = []
     cols = []
@@ -194,7 +194,7 @@ def sensor_neighbors(sensor_locs):
 
     # get info about the sensors
     nsens = len(sensor_locs)
-    
+
     # do the triangulation
     d = spatial.Delaunay(sensor_locs)
 
@@ -241,7 +241,7 @@ def tfce(x, dt=.1, E=2/3., H=2.0, tail=0, connectivity=None):
 
     # get starting values for data (reshape it b/c needs to be 1d)
     xt = np.zeros_like(x).reshape(np.prod(x.shape))
-    
+
     # make own connectivity if not provided so that we have consistent return values
     if connectivity is None:
         connectivity = sparse_dim_connectivity([simple_neighbors_1d(n) for n in x.shape])
