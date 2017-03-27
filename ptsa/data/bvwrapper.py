@@ -13,8 +13,11 @@ from basewrapper import BaseWrapper
 # global imports
 import numpy as np
 import os.path
-from configparser import SafeConfigParser
 import io
+try:
+    from configparser import SafeConfigParser
+except ImportError:
+    from ConfigParser import SafeConfigParser
 
 class BVWrapper(BaseWrapper):
     """
