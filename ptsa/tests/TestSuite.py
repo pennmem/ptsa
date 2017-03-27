@@ -3,7 +3,7 @@ __author__ = 'm'
 import unittest
 from .TestReaders import TestReaders
 from .ptsa_regression.TestRegressionPTSA import TestRegressionPTSA
-from .TestFilters import TestFilters
+from .testfilters import TestFilters
 
 if __name__=='__main__':
     test_suite = unittest.TestSuite()
