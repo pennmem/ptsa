@@ -16,7 +16,7 @@ from distutils.command.build import build
 
 # for windows install see http://stackoverflow.com/questions/2817869/error-unable-to-find-vcvarsall-bat
 # for visual studio compilation you need to SET VS90COMNTOOLS=%VS140COMNTOOLS%
-if "win" in sys.platform:
+if sys.platform.startswith("win"):
     os.environ["VS90COMNTOOLS"] = os.environ["VS140COMNTOOLS"]
 
 
@@ -46,7 +46,7 @@ extensions_dir = join(root_dir, 'ptsa', 'extensions')
 circ_stat_dir = join(root_dir,'ptsa','extensions','circular_stat')
 
 if sys.platform.startswith('darwin'):
-    extra_compile_args = ['-std=c++11', '-stdlib=libc++', '-mmacosx-version-min=10.7']
+    extra_compile_args = ['-std=c++11', '-stdlib=libc++', '-mmacosx-version-min=10.8']
 elif sys.platform.startswith('win'):
     extra_compile_args = []
 else:
