@@ -1,6 +1,6 @@
 __author__ = 'm'
 
-import xray
+import xarray as xray
 
 
 # xray.backends.api.WRITEABLE_STORES['netcdf4'] = xray.backends.NetCDF4DataStoreRAM
