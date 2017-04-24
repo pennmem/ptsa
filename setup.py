@@ -5,6 +5,7 @@ import sys
 from subprocess import check_call
 from contextlib import contextmanager
 from zipfile import ZipFile
+import site
 
 from setuptools import setup, Extension, Command
 from setuptools.command.build_py import build_py
@@ -19,6 +20,13 @@ extensions_dir = osp.join(root_dir, 'ptsa', 'extensions')
 circ_stat_dir = osp.join(root_dir, 'ptsa', 'extensions', 'circular_stat')
 third_party_build_dir = osp.join(root_dir, build_subdir, 'third_party_build')
 third_party_install_dir = osp.join(root_dir, build_subdir, 'third_party_install')
+
+for path in site.getsitepackages():
+    if path.endswith("site-packages"):
+        site_packages = path
+        break
+else:
+    raise RuntimeError("site-packages not found?!?")
 
 # see recipe http://stackoverflow.com/questions/12491328/python-distutils-not-include-the-swig-generated-module
 
@@ -134,7 +142,10 @@ class BuildFftw(Command):
                 with ZipFile(archive) as zfile:
                     zfile.extractall()
 
-                shutil.copytree(build_dir, third_party_install_dir)
+                try:
+                    shutil.copytree(build_dir, third_party_install_dir)
+                except OSError:
+                    print("WARNING: skipping copying fftw contents (already exist?)")
         else:
             # Extract
             name = "fftw-3.3.4"
@@ -165,8 +176,17 @@ class CustomBuild(build_py):
 class CustomInstall(install):
     def run(self):
         self.run_command("build_fftw")
-        # self.run_command("build_py")
         install.run(self)
+
+        if sys.platform.startswith("win"):
+            # FIXME: copy DLLs in a less stupid way
+            dll_path = osp.join(third_party_install_dir, "libfftw3-3.dll")
+            ext_path = osp.join(site_packages, "ptsa", "extensions")
+            print(site_packages)
+            morlet_path = osp.join(ext_path, "morlet")
+            circ_stat_path = osp.join(ext_path, "circular_stat")
+            shutil.copy(dll_path, morlet_path)
+            shutil.copy(dll_path, circ_stat_path)
 
 
 ext_modules = [
