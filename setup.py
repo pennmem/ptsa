@@ -1,15 +1,13 @@
 import os
 import os.path as osp
 import sys
-import shutil
 from subprocess import check_call
 
 from setuptools import setup, Extension, Command
-from setuptools.command.build_ext import build_ext
 from setuptools.command.build_py import build_py
 from setuptools.command.install import install
 import distutils
-from distutils.sysconfig import get_python_lib  # used to determine location of site-packages
+import numpy as np
 
 root_dir = osp.dirname(osp.abspath(__file__))
 build_subdir = 'build'
@@ -43,7 +41,6 @@ def get_numpy_include_dir():
     have setuptools fetch numpy for us if we don't have it yet.
 
     """
-    import numpy as np
     return np.get_include()
 
 
