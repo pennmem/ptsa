@@ -93,7 +93,8 @@ def get_compiler_args():
         return ['-std=c++11']
 
 
-class CustomCommand(Command):
+class BuildFftw(Command):
+    description = "Build libfftw"
     user_options = []
 
     def initialize_options(self):
@@ -102,37 +103,39 @@ class CustomCommand(Command):
     def finalize_options(self):
         pass
 
-
-class BuildFftw(CustomCommand):
-    description = "Build libfftw"
-
     def run(self):
+        try:
+            os.makedirs(third_party_build_dir)
+        except OSError:  # directories likely already exist
+            pass
+
         if sys.platform.startswith("win"):
             raise OSError("FIXME Windows not yet supported")
 
-        # Extract
-        name = "fftw-3.3.4"
-        tarball = name + ".tar.gz"
-        archive = osp.join(root_dir, 'third_party', tarball)
-        check_call(['tar', '-xzf', archive, '-C', third_party_build_dir])
+        else:
+            # Extract
+            name = "fftw-3.3.4"
+            tarball = name + ".tar.gz"
+            archive = osp.join(root_dir, 'third_party', tarball)
+            check_call(['tar', '-xzf', archive, '-C', third_party_build_dir])
 
-        fftw_src_dir = osp.join(third_party_build_dir, name)
+            fftw_src_dir = osp.join(third_party_build_dir, name)
 
-        orig_dir = os.getcwd()
+            orig_dir = os.getcwd()
 
-        try:
-            os.chdir(fftw_src_dir)
+            try:
+                os.chdir(fftw_src_dir)
 
-            # add -fPIC c and cpp flags
-            os.environ['CFLAGS'] = '-fPIC -O3'
-            os.environ['CPPFLAGS'] = '-fPIC -O3'
-            os.environ['CXXFLAGS'] = '-fPIC -O3'
+                # add -fPIC c and cpp flags
+                os.environ['CFLAGS'] = '-fPIC -O3'
+                os.environ['CPPFLAGS'] = '-fPIC -O3'
+                os.environ['CXXFLAGS'] = '-fPIC -O3'
 
-            check_call(['./configure', '--prefix=' + third_party_install_dir])
-            check_call(['make'])
-            check_call(['make', 'install'])
-        finally:
-            os.chdir(orig_dir)
+                check_call(['./configure', '--prefix=' + third_party_install_dir])
+                check_call(['make'])
+                check_call(['make', 'install'])
+            finally:
+                os.chdir(orig_dir)
 
 
 class CustomBuild(build_ext):
@@ -143,10 +146,8 @@ class CustomBuild(build_ext):
         pass
 
     def run(self):
-        build_ext.run(self)
         self.run_command("build_fftw")
-        # self.run_command("swigify")
-        # build_ext.run(self)
+        build_ext.run(self)
 
 
 ext_modules = [
@@ -196,7 +197,7 @@ setup(
     url='https://github.com/maciekswat/ptsa_new',
     cmdclass={
         'build_fftw': BuildFftw,
-        # 'build_ext': CustomBuild
+        'build_ext': CustomBuild
     },
     ext_modules=ext_modules,
 
@@ -231,8 +232,8 @@ setup(
         'ptsa.stats',
         'dimarray',
         'dimarray.tests'
-    ],
-    py_modules=['ptsa.extensions.morlet', 'ptsa.extensions.circular_stat']
+    ]
+    # py_modules=['ptsa.extensions.morlet', 'ptsa.extensions.circular_stat']
 )
 
 # FIXME
