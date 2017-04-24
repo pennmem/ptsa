@@ -4,8 +4,19 @@ PTSA README
 For installation instructions, documentation and tutorials please see
 http://ptsa.readthedocs.io/en/latest/
 
-Windows
--------
+Installation
+------------
 
-Before running setup.py, you need to extract the contents of
-third_party/fftw-3.3.5-dll64.zip to third_part/fftw.
+Install dependencies:
+
+.. code-block:: shell-session
+
+   conda install -y numpy pandas scipy xarray pywavelets swig
+
+Install:
+
+.. code-block:: shell-session
+
+   python setup.py install
+
+TODO: create conda packages for faster installation
