@@ -146,7 +146,7 @@ class CustomBuild(build_ext):
         pass
 
     def run(self):
-        self.run_command("build_fftw")
+        # self.run_command("build_fftw")
         build_ext.run(self)
 
 
@@ -211,7 +211,6 @@ setup(
         "pandas",
         "PyWavelets"
     ],
-    # package_dir={},
     packages=[
         'ptsa',
         'ptsa.extensions.morlet',
@@ -228,12 +227,10 @@ setup(
         'ptsa.data.tests',
         'ptsa.data.edf',
         'ptsa.plotting',
-        'ptsa.plotting.tests',
         'ptsa.stats',
         'dimarray',
         'dimarray.tests'
     ]
-    # py_modules=['ptsa.extensions.morlet', 'ptsa.extensions.circular_stat']
 )
 
 # FIXME
