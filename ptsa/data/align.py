@@ -10,6 +10,7 @@
 
 # methods for aligning events and eeg data
 
+from __future__ import print_function
 import os
 import csv
 import numpy as np
@@ -104,7 +105,7 @@ def times_to_offsets_old(eeg_times, eeg_offsets, beh_times,
     # pick beginning and end (needle in haystack)
     s_ind = None
     e_ind = None
-    for i in xrange(len(annot_ms)-window):
+    for i in range(len(annot_ms)-window):
         s_ind = find_needle_in_haystack(np.diff(annot_ms[i:i+window]),
                                         np.diff(pulse_ms),thresh_ms)
         if not s_ind is None:
@@ -114,7 +115,7 @@ def times_to_offsets_old(eeg_times, eeg_offsets, beh_times,
     start_annot_vals = annot_ms[i:i+window]
     start_pulse_vals = pulse_ms[s_ind:s_ind+window]
 
-    for i in xrange(len(annot_ms)-window):
+    for i in range(len(annot_ms)-window):
         e_ind = find_needle_in_haystack(np.diff(annot_ms[::-1][i:i+window]),
                                         np.diff(pulse_ms[::-1]),thresh_ms)
         if not e_ind is None:
