@@ -1,8 +1,6 @@
-__author__ = 'm'
-
 import unittest
 
-from numpy.testing import *
+# from numpy.testing import *
 # from unittest import *
 
 from EventReadersTestBase import EventReadersTestBase
