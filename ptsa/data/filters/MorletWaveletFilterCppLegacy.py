@@ -6,9 +6,7 @@ import ptsa.data.common.xr as xr
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.filters import BaseFilter
-# from ptsa.extensions import morlet
-# from ptsa.extensions.morlet.morlet import MorletWaveletTransform
-from ptsa.extensions import MorletWaveletTransform
+from ptsa.extensions.morlet.morlet import MorletWaveletTransform
 from ptsa.extensions import morlet
 
 
