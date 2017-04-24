@@ -1,7 +1,10 @@
 import os
 import os.path as osp
+import shutil
 import sys
 from subprocess import check_call
+from contextlib import contextmanager
+from zipfile import ZipFile
 
 from setuptools import setup, Extension, Command
 from setuptools.command.build_py import build_py
@@ -23,6 +26,15 @@ third_party_install_dir = osp.join(root_dir, build_subdir, 'third_party_install'
 # for visual studio compilation you need to SET VS90COMNTOOLS=%VS140COMNTOOLS%
 if sys.platform.startswith("win"):
     os.environ["VS90COMNTOOLS"] = os.environ["VS140COMNTOOLS"]
+
+
+@contextmanager
+def chdir(path):
+    """Change to a directory and then change back."""
+    orig_cwd = os.getcwd()
+    os.chdir(path)
+    yield
+    os.chdir(orig_cwd)
 
 
 def check_dependencies():
@@ -109,8 +121,20 @@ class BuildFftw(Command):
             pass
 
         if sys.platform.startswith("win"):
-            raise OSError("FIXME Windows not yet supported")
+            build_dir = osp.join(third_party_build_dir, "fftw")
+            archive = osp.join(root_dir, 'third_party', 'fftw-3.3.5-dll64.zip')
 
+            try:
+                os.makedirs(build_dir)
+            except OSError:
+                pass
+
+            with chdir(build_dir):
+                # Extract. Windows binaries are already built.
+                with ZipFile(archive) as zfile:
+                    zfile.extractall()
+
+                shutil.copytree(build_dir, third_party_install_dir)
         else:
             # Extract
             name = "fftw-3.3.4"
@@ -118,13 +142,9 @@ class BuildFftw(Command):
             archive = osp.join(root_dir, 'third_party', tarball)
             check_call(['tar', '-xzf', archive, '-C', third_party_build_dir])
 
-            fftw_src_dir = osp.join(third_party_build_dir, name)
+            build_dir = osp.join(third_party_build_dir, name)
 
-            orig_dir = os.getcwd()
-
-            try:
-                os.chdir(fftw_src_dir)
-
+            with chdir(build_dir):
                 # add -fPIC c and cpp flags
                 # Supposedly we could only use CPPFLAGS: http://stackoverflow.com/a/5542170
                 os.environ['CFLAGS'] = '-fPIC -O3'
@@ -134,8 +154,6 @@ class BuildFftw(Command):
                 check_call(['./configure', '--prefix=' + third_party_install_dir])
                 check_call(['make'])
                 check_call(['make', 'install'])
-            finally:
-                os.chdir(orig_dir)
 
 
 class CustomBuild(build_py):
