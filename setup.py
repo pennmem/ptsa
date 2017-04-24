@@ -6,6 +6,8 @@ from subprocess import check_call
 
 from setuptools import setup, Extension, Command
 from setuptools.command.build_ext import build_ext
+from setuptools.command.build_py import build_py
+from setuptools.command.install import install
 import distutils
 from distutils.sysconfig import get_python_lib  # used to determine location of site-packages
 
@@ -127,6 +129,7 @@ class BuildFftw(Command):
                 os.chdir(fftw_src_dir)
 
                 # add -fPIC c and cpp flags
+                # Supposedly we could only use CPPFLAGS: http://stackoverflow.com/a/5542170
                 os.environ['CFLAGS'] = '-fPIC -O3'
                 os.environ['CPPFLAGS'] = '-fPIC -O3'
                 os.environ['CXXFLAGS'] = '-fPIC -O3'
@@ -138,16 +141,17 @@ class BuildFftw(Command):
                 os.chdir(orig_dir)
 
 
-class CustomBuild(build_ext):
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
+class CustomBuild(build_py):
     def run(self):
-        # self.run_command("build_fftw")
-        build_ext.run(self)
+        self.run_command("build_fftw")
+        build_py.run(self)
+
+
+class CustomInstall(install):
+    def run(self):
+        self.run_command("build_fftw")
+        # self.run_command("build_py")
+        install.run(self)
 
 
 ext_modules = [
@@ -197,7 +201,8 @@ setup(
     url='https://github.com/maciekswat/ptsa_new',
     cmdclass={
         'build_fftw': BuildFftw,
-        'build_ext': CustomBuild
+        'build_py': CustomBuild,
+        'install': CustomInstall
     },
     ext_modules=ext_modules,
 
@@ -230,18 +235,8 @@ setup(
         'ptsa.stats',
         'dimarray',
         'dimarray.tests'
-    ]
+    ],
+
+    # Needs to be separate due to the way they are built as extensions...
+    py_modules=['ptsa.extensions.morlet', 'ptsa.extensions.circular_stat']
 )
-
-# FIXME
-if False:
-    # copying fftw .dll - have to find better way of doing it "distutils-style"...
-    shutil.copy(
-        src=fftw_lib_abspath,
-        dst=osp.join(get_python_lib(), 'ptsa', 'extensions', 'morlet')
-    )
-
-    shutil.copy(
-        src=fftw_lib_abspath,
-        dst=osp.join(get_python_lib(), 'ptsa', 'extensions', 'circular_stat')
-    )
