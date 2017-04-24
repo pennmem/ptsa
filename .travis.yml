@@ -8,6 +8,7 @@ notifications:
   email: false
 install:
   - sudo apt-get update
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-6"; fi
   # We do this conditionally because it saves us some downloading if the
   # version is the same.
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
@@ -26,6 +27,14 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy pandas xarray pywavelets swig
   - source activate test-environment
   - python setup.py install
+
+# Because Travis-CI is apparently stuck in the past...
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-6
 
 # TODO: get actual tests running
 script:
