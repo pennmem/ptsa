@@ -29,8 +29,6 @@ def check_dependencies():
     """Checks for dependencies that aren't installable via pip."""
     if not distutils.spawn.find_executable('swig'):
         raise OSError('Missing swig - please `conda install swig`')
-    if not distutils.spawn.find_executable("cmake"):
-        raise OSError("Missing CMake - please `conda install cmake")
 
 
 def get_version_str():
