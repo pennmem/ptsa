@@ -35,6 +35,7 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - gcc-4.9
+      - g++-4.9
 
 # TODO: get actual tests running
 script:
