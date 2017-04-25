@@ -248,7 +248,6 @@ setup(
         "numpy",
         "scipy",
         "xarray",
-        "pandas",
         "PyWavelets"
     ],
     packages=[

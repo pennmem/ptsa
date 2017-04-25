@@ -50,9 +50,6 @@ if hasattr(lme4,'model_matrix'):
 else:
     r_model_matrix = rstats.model_matrix
 
-#import pandas as pd
-#import pandas.rpy.common as com
-
 # load ptsa clustering
 from . import cluster
 

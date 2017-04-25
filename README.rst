@@ -11,7 +11,7 @@ Install dependencies:
 
 .. code-block:: shell-session
 
-   conda install -y numpy pandas scipy xarray pywavelets swig
+   conda install -y numpy scipy xarray pywavelets swig
 
 Install:
 
