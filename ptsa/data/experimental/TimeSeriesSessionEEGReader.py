@@ -22,13 +22,13 @@ class TimeSeriesSessionEEGReader(PropertiedObject):
 
     def __init__(self, **kwds):
 
-        for option_name, val in kwds.items():
+        for option_name, val in list(kwds.items()):
 
             try:
                 attr = getattr(self, option_name)
                 setattr(self, option_name, val)
             except AttributeError:
-                print 'Option: ' + option_name + ' is not allowed'
+                print('Option: ' + option_name + ' is not allowed')
 
         self.eegfile_names = self._extract_session_eegfile_names()
 
@@ -76,7 +76,7 @@ class TimeSeriesSessionEEGReader(PropertiedObject):
                 bin_readers_dict[eegfile_name] = RawBinWrapperXray(eegfile_name)
             except TypeError:
                 warning_str = 'Could not create reader for %s' % eegfile_name
-                print warning_str
+                print(warning_str)
                 raise TypeError(warning_str)
 
         return bin_readers_dict
@@ -98,7 +98,7 @@ class TimeSeriesSessionEEGReader(PropertiedObject):
 
         bin_reader = self.bin_readers_dict[eegfile_name]
 
-        print 'reading ', eegfile_name
+        print('reading ', eegfile_name)
 
         start_offset = self.offset
         end_offset = -1
@@ -126,7 +126,7 @@ class TimeSeriesSessionEEGReader(PropertiedObject):
                                       dims=['channels', 'events', 'time'])
         eegdata_xray.attrs['samplerate'] = self.samplerate
 
-        print 'last_time_stamp=',eegdata_xray['time'][-1]
+        print('last_time_stamp=',eegdata_xray['time'][-1])
 
         return TimeSeriesX(eegdata_xray)
 
@@ -135,7 +135,7 @@ class TimeSeriesSessionEEGReader(PropertiedObject):
         session_eegdata_dict = OrderedDict()
         samplesize = 1.0 / self.samplerate
 
-        eegfile_names =  self.bin_readers_dict.keys() if len(session_list)==0 else session_list
+        eegfile_names =  list(self.bin_readers_dict.keys()) if len(session_list)==0 else session_list
         for eegfile_name in eegfile_names:
             eegdata_xray = self.read_session(eegfile_name)
             session_eegdata_dict[eegfile_name] = eegdata_xray
@@ -164,7 +164,7 @@ if __name__ == '__main__':
     # time_series_reader = TimeSeriesSessionEEGReader(events=base_events, event_data_only=True, channels=['002', '003', '004', '005']*20)
     ts = time_series_reader.read()
 
-    print ts
+    print(ts)
 
     # #
     # # sys.exit()

@@ -34,7 +34,7 @@ class JsonIndexReader(object):
         like paths.
         """
         protocols_basename = os.path.basename(protocols_root)
-        for k, v in index.items():
+        for k, v in list(index.items()):
             if isinstance(v, dict):
                 cls._prepend_db_root(protocols_root, v)
             elif isinstance(v, basestring):
@@ -50,7 +50,7 @@ class JsonIndexReader(object):
         Merges two dictionaries
         """
         merged = index1
-        for k, v in index2.items():
+        for k, v in list(index2.items()):
             if k not in merged:
                 merged[k] = v
             elif isinstance(v, dict):
@@ -67,7 +67,7 @@ class JsonIndexReader(object):
         :return: None
         """
         for index in indexes:
-            for k in index.keys():
+            for k in list(index.keys()):
                 if not isinstance(index[k], dict):
                     continue
                 cls._prune(index[k])
@@ -94,7 +94,7 @@ class JsonIndexReader(object):
                     if v not in index[f_k]:
                         del index[f_k]
                     else:
-                        for k in index[f_k].keys():
+                        for k in list(index[f_k].keys()):
                             if k != v:
                                 del index[f_k][k]
             except KeyError:
@@ -102,9 +102,9 @@ class JsonIndexReader(object):
             indxs = []
             for indx in indexes:
                 if len(indx) > 0:
-                    indxs.extend(indx[f_k].values())
+                    indxs.extend(list(indx[f_k].values()))
             indexes = indxs
-        for kwarg_f, kwarg_v in kwargs.items():
+        for kwarg_f, kwarg_v in list(kwargs.items()):
             if len(indexes) == 0:
                 break
             if kwarg_f in indexes[0]:
@@ -132,7 +132,7 @@ class JsonIndexReader(object):
             except KeyError:
                 new_indexes = []
                 for indx in sub_indexes:
-                    new_indexes.extend(indx.values())
+                    new_indexes.extend(list(indx.values()))
                 these_indexes = new_indexes
         out = set()
         if not is_leaf:
@@ -201,7 +201,7 @@ class JsonIndexReader(object):
 
 if __name__ == '__main__':
     reader = JsonIndexReader('/Users/iped/rhino_mount/data/eeg/protocols/r1.json')
-    print reader.aggregate_values('sessions', subject='R1093J', experiment='FR1')
-    print reader.aggregate_values('subjects', experiment='PAL2')
-    print reader.aggregate_values('experiments', subject='R1001P')
-    print reader.get_value('task_events', subject='R1001P', experiment='FR1', session=0)
+    print(reader.aggregate_values('sessions', subject='R1093J', experiment='FR1'))
+    print(reader.aggregate_values('subjects', experiment='PAL2'))
+    print(reader.aggregate_values('experiments', subject='R1001P'))
+    print(reader.get_value('task_events', subject='R1001P', experiment='FR1', session=0))

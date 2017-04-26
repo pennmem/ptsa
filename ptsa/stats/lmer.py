@@ -50,11 +50,8 @@ if hasattr(lme4,'model_matrix'):
 else:
     r_model_matrix = rstats.model_matrix
 
-#import pandas as pd
-#import pandas.rpy.common as com
-
 # load ptsa clustering
-import cluster
+from . import cluster
 
 
 def lmer_feature(formula_str, dat, perms=None, 
@@ -62,7 +59,7 @@ def lmer_feature(formula_str, dat, perms=None,
     """
     Run LMER on a number of permutations of the predicted data.
 
-    
+
     """
     # get the perm_var
     perm_var = formula_str.split('~')[0].strip()
@@ -80,9 +77,9 @@ def lmer_feature(formula_str, dat, perms=None,
                         if (k in factors) or isinstance(dat[k][0],str) 
                         else dat[k]) 
                      for k in dat.dtype.names})
-    
+
     #rdf = com.convert_to_r_dataframe(pd.DataFrame(dat),strings_as_factors=True)
-    
+
 
     # get the column index
     col_ind = list(rdf.colnames).index(perm_var)
@@ -147,9 +144,9 @@ class LMER():
             factors = {}
         # add in missingarg for any potential factor not provided
         for k in df.dtype.names:
-            if isinstance(df[k][0],str) and not factors.has_key(k):
+            if isinstance(df[k][0],str) and k not in factors:
                 factors[k] = MissingArg
-                
+
         for f in factors:
             if factors[f] is None:
                 factors[f] = MissingArg
@@ -215,7 +212,7 @@ class LMER():
             except:
                 continue
                 #tvals.append(np.array([np.nan]))
-            
+
             # save the model
             if self._ms is None:
                 self._ms = ms
@@ -314,7 +311,7 @@ def sparse_stable_svd(R, nboot=50):
 
     # calc the original SVD
     U, s, Vh = np.linalg.svd(np.concatenate(R), full_matrices=False)
-    
+
     # do the boots
     rVs = []
     for i in range(len(boots)):
@@ -323,12 +320,12 @@ def sparse_stable_svd(R, nboot=50):
         rmat = procrustes(U,Ub)
 
         rVs.append(np.dot(rmat,np.dot(diagsvd(sb,len(sb),len(sb)),Vhb)))
-        
+
     # get the bootstrap ratios
     rVs = np.array(rVs)
     Vs = np.dot(diagsvd(s,len(s),len(s)),Vh)
     boot_ratio = Vs/rVs.std(0)
-    
+
     # pass the boot ratios through fdrtool to pick stable features
     fachist = np.histogram(boot_ratio.flatten(),bins=500)
     peak = fachist[1][fachist[0]==np.max(fachist[0])][0]
@@ -468,7 +465,7 @@ def _eval_model(model_id, perm=None, boot=None):
     else:
         run_null = False
         mer_null = mm._mer_null
-    
+
     # loop over LVs performing LMER
     #Dw = []
     res = []
@@ -544,20 +541,20 @@ def _eval_model(model_id, perm=None, boot=None):
         tvals_null,log_likes_null = zip(*res_null)
         log_likes_null = np.concatenate(log_likes_null)
 
-        print "Like Ratio: ", 2*(log_likes.sum() - log_likes_null.sum())
-        print "Like Ratio Scaled: ", 2*(np.dot(log_likes,ss[ss>0.0]/_ss) - 
-                                        np.dot(log_likes_null,ss[ss>0.0]/_ss))
-        print "Like Ratio Comb: ", np.dot(2*(log_likes-log_likes_null),ss[ss>0.0]/_ss)
+        print("Like Ratio: ", 2*(log_likes.sum() - log_likes_null.sum()))
+        print("Like Ratio Scaled: ", 2*(np.dot(log_likes,ss[ss>0.0]/_ss) - 
+                                        np.dot(log_likes_null,ss[ss>0.0]/_ss)))
+        print("Like Ratio Comb: ", np.dot(2*(log_likes-log_likes_null),ss[ss>0.0]/_ss))
 
         ll_null_boot = np.vstack(ll_null_boot)
         ll_full_boot = np.vstack(ll_full_boot)
 
         lr = 2*(log_likes-log_likes_null)
         lr_boot = 2*(ll_full_boot-ll_null_boot)
-        print "Like Boot: ", np.dot(lr_boot, ss[ss>0.0]/_ss)
+        print("Like Boot: ", np.dot(lr_boot, ss[ss>0.0]/_ss))
         sscale = ss/ss.sum()
         mg = np.dot([((lr_boot[:,ii]-lr[ii])>0).sum() for ii in range(20)],sscale)
-        print "prop: ", mg/float(mm._num_null_boot)
+        print("prop: ", mg/float(mm._num_null_boot))
         1/0
 
     # # get the term names (skip the intercept)
@@ -708,7 +705,7 @@ class MELD(object):
         self._re_group = re_group
         if isinstance(ind_data, dict):
             # groups are the keys
-            self._groups = np.array(ind_data.keys())
+            self._groups = np.array(list(ind_data.keys()))
         else:
             # groups need to be extracted from the recarray
             self._groups = np.unique(ind_data[re_group])
@@ -731,7 +728,7 @@ class MELD(object):
             else:
                 # index into it with ind_ind
                 row_ind = row_mask[ind_ind]
-            
+
             # extract that group's A,M,O
             # first save the observations (rows of A)
             self._O[g] = ind_data[ind_ind][row_ind]
@@ -769,7 +766,7 @@ class MELD(object):
 
             # reshape M, so we don't have to do it repeatedly
             self._M[g] = self._D[g].copy() #dep_data[ind].reshape((dep_data[ind].shape[0],-1))
-                
+
             # normalize M
             if use_norm:
                 self._M[g] -= self._M[g].mean(0)
@@ -779,7 +776,7 @@ class MELD(object):
             rdf = DataFrame({k:(FactorVector(self._O[g][k]) 
                                 if k in factors else self._O[g][k]) 
                              for k in self._O[g].dtype.names})
-            
+
             # model spec as data frame
             ms = r['data.frame'](r_model_matrix(Formula(fe_formula), data=rdf))
 
@@ -856,14 +853,14 @@ class MELD(object):
 
         # clean up memmapping files
         if self._memmap:
-            for g in self._M.keys():
+            for g in list(self._M.keys()):
                 try:
                     filename = self._M[g].filename 
                     del self._M[g]
                     os.remove(filename)
                 except OSError:
                     pass
-            for g in self._D.keys():
+            for g in list(self._D.keys()):
                 try:
                     filename = self._D[g].filename 
                     del self._D[g]
@@ -873,7 +870,7 @@ class MELD(object):
 
         # clean self out of global model list
         global _global_meld
-        if _global_meld and _global_meld.has_key(my_id):
+        if _global_meld and my_id in _global_meld:
             del _global_meld[my_id]
 
 
@@ -1030,9 +1027,9 @@ class MELD(object):
         for i in range(1,len(ind)):
             if pvals[names[ind[i]]] < pvals[names[ind[i-1]]]:
                 pvals[names[ind[i]]] = pvals[names[ind[i-1]]]
-            
+
         return pvals
-        
+
     @property
     def boot_ratio(self):
         """Return the bootstrap ratio for each feature.
@@ -1082,7 +1079,7 @@ class MELD(object):
 
             # append the qvals
             qv[good_ind] = np.array(results.rx('qval'))
-            
+
             qvals.append(qv.reshape(self._feat_shape))
 
         # convert to recarray
@@ -1115,7 +1112,7 @@ if __name__ == '__main__':
 
     # data with observations in first dimension and features on the remaining
     dep_data = np.random.rand(len(s),*nfeat)
-    print 'Data shape:',dep_data.shape
+    print('Data shape:',dep_data.shape)
 
     # now with signal
     # add in some signal
@@ -1128,7 +1125,7 @@ if __name__ == '__main__':
     import scipy.ndimage
     dep_data = scipy.ndimage.gaussian_filter(dep_data, [0,1,1])
     dep_data_s = scipy.ndimage.gaussian_filter(dep_data_s, [0,1,1])
-    
+
 
     # # run without signal
     # # set up the lmer_pht
@@ -1161,12 +1158,12 @@ if __name__ == '__main__':
     # #print "BR num sig:",[(n,(me.fdr_boot[n]<=.05).sum())
     # #                     for n in brs.dtype.names]
 
-    print
-    print "Now with signal!"
-    print "----------------"
-    print "Terms:",me_s.terms
-    print "t-vals:",me_s.t_terms
-    print "term p-vals:",me_s.pvals
+    print()
+    print("Now with signal!")
+    print("----------------")
+    print("Terms:",me_s.terms)
+    print("t-vals:",me_s.t_terms)
+    print("term p-vals:",me_s.pvals)
     #brs_s = me_s.boot_ratio
     #print "Bootstrap ratio shape:",brs_s.shape
     #print "BR num sig:",[(n,(me_s.fdr_boot[n]<=.05).sum())

@@ -26,7 +26,7 @@ from ptsa import filt
 
 #     def test_bar(self): pass
 #         #print "testing bar"
-      
+
 
 # if __name__ == '__main__':
 #     NumpyTest.main()
@@ -55,7 +55,7 @@ class TestData:
         timeRange = np.linspace(sampStart,sampEnd,duration)
         self.dims200 = [Dim(np.arange(self.dat200.shape[0]),'channel'),
                         Dim(timeRange,'time',unit='ms')]
-        
+
         numSecs = 4.
         numPoints = int(numSecs*50.)
         Hz = 10
@@ -98,7 +98,7 @@ class test_TimeSeries(TestCase):
         self.assertRaises(ValueError,TimeSeries,self.dat200,
                           'time',-200,dims=self.dims200)
 
-        
+
     def test_remove_buffer(self):
         buf = 200
         numsamp = 4*200

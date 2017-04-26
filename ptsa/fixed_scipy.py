@@ -53,12 +53,12 @@ def morlet(M, w=5.0, s=1.0, complete=True):
     """
     x = linspace(-s*2*pi,s*2*pi,M)
     output = exp(1j*w*x)
-    
+
     if complete:
         output -= exp(-0.5*(w**2))
-    
+
     output *= exp(-0.5*(x**2)) * pi**(-0.25)
-    
+
     return output
 
 ###

@@ -58,10 +58,10 @@ class BaseRawReader(PropertiedObject,BaseReader):
                 self.file_format = self.file_format_dict[format_name]
             except KeyError:
                 raise RuntimeError('Unsupported format: %s. Allowed format names are: %s' % (
-                    format_name, self.file_format_dict.keys()))
+                    format_name, list(self.file_format_dict.keys())))
         except KeyError:
-            print 'Could not find data format definition in the params file. Will read te file assuming' \
-                  ' data format is int16'
+            print('Could not find data format definition in the params file. Will read te file assuming' \
+                  ' data format is int16')
 
     def get_file_size(self):
         '''
@@ -107,7 +107,7 @@ class BaseRawReader(PropertiedObject,BaseReader):
                 # rejecting negative offset
                 if start_offset<0:
                     read_ok_mask[c,e]=False
-                    print('Cannot read from negative offset %d in file %s' % (start_offset,eegfname))
+                    print(('Cannot read from negative offset %d in file %s' % (start_offset,eegfname)))
                     continue
 
                 # seek to the position in the file
@@ -126,9 +126,9 @@ class BaseRawReader(PropertiedObject,BaseReader):
                 if len(data) < self.read_size:
                     read_ok_mask[c,e]=False
 
-                    print(
+                    print((
                         'Cannot read full chunk of data for offset ' + str(start_offset) +
-                        'End of read interval  is outside the bounds of file ' + str(eegfname))
+                        'End of read interval  is outside the bounds of file ' + str(eegfname)))
                 else:
                     # append it to the eventdata
                     eventdata[c, e, :] = data

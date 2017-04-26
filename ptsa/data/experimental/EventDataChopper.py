@@ -41,7 +41,7 @@ class EventDataChopper(PropertiedObject):
 
         event_data_dict = OrderedDict()
 
-        for eegfile_name, data in self.data_dict.items():
+        for eegfile_name, data in list(self.data_dict.items()):
 
             evs = self.events[self.events.eegfile == eegfile_name]
 
@@ -119,13 +119,13 @@ if __name__ == '__main__':
     # time_series_reader = TimeSeriesSessionEEGReader(events=base_events, channels=monopolar_channels)
     ts_dict = time_series_reader.read()
 
-    print ts_dict
+    print(ts_dict)
 
     from ptsa.data.experimental.EventDataChopper import EventDataChopper
 
     edc = EventDataChopper(events=base_events, event_duration=1.6, buffer=1.0, data_dict=ts_dict)
     ev_data_dict = edc.filter()
-    print ev_data_dict
+    print(ev_data_dict)
 
     # from ptsa.data.filters.EventDataChopper import EventDataChopper
     #
@@ -136,10 +136,10 @@ if __name__ == '__main__':
     # wavelets
 
     freqs = np.logspace(np.log10(3), np.log10(180), 12)
-    for session_file, ev_data in ev_data_dict.items():
+    for session_file, ev_data in list(ev_data_dict.items()):
         break
 
-    print ev_data
+    print(ev_data)
 
     bp = ev_data.values[0, 0, :] - ev_data.values[1, 0, :]
 
@@ -147,17 +147,17 @@ if __name__ == '__main__':
 
     pow_ev_new = phase_pow_multi(freqs, bp, to_return='power', samplerates=ev_data.attrs['samplerate'])
 
-    print 'pow_ev_new=', pow_ev_new
+    print('pow_ev_new=', pow_ev_new)
 
-    for session_file, session_data in ts_dict.items():
+    for session_file, session_data in list(ts_dict.items()):
         break
 
     bp_sess_0 = session_data.values[0, 0, :] - session_data.values[1, 0, :]
-    print bp_sess_0
+    print(bp_sess_0)
 
     pow_sess_new_0 = phase_pow_multi(freqs, bp_sess_0, to_return='power', samplerates=ev_data.attrs['samplerate'])
 
-    print pow_sess_new_0
+    print(pow_sess_new_0)
 
     pow_xray_0 = xray.DataArray(pow_sess_new_0.reshape(1, 1, pow_sess_new_0.shape[0], pow_sess_new_0.shape[1]),
                                 coords=[['002_003'], np.arange(1), freqs, session_data['time']],
@@ -165,11 +165,11 @@ if __name__ == '__main__':
                                 )
 
     bp_sess_1 = session_data.values[1, 0, :] - session_data.values[2, 0, :]
-    print bp_sess_1
+    print(bp_sess_1)
 
     pow_sess_new_1 = phase_pow_multi(freqs, bp_sess_1, to_return='power', samplerates=ev_data.attrs['samplerate'])
 
-    print pow_sess_new_1
+    print(pow_sess_new_1)
 
     pow_xray_1 = xray.DataArray(pow_sess_new_1.reshape(1, 1, pow_sess_new_1.shape[0], pow_sess_new_1.shape[1]),
                                 coords=[['003_004'], np.arange(1), freqs, session_data['time']],
@@ -185,7 +185,7 @@ if __name__ == '__main__':
 
     chopped_wavelets = edcw.filter()
 
-    print
+    print()
 
     # class EventDataChopper(PropertiedObject):
     #     _descriptors = [

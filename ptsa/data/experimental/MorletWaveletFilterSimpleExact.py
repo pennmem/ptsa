@@ -233,7 +233,7 @@ class MorletWaveletFilterSimple(PropertiedObject):
                 self.store(out_idx_tuple,wavelet_phase_array,phase_array_single)
 
 
-        print 'total time wavelet loop: ', time.time() - wavelet_start
+        print('total time wavelet loop: ', time.time() - wavelet_start)
         return self.build_output_arrays(wavelet_pow_array, wavelet_phase_array,time_axis)
 
     # def compute_wavelet_ffts(self):
@@ -341,7 +341,7 @@ def test_1_old():
     monopolar_channels = tal_reader.get_monopolar_channels()
     bipolar_pairs = tal_reader.get_bipolar_pairs()
 
-    print 'bipolar_pairs=', bipolar_pairs
+    print('bipolar_pairs=', bipolar_pairs)
 
     from ptsa.data.experimental.TimeSeriesSessionEEGReader import TimeSeriesSessionEEGReader
 
@@ -349,9 +349,9 @@ def test_1_old():
     time_series_reader = TimeSeriesSessionEEGReader(events=base_events, channels=monopolar_channels)
     ts_dict = time_series_reader.read()
 
-    first_session_data = ts_dict.items()[0][1]
+    first_session_data = list(ts_dict.items())[0][1]
 
-    print first_session_data
+    print(first_session_data)
 
     wavelet_start = time.time()
 
@@ -363,7 +363,7 @@ def test_1_old():
                        )
 
     pow_wavelet, phase_wavelet = wf.filter()
-    print 'wavelet total time = ', time.time() - wavelet_start
+    print('wavelet total time = ', time.time() - wavelet_start)
     # return pow_wavelet
 
     from ptsa.data.experimental.EventDataChopper import EventDataChopper
@@ -372,9 +372,9 @@ def test_1_old():
 
     chopped_wavelets = edcw.filter()
 
-    chopped_wavelets = chopped_wavelets.items()[0][1]  # getting first item of return dictionary
+    chopped_wavelets = list(chopped_wavelets.items())[0][1]  # getting first item of return dictionary
 
-    print 'total time = ', time.time() - start
+    print('total time = ', time.time() - start)
     #
     # from ptsa.data.filters.ResampleFilter import ResampleFilter
     # rsf = ResampleFilter (resamplerate=50.0)
@@ -410,7 +410,7 @@ def test_2_old():
     monopolar_channels = tal_reader.get_monopolar_channels()
     bipolar_pairs = tal_reader.get_bipolar_pairs()
 
-    print 'bipolar_pairs=', bipolar_pairs
+    print('bipolar_pairs=', bipolar_pairs)
 
     from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
 
@@ -432,7 +432,7 @@ def test_2_old():
 
     pow_wavelet, phase_wavelet = wf.filter()
 
-    print 'total time = ', time.time() - start
+    print('total time = ', time.time() - start)
 
 
     res_start =time.time()
@@ -444,7 +444,7 @@ def test_2_old():
 
 
 
-    print 'resample_time=',time.time()-res_start
+    print('resample_time=',time.time()-res_start)
     return pow_wavelet
 
 def test_2():
@@ -472,7 +472,7 @@ def test_2():
     monopolar_channels = tal_reader.get_monopolar_channels()
     bipolar_pairs = tal_reader.get_bipolar_pairs()
 
-    print 'bipolar_pairs=', bipolar_pairs
+    print('bipolar_pairs=', bipolar_pairs)
 
     from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
 
@@ -494,7 +494,7 @@ def test_2():
 
     pow_wavelet, phase_wavelet = wf.filter()
 
-    print 'total time = ', time.time() - start
+    print('total time = ', time.time() - start)
 
 
     res_start =time.time()
@@ -506,7 +506,7 @@ def test_2():
 
 
 
-    print 'resample_time=',time.time()-res_start
+    print('resample_time=',time.time()-res_start)
     return pow_wavelet
 
 def test_1():
@@ -549,7 +549,7 @@ def test_1():
                        )
 
     pow_wavelet, phase_wavelet = wf.filter()
-    print 'wavelet total time = ', time.time() - wavelet_start
+    print('wavelet total time = ', time.time() - wavelet_start)
     # return pow_wavelet
 
 
@@ -557,7 +557,7 @@ def test_1():
     sedc = EventDataChopper(events=base_events, session_data=pow_wavelet, start_time=0.0, end_time=1.6, buffer_time=1.0)
     chopped_wavelets = sedc.filter()
 
-    print 'total time = ', time.time() - start
+    print('total time = ', time.time() - start)
 
     return chopped_wavelets
 

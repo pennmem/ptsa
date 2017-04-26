@@ -12,8 +12,8 @@ import numpy as np
 import h5py
 
 # local imports
-from basewrapper import BaseWrapper
-from timeseries import TimeSeries
+from .basewrapper import BaseWrapper
+from .timeseries import TimeSeries
 
 class HDF5Wrapper(BaseWrapper):
     """
@@ -32,7 +32,7 @@ class HDF5Wrapper(BaseWrapper):
 
         For example, here is one way to create an HDF5 dataset from a
         TimeSeries instance:
-        
+
         HDF5Wrapper('data.hdf5', data=data, compression='gzip')
 
         Now let's say the TimeSeries is float64, but you want to save
@@ -42,7 +42,7 @@ class HDF5Wrapper(BaseWrapper):
         save the data in int16:
 
         HDF5Wrapper('data.hdf5', data=data, file_dtype=np.int16, compression='gzip')
-        
+
         """
         # set up the basic params of the data
         self.filepath = filepath
@@ -53,10 +53,10 @@ class HDF5Wrapper(BaseWrapper):
         self.gain_buffer = gain_buffer
         self.gain = None
         self.hdf5opts = hdf5opts
-        
+
         self.file_dtype = file_dtype
         self.data_dtype = None
-        
+
         # see if create dataset
         if not data is None:
             # must provide samplerate and data
@@ -109,7 +109,7 @@ class HDF5Wrapper(BaseWrapper):
             self.data_dtype = np.dtype(d.attrs['data_dtype'])
             self.file_dtype = d.dtype
             self.gain = d.attrs['gain']
-            
+
     def _data_to_file(self, data):
         # process the datatypes
         if self.file_dtype is None:
@@ -132,7 +132,7 @@ class HDF5Wrapper(BaseWrapper):
                 fr = np.iinfo(self.file_dtype).max*2
                 dr = np.abs(data).max()*2 * (1.+self.gain_buffer)
                 self.gain = dr/fr
-                
+
         # calc and apply gain if necessary
         if self.apply_gain and self.gain != 1.0:
             return np.asarray(data/self.gain,dtype=self.file_dtype)
@@ -217,17 +217,17 @@ class HDF5Wrapper(BaseWrapper):
         # connect to the file and get the dataset
         f = h5py.File(self.filepath,'r')
         data = f[self.dataset_name]
-        
+
         # allocate for data
-	eventdata = np.empty((len(channels),len(event_offsets),dur_samp),
+        eventdata = np.empty((len(channels),len(event_offsets),dur_samp),
                              dtype=self.data_dtype)*np.nan
 
-	# loop over events
-	for e,evOffset in enumerate(event_offsets):
+        # loop over events
+        for e,evOffset in enumerate(event_offsets):
             # set the range
             ssamp = offset_samp+evOffset
             esamp = ssamp + dur_samp
-            
+
             # check the ranges
             if ssamp < 0 or esamp > data.shape[1]:
                 raise IOError('Event with offset '+str(evOffset)+
@@ -236,7 +236,7 @@ class HDF5Wrapper(BaseWrapper):
 
         # close the file
         f.close()
-        
+
         return eventdata
 
     def append_data(self, data):
@@ -275,7 +275,7 @@ class HDF5Wrapper(BaseWrapper):
 
         # get the dataset (must already exist)
         d = f[self.dataset_name]
-        
+
         # reshape if necessary
         cursamp = d.shape[1]
         newsamp = len(data)

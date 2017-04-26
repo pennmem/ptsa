@@ -15,7 +15,7 @@
 import numpy as np
 from xray import DataArray
 
-from basewrapper import BaseWrapper
+from .basewrapper import BaseWrapper
 
 
 class BaseWrapperXray(BaseWrapper):
@@ -125,7 +125,7 @@ class BaseWrapperXray(BaseWrapper):
         if isinstance(channels, dict):
             # turn into indices
             ch_info = self.channels
-            key = channels.keys()[0]
+            key = list(channels.keys())[0]
             channels = [np.nonzero(ch_info[key] == c)[0][0] for c in channels[key]]
         elif isinstance(channels, str):
             # find that channel by name
@@ -239,60 +239,60 @@ class BaseWrapperXray(BaseWrapper):
 
 
             # process the channels
-            if isinstance(channels, dict):
-                # turn into indices
-                ch_info = self.channels
-                key = channels.keys()[0]
-                channels = [np.nonzero(ch_info[key]==c)[0][0] for c in channels[key]]
-            elif isinstance(channels, str):
-                # find that channel by name
-                channels = np.nonzero(self.channels['name']==channels)[0][0]
-            if channels is None or len(np.atleast_1d(channels))==0:
-                channels = np.arange(self.nchannels)
-            channels = np.atleast_1d(channels)
-            channels.sort()
+        if isinstance(channels, dict):
+            # turn into indices
+            ch_info = self.channels
+            key = list(channels.keys())[0]
+            channels = [np.nonzero(ch_info[key]==c)[0][0] for c in channels[key]]
+        elif isinstance(channels, str):
+            # find that channel by name
+            channels = np.nonzero(self.channels['name']==channels)[0][0]
+        if channels is None or len(np.atleast_1d(channels))==0:
+            channels = np.arange(self.nchannels)
+        channels = np.atleast_1d(channels)
+        channels.sort()
 
-            # load the timeseries (this must be implemented by subclasses)
+        # load the timeseries (this must be implemented by subclasses)
 
-            event_offsets = np.array(start_offset,ndmin=1)
-            dur_samp = end_offset-start_offset + 2*buffer
-            offset_samp = -buffer
+        event_offsets = np.array(start_offset,ndmin=1)
+        dur_samp = end_offset-start_offset + 2*buffer
+        offset_samp = -buffer
 
-            eventdata = self._load_data(channels,event_offsets,dur_samp,offset_samp)
-            # eventdata = self._load_all_data(channels,start_offset-buffer)
+        eventdata = self._load_data(channels,event_offsets,dur_samp,offset_samp)
+        # eventdata = self._load_all_data(channels,start_offset-buffer)
 
-            # calc the time range
-            # get the samplesize
-            samplesize = 1.0/self.samplerate
-            samp_start = (start_offset-buffer)*samplesize
-            samp_end =   (end_offset+buffer)*samplesize
+        # calc the time range
+        # get the samplesize
+        samplesize = 1.0/self.samplerate
+        samp_start = (start_offset-buffer)*samplesize
+        samp_end =   (end_offset+buffer)*samplesize
 
-            time_range = np.linspace(samp_start,samp_end,dur_samp)
-            eegoffset = np.arange(start_offset-buffer,  end_offset+buffer)
-
-
-            time_axis = np.rec.fromarrays([time_range,eegoffset],names='time,eegoffset')
+        time_range = np.linspace(samp_start,samp_end,dur_samp)
+        eegoffset = np.arange(start_offset-buffer,  end_offset+buffer)
 
 
-
-            # when channels is and array of channels labels i.e. strings like  '002','003',...
-            # we need to use xray arrays to do fancy indexing
-
-            self.channels_xray = DataArray(self.channels.number,coords=[self.channels.name],dims=['name'])
-
-            if channels.dtype.char=='S':
-
-                self.channels_xray = self.channels_xray.loc[channels]
-
-            else:
-
-                self.channels_xray = self.channels_xray[channels]
-
-            self.channels_xray=np.rec.fromarrays([self.channels_xray.values,self.channels_xray.coords['name'].values],names='number,name')
+        time_axis = np.rec.fromarrays([time_range,eegoffset],names='time,eegoffset')
 
 
-            # eventdata = DataArray(eventdata,coords=[self.channels_xray,np.arange(len(events)),time_range],dims=['channels','events','time'])
-            eventdata = DataArray(eventdata,coords=[self.channels_xray,np.arange(len(events)),time_axis],dims=['channels','events','time'])
-            eventdata.attrs['samplerate'] = self.samplerate
 
-            return eventdata
+        # when channels is and array of channels labels i.e. strings like  '002','003',...
+        # we need to use xray arrays to do fancy indexing
+
+        self.channels_xray = DataArray(self.channels.number,coords=[self.channels.name],dims=['name'])
+
+        if channels.dtype.char=='S':
+
+            self.channels_xray = self.channels_xray.loc[channels]
+
+        else:
+
+            self.channels_xray = self.channels_xray[channels]
+
+        self.channels_xray=np.rec.fromarrays([self.channels_xray.values,self.channels_xray.coords['name'].values],names='number,name')
+
+
+        # eventdata = DataArray(eventdata,coords=[self.channels_xray,np.arange(len(events)),time_range],dims=['channels','events','time'])
+        eventdata = DataArray(eventdata,coords=[self.channels_xray,np.arange(len(events)),time_axis],dims=['channels','events','time'])
+        eventdata.attrs['samplerate'] = self.samplerate
+
+        return eventdata

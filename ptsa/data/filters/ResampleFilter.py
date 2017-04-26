@@ -1,7 +1,7 @@
 __author__ = 'm'
 
 import numpy as np
-import xray
+import xarray as xray
 from scipy.signal import resample
 
 from ptsa.data.TimeSeriesX import TimeSeriesX
@@ -70,7 +70,7 @@ class ResampleFilter(PropertiedObject,BaseFilter):
         time_axis_length = np.squeeze(self.time_series.coords['time'].shape)
         new_length = int(np.round(time_axis_length*self.resamplerate/samplerate))
 
-        print new_length
+        print(new_length)
 
         if self.time_axis_index<0:
             self.time_axis_index = self.time_series.get_axis_num('time')
@@ -174,8 +174,8 @@ if __name__ == '__main__':
     time_series_session_reader = TimeSeriesSessionEEGReader(events=base_events, channels=np.array(['003', '004', '005']))
 
     ts_dict = time_series_session_reader.read()
-    print ts_dict
-    ts=ts_dict.items()[0][1]
+    print(ts_dict)
+    ts=list(ts_dict.items())[0][1]
 
     resample_filter_rounded = ResampleFilter(time_series=ts, resamplerate=50.0,round_to_original_timepoints=True)
     # resample_filter_rounded = ResampleFilter(time_series=ts, resamplerate=50.0)
@@ -201,4 +201,4 @@ if __name__ == '__main__':
     base_eegs_resampled_rounded = resample_filter_rounded.filter()
 
 
-    print
+    print()

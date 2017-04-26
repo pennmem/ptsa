@@ -6,7 +6,7 @@ from numpy.testing import *
 import unittest
 # from unittest import *
 
-from EventReadersTestBase import EventReadersTestBase
+from .EventReadersTestBase import EventReadersTestBase
 from ptsa.data.events import Events
 from ptsa.data.readers import BaseEventReader
 from ptsa.data.readers import PTSAEventReader
@@ -89,7 +89,7 @@ class TestRegressionPTSA(unittest.TestCase):
         nb_ = int(np.ceil(samplerate * duration))
 
         assert_array_equal(self.base_eegs[...,1:nb_+1], mirrored_buf_eegs[...,:nb_][...,::-1])
-        print mirrored_buf_eegs
+        print(mirrored_buf_eegs)
 
     def test_missing_data_read(self):
         self.e_path = '/Volumes/rhino_root/data/events/RAM_PS/R1104D_events.mat'
@@ -97,7 +97,7 @@ class TestRegressionPTSA(unittest.TestCase):
             self.e_path = 'D:/data/events/RAM_PS/R1104D_events.mat'
         base_e_reader = BaseEventReader(filename=self.e_path)
         base_events = base_e_reader.read()
-        print 'base_events=',base_events
+        print('base_events=',base_events)
 
 
     def test_full_session_read(self):
@@ -139,7 +139,7 @@ class TestRegressionPTSA(unittest.TestCase):
         assert_array_equal(np.array(eegs['events']['item']), base_eegs['events'].data['item'])
 
 
-        print
+        print()
 
 
 
@@ -161,13 +161,13 @@ class TestRegressionPTSA(unittest.TestCase):
 
         eegs = eegs[:,:,:-1]
         words_ptsa = eegs['events']['item']
-        print 'words_ptsa=',words_ptsa
+        print('words_ptsa=',words_ptsa)
 
 
         words = self.base_eegs['events'].data['item']
 
 
-        print words
+        print(words)
 
         assert_array_equal(np.array(words_ptsa),words)
 
@@ -263,11 +263,11 @@ class TestRegressionPTSA(unittest.TestCase):
         resample_filter = ResampleFilter(time_series=pow_wavelet, resamplerate=100.0)
         pow_wavelet_resampled = resample_filter.filter()
 
-        print pow_wavelet_resampled
+        print(pow_wavelet_resampled)
 
         pow_wavelet_resampled_direct = pow_wavelet.resampled(resampled_rate=100.0)
 
-        print pow_wavelet_resampled_direct
+        print(pow_wavelet_resampled_direct)
 
         # from ptsa.wavelet import phase_pow_multi
         # pow_wavelet_ptsa_orig = phase_pow_multi(freqs=np.logspace(np.log10(3), np.log10(180), 8), dat=eegs,to_return='power')
@@ -319,7 +319,7 @@ class TestRegressionPTSA(unittest.TestCase):
         argsort_eegs = eegs.argsort(axis='time')
         argsort_base_eegs = np.argsort(base_eegs,axis=base_eegs.get_axis_num('time'))
         assert_array_equal(argsort_eegs, argsort_base_eegs)
-                
+
         # could not get compress to work using timeseries.compress method 
         # compress_eegs = eegs.compress(condition=[0,2], axis='time')
         # compress_base_eegs = np.compress(condition=[0,1], a=base_eegs.data, axis=base_eegs.get_axis_num('channels'))
@@ -356,16 +356,16 @@ class TestRegressionPTSA(unittest.TestCase):
         take_eegs = eegs.take(indices=[2,4,6,8],axis='events')
         take_base_eegs = base_eegs.isel(events=[2,4,6,8])
         assert_array_equal(take_eegs , take_base_eegs)
-        
+
         trace_eegs = eegs.trace(offset=0, axis1=0,axis2=2)
         trace_base_eegs = np.trace(base_eegs, offset=0, axis1=base_eegs.get_axis_num('channels'),
                                    axis2=base_eegs.get_axis_num('time'))
         assert_array_equal(trace_eegs , trace_base_eegs)
-        
+
         var_eegs = eegs.var(axis='time')
         var_base_eegs = base_eegs.var(dim='time')
         assert_array_equal(var_eegs, var_base_eegs)
-        
+
     def test_wavelets(self):
         eegs = self.eegs[:, :, :-1]
         base_eegs = self.base_eegs
@@ -378,11 +378,11 @@ class TestRegressionPTSA(unittest.TestCase):
                                  )
 
         pow_wavelet, phase_wavelet = wf.filter()
-        print 'pow_wavelet=',pow_wavelet
+        print('pow_wavelet=',pow_wavelet)
 
         from ptsa.wavelet import phase_pow_multi
         pow_wavelet_ptsa_orig = phase_pow_multi(freqs=np.logspace(np.log10(3), np.log10(180), 8), dat=eegs,to_return='power')
-        print 'pow_wavelets_ptsa_orig=',pow_wavelet_ptsa_orig
+        print('pow_wavelets_ptsa_orig=',pow_wavelet_ptsa_orig)
 
 
         # import matplotlib;
@@ -419,7 +419,7 @@ class TestRegressionPTSA(unittest.TestCase):
 
     def test_wavelets_python_cpp(self):
         from ptsa.data.filters import MorletWaveletFilterCpp
-        print 'hello'
+        print('hello')
 
         wf = MorletWaveletFilter(time_series=self.base_eegs,
                                  freqs=np.logspace(np.log10(3), np.log10(180), 8),
@@ -449,12 +449,12 @@ class TestRegressionPTSA(unittest.TestCase):
                 (pow_wavelet_cpp[freq_num,:,:,500:-500]-pow_wavelet[freq_num,:,:,500:-500])/pow_wavelet_cpp[freq_num,:,:,500:-500],
                 np.zeros_like(pow_wavelet_cpp[freq_num,:,:,500:-500]), decimal=decimal)
         except AssertionError:
-            print 'WARNING: Cpp and Python wavelets are not within 1%. Will try weaker test '
+            print('WARNING: Cpp and Python wavelets are not within 1%. Will try weaker test ')
 
             mean_min = np.min((desc_cpp.mean-desc_py.mean)/desc_cpp.mean)
             mean_max = np.max((desc_cpp.mean-desc_py.mean)/desc_cpp.mean)
-            print 'mean_max=',mean_max
-            print 'mean_min=',mean_min
+            print('mean_max=',mean_max)
+            print('mean_min=',mean_min)
 
 
             self.assertTrue(np.abs(mean_max)<0.05)
@@ -463,8 +463,8 @@ class TestRegressionPTSA(unittest.TestCase):
 
     def test_wavelets_multicore(self):
         from ptsa.data.filters import MorletWaveletFilterCpp
-        print 'hello'
-        print sys.path
+        print('hello')
+        print(sys.path)
 
         wf_cpp_multi = MorletWaveletFilterCpp(time_series=self.base_eegs,
                                  freqs=np.logspace(np.log10(3), np.log10(180), 8),

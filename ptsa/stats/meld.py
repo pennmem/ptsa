@@ -54,8 +54,8 @@ else:
     r_model_matrix = rstats.model_matrix
 
 # load ptsa clustering
-import cluster
-from stat_helper import fdr_correction
+from . import cluster
+from .stat_helper import fdr_correction
 
 # deal with warnings for bootstrap
 import warnings
@@ -93,9 +93,9 @@ class LMER():
             factors = {}
         # add in missingarg for any potential factor not provided
         for k in df.dtype.names:
-            if isinstance(df[k][0],str) and not factors.has_key(k):
+            if isinstance(df[k][0],str) and k not in factors:
                 factors[k] = MissingArg
-                
+
         for f in factors:
             if factors[f] is None:
                 factors[f] = MissingArg
@@ -160,7 +160,7 @@ class LMER():
             except:
                 continue
                 #tvals.append(np.array([np.nan]))
-            
+
             # save the model
             if self._ms is None:
                 self._ms = ms
@@ -258,7 +258,7 @@ def _eval_model(model_id, perm=None):
 
     # turn R into array
     R_nocat = np.array(R)
-    
+
     # zero invariant features
     feat_mask = np.isnan(R)
     R_nocat[feat_mask] = 0.0
@@ -271,7 +271,7 @@ def _eval_model(model_id, perm=None):
     else:
         # turn to Z
         R_nocat = np.arctanh(R_nocat)
-                
+
     # pick only stable features
     # NOTE: R_nocat is no longer R, it's either TFCE or Z
     Rtbr = pick_stable_features(R_nocat, nboot=mm._feat_nboot)
@@ -320,7 +320,7 @@ def _eval_model(model_id, perm=None):
         mer = None
     else:
         mer = mm._mer
-    
+
     # loop over LVs performing LMER
     res = []
     for i in range(len(Vh)):
@@ -393,7 +393,7 @@ def _eval_model(model_id, perm=None):
     if perm is None:
         # return tvals, tfs, and R for actual non-permuted data
         out = (ts,tfs,_R,feat_mask,_ss,mer)
-    
+
     else:
         # return the tvals for the terms
         out = (ts,tfs,~feat_mask[0])
@@ -491,7 +491,7 @@ class MELD(object):
         self._re_group = re_group
         if isinstance(ind_data, dict):
             # groups are the keys
-            self._groups = np.array(ind_data.keys())
+            self._groups = np.array(list(ind_data.keys()))
         else:
             # groups need to be extracted from the recarray
             self._groups = np.unique(ind_data[re_group])
@@ -514,7 +514,7 @@ class MELD(object):
             else:
                 # index into it with ind_ind
                 row_ind = row_mask[ind_ind]
-            
+
             # extract that group's A,M,O
             # first save the observations (rows of A)
             self._O[g] = ind_data[ind_ind][row_ind]
@@ -556,7 +556,7 @@ class MELD(object):
 
             # reshape M, so we don't have to do it repeatedly
             self._M[g] = self._D[g].copy() 
-            
+
             # normalize M
             if use_norm:
                 self._M[g] -= self._M[g].mean(0)
@@ -566,7 +566,7 @@ class MELD(object):
             rdf = DataFrame({k:(FactorVector(self._O[g][k])
                                 if k in factors else self._O[g][k])
                              for k in self._O[g].dtype.names})
-            
+
             # model spec as data frame
             ms = r['data.frame'](r_model_matrix(Formula(fe_formula), data=rdf))
 
@@ -647,14 +647,14 @@ class MELD(object):
 
         # clean up memmapping files
         if self._memmap:
-            for g in self._M.keys():
+            for g in list(self._M.keys()):
                 try:
                     filename = self._M[g].filename 
                     del self._M[g]
                     os.remove(filename)
                 except OSError:
                     pass
-            for g in self._D.keys():
+            for g in list(self._D.keys()):
                 try:
                     filename = self._D[g].filename 
                     del self._D[g]
@@ -664,7 +664,7 @@ class MELD(object):
 
         # clean self out of global model list
         global _global_meld
-        if _global_meld and _global_meld.has_key(my_id):
+        if _global_meld and my_id in _global_meld:
             del _global_meld[my_id]
 
 
@@ -773,7 +773,7 @@ class MELD(object):
         pfts = np.rec.fromarrays(pfts, names=','.join(names))
         return pfts
 
-    
+
 
 if __name__ == '__main__':
     np.random.RandomState(seed = 42)
@@ -790,7 +790,7 @@ if __name__ == '__main__':
     use_ranks = False
     smoothed = False
     memmap = False
-    
+
     s = np.concatenate([np.array(['subj%02d'%i]*nobs) for i in range(nsubj)])
     beh = np.concatenate([np.array([1]*(nobs/2) + [0]*(nobs/2)) 
                           for i in range(nsubj)])
@@ -802,7 +802,7 @@ if __name__ == '__main__':
 
     # data with observations in first dimension and features on the remaining
     dep_data = np.random.randn(len(s),*nfeat)
-    print 'Data shape:',dep_data.shape
+    print('Data shape:',dep_data.shape)
 
     # now with signal
     # add in some signal
@@ -811,7 +811,7 @@ if __name__ == '__main__':
         for j in range(2):
             dep_data_s[:,4,i+j] += (ind_data['beh'] * (i+1)/50.)
             dep_data_s[:,5,i+j] += (ind_data['beh'] * (i+1)/50.)
-    
+
     # smooth the data
     if smoothed:
         import scipy.ndimage
@@ -819,8 +819,8 @@ if __name__ == '__main__':
         dep_data_s = scipy.ndimage.gaussian_filter(dep_data_s, [0,1,1])
 
 
-    print "Starting MELD test"
-    print "beh has signal, beh2 does not"
+    print("Starting MELD test")
+    print("beh has signal, beh2 does not")
     me_s = MELD('val ~ beh+beh2', '(1|subj)', 'subj',
                 dep_data_s, ind_data, factors = {'subj':None},
                 use_ranks=use_ranks, 
@@ -837,8 +837,8 @@ if __name__ == '__main__':
     )
     me_s.run_perms(nperms)
     pfts = me_s.p_features
-    print "Number of signifcant features:",[(n,(pfts[n]<=.05).sum())
-                                 for n in pfts.dtype.names]
+    print("Number of signifcant features:",[(n,(pfts[n]<=.05).sum())
+                                 for n in pfts.dtype.names])
 
 
 

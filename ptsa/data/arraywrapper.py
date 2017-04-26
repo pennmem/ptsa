@@ -8,7 +8,7 @@
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
 
 # local imports
-from basewrapper import BaseWrapper
+from .basewrapper import BaseWrapper
 
 # global imports
 import numpy as np
@@ -40,22 +40,22 @@ class ArrayWrapper(BaseWrapper):
         return self._annotations
 
     def _load_data(self,channels,event_offsets,dur_samp,offset_samp):
-        """        
+        """
         """
         # allocate for data
-	eventdata = np.empty((len(channels),len(event_offsets),dur_samp),
+        eventdata = np.empty((len(channels),len(event_offsets),dur_samp),
                              dtype=self._data.dtype)*np.nan
 
-	# loop over events
-	for e,evOffset in enumerate(event_offsets):
+        # loop over events
+        for e,evOffset in enumerate(event_offsets):
             # set the range
             ssamp = offset_samp+evOffset
             esamp = ssamp + dur_samp
-            
+
             # check the ranges
             if ssamp < 0 or esamp > self._data.shape[1]:
                 raise IOError('Event with offset '+str(evOffset)+
-                              ' is outside the bounds of the data.')
+                                ' is outside the bounds of the data.')
             eventdata[:,e,:] = self._data[channels,ssamp:esamp]
 
         return eventdata

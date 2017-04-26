@@ -1,12 +1,7 @@
 import sys
-sys.path.append('/Users/m/PTSA_NEW_GIT/')
-sys.path.append('/Users/m/src/morlet_git_clion_install')
-# sys.path.append('/Users/m/src/morlet_git_install')
-import morlet
+from ptsa.extensions.morlet import morlet
 from scipy.stats import describe
 import numpy as np
-from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
-from ptsa.data.TimeSeriesX import TimeSeriesX
 num_freqs = 8
 min_frequency = 3.0
 max_frequency = 60.0
@@ -36,5 +31,5 @@ morlet_transform.multiphasevec(signal,powers)
 
 powers = powers.reshape(8,powers.shape[0]/8)
 
-print describe(powers)
+print(describe(powers))
 

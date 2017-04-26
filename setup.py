@@ -1,16 +1,32 @@
 import os
-from setup_helper import *
+import os.path as osp
+import shutil
+import sys
+from subprocess import check_call
+from contextlib import contextmanager
+from zipfile import ZipFile
+import site
 
-# used to determine location of site-packages
-from distutils.sysconfig import get_python_lib
+from setuptools import setup, Extension, Command
+from setuptools.command.build_py import build_py
+from setuptools.command.install import install
+import distutils
+import numpy as np
 
+root_dir = osp.dirname(osp.abspath(__file__))
+build_subdir = 'build'
+morlet_dir = osp.join(root_dir, 'ptsa', 'extensions', 'morlet')
+extensions_dir = osp.join(root_dir, 'ptsa', 'extensions')
+circ_stat_dir = osp.join(root_dir, 'ptsa', 'extensions', 'circular_stat')
+third_party_build_dir = osp.join(root_dir, build_subdir, 'third_party_build')
+third_party_install_dir = osp.join(root_dir, build_subdir, 'third_party_install')
 
-from glob import glob
-from shutil import copy
-from distutils.command.build import build
-
-
-
+for path in site.getsitepackages():
+    if path.endswith("site-packages"):
+        site_packages = path
+        break
+else:
+    raise RuntimeError("site-packages not found?!?")
 
 # see recipe http://stackoverflow.com/questions/12491328/python-distutils-not-include-the-swig-generated-module
 
@@ -20,141 +36,241 @@ if sys.platform.startswith("win"):
     os.environ["VS90COMNTOOLS"] = os.environ["VS140COMNTOOLS"]
 
 
-# When running from and IDE e.g. PyCharm , you may need to copy extensions .so (.pyd) to source extension directory.
-# Or set path accordingly
-
-class CustomBuild(build):
-    sub_commands = [
-        ('build_ext', build.has_ext_modules),
-        ('build_py', build.has_pure_modules),
-        ('build_clib', build.has_c_libraries),
-        ('build_scripts', build.has_scripts),
-    ]
+@contextmanager
+def chdir(path):
+    """Change to a directory and then change back."""
+    orig_cwd = os.getcwd()
+    os.chdir(path)
+    yield
+    os.chdir(orig_cwd)
 
 
-root_dir = dirname(abspath(__file__))
+def check_dependencies():
+    """Checks for dependencies that aren't installable via pip."""
+    if not distutils.spawn.find_executable('swig'):
+        raise OSError('Missing swig - please `conda install swig`')
 
-clean_previous_build()
+
+def get_version_str():
+    from ptsa import versionString
+    return versionString.vstr
+
+
+def get_numpy_include_dir():
+    """Returns the numpy include dir. Only a separate function so that we can
+    have setuptools fetch numpy for us if we don't have it yet.
+
+    """
+    return np.get_include()
+
+
+def get_include_dirs():
+    """Return extra include directories for building extensions."""
+    dirs = [get_numpy_include_dir(), osp.join(extensions_dir, 'ThreadPool')]
+
+    if sys.platform.startswith("win"):
+        dirs += [third_party_install_dir]
+    else:
+        dirs += [osp.join(third_party_install_dir, 'include')]
+    return dirs
+
+
+def get_lib_dirs():
+    """Return extra library directories for building extensions."""
+    if sys.platform.startswith('win'):
+        return [third_party_install_dir]
+    else:
+        return [osp.join(third_party_install_dir, 'lib')]
+
+
+def get_fftw_libs():
+    if sys.platform.startswith("win"):
+        return ['libfftw3-3']
+    else:
+        return ['fftw3']
+
+
+def get_libfftw_path():
+    """Returns the path to the built libfftw."""
+    if sys.platform.startswith("win"):
+        fftw_lib = 'libfftw3-3'
+        fftw_install_dir = third_party_install_dir
+        return osp.join(fftw_install_dir, fftw_lib + '.dll')
+    else:
+        fftw_lib = 'fftw3'
+        fftw_install_dir = third_party_install_dir
+        return osp.join(fftw_install_dir, 'lib', 'lib'+fftw_lib+'.a')
+
+
+def get_compiler_args():
+    """Return extra compiler arguments for building extensions."""
+    if sys.platform.startswith('darwin'):
+        return ['-std=c++11', '-stdlib=libc++', '-mmacosx-version-min=10.8']
+    elif sys.platform.startswith('win'):
+        return []
+    else:
+        return ['-std=c++11']
+
+
+class BuildFftw(Command):
+    description = "Build libfftw"
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        try:
+            os.makedirs(third_party_build_dir)
+        except OSError:  # directories likely already exist
+            pass
+
+        if sys.platform.startswith("win"):
+            build_dir = osp.join(third_party_build_dir, "fftw")
+            archive = osp.join(root_dir, 'third_party', 'fftw-3.3.5-dll64.zip')
+
+            try:
+                os.makedirs(build_dir)
+            except OSError:
+                pass
+
+            with chdir(build_dir):
+                # Extract. Windows binaries are already built.
+                with ZipFile(archive) as zfile:
+                    zfile.extractall()
+
+                try:
+                    shutil.copytree(build_dir, third_party_install_dir)
+                except OSError:
+                    print("WARNING: skipping copying fftw contents (already exist?)")
+        else:
+            # Extract
+            name = "fftw-3.3.4"
+            tarball = name + ".tar.gz"
+            archive = osp.join(root_dir, 'third_party', tarball)
+            check_call(['tar', '-xzf', archive, '-C', third_party_build_dir])
+
+            build_dir = osp.join(third_party_build_dir, name)
+
+            with chdir(build_dir):
+                # add -fPIC c and cpp flags
+                # Supposedly we could only use CPPFLAGS: http://stackoverflow.com/a/5542170
+                os.environ['CFLAGS'] = '-fPIC -O3'
+                os.environ['CPPFLAGS'] = '-fPIC -O3'
+                os.environ['CXXFLAGS'] = '-fPIC -O3'
+
+                check_call(['./configure', '--prefix=' + third_party_install_dir])
+                check_call(['make'])
+                check_call(['make', 'install'])
+
+
+class CustomBuild(build_py):
+    def run(self):
+        self.run_command("build_fftw")
+        build_py.run(self)
+
+
+class CustomInstall(install):
+    def run(self):
+        self.run_command("build_fftw")
+        install.run(self)
+
+        if sys.platform.startswith("win"):
+            # FIXME: copy DLLs in a less stupid way
+            dll_path = osp.join(third_party_install_dir, "libfftw3-3.dll")
+            ext_path = osp.join(site_packages, "ptsa", "extensions")
+            print(site_packages)
+            morlet_path = osp.join(ext_path, "morlet")
+            circ_stat_path = osp.join(ext_path, "circular_stat")
+            shutil.copy(dll_path, morlet_path)
+            shutil.copy(dll_path, circ_stat_path)
+
+
+ext_modules = [
+    Extension(
+        'ptsa.extensions.morlet._morlet',
+        sources=[osp.join(morlet_dir, 'morlet.cpp'),
+                 osp.join(morlet_dir, 'MorletWaveletTransformMP.cpp'),
+                 osp.join(morlet_dir, 'morlet.i')],
+        swig_opts=['-c++'],
+        include_dirs=get_include_dirs(),
+        library_dirs=get_lib_dirs(),
+        extra_compile_args=get_compiler_args(),
+        libraries=get_fftw_libs(),
+    ),
+
+    Extension(
+        'ptsa.extensions.circular_stat._circular_stat',
+        sources=[
+            osp.join(circ_stat_dir, 'circular_stat.cpp'),
+            osp.join(circ_stat_dir, 'circular_stat.i')
+        ],
+        swig_opts=['-c++'],
+        include_dirs=get_include_dirs(),
+        library_dirs=get_lib_dirs(),
+        extra_compile_args=get_compiler_args(),
+        libraries=get_fftw_libs(),
+    ),
+
+    Extension(
+        "ptsa.data.edf.edf",
+        sources=["ptsa/data/edf/edf.c",
+                 "ptsa/data/edf/edfwrap.c",
+                 "ptsa/data/edf/edflib.c"],
+        include_dirs=[get_numpy_include_dir()],
+        define_macros=[('_LARGEFILE64_SOURCE', None),
+                       ('_LARGEFILE_SOURCE', None)]
+    )
+]
+
 check_dependencies()
-swig_third_party()
 
-ext_modules = []
+setup(
+    name='ptsa',
+    version=get_version_str(),
+    maintainer=['Per B. Sederberg', 'Maciek Swat'],
+    maintainer_email=['psederberg@gmail.com', 'maciekswat@gmail.com'],
+    url='https://github.com/maciekswat/ptsa_new',
+    cmdclass={
+        'build_fftw': BuildFftw,
+        'build_py': CustomBuild,
+        'install': CustomInstall
+    },
+    ext_modules=ext_modules,
 
-morlet_dir = join(root_dir, 'ptsa', 'extensions', 'morlet')
-extensions_dir = join(root_dir, 'ptsa', 'extensions')
+    # This doesn't seem to work because of custom commands. For now, just
+    # install the prereqs with conda/pip.
+    # See: http://stackoverflow.com/questions/20194565/running-custom-setuptools-build-during-install#20196065
+    install_requires=[
+        "numpy",
+        "scipy",
+        "xarray",
+        "PyWavelets"
+    ],
+    packages=[
+        'ptsa',
+        'ptsa.extensions.morlet',
+        'ptsa.extensions.circular_stat',
+        'ptsa.tests',
+        'ptsa.tests.ptsa_regression',
+        'ptsa.data',
+        'ptsa.data.readers',
+        'ptsa.data.MatlabIO',
+        'ptsa.data.common',
+        'ptsa.data.filters',
+        'ptsa.data.readers',
+        'ptsa.data.writers',
+        'ptsa.data.tests',
+        'ptsa.data.edf',
+        'ptsa.plotting',
+        'ptsa.stats',
+        'dimarray',
+        'dimarray.tests'
+    ],
 
-circ_stat_dir = join(root_dir,'ptsa','extensions','circular_stat')
-
-if sys.platform.startswith('darwin'):
-    extra_compile_args = ['-std=c++11', '-stdlib=libc++', '-mmacosx-version-min=10.8']
-elif sys.platform.startswith('win'):
-    extra_compile_args = []
-else:
-    extra_compile_args = ['-std=c++11']
-
-extra_include_dirs = ''
-extra_lib_dirs = ''
-if sys.platform.startswith('win'):
-    extra_include_dirs = [get_third_party_install_dir(), numpy.get_include(), join(extensions_dir, 'ThreadPool')]
-    extra_lib_dirs = [get_third_party_install_dir()]
-    fftw_lib = 'libfftw3-3'
-    fftw_install_dir = get_third_party_install_dir()
-    fftw_lib_abspath = join(fftw_install_dir, fftw_lib+'.dll')
-
-    fftw_libs = [fftw_lib]
-else:
-    extra_include_dirs = [join(get_third_party_install_dir(), 'include'), numpy.get_include(),
-                          join(extensions_dir, 'ThreadPool')]
-    extra_lib_dirs = [join(get_third_party_install_dir(), 'lib')]
-    fftw_lib = 'fftw3'
-    fftw_install_dir = get_third_party_install_dir()
-    fftw_lib_abspath = join(fftw_install_dir,'lib', 'lib'+fftw_lib+'.a')
-
-    fftw_libs = [fftw_lib]
-
-morlet_module = Extension('ptsa.extensions.morlet._morlet',
-                          sources=[join(morlet_dir, 'morlet.cpp'),
-                                   join(morlet_dir, 'MorletWaveletTransformMP.cpp'),
-                                   join(morlet_dir, 'morlet.i')],
-                          swig_opts=['-c++'],
-                          include_dirs=extra_include_dirs,
-                          library_dirs=extra_lib_dirs,
-
-                          # include_dirs=[join(get_third_party_install_dir(), 'include'), numpy.get_include()],
-                          # library_dirs=[join(get_third_party_install_dir(), 'lib')],
-                          extra_compile_args=extra_compile_args,
-                          libraries=fftw_libs,
-
-                          )
-
-circ_stat_module = Extension('ptsa.extensions.circular_stat._circular_stat',
-                             sources=[join(circ_stat_dir, 'circular_stat.cpp'),
-                                   join(circ_stat_dir, 'circular_stat.i')],
-                             swig_opts=['-c++'],
-                             include_dirs=extra_include_dirs,
-                             library_dirs=extra_lib_dirs,
-                             extra_compile_args=extra_compile_args,
-                             libraries=fftw_libs,
-
-                             )
-
-
-edf_ext = Extension("ptsa.data.edf.edf",
-                    sources=["ptsa/data/edf/edf.c",
-                             "ptsa/data/edf/edfwrap.c",
-                             "ptsa/data/edf/edflib.c"],
-                    include_dirs=[numpy.get_include()],
-                    define_macros=[('_LARGEFILE64_SOURCE', None),
-                                   ('_LARGEFILE_SOURCE', None)])
-
-ext_modules.append(morlet_module)
-ext_modules.append(circ_stat_module)
-ext_modules.append(edf_ext)
-
-setup(name='ptsa',
-      cmdclass={'build': CustomBuild},
-      version=get_version_str(),
-      maintainer=['Per B. Sederberg', 'Maciek Swat'],
-      maintainer_email=['psederberg@gmail.com', 'maciekswat@gmail.com'],
-      url=['https://github.com/maciekswat/ptsa_new'],
-      ext_modules=ext_modules,
-      # package_dir={},
-      packages=[
-                'ptsa',
-                'ptsa.extensions.morlet',
-                'ptsa.extensions.circular_stat',
-                'ptsa.tests',
-                'ptsa.tests.ptsa_regression',
-                'ptsa.data',
-                'ptsa.data.readers',
-                'ptsa.data.MatlabIO',
-                'ptsa.data.common',
-                'ptsa.data.filters',
-                'ptsa.data.readers',
-                'ptsa.data.writers',
-                'ptsa.data.tests',
-                'ptsa.data.edf',
-                'ptsa.plotting',
-                'ptsa.plotting.tests',
-                'ptsa.stats',
-                'dimarray',
-                'dimarray.tests'
-                ],
-      py_modules=['ptsa.extensions.morlet','ptsa.extensions.circular_stat']
-      )
-
-
-
-# copying fftw .dll - have to find better way of doing it "distutils-style"...
-copy(
-    src=fftw_lib_abspath,
-    dst=join(get_python_lib(),'ptsa','extensions','morlet')
+    # Needs to be separate due to the way they are built as extensions...
+    py_modules=['ptsa.extensions.morlet', 'ptsa.extensions.circular_stat']
 )
-
-copy(
-    src=fftw_lib_abspath,
-    dst=join(get_python_lib(),'ptsa','extensions','circular_stat')
-)
-
-
-print 'SETUP COMPLETE'

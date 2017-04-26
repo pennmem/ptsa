@@ -93,7 +93,7 @@ class MorletWaveletFilterCppLegacy(PropertiedObject, BaseFilter):
             coords['frequency'] = self.freqs
             coords['time'] = time_axis
 
-            if 'offsets' in self.time_series.coords.keys():
+            if 'offsets' in list(self.time_series.coords.keys()):
                 coords['offsets'] = ('time', self.time_series['offsets'])
 
             if wavelet_pow_array is not None:
@@ -160,7 +160,7 @@ class MorletWaveletFilterCppLegacy(PropertiedObject, BaseFilter):
                 self.store(idx_tuple, wavelet_pow_array, powers)
 
         if self.verbose:
-            print 'total time wavelet loop: ', time.time() - wavelet_start
+            print('total time wavelet loop: ', time.time() - wavelet_start)
 
         return self.build_output_arrays(wavelet_pow_array, wavelet_phase_array, time_axis)
 

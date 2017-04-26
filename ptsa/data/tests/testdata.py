@@ -32,7 +32,7 @@ class TestData():
         timeRange = N.linspace(sampStart,sampEnd,duration)
         self.dims200 = [Dim('channel',N.arange(self.dat200.shape[0])),
                         Dim('time',timeRange,'ms')]
-        
+
         numSecs = 4.
         numPoints = int(numSecs*50.)
         Hz = 10
@@ -49,4 +49,4 @@ class TestData():
         timeRange = N.linspace(sampStart,sampEnd,duration)
         self.dims50 = [Dim('channel',N.arange(self.dat50.shape[0])),
                        Dim('time',timeRange,'ms')]
- 
+

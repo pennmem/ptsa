@@ -10,6 +10,7 @@
 
 # methods for aligning events and eeg data
 
+from __future__ import print_function
 import os
 import csv
 import numpy as np
@@ -45,18 +46,18 @@ def times_to_offsets(eeg_times, beh_times, ev_times, blen=10, tolerance=.0015):
             #print i,
         else:
             # no good, so say we're skipping
-            print '.', #(np.abs((bt-btimes[-1])-(eeg_times[j]-etimes[-1]))),
-    print
+            print('.', end=' ') #(np.abs((bt-btimes[-1])-(eeg_times[j]-etimes[-1]))),
+    print()
     # convert to arrays
     etimes = np.array(etimes)
     btimes = np.array(btimes)
-    print "Num. matching: ", len(etimes) #,len(btimes)
+    print("Num. matching: ", len(etimes)) #,len(btimes)
     #plot(etimes,btimes,'o')
 
     # fit a line to convert between behavioral and eeg times
     A = np.vstack([btimes, np.ones(len(btimes))]).T
     m, c = np.linalg.lstsq(A, etimes)[0]
-    print "Slope and Offset: ", m ,c
+    print("Slope and Offset: ", m ,c)
 
     # convert to get eoffsets
     eoffsets = ev_times*m + c
@@ -100,11 +101,11 @@ def times_to_offsets_old(eeg_times, eeg_offsets, beh_times,
     """
     pulse_ms = eeg_times
     annot_ms = eeg_offsets
-    
+
     # pick beginning and end (needle in haystack)
     s_ind = None
     e_ind = None
-    for i in xrange(len(annot_ms)-window):
+    for i in range(len(annot_ms)-window):
         s_ind = find_needle_in_haystack(np.diff(annot_ms[i:i+window]),
                                         np.diff(pulse_ms),thresh_ms)
         if not s_ind is None:
@@ -114,7 +115,7 @@ def times_to_offsets_old(eeg_times, eeg_offsets, beh_times,
     start_annot_vals = annot_ms[i:i+window]
     start_pulse_vals = pulse_ms[s_ind:s_ind+window]
 
-    for i in xrange(len(annot_ms)-window):
+    for i in range(len(annot_ms)-window):
         e_ind = find_needle_in_haystack(np.diff(annot_ms[::-1][i:i+window]),
                                         np.diff(pulse_ms[::-1]),thresh_ms)
         if not e_ind is None:
@@ -144,7 +145,7 @@ def times_to_offsets_old(eeg_times, eeg_offsets, beh_times,
 
     return offsets
 
-    
+
 def align_pyepl(wrappedfile, eeglog, events, annot_id='S255', 
                 channel_for_sr=0, 
                 window=100, thresh_ms=10,
@@ -161,7 +162,7 @@ def align_pyepl(wrappedfile, eeglog, events, annot_id='S255',
 
     if(not isinstance(wrappedfile,BaseWrapper)):
         raise ValueError('BaseWrapper instance required!')
-    
+
     # point to wrapper
     w = wrappedfile
 

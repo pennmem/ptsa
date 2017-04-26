@@ -22,12 +22,12 @@ def morlet_multi(freqs, widths, samplerate,
                  sampling_window=7, complete=True):
     """
     Calculate Morlet wavelets with the total energy normalized to 1.
-    
+
     Calls the scipy.signal.wavelet.morlet() function to generate
     Morlet wavelets with the specified frequencies, samplerate, and
     widths (in cycles); see the docstring for the scipy morlet function
     for details. These wavelets are normalized before they are returned.
-    
+
     Parameters
     ----------
     freqs : {int, float, array_like of ints or floats}
@@ -58,17 +58,17 @@ def morlet_multi(freqs, widths, samplerate,
         the complete version of a Morlet wavelet. Complete should be True,
         especially for low (<=5) values of width. See
         scipy.signal.wavelet.morlet() for details.
-    
+
     Returns
     -------
     A 2-D (frequencies * samples) array of Morlet wavelets.
-    
+
     Notes
     -----
     The in scipy versions <= 0.6.0, the scipy.signal.wavelet.morlet()
     code contains a bug. Until it is fixed in a stable release, this
     code calls a local fixed version of the scipy function.
-    
+
     Examples
     --------
     >>> wavelet = morlet_multi(10,5,200)
@@ -92,18 +92,18 @@ def morlet_multi(freqs, widths, samplerate,
                          "be evenly divisible by len(widths).\n"+
                          "len(freqs) = "+str(len(freqs))+"\nlen(widths) = "+
                          str(len(widths)/(len(freqs)/len(widths))))
-    
+
     # std. devs. in the time domain:
     st = widths/(2*N.pi*freqs)
-    
+
     # determine number of samples needed based on wavelet with maximum
     # standard deviation in time domain
     samples = N.ceil(N.max(st)*samplerate*sampling_window)
-    
+
     # determine the scales of the wavelet (cf.
     # scipy.signal.wavelets.morlet docstring):
     scales = (freqs*samples)/(2.*widths*samplerate)
-    
+
     #wavelets = N.empty((len(freqs),samples),dtype=N.complex128)
     wavelets = N.empty((len(freqs),samples),dtype=N.complex)
     for i in xrange(len(freqs)):
@@ -121,12 +121,12 @@ def morlet_multi2(freqs, widths, samplerate,fft_thresh=90,
                  sampling_window=7, complete=True):
     """
     Calculate Morlet wavelets with the total energy normalized to 1.
-    
+
     Calls the scipy.signal.wavelet.morlet() function to generate
     Morlet wavelets with the specified frequencies, samplerate, and
     widths (in cycles); see the docstring for the scipy morlet function
     for details. These wavelets are normalized before they are returned.
-    
+
     Parameters
     ----------
     freqs : {int, float, array_like of ints or floats}
@@ -159,17 +159,17 @@ def morlet_multi2(freqs, widths, samplerate,fft_thresh=90,
         the complete version of a Morlet wavelet. Complete should be True,
         especially for low (<=5) values of width. See
         scipy.signal.wavelet.morlet() for details.
-    
+
     Returns
     -------
     A 2-D (frequencies * samples) array of Morlet wavelets.
-    
+
     Notes
     -----
     The in scipy versions <= 0.6.0, the scipy.signal.wavelet.morlet()
     code contains a bug. Until it is fixed in a stable release, this
     code calls a local fixed version of the scipy function.
-    
+
     Examples
     --------
     >>> wavelet = morlet_multi(10,5,200)
@@ -193,10 +193,10 @@ def morlet_multi2(freqs, widths, samplerate,fft_thresh=90,
                          "be evenly divisible by len(widths).\n"+
                          "len(freqs) = "+str(len(freqs))+"\nlen(widths) = "+
                          str(len(widths)/(len(freqs)/len(widths))))
-    
+
     # std. devs. in the time domain:
     st = widths/(2*N.pi*freqs)
-    
+
     # determine number of samples needed based on wavelet with maximum
     # standard deviation in time domain
     samples = N.ceil(st*samplerate*sampling_window)
@@ -209,11 +209,11 @@ def morlet_multi2(freqs, widths, samplerate,fft_thresh=90,
         fft_samples = N.max(samples[fft_ind])
         fft_freqs = freqs[fft_ind]
         fft_widths = widths[fft_ind]
-    
+
         # determine the scales of the wavelet (cf.
         # scipy.signal.wavelets.morlet docstring):
         fft_scales = (fft_freqs*fft_samples)/(2.*fft_widths*samplerate)
-        
+
         #fft_wavelets = N.empty((len(fft_freqs),fft_samples),dtype=N.complex128)
         fft_wavelets = N.empty((len(fft_freqs),fft_samples),dtype=N.complex)
         for i in xrange(len(fft_freqs)):
@@ -225,11 +225,11 @@ def morlet_multi2(freqs, widths, samplerate,fft_thresh=90,
         fft_wavelets = fft_wavelets*fft_norm_factors
     else:
         fft_wavelets = N.array([[]])
-        
+
     reg_samples = samples[~fft_ind]
     reg_freqs = freqs[~fft_ind]
     reg_widths = widths[~fft_ind]
-    
+
     reg_scales = (reg_freqs*reg_samples)/(2.*reg_widths*samplerate)
 
     reg_wavelets = [morlet_wavelet(reg_samples[i],w=reg_widths[i],
@@ -253,7 +253,7 @@ def fconv_multi(in1, in2, mode='full'):
     result. Therefore the output array has as many rows as the product
     of the number of rows in in1 and in2 (the number of colums depend
     on the mode).
-    
+
     Parameters
     ----------
     in1 : {array_like}
@@ -265,7 +265,7 @@ def fconv_multi(in1, in2, mode='full'):
     mode : {'full','valid','same'},optional
         Specifies the size of the output. See the docstring for
         scipy.signal.convolve() for details.
-    
+
     Returns
     -------
     Array with in1.shape[0]*in2.shape[0] rows with the convolution of
@@ -278,7 +278,7 @@ def fconv_multi(in1, in2, mode='full'):
     # get the number of signals and samples in each input
     num1,s1 = in1.shape
     num2,s2 = in2.shape
-    
+
     # see if we will be returning a complex result
     complex_result = (N.issubdtype(in1.dtype, N.complex) or
                       N.issubdtype(in2.dtype, N.complex))
@@ -296,24 +296,24 @@ def fconv_multi(in1, in2, mode='full'):
     in2_fft = N.empty((num2,size),dtype=N.complex)
     for i in xrange(num2):
         in2_fft[i] = fft(in2[i],size)
-    
+
     # duplicate the signals and multiply before taking the inverse
     in1_fft = in1_fft.repeat(num2,axis=0)
     in1_fft *= N.vstack([in2_fft]*num1)
     ret = ifft(in1_fft)
 #     ret = ifft(in1_fft.repeat(num2,axis=0) * \
 #                N.vstack([in2_fft]*num1))
-    
+
     # delete to save memory
     del in1_fft, in2_fft
-    
+
     # strip of extra space if necessary
     ret = ret[:,:actual_size]
-    
+
     # determine if complex, keeping only real if not
     if not complex_result:
         ret = ret.real
-    
+
     # now only keep the requested portion
     if mode == "full":
         return ret
@@ -360,7 +360,7 @@ def phase_pow_multi(freqs, dat, samplerate, widths=5, to_return='both',
         Should be in {0, time_axis, time_axis+1,len(dat.shape)}.
     **kwargs : {**kwargs},optional
         Additional key word arguments to be passed on to morlet_multi().
-    
+
     Returns
     -------
     Array(s) of phase and/or power values as specified in to_return. The
@@ -382,7 +382,7 @@ def phase_pow_multi(freqs, dat, samplerate, widths=5, to_return='both',
                          "data samples by using a (longer) buffer.\n data "+
                          "samples: "+str(dat.shape[time_axis])+"\nwavelet "+
                          "samples: "+str(wavelets.shape[1]))
-    
+
     # reshape the data to 2D with time on the 2nd dimension
     origshape = dat.shape
     eegdat = reshapeTo2D(dat,time_axis)
@@ -396,7 +396,7 @@ def phase_pow_multi(freqs, dat, samplerate, widths=5, to_return='both',
     # XXX
     newshape.insert(freq_axis,len(freqs))
     newshape = tuple(newshape)
-    
+
     if to_return == 'power' or to_return == 'both':
         # calculate power:
         power = N.power(N.abs(wavCoef),2)
@@ -422,7 +422,7 @@ def phase_pow_multi(freqs, dat, samplerate, widths=5, to_return='both',
         return phase
     elif to_return == 'both':
         return phase,power
-    
+
 
 def phase_pow_multi2(freqs, dat, samplerate, widths=5, to_return='both',
                     time_axis=-1, freq_axis=0, **kwargs):
@@ -457,7 +457,7 @@ def phase_pow_multi2(freqs, dat, samplerate, widths=5, to_return='both',
         Should be in {0, time_axis, time_axis+1,len(dat.shape)}.
     **kwargs : {**kwargs},optional
         Additional key word arguments to be passed on to morlet_multi().
-    
+
     Returns
     -------
     Array(s) of phase and/or power values as specified in to_return. The
@@ -481,7 +481,7 @@ def phase_pow_multi2(freqs, dat, samplerate, widths=5, to_return='both',
                          "data samples by using a (longer) buffer.\n data "+
                          "samples: "+str(dat.shape[time_axis])+"\nwavelet "+
                          "samples: "+str(fft_wavelets.shape[1]))
-    
+
     # reshape the data to 2D with time on the 2nd dimension
     origshape = dat.shape
     eegdat = reshapeTo2D(dat,time_axis)
@@ -507,14 +507,14 @@ def phase_pow_multi2(freqs, dat, samplerate, widths=5, to_return='both',
             reg_wavCoef[i] = N.convolve(reg_wavelets[reg],evDat,'same')
             i += 1
     wavCoef[conv_ind] = reg_wavCoef
-    
+
     # Determine shape for ouput arrays with added frequency dimension:
     newshape = list(origshape)
     # freqs must be first for reshapeFrom2D to work
     # XXX
     newshape.insert(freq_axis,len(freqs))
     newshape = tuple(newshape)
-    
+
     if to_return == 'power' or to_return == 'both':
         # calculate power:
         power = N.power(N.abs(wavCoef),2)
@@ -568,7 +568,7 @@ def phasePow1d(freq,dat,samplerate,width):
     dt = 1./float(samplerate)
     sf = float(freq)/float(width)
     st = 1./(2*N.pi*sf)
-    
+
     # get the morlet wavelet for the proper time range
     t=N.arange(-3.5*st,3.5*st,dt)
     m = morlet(freq,t,width)
@@ -576,7 +576,7 @@ def phasePow1d(freq,dat,samplerate,width):
     # make sure we are not trying to get a too low a freq
     # for now it is up to them
     #if len(t) > len(dat):
-	#raise
+        #raise
 
     # convolve the wavelet and the signal
     y = N.convolve(m,dat,'full')
@@ -589,12 +589,12 @@ def phasePow1d(freq,dat,samplerate,width):
 
     # find where the power is zero
     ind = power==0
-        
+
     # normalize the phase estimates to length one
     y[ind] = 1.
     y = y/N.abs(y)
     y[ind] = 0
-        
+
     # get the phase
     phase = N.angle(y)
 
@@ -610,7 +610,7 @@ def phasePow2d(freq,dat,samplerate,width):
     dt = 1./float(samplerate)
     sf = float(freq)/float(width)
     st = 1./(2*N.pi*sf)
-    
+
     # get the morlet wavelet for the proper time range
     t=N.arange(-3.5*st,3.5*st,dt)
     m = morlet(freq,t,width)
@@ -623,26 +623,26 @@ def phasePow2d(freq,dat,samplerate,width):
     wCoef = N.empty(dat.shape,N.complex128)
 
     for ev,evDat in enumerate(dat):
-	# convolve the wavelet and the signal
-	y = N.convolve(m,evDat,'full')
+        # convolve the wavelet and the signal
+        y = N.convolve(m,evDat,'full')
 
-	# cut off the extra
-	y = y[N.ceil(len(m)/2.)-1:len(y)-N.floor(len(m)/2.)];
+        # cut off the extra
+        y = y[N.ceil(len(m)/2.)-1:len(y)-N.floor(len(m)/2.)];
 
-	# insert the data
-	wCoef[ev] = y
+        # insert the data
+        wCoef[ev] = y
 
     # get the power
     power = N.power(N.abs(wCoef),2)
 
     # find where the power is zero
     ind = power==0
-        
+
     # normalize the phase estimates to length one
     wCoef[ind] = 1.
     wCoef = wCoef/N.abs(wCoef)
     wCoef[ind] = 0
-        
+
     # get the phase
     phase = N.angle(wCoef)
 
@@ -658,7 +658,7 @@ def tsPhasePow(freqs,tseries,width=5,resample=None,keepBuffer=False,
         raise ValueError("to_return must be \'pow\', \'phase\', or \'both\' to\
         specify whether power, phase, or both should be  returned. Invalid\
         value for to_return: %s " % to_return)
-    
+
     # first get the phase and power as desired
     res = calcPhasePow(freqs,tseries.data,tseries.samplerate,axis=tseries.tdim,
                        width=width,verbose=verbose,to_return=to_return)
@@ -669,7 +669,7 @@ def tsPhasePow(freqs,tseries,width=5,resample=None,keepBuffer=False,
     # add in frequency dimension
     freqDim = Dim(freqDimName,freqs,'Hz')
     tsdims.insert(0,freqDim)
-    
+
     # turn them into timeseries
     if to_return == 'pow' or to_return == 'both':
         # turn into a timeseries
@@ -686,7 +686,7 @@ def tsPhasePow(freqs,tseries,width=5,resample=None,keepBuffer=False,
         # see if remove buffer
         if not keepBuffer:
             powerAll.removeBuf()
-    
+
     if to_return == 'phase' or to_return == 'both':
         # get the phase matrix
         phaseAll = TimeSeries(res,tsdims,
@@ -700,7 +700,7 @@ def tsPhasePow(freqs,tseries,width=5,resample=None,keepBuffer=False,
         # see if remove buffer
         if not keepBuffer:
             phaseAll.removeBuf()
-    
+
     # see what to return
     if to_return == 'pow':
         return powerAll
@@ -708,8 +708,8 @@ def tsPhasePow(freqs,tseries,width=5,resample=None,keepBuffer=False,
         return phaseAll
     elif to_return == 'both':
         return phaseAll,powerAll
-        
-    
+
+
 
 def calcPhasePow(freqs,dat,samplerate,axis=-1,width=5,verbose=False,to_return='both'):
     """Calculate phase and power over time with a Morlet wavelet.
@@ -723,7 +723,7 @@ def calcPhasePow(freqs,dat,samplerate,axis=-1,width=5,verbose=False,to_return='b
 
     if to_return != 'both' and to_return != 'pow' and to_return != 'phase':
         raise ValueError("to_return must be \'pow\', \'phase\', or \'both\' to specify whether power, phase, or both are returned. Invalid value: %s " % to_return)
-    
+
     # reshape the data to 2D with time on the 2nd dimension
     origshape = dat.shape
     eegdat = reshapeTo2D(dat,axis)
@@ -735,39 +735,39 @@ def calcPhasePow(freqs,dat,samplerate,axis=-1,width=5,verbose=False,to_return='b
     # loop over freqs
     freqs = N.asarray(freqs)
     if len(freqs.shape)==0:
-	freqs = N.array([freqs])
+        freqs = N.array([freqs])
     if verbose:
-	sys.stdout.write('Calculating wavelet phase/power...\n')
-	sys.stdout.write('Freqs (%g to %g): ' % (N.min(freqs),N.max(freqs)))
+        sys.stdout.write('Calculating wavelet phase/power...\n')
+        sys.stdout.write('Freqs (%g to %g): ' % (N.min(freqs),N.max(freqs)))
     for f,freq in enumerate(freqs):
-	if verbose:
-	    sys.stdout.write('%g ' % (freq))
-	    sys.stdout.flush()
-	# get the phase and power for that freq
-	phase,power = phasePow2d(freq,eegdat,samplerate,width)
-        
-        # reshape back do original data shape
-	if to_return == 'phase' or to_return == 'both':
-	    phase = reshapeFrom2D(phase,axis,origshape)
-	if to_return == 'pow' or to_return == 'both':
-	    power = reshapeFrom2D(power,axis,origshape)
+        if verbose:
+            sys.stdout.write('%g ' % (freq))
+            sys.stdout.flush()
+        # get the phase and power for that freq
+        phase,power = phasePow2d(freq,eegdat,samplerate,width)
 
-	# see if allocate
-	if len(phaseAll) == 0 and len(powerAll) == 0:
-	    if to_return == 'phase' or to_return == 'both':
-		phaseAll = N.empty(N.concatenate(([len(freqs)],phase.shape)),
-				   dtype=phase.dtype)
-	    if to_return == 'pow' or to_return == 'both':
-		powerAll = N.empty(N.concatenate(([len(freqs)],power.shape)),
-				   dtype=power.dtype)
+        # reshape back do original data shape
+        if to_return == 'phase' or to_return == 'both':
+            phase = reshapeFrom2D(phase,axis,origshape)
+        if to_return == 'pow' or to_return == 'both':
+            power = reshapeFrom2D(power,axis,origshape)
+
+        # see if allocate
+        if len(phaseAll) == 0 and len(powerAll) == 0:
+            if to_return == 'phase' or to_return == 'both':
+                phaseAll = N.empty(N.concatenate(([len(freqs)],phase.shape)),
+                                   dtype=phase.dtype)
+            if to_return == 'pow' or to_return == 'both':
+                powerAll = N.empty(N.concatenate(([len(freqs)],power.shape)),
+                                   dtype=power.dtype)
         # insert into all
-	if to_return == 'phase' or to_return == 'both':
-	    phaseAll[f] = phase
-	if to_return == 'pow' or to_return == 'both':
-	    powerAll[f] = power
+        if to_return == 'phase' or to_return == 'both':
+            phaseAll[f] = phase
+        if to_return == 'pow' or to_return == 'both':
+            powerAll[f] = power
 
     if verbose:
-	sys.stdout.write('\n')
+        sys.stdout.write('\n')
 
     if to_return == 'pow':
         return powerAll

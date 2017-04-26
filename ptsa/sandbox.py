@@ -17,22 +17,22 @@ class BaseDict(dict):
         A dict allows inputting data as adict.xxx as well as adict['xxx']
 
         In python obj:
-        
+
             obj.var=x  ---> 'var' be in obj.__dict__ (this is python default)
 
         In python dict:
-        
+
             dict['var']=x ---> 'var' be in dict.items(this is dict behavior)
 
         In BaseDict:  
 
             let bd=BaseDict()
-            
+
             Both bd.var and bd['var'] will save x to bd.items 
             and bd.setDict('var', x) will save x to bd.__dict__ 
 
             This allows an easier access of the variables.        
-  
+
     '''
     def __init__(self, data=None):
         if data:  dict.__init__(self, data)
@@ -40,21 +40,21 @@ class BaseDict(dict):
         dic = self.__dict__
         dic['__ver__']   ='20041208_1'
         dic['__author__']='Runsun Pan'
-    
+
     def __setattr__(self, name, val):
         if name in self.__dict__:  self.__dict__[name]= val        
         else:   self[name] = val
-        
+
     def __getattr__(self, name):
         if name in self.__dict__:  return self.__dict__[name]        
         else:  return self[name] 
-           
+
     def setDict(self, name, val): 
         '''
             setDict(name, val): Assign *val* to the key *name* of __dict__.
-         
+
             :Usage:
-            
+
             >>> bd = BaseDict()
             >>> bd.getDict()['height']   
             Traceback (most recent call last):
@@ -72,9 +72,9 @@ class BaseDict(dict):
     def getDict(self): 
         ''' 
             Return the internal __dict__.
-            
+
             :Usage:
-            
+
             >>> bd = BaseDict()
             >>> bd.getDict()['height']
             Traceback (most recent call last):
@@ -86,14 +86,14 @@ class BaseDict(dict):
             160
             '''
         return self.__dict__
-        
+
     def setItem(self, name, val): 
         ''' 
             Set the value of dict key *name* to *val*. Note this dict 
             is not the __dict__.
 
             :Usage:
-            
+
             >>> bd = BaseDict()
             >>> bd
             {}
@@ -105,7 +105,7 @@ class BaseDict(dict):
             '''
         self[name] = val
         return self
-    
+
     def __getstate__(self): 
         ''' Needed for cPickle in .copy() '''
         return self.__dict__.copy() 
@@ -117,9 +117,9 @@ class BaseDict(dict):
     def copy(self):   
         ''' 
             Return a copy. 
-            
+
             :Usage:
-            
+
             >>> bd = BaseDict()
             >>> bd['name']=[1,2,3]
             >>> bd
@@ -141,7 +141,7 @@ class BaseDict(dict):
             {'name': [1, 2, 3]}
             >>> bd2
             {'name': ['aa', 2, 3], 'height': 60}
-                
+
             '''
         return cPickle.loads(cPickle.dumps(self))
 
@@ -151,26 +151,26 @@ class DataDict(BaseDict):
     """ Dictionary where you can access the values as attributes, but with
     added features for manipulating the data inside.  """
     def removeBuffer(self,fields,axis=-1):
-	"""Use the information contained in the data dictionary to remove the
-	buffer from the specified fields and reset the time range.  If
-	bufLen is 0, no action is performed."""
-	# see if remove the anything
-	if self.bufLen>0:
-	    # make sure it's a list
-	    fields = N.asarray(fields)
-	    if len(fields.shape)==0:
-		fields = [fields]
-	    for field in fields:
-		# remove the buffer
-		self[field] = self[field].take(range(self.bufLen,
-						     self[field].shape[axis]-self.bufLen),
-					       axis)
-	    # set the time range with no buffer
-	    self.time = N.linspace(self.OffsetMS,
-				   self.OffsetMS+self.DurationMS,
-				   self[fields[0]].shape[axis])
-	    # reset buffer to indicate it was removed
-	    self.bufLen = 0
+        """Use the information contained in the data dictionary to remove the
+        buffer from the specified fields and reset the time range.  If
+        bufLen is 0, no action is performed."""
+        # see if remove the anything
+        if self.bufLen>0:
+            # make sure it's a list
+            fields = N.asarray(fields)
+            if len(fields.shape)==0:
+                fields = [fields]
+            for field in fields:
+                # remove the buffer
+                self[field] = self[field].take(range(self.bufLen,
+                                                     self[field].shape[axis]-self.bufLen),
+                                               axis)
+            # set the time range with no buffer
+            self.time = N.linspace(self.OffsetMS,
+                                   self.OffsetMS+self.DurationMS,
+                                   self[fields[0]].shape[axis])
+            # reset buffer to indicate it was removed
+            self.bufLen = 0
 
 
 
@@ -216,7 +216,7 @@ class EegTimeSeries_old(object):
         self.dtype = data.dtype
         self.shape = data.shape
         self.ndim = len(data.shape)
-        
+
         # get the time dimension
         if tdim >= 0:
             # use it
@@ -239,7 +239,7 @@ class EegTimeSeries_old(object):
             # default to no offset
             self.offset = 0
             self.offsetMS = 0
-                
+
         # set the buffer
         if not buffer is None:
             # set bufferMS from buffer
@@ -262,17 +262,17 @@ class EegTimeSeries_old(object):
                                    self.offsetMS+self.durationMS+self.bufferMS,
                                    self.shape[self.tdim])
 
-            
+
     def __getitem__(self, item):
         """
         :Parameters:
             item : ``slice``
                 The slice of the data to take.
-        
+
         :Returns: ``numpy.ndarray``
         """
         return self.data[item]
-        
+
     def __setitem__(self, item, value):
         """
         :Parameters:
@@ -280,30 +280,30 @@ class EegTimeSeries_old(object):
                 The slice of the data to write to
             value : A single value or array of type ``self.dtype``
                 The value to be set.
-        
+
         :Returns: ``None``
         """
         self.data[item] = value
 
     def removeBuffer(self):
-	"""Use the information contained in the time series to remove the
-	buffer reset the time range.  If buffer is 0, no action is
-	performed."""
-	# see if remove the anything
-	if self.buffer>0:
+        """Use the information contained in the time series to remove the
+        buffer reset the time range.  If buffer is 0, no action is
+        performed."""
+        # see if remove the anything
+        if self.buffer>0:
             # remove the buffer
             self.data = self.data.take(range(self.buffer,
                                              self.shape[self.tdim]-self.buffer),self.tdim)
 
             # reset buffer to indicate it was removed
-	    self.buffer = 0
+            self.buffer = 0
             self.bufferMS = 0
 
             # reset the shape
             self.shape = self.data.shape
 
-	    # set the time range with no buffer
-	    self.trangeMS = N.linspace(self.offsetMS-self.bufferMS,
+            # set the time range with no buffer
+            self.trangeMS = N.linspace(self.offsetMS-self.bufferMS,
                                        self.offsetMS+self.durationMS+self.bufferMS,
                                        self.shape[self.tdim])
 
@@ -367,7 +367,7 @@ class EegTimeSeries_old(object):
         self.trangeMS = N.linspace(self.offsetMS-self.bufferMS,
                                    self.offsetMS+self.durationMS+self.bufferMS,
                                    self.shape[self.tdim])
-                 
+
 
 
 # class EventRecord(N.record):

@@ -90,7 +90,7 @@ class TestReaders(unittest.TestCase):
         base_eegs = eeg_reader.read()
 
         if eeg_reader.removed_bad_data():
-            print 'REMOVED BAD DATA !!!!!!!!!!!!!'
+            print('REMOVED BAD DATA !!!!!!!!!!!!!')
 
         events = base_eegs['events'].data.view(np.recarray)
 
@@ -166,7 +166,7 @@ class TestReaders(unittest.TestCase):
         tal_reader = TalStimOnlyReader(filename=tal_path)
 
         tal = tal_reader.read()
-        print tal
+        print(tal)
 
 
 

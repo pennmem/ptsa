@@ -20,12 +20,12 @@ def pca(X, ncomps=None, eigratio=1e6):
 %   ratio between the maximum and minimum covariance eigenvalue is below
 %   EIGRATIO. In such a case, the function will return as few components as
 %   are necessary to guarantee that such ratio is greater than EIGRATIO.
-    
+
     """
 
     if ncomps is None:
         ncomps = X.shape[0]
-        
+
     C = np.cov(X)
     D,V = np.linalg.eigh(C)
     val = np.abs(D)

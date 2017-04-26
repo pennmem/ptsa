@@ -26,7 +26,7 @@ def reshape_to_2d(data,axis):
     # reshape and transpose the data
     newdata = np.reshape(np.transpose(data,tuple(newdims)),
                          (np.prod(dshape,axis=0)/n,n))
-    
+
     # make sure we have a copy
     #newdata = newdata.copy()
 
@@ -53,15 +53,15 @@ def reshape_from_2d(data,axis,dshape):
     vals = range(rnk)
     olddims = vals[:axis] + [rnk-1] +vals[axis:rnk-1]
     ret = np.transpose(ret,tuple(olddims))
-    
+
     # make sure we have a copy
     #ret = ret.copy()
     return ret
 
 def repeat_to_match_dims(x,y,axis=-1):
-    
+
     rnk = len(y.shape)
-    
+
     # convert negative axis to positive axis
     if axis < 0: 
         axis = axis + rnk
@@ -144,7 +144,7 @@ def release_file(filename,lockdirpath=None,lockdirname=None):
     except:
         return False
     return True
-      
+
 def next_pow2(n):
     """
     Returns p such that 2 ** p >= n
@@ -190,11 +190,11 @@ def centered(arr, newsize):
     Returns
     -------
     A center slice into the input array
-    
+
     Note
     ----
     Adapted from scipy.signal.signaltools._centered
-        
+
     """
     # Don't make a copy of newsize when creating array:
     newsize = np.asarray(newsize)
@@ -231,7 +231,7 @@ def getargspec(obj):
     See http://kbyanc.blogspot.com/2007/07/python-more-generic-getargspec.html
     """
     if not callable(obj):
-        raise TypeError, "%s is not callable" % type(obj)
+        raise TypeError("%s is not callable" % type(obj))
     try:
         if inspect.isfunction(obj):
             return inspect.getargspec(obj)
@@ -263,6 +263,5 @@ def getargspec(obj):
         # care what aspect(s) of that object we actually
         # examined).
         pass
-    raise NotImplementedError, \
-          "do not know how to get argument list for %s" % \
-          type(obj)
+    raise NotImplementedError("do not know how to get argument list for %s" % \
+          type(obj))

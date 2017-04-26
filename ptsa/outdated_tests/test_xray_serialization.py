@@ -1,6 +1,6 @@
 __author__ = 'm'
 
-import xray
+import xarray as xray
 
 
 # xray.backends.api.WRITEABLE_STORES['netcdf4'] = xray.backends.NetCDF4DataStoreRAM
@@ -45,7 +45,7 @@ data['press_sounding'] = range(800,300,-50)
 
 data['location_name'][0] = stringtoarr('Boulder, Colorado, USA',NUMCHARS)
 
-print 'data=',data
+print('data=',data)
 
 
 
@@ -68,14 +68,14 @@ from copy import deepcopy
 
 new_dtype_dict = {'names':[],'formats':[]}
 
-for field, dt in x_dtype.fields.items():
-    print field
+for field, dt in list(x_dtype.fields.items()):
+    print(field)
     # print type(dt[0])
     # print dir(dt[0])
 
-    print 'char = ', dt[0].char
-    print 'kind = ', dt[0].kind
-    print 'shape = ', dt[0].itemsize
+    print('char = ', dt[0].char)
+    print('kind = ', dt[0].kind)
+    print('shape = ', dt[0].itemsize)
 
     if dt[0].kind =='S' and dt[0].itemsize>1:
         new_dtype_dict['names'].append(field)
@@ -94,12 +94,12 @@ def str_array_to_char_array_mapper(array,str_size):
 
 
 
-print new_dtype_dict
+print(new_dtype_dict)
 
 x_new = np.empty(x.shape[0],dtype=new_dtype_dict)
 
 
-print x_new['y'].dtype
+print(x_new['y'].dtype)
 
 # sys.exit()
 
@@ -128,7 +128,7 @@ a_xray = xray.DataArray(a, coords=[x_new,np.arange(10)],dims=['events','time'])
 a_xray.attrs['samplerate'] = 500
 a_xray.attrs['buffer'] = 1.0
 
-print a_xray
+print(a_xray)
 
 
 a_xray_ds = xray.Dataset({'a_xray':a_xray})
@@ -140,7 +140,7 @@ a_xray_ds_read = xray.open_dataset('a_xray.nc')
 
 a_xray_read = a_xray_ds_read['a_xray']
 
-print 'a_xray_read=',a_xray_read
+print('a_xray_read=',a_xray_read)
 
 from netCDF4 import Dataset
 
@@ -171,7 +171,7 @@ from netCDF4 import Dataset
 
 # create a file (Dataset object, also the root group).
 rootgrp = Dataset('test.nc', 'w', format='NETCDF4')
-print(rootgrp.file_format)
+print((rootgrp.file_format))
 rootgrp.close()
 
 rootgrp = Dataset('test.nc', 'a')
@@ -184,7 +184,7 @@ latitudes = np.arange(73)
 x_dtype = x.dtype
 
 x_dtype_t = rootgrp.createCompoundType(x_dtype,'x_dtype')
-print
+print()
 
 
 # create a variable with this data type, write some data to it.
@@ -192,7 +192,7 @@ rootgrp.createDimension('x_dim',2)
 x_var = rootgrp.createVariable('x_var',x_dtype_t,'x_dim')
 
 
-print 'str x.dtype=', str(x.dtype)
+print('str x.dtype=', str(x.dtype))
 
 # create a variable with this data type, write some data to it.
 # rootgrp.createDimension('x_dim',2)
@@ -210,9 +210,9 @@ f = Dataset('test.nc')
 # print(f.cmptypes)
 # print(f.cmptypes['complex128'])
 v = f.variables['x_var']
-print(v.shape)
+print((v.shape))
 
-print 'v=',v[:]
+print('v=',v[:])
 
 sys.exit()
 
@@ -233,16 +233,16 @@ a_xray_ds.to_netcdf('a_xray_ds.nc', format='NETCDF4',engine='netcdf4')
 
 a_xray_read_dataset = xray.open_dataset('a_xray_ds.nc')
 #
-print 'a_xray_read_dataset=',a_xray_read_dataset
+print('a_xray_read_dataset=',a_xray_read_dataset)
 
-print 'a_xray_read_dataset.attrs=',a_xray_read_dataset.attrs
+print('a_xray_read_dataset.attrs=',a_xray_read_dataset.attrs)
 
 #
 #
 a_xray_read = a_xray_read_dataset.to_array()
 #
-print a_xray_read
-print a_xray_read.attrs
+print(a_xray_read)
+print(a_xray_read.attrs)
 
 
 

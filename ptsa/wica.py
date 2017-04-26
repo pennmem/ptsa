@@ -28,7 +28,7 @@ def find_blinks(dat, L, fast_rate=.5, slow_rate=.975, thresh=None):
     """
     # make the range to go around an eyeblink
     #L = np.int32(np.round(samplerate*0.1))*2
-    
+
     # process the data
     #if thresh is None:
     #    zd = (dat-np.mean(dat))/np.std(dat)
@@ -36,7 +36,7 @@ def find_blinks(dat, L, fast_rate=.5, slow_rate=.975, thresh=None):
     #    zd = dat
     zdf = dat
     zdb = dat[::-1]
-    
+
     # initialize the fast and slow running averages
     fastf = np.zeros(len(dat)+1)
     slowf = np.zeros(len(dat)+1)
@@ -44,7 +44,7 @@ def find_blinks(dat, L, fast_rate=.5, slow_rate=.975, thresh=None):
     fastb = np.zeros(len(dat)+1)
     slowb = np.zeros(len(dat)+1)
     slowb[0] = np.mean(zdb[:10])
-    
+
     # params for running averages
     a = fast_rate
     b = 1-a
@@ -77,9 +77,9 @@ def find_blinks(dat, L, fast_rate=.5, slow_rate=.975, thresh=None):
     # determine the thresh
     if thresh is None:
         thresh = np.std(np.abs(fast))
-    
+
     # determine the artifact indices
-    
+
     # first apply a thresh
     idx = np.nonzero(np.abs(fast)>thresh)[0]
     inds = np.arange(len(dat), dtype=np.int32)
@@ -90,7 +90,7 @@ def find_blinks(dat, L, fast_rate=.5, slow_rate=.975, thresh=None):
         idx_ext[(2*L+1)*(k):(2*L+1)*(k+1)-1] = np.arange(idx[k]-L,idx[k]+L)
     id_noise = np.setdiff1d(inds, idx_ext)
     id_artef = np.setdiff1d(inds, id_noise)
-    
+
     return id_artef,id_noise
 
 def _clean_find_thresh(Y,Kthr,wavelet,L):
@@ -99,7 +99,7 @@ def _clean_find_thresh(Y,Kthr,wavelet,L):
     thld = 0.0
 
     N = len(Y)
-    
+
     # find the outliers
     # need to replace this with blink-finding code
 
@@ -127,7 +127,7 @@ def _clean_find_thresh(Y,Kthr,wavelet,L):
         id_artef,id_noise = find_blinks(Y,L)
 
     # make sure it's not all noise or artifact
-    print len(id_artef),len(id_noise)
+    print(len(id_artef),len(id_noise))
 
     # if isempty(id_artef),
     #     disp(['The component #' num2str(Comp(c)) ' has passed unchanged']);
@@ -220,7 +220,7 @@ def _clean_comp(comp, Kthr, L, thld=None):
 
     # Y = icaEEG(Comp(c),1:N);
     Y = comp[:N]
-        
+
     if thld is None:
         # opt(c) = thld;
         xn,thld = _clean_find_thresh(Y,Kthr,wavelet,L)
@@ -235,7 +235,7 @@ def _clean_comp(comp, Kthr, L, thld=None):
 
     # icaEEG(Comp(c),1:N) = xn;
     comp[:N] = xn
-    
+
     # clean the second half
     # Y = icaEEG(Comp(c),end-N+1:end);
     Y = comp[-N:]
@@ -246,7 +246,7 @@ def _clean_comp(comp, Kthr, L, thld=None):
 
     return comp, thld
 
-    
+
 def remove_strong_artifacts(data, A, icaEEG, Comp, Kthr=1.25, F=256,
                             Cthr=None, num_mp_procs=0):
     """
@@ -255,11 +255,11 @@ def remove_strong_artifacts(data, A, icaEEG, Comp, Kthr=1.25, F=256,
     %
 
     Ported and enhanced from Matlab code distributed by the authors of:
-    
+
     N.P. Castellanos, and V.A. Makarov (2006). 'Recovering EEG brain signals: Artifact 
     suppression with wavelet enhanced independent component analysis'
     J. Neurosci. Methods, 158, 300--312.
-    
+
     % INPUT:
     %
     % icaEEG - matrix of ICA components (Nchanel x Nobservations)
@@ -286,7 +286,7 @@ def remove_strong_artifacts(data, A, icaEEG, Comp, Kthr=1.25, F=256,
     #icaEEG = data.copy()
     # allow to modify to save memory
     #icaEEG = data
-    
+
     # L = round(F*0.1);
     L = np.int32(np.round(F*0.1))
     # [Nchan, Nobser] = size(icaEEG);
@@ -318,7 +318,7 @@ def remove_strong_artifacts(data, A, icaEEG, Comp, Kthr=1.25, F=256,
     if has_mp and num_mp_procs != 0:
         po = mp.Pool(num_mp_procs)
         mp_res = []
-        
+
     # for c=1:length(Comp),
     for c in xrange(len(Comp)):
         if find_thresh:
@@ -504,7 +504,7 @@ class WICA(object):
         # return cleaned data back in EEG space
         return np.dot(self.ICA_weights,self._components)
 
-    
+
 
 def wica_clean(data, samplerate=None, pure_range=(None,None),
                EOG_elecs=[0,1], std_fact=1.5, Kthr=2.5,num_mp_procs=0):
@@ -538,7 +538,7 @@ def wica_clean(data, samplerate=None, pure_range=(None,None),
     # run pca
     sys.stdout.write("Running PCA...")
     Wpca,pca_data = pca(data[:,pure_range[0]:pure_range[1]]) #, ncomps, eigratio)
-    
+
     # Run iwasobi
     sys.stdout.write("Running IWASOBI ICA...")
     sys.stdout.flush()
@@ -599,7 +599,7 @@ def wica_clean(data, samplerate=None, pure_range=(None,None),
     Cthr = remove_strong_artifacts(signals,comp_ind,Kthr,
                                    samplerate,Cthr,
                                    num_mp_procs=num_mp_procs)
-    
+
     # return cleaned data back in EEG space
     return np.dot(A,signals).astype(data.dtype)
 

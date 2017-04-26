@@ -81,7 +81,7 @@ class MonopolarToBipolarMapper(PropertiedObject,BaseFilter):
         # coords_bp = [self.time_series[dim_name].copy() for dim_name in self.time_series.dims]
         # coords_bp[channels_idx] = self.bipolar_pairs
 
-        coords_bp = {coord_name:coord for coord_name, coord in self.time_series.coords.items()}
+        coords_bp = {coord_name:coord for coord_name, coord in list(self.time_series.coords.items())}
         del coords_bp['channels']
         coords_bp['bipolar_pairs'] = self.bipolar_pairs
 
@@ -126,7 +126,7 @@ def main_fcn():
     monopolar_channels = tal_reader.get_monopolar_channels()
     bipolar_pairs = tal_reader.get_bipolar_pairs()
 
-    print 'bipolar_pairs=', bipolar_pairs
+    print('bipolar_pairs=', bipolar_pairs)
 
 
     from ptsa.data.readers.EEGReader import EEGReader
@@ -157,7 +157,7 @@ def main_fcn():
     del base_eegs
     del time_series_reader
 
-    print
+    print()
 
     pass
 
@@ -165,7 +165,7 @@ def main_fcn():
 def new_fcn():
 
     time.sleep(20)
-    print new_fcn
+    print(new_fcn)
 
 if __name__ == '__main__':
     main_fcn()

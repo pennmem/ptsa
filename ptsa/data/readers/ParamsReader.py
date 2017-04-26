@@ -103,7 +103,7 @@ class ParamsReader(PropertiedObject,BaseReader):
         if not set(params.keys()).issuperset(set(['gain', 'samplerate'])):
             raise ValueError(
                     'Params file must contain samplerate and gain!\n' +
-                    'The following fields were supplied:\n' + str(params.keys()))
+                    'The following fields were supplied:\n' + str(list(params.keys())))
 
         return params
 
@@ -125,4 +125,4 @@ if __name__ == '__main__':
     dataroot = '/Volumes/db_root/protocols/r1/subjects/R1001P/experiments/FR1/sessions/0/ephys/current_processed/noreref/R1001P_FR1_0_12Oct14_1034'
     p_reader = ParamsReader(dataroot=dataroot)
     params = p_reader.read()
-    print params
+    print(params)

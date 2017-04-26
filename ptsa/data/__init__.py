@@ -8,14 +8,14 @@
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
 
 from dimarray import Dim, DimArray, AttrArray
-from timeseries import TimeSeries
+from .timeseries import TimeSeries
 
-from basewrapper import BaseWrapper
-from arraywrapper import ArrayWrapper
+from .basewrapper import BaseWrapper
+from .arraywrapper import ArrayWrapper
 
 try:
-    from edfwrapper import EdfWrapper
+    from .edfwrapper import EdfWrapper
 except ImportError:
-    print 'Could not find compiled version of c library for handing edf files. If you want edf support, please run setup.py and compile this library'
+    print('Could not find compiled version of c library for handing edf files. If you want edf support, please run setup.py and compile this library')
 
-from events import Events
+from .events import Events

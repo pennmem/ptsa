@@ -80,7 +80,7 @@ def add_pizza():
     ax.set_yticks(np.arange(1, 9, 2))
     ax.set_rmax(9)
 
-    
+
 if __name__ == '__main__':
     main_axes = add_timeseries()
     add_pizza()

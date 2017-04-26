@@ -8,13 +8,16 @@
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
 
 # local imports
-from basewrapper import BaseWrapper
+from .basewrapper import BaseWrapper
 
 # global imports
 import numpy as np
 import os.path
-from ConfigParser import SafeConfigParser
 import io
+try:
+    from configparser import SafeConfigParser
+except ImportError:
+    from ConfigParser import SafeConfigParser
 
 class BVWrapper(BaseWrapper):
     """
@@ -102,7 +105,7 @@ class BVWrapper(BaseWrapper):
         self._channel_info = np.rec.fromarrays([numbers,names,scales,
                                                 units,impedances],
                                                names='number,name,scale,unit,impedance')
-            
+
         # process the binary format
         if self._binaryformat == 'INT_16':
             self._samplesize = 2
@@ -161,26 +164,26 @@ class BVWrapper(BaseWrapper):
                 sub_one = True
         if sub_one:
             onsets -= long(1)/self._samplerate
-            
+
         # convert to rec array
         annotations = np.rec.fromarrays([onsets,durations,annots],
                                         names='onsets,durations,annotations')
 
         # sort by index and return
         return annotations[np.argsort(index)]
-    
+
     def _load_data(self,channels,event_offsets,dur_samp,offset_samp):
         """        
         """
         # allocate for data
-	eventdata = np.empty((len(channels),len(event_offsets),dur_samp),
+        eventdata = np.empty((len(channels),len(event_offsets),dur_samp),
                              dtype=np.float64)*np.nan
 
         # Memmap to the file
         mm = np.memmap(self._data_file,dtype=self._dtype,
                        mode='r',shape=(self._nsamples,self._nchannels))
-        
-	# loop over events
+
+        # loop over events
         for e,ev_offset in enumerate(event_offsets):
             # set the range
             ssamp = offset_samp+ev_offset

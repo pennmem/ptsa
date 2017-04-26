@@ -47,13 +47,13 @@ class PropertiedObject(object):
     _descriptors = []
 
     def init_attrs(self, kwds):
-        for option_name, val in kwds.items():
+        for option_name, val in list(kwds.items()):
             try:
                 attr = getattr(self,option_name)
                 setattr(self,option_name,val)
             except AttributeError:
                 s = 'Option: '+ option_name+' is not allowed'
-                print s
+                print(s)
                 raise AttributeError(s)
 
 
@@ -80,5 +80,5 @@ if __name__=='__main__':
 
     rf = RF(resamplerate=20.0,time_axis_index=2,window=[0,1])
 
-    print rf.resamplerate
-    print rf.window
+    print(rf.resamplerate)
+    print(rf.window)

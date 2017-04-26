@@ -77,7 +77,7 @@ class TimeSeriesX(DataArray):
         coords={}
 
 
-        for coord_name, coord in self.coords.items():
+        for coord_name, coord in list(self.coords.items()):
             if len(coord.shape):
                 coords[coord_name] = coord
 
@@ -123,7 +123,7 @@ class TimeSeriesX(DataArray):
         # constructing axes
         coords = {}
         time_axis_name = self.dims[time_axis_index]
-        for coord_name, coord in self.coords.items():
+        for coord_name, coord in list(self.coords.items()):
             if len(coord.shape):
                 coords[coord_name] = coord
             else:
@@ -226,4 +226,4 @@ if __name__ == '__main__':
     ts = TimeSeriesX(data=np.arange(20).reshape(4, 5), dims=['channels', 'time'])
     ts2 = TimeSeriesX(data=np.arange(20).reshape(4, 5), dims=['channels', 'time'])
 
-    print ts + ts2
+    print(ts + ts2)
