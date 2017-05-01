@@ -1,0 +1,27 @@
+package:
+  name: ptsa
+  version: 1.0.3
+
+source:
+  git_url: ../
+
+requirements:
+  build:
+    - python
+    - numpy
+    - scipy
+    - xarray
+    - pywavelets
+    - swig
+
+  run:
+    - python
+    - numpy
+    - scipy
+    - xarray
+    - pywavelets
+
+about:
+  home: https://github.com/pennmem/ptsa_new
+  license: GPLv3
+  license_file: LICENSE
