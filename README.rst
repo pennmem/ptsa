@@ -39,3 +39,4 @@ TODO:
 
 * Automate building for multiple Python versions
 * Automate building on Windows
+* Use conda-forge FFTW package for macOS/Linux to reduce build time

@@ -21,6 +21,14 @@ requirements:
     - xarray
     - pywavelets
 
+test:
+  # Test that we can import ptsa and its extension modules
+  imports:
+    - ptsa
+    - dimarray
+    - ptsa.extensions.morlet
+    - ptsa.extensions.circular_stat
+
 about:
   home: https://github.com/pennmem/ptsa_new
   license: GPLv3
