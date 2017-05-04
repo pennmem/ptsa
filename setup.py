@@ -254,8 +254,6 @@ setup(
         'ptsa',
         'ptsa.extensions.morlet',
         'ptsa.extensions.circular_stat',
-        'ptsa.tests',
-        'ptsa.tests.ptsa_regression',
         'ptsa.data',
         'ptsa.data.readers',
         'ptsa.data.MatlabIO',
