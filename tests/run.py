@@ -1,4 +1,4 @@
 import sys
 import pytest
 
-pytest.main(sys.argv[1:])
+sys.exit(pytest.main(sys.argv[1:]))

@@ -3,7 +3,7 @@ __author__ = 'm'
 import time
 
 import numpy as np
-import xarray as xray
+import xarray as xr
 from scipy.fftpack import fft, ifft
 
 from ptsa.data.TimeSeriesX import TimeSeriesX
@@ -89,7 +89,7 @@ class MorletWaveletFilter(PropertiedObject,BaseFilter):
         return self.all_but_time_iterator(self.time_series)
 
     def construct_output_array(self, array, dims, coords):
-        out_array = xray.DataArray(array, dims=dims, coords=coords)
+        out_array = xr.DataArray(array, dims=dims, coords=coords)
         # out_array.attrs['samplerate'] = self.time_series.attrs['samplerate']
         out_array['samplerate'] = self.time_series['samplerate']
         return out_array
@@ -98,7 +98,7 @@ class MorletWaveletFilter(PropertiedObject,BaseFilter):
         wavelet_pow_array_xray = None
         wavelet_phase_array_xray = None
 
-        if isinstance(self.time_series, xray.DataArray):
+        if isinstance(self.time_series, xr.DataArray):
 
             dims = list(self.time_series.dims[:-1] + ('frequency', 'time',))
 

@@ -1,6 +1,6 @@
 __author__ = 'm'
 
-import xray
+import xarray as xr
 import numpy as np
 from ptsa.data.writers import BaseWriter
 
@@ -31,6 +31,6 @@ class NetCDF4XrayWriter(BaseWriter):
                     dtype = dtype_tuple[0]
                     coords_dict['__axis__' + dim_name + '__' + field] = self.array[dim_name].values[field]
 
-        ds = xray.Dataset(values_dict, coords=coords_dict)
+        ds = xr.Dataset(values_dict, coords=coords_dict)
 
         ds.to_netcdf(filename)

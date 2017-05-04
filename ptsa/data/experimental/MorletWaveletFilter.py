@@ -1,9 +1,7 @@
-__author__ = 'm'
-
 import time
 
 import numpy as np
-import xray
+import xarray as xr
 from scipy.fftpack import fft, ifft
 from scipy.signal import resample
 
@@ -140,7 +138,7 @@ class MorletWaveletFilter(PropertiedObject):
         return data_iterator
 
     def construct_output_array(self,array, dims, coords):
-        out_array =  xray.DataArray(array, dims=dims,coords=coords)
+        out_array =  xr.DataArray(array, dims=dims, coords=coords)
         out_array.attrs['samplerate'] = self.time_series.attrs['samplerate']
         if self.resamplerate > 0.0:
             out_array.attrs['samplerate'] = self.time_series.attrs['samplerate']
@@ -151,7 +149,7 @@ class MorletWaveletFilter(PropertiedObject):
         wavelet_pow_array_xray = None
         wavelet_phase_array_xray = None
 
-        if isinstance(self.time_series, xray.DataArray):
+        if isinstance(self.time_series, xr.DataArray):
 
 
             if len(self.bipolar_pairs):
