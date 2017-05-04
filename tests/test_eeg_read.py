@@ -1,12 +1,11 @@
 import unittest
-
-# from numpy.testing import *
-# from unittest import *
+from ptsa.data.events import Events
+import pytest
 
 from EventReadersTestBase import EventReadersTestBase
-from ptsa.data.events import Events
 
 
+@pytest.mark.skip(reason="Hardcoded data paths")
 class TestEEGRead(unittest.TestCase, EventReadersTestBase):
     def setUp(self):
 

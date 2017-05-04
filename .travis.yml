@@ -26,6 +26,7 @@ install:
   - conda info -a
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy xarray pywavelets swig
   - source activate test-environment
+  - pip install pytest
   - python setup.py install
 
 # Because Travis-CI is apparently stuck in the past...
@@ -37,6 +38,5 @@ addons:
       - gcc-4.9
       - g++-4.9
 
-# TODO: get actual tests running
 script:
-  - python -m ptsa
+  - cd tests && python run.py
