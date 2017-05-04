@@ -39,4 +39,5 @@ addons:
       - g++-4.9
 
 script:
-  - cd tests && python run.py
+  - cd tests
+  - python run.py
