@@ -3,7 +3,7 @@ import numpy as np
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.filters import BaseFilter
-from ptsa.extensions import MorletWaveletTransformMP
+from ptsa.extensions.morlet import MorletWaveletTransformMP
 from ptsa.extensions import morlet
 
 

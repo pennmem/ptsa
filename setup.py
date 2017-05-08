@@ -268,5 +268,8 @@ setup(
         'ptsa.stats',
         'dimarray',
         'dimarray.tests'
-    ]
+    ],
+
+    # Needs to be separate?
+    # py_modules=["ptsa.extensions.morlet", "ptsa.extensions.circular_stat"]
 )
