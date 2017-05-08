@@ -5,7 +5,7 @@ from collections import namedtuple
 import numpy as np
 
 from ptsa.data.common import TypeValTuple, PropertiedObject
-from ptsa.data.common.xr import DataArray
+from xarray import DataArray
 from ptsa.data.readers import BaseReader
 
 class BaseRawReader(PropertiedObject,BaseReader):
@@ -151,4 +151,3 @@ class BaseRawReader(PropertiedObject,BaseReader):
         eventdata.attrs = deepcopy(self.params_dict)
 
         return eventdata, read_ok_mask
-

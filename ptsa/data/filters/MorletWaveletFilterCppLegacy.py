@@ -2,7 +2,7 @@ __author__ = 'm'
 
 import time
 import numpy as np
-import ptsa.data.common.xr as xr
+import xarray as xr
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.filters import BaseFilter
@@ -163,5 +163,3 @@ class MorletWaveletFilterCppLegacy(PropertiedObject, BaseFilter):
             print('total time wavelet loop: ', time.time() - wavelet_start)
 
         return self.build_output_arrays(wavelet_pow_array, wavelet_phase_array, time_axis)
-
-

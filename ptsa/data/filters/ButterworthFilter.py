@@ -1,6 +1,4 @@
-__author__ = 'm'
-
-from ptsa.data.common.xr import DataArray
+from xarray import DataArray
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import get_axis_index
