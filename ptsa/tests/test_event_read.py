@@ -35,6 +35,7 @@ class TestEventRead(unittest.TestCase,EventReadersTestBase):
         for base_event, event in zip(base_events,events):
             self.assertEqual(base_event.eegoffset,event.eegoffset)
 
+
     @unittest.expectedFailure
     def test_eventness(self):
         # self.initialize()

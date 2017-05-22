@@ -3,9 +3,9 @@ from ptsa.data.readers import BaseReader
 from os.path import *
 import json
 import collections
+import warnings
 
-
-class ParamsReader(PropertiedObject,BaseReader):
+class ParamsReader(PropertiedObject, BaseReader):
     '''
     Reader for parameter file (e.g. params.txt)
     '''
@@ -33,7 +33,8 @@ class ParamsReader(PropertiedObject,BaseReader):
         elif self.dataroot:
             self.filename = self.locate_params_file(dataroot=self.dataroot)
         else:
-            raise IOError('Could not find params file using dataroot: %s or using direct path:%s'%(self.dataroot,self.filename))
+            raise IOError('Could not find params file using dataroot: %s or using direct path:%s' % (
+            self.dataroot, self.filename))
 
         if splitext(self.filename)[-1] == '.txt':
             Converter = collections.namedtuple('Converter', ['convert', 'name'])
@@ -52,7 +53,7 @@ class ParamsReader(PropertiedObject,BaseReader):
         """
 
         for param_file in (abspath(dataroot + '.params'),
-                          abspath(join(dirname(dataroot), 'params.txt'))):
+                           abspath(join(dirname(dataroot), 'params.txt'))):
 
             if isfile(param_file):
                 return param_file
@@ -60,7 +61,6 @@ class ParamsReader(PropertiedObject,BaseReader):
         param_file = join(dirname(dataroot), '..', 'sources.json')
         if isfile(param_file):
             return param_file
-
 
         raise IOError('No params file found in ' + str(dir) +
                       '. Params files must be in the same directory ' +
@@ -93,17 +93,28 @@ class ParamsReader(PropertiedObject,BaseReader):
 
         # we have a file, so open and process it
         for line in open(param_file, 'r').readlines():
+
+            stripped_line_list = line.strip().split()
+            if len(stripped_line_list) < 2:
+                continue
+
             # get the columns by splitting
-            param_name, str_to_convert = line.strip().split()[:2]
+            # param_name, str_to_convert = line.strip().split()[:2]
+            param_name, str_to_convert = stripped_line_list[:2]
             try:
                 convert_tuple = self.param_to_convert_fcn[param_name]
                 params[convert_tuple.name] = convert_tuple.convert(str_to_convert)
             except KeyError:
                 pass
+
+        if not 'gain' in params.keys():
+            params['gain'] = 1.0
+            warnings.warn('Did not find "gain" in the params.txt file. Assuming gain=1.0', RuntimeWarning)
+
         if not set(params.keys()).issuperset(set(['gain', 'samplerate'])):
             raise ValueError(
-                    'Params file must contain samplerate and gain!\n' +
-                    'The following fields were supplied:\n' + str(list(params.keys())))
+                'Params file must contain samplerate and gain!\n' +
+                'The following fields were supplied:\n' + str(list(params.keys())))
 
         return params
 

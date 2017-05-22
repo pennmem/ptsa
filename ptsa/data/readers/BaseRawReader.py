@@ -1,6 +1,7 @@
 import os
 import struct
 from collections import namedtuple
+import warnings
 
 import numpy as np
 
@@ -8,14 +9,15 @@ from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.common.xr import DataArray
 from ptsa.data.readers import BaseReader
 
-class BaseRawReader(PropertiedObject,BaseReader):
+
+class BaseRawReader(PropertiedObject, BaseReader):
     '''
     Object that knows how to read binary eeg files
     '''
     _descriptors = [
         TypeValTuple('dataroot', str, ''),
         # TypeValTuple('channels', list, []),
-        TypeValTuple('channels', np.ndarray, np.array([],dtype='|S3')),
+        TypeValTuple('channels', np.ndarray, np.array([], dtype='|S3')),
         TypeValTuple('start_offsets', np.ndarray, np.array([0], dtype=np.int)),
         TypeValTuple('read_size', int, -1),
     ]
@@ -60,8 +62,8 @@ class BaseRawReader(PropertiedObject,BaseReader):
                 raise RuntimeError('Unsupported format: %s. Allowed format names are: %s' % (
                     format_name, list(self.file_format_dict.keys())))
         except KeyError:
-            print('Could not find data format definition in the params file. Will read te file assuming' \
-                  ' data format is int16')
+            warnings.warn('Could not find data format definition in the params file. Will read the file assuming' \
+                          ' data format is int16', RuntimeWarning)
 
     def get_file_size(self):
         '''
@@ -88,7 +90,7 @@ class BaseRawReader(PropertiedObject,BaseReader):
         eventdata = np.empty((len(self.channels), len(self.start_offsets), self.read_size),
                              dtype=np.float) * np.nan
 
-        read_ok_mask = np.ones(shape=(len(self.channels),len(self.start_offsets)), dtype=np.bool)
+        read_ok_mask = np.ones(shape=(len(self.channels), len(self.start_offsets)), dtype=np.bool)
 
         # loop over channels
         for c, channel in enumerate(self.channels):
@@ -105,9 +107,9 @@ class BaseRawReader(PropertiedObject,BaseReader):
             # loop over start offsets
             for e, start_offset in enumerate(self.start_offsets):
                 # rejecting negative offset
-                if start_offset<0:
-                    read_ok_mask[c,e]=False
-                    print(('Cannot read from negative offset %d in file %s' % (start_offset,eegfname)))
+                if start_offset < 0:
+                    read_ok_mask[c, e] = False
+                    print(('Cannot read from negative offset %d in file %s' % (start_offset, eegfname)))
                     continue
 
                 # seek to the position in the file
@@ -124,7 +126,7 @@ class BaseRawReader(PropertiedObject,BaseReader):
 
                 # make sure we got some data
                 if len(data) < self.read_size:
-                    read_ok_mask[c,e]=False
+                    read_ok_mask[c, e] = False
 
                     print((
                         'Cannot read full chunk of data for offset ' + str(start_offset) +
@@ -139,16 +141,15 @@ class BaseRawReader(PropertiedObject,BaseReader):
         eventdata = DataArray(eventdata,
                               dims=['channels', 'start_offsets', 'offsets'],
                               coords={
-                                       'channels': self.channels,
-                                       'start_offsets': self.start_offsets.copy(),
-                                       'offsets': np.arange(self.read_size),
-                                       'samplerate': self.params_dict['samplerate']
+                                  'channels': self.channels,
+                                  'start_offsets': self.start_offsets.copy(),
+                                  'offsets': np.arange(self.read_size),
+                                  'samplerate': self.params_dict['samplerate']
 
-                                   }
+                              }
                               )
 
         from copy import deepcopy
         eventdata.attrs = deepcopy(self.params_dict)
 
         return eventdata, read_ok_mask
-
