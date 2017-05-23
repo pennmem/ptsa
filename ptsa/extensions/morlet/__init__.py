@@ -1,1 +1,1 @@
-from morlet import *
+from .morlet import *
