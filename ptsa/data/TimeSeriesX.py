@@ -127,6 +127,8 @@ class TimeSeriesX(DataArray):
             if coord_name == time_axis_name:
                 coords[coord_name] = new_time_axis
 
+        coords['samplerate'] = float(resampled_rate)
+
         resampled_time_series = TimeSeriesX(
             resampled_array,
             dims=[dim_name for dim_name in self.dims],
