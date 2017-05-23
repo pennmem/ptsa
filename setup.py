@@ -277,5 +277,5 @@ setup(
     ],
 
     # Needs to be separate?
-    # py_modules=["ptsa.extensions.morlet", "ptsa.extensions.circular_stat"]
+    py_modules=["ptsa.extensions.morlet", "ptsa.extensions.circular_stat"]
 )
