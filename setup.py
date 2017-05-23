@@ -175,12 +175,14 @@ class BuildFftw(Command):
 class CustomBuild(build_py):
     def run(self):
         self.run_command("build_fftw")
+        self.run_command("build_ext")
         build_py.run(self)
 
 
 class CustomInstall(install):
     def run(self):
         self.run_command("build_fftw")
+        self.run_command("build_ext")
         install.run(self)
 
         if sys.platform.startswith("win"):
@@ -274,11 +276,5 @@ setup(
         'ptsa.stats',
         'dimarray',
         'dimarray.tests'
-    ],
-
-    # SWIG-generated Python modules seem to need separate listing
-    py_modules=[
-        "ptsa.extensions.morlet.morlet",
-        "ptsa.extensions.circular_stat.circular_stat"
     ]
 )
