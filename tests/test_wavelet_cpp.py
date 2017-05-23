@@ -1,5 +1,5 @@
 import sys
-from ptsa.extensions.morlet import morlet
+from ptsa.extensions import morlet
 from scipy.stats import describe
 import numpy as np
 
