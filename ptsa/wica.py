@@ -53,7 +53,7 @@ def find_blinks(dat, L, fast_rate=.5, slow_rate=.975, thresh=None):
 
     # first forward
     # calc running average
-    for i in xrange(len(zdf)):
+    for i in range(len(zdf)):
         fastf[i+1] = a*fastf[i] + b*(zdf[i]-slowf[i])
         slowf[i+1] = c*slowf[i] + d*(zdf[i])
 
@@ -63,7 +63,7 @@ def find_blinks(dat, L, fast_rate=.5, slow_rate=.975, thresh=None):
 
     # then backward
     # calc running average
-    for i in xrange(len(zdb)):
+    for i in range(len(zdb)):
         fastb[i+1] = a*fastb[i] + b*(zdb[i]-slowb[i])
         slowb[i+1] = c*slowb[i] + d*(zdb[i])
 
@@ -86,7 +86,7 @@ def find_blinks(dat, L, fast_rate=.5, slow_rate=.975, thresh=None):
 
     # make sure to connect contiguous artifacts
     idx_ext = np.zeros(len(idx)*(2*L+1), dtype=np.int32)
-    for k in xrange(len(idx)):
+    for k in range(len(idx)):
         idx_ext[(2*L+1)*(k):(2*L+1)*(k+1)-1] = np.arange(idx[k]-L,idx[k]+L)
     id_noise = np.setdiff1d(inds, idx_ext)
     id_artef = np.setdiff1d(inds, id_noise)
@@ -117,7 +117,7 @@ def _clean_find_thresh(Y,Kthr,wavelet,L):
         # for k=1:length(idx),
         #     idx_ext((2*L+1)*(k-1)+1:(2*L+1)*k) = [idx(k)-L:idx(k)+L];
         # end
-        for k in xrange(len(idx)):
+        for k in range(len(idx)):
             idx_ext[(2*L+1)*(k):(2*L+1)*(k+1)-1] = np.arange(idx[k]-L,idx[k]+L)
         # id_noise=setdiff((1:N), idx_ext);
         id_noise = np.setdiff1d(range(N), idx_ext)
@@ -172,7 +172,7 @@ def _clean_find_thresh(Y,Kthr,wavelet,L):
         # bump up the thresh
         thld += 0.5
         # zero out everything below threshold in each wavelet coef
-        for i in xrange(len(wres)):
+        for i in range(len(wres)):
             wres[i][1] = (np.abs(wres[i][1]) > thld) * wres[i][1]
         # invert the wavelet back
         xd = iswt(wres, wavelet)
@@ -205,7 +205,7 @@ def _clean_use_thresh(Y,thld,wavelet):
     wres = swt(Y,wavelet,level=LL)
     wres = [list(wres[i]) for i in range(len(wres))]
     # xh = HardTh(xh, thld);
-    for i in xrange(len(wres)):
+    for i in range(len(wres)):
         wres[i][1] = (np.abs(wres[i][1]) > thld) * wres[i][1]
     # xd = mirdwt(xl,xh,h,LL);
     xd = iswt(wres, wavelet)
@@ -320,7 +320,7 @@ def remove_strong_artifacts(data, A, icaEEG, Comp, Kthr=1.25, F=256,
         mp_res = []
 
     # for c=1:length(Comp),
-    for c in xrange(len(Comp)):
+    for c in range(len(Comp)):
         if find_thresh:
             thld = None
         else:
@@ -349,7 +349,7 @@ def remove_strong_artifacts(data, A, icaEEG, Comp, Kthr=1.25, F=256,
         # collect results
         po.close()
         po.join()
-        for c in xrange(len(Comp)):
+        for c in range(len(Comp)):
             sys.stdout.write("Component #%d: "%(Comp[c]))
             sys.stdout.flush()
             comp,thld = mp_res[c].get()

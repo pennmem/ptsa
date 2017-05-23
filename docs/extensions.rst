@@ -1,14 +1,15 @@
 ptsa.extensions package
-***********************
+=======================
 
 C extension modules, for accelerated calculations.
 
+ptsa.extensions.circular_stat
+-----------------------------
 
-Subpackages
-===========
+.. automodule:: ptsa.extensions.circular_stat
+   :members:
 
-.. toctree::
-   ptsa.extensions.circular_stat
-   ptsa.extensions.morlet
+ptsa.extensions.morlet
+----------------------
 
-
+.. automodule:: ptsa.extensions.morlet
