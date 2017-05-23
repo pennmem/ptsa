@@ -1,15 +1,15 @@
-PTSA API
-============
+API Reference
+=============
 
 Subpackages
 -----------
 
 .. toctree::
 
-    ptsa.data
-    ptsa.extensions
-    ptsa.plotting
-    ptsa.stats
+    data
+    extensions
+    plotting
+    stats
 
 Submodules
 ----------
