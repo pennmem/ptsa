@@ -1,13 +1,9 @@
-__author__ = 'm'
-
-try:
-    from xarray import __version__, DataArray, concat
-except ImportError:
-    from xray import __version__, DataArray, concat
+from xarray import __version__, DataArray, concat
 
 import numpy as np
 from ptsa.data.common import get_axis_index
 from scipy.signal import resample
+
 
 def to_int(x):
     try:
@@ -94,7 +90,7 @@ class TimeSeriesX(DataArray):
 
     def resampled(self, resampled_rate, window=None,
                   loop_axis=None, num_mp_procs=0, pad_to_pow2=False):
-        '''
+        """
 
         :param resampled_rate: resample rate
         :param window: ignored for now - added for legacy reasons
@@ -102,8 +98,8 @@ class TimeSeriesX(DataArray):
         :param num_mp_procs: ignored for now - added for legacy reasons
         :param pad_to_pow2: ignored for now - added for legacy reasons
         :return: resampled time series
-        '''
 
+        """
         # use ResampleFilter instead
         # samplerate = self.attrs['samplerate']
         samplerate = float(self['samplerate'])
@@ -119,7 +115,6 @@ class TimeSeriesX(DataArray):
                                                   new_length, t=time_axis.values,
                                                   axis=time_axis_index, window=window)
 
-
         # constructing axes
         coords = {}
         time_axis_name = self.dims[time_axis_index]
@@ -131,7 +126,6 @@ class TimeSeriesX(DataArray):
 
             if coord_name == time_axis_name:
                 coords[coord_name] = new_time_axis
-
 
         resampled_time_series = TimeSeriesX(
             resampled_array,
@@ -219,11 +213,3 @@ class TimeSeriesX(DataArray):
         """
 
         return self - self.isel(time=(self['time'] >= base_range[0]) & (self['time'] <= base_range[1])).mean(dim='time')
-
-
-if __name__ == '__main__':
-    # ts = xray.DataArray(data=np.arange(20).reshape(4,5),dims=['channels','time'])
-    ts = TimeSeriesX(data=np.arange(20).reshape(4, 5), dims=['channels', 'time'])
-    ts2 = TimeSeriesX(data=np.arange(20).reshape(4, 5), dims=['channels', 'time'])
-
-    print(ts + ts2)

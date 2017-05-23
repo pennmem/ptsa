@@ -1,0 +1,35 @@
+package:
+  name: ptsa
+  version: 1.0.3
+
+source:
+  git_url: ../
+
+requirements:
+  build:
+    - python
+    - numpy
+    - scipy
+    - xarray
+    - pywavelets
+    - swig
+
+  run:
+    - python
+    - numpy
+    - scipy
+    - xarray
+    - pywavelets
+
+test:
+  # Test that we can import ptsa and its extension modules
+  imports:
+    - ptsa
+    - dimarray
+    - ptsa.extensions.morlet
+    - ptsa.extensions.circular_stat
+
+about:
+  home: https://github.com/pennmem/ptsa_new
+  license: GPLv3
+  license_file: LICENSE

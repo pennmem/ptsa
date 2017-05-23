@@ -1,48 +1,23 @@
-__author__ = 'm'
-
 import numpy as np
-from numpy.testing import *
 import unittest
+import pytest
+
 from ptsa.data.readers import BaseEventReader
-from ptsa.data.readers.EEGReader import EEGReader
-from ptsa.data.filters.ButterworthFilter import ButterworthFilter
-from ptsa.data.filters.ResampleFilter import ResampleFilter
 from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
 from ptsa.data.readers.TalReader import TalReader
 from ptsa.data.readers import EEGReader
-from ptsa.data.filters import EventDataChopper
 from ptsa.data.filters import MonopolarToBipolarMapper
-#
-# class test_classifier(unittest.TestCase):
-#     def setUp(self):
-#         self.e_path = '/Users/m/data/events/RAM_FR1/R1060M_math.mat'
-#         # ---------------- NEW STYLE PTSA -------------------
-#         base_e_reader = BaseEventReader(filename=self.e_path, eliminate_events_with_no_eeg=True)
-#
-#         self.base_events = base_e_reader.read()
-#         print
-#
-#
-#     def test_math_event_read(self):
-#
-#
-#
-#
-#         # sess_pow_mat_post[ev,i,:] = np.nanmean(pow_ev_stripped, axis=1)
-#
-#         print
 
+
+@pytest.mark.skip(reason="Hardcoded data paths")
 class test_classifier(unittest.TestCase):
     def setUp(self):
         self.e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
         tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
 
-        # ---------------- NEW STYLE PTSA -------------------
         base_e_reader = BaseEventReader(filename=self.e_path, eliminate_events_with_no_eeg=True)
 
         self.base_events = base_e_reader.read()
-
-
 
         tal_reader = TalReader(filename=tal_path)
         self.monopolar_channels = tal_reader.get_monopolar_channels()
@@ -79,14 +54,3 @@ class test_classifier(unittest.TestCase):
         print(pow_wavelet)
         mean_powers = pow_wavelet.mean(dim='time')
         print(mean_powers)
-
-
-
-
-        # sess_pow_mat_post[ev,i,:] = np.nanmean(pow_ev_stripped, axis=1)
-
-        print()
-
-
-if __name__ == '__main__':
-    unittest.main(verbosity=2)
