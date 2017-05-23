@@ -3,7 +3,7 @@ __author__ = 'm'
 from collections import OrderedDict
 
 import numpy as np
-import xray
+import xarray as xr
 
 from ptsa.data.RawBinWrapperXray import RawBinWrapperXray
 from ptsa.data.TimeSeriesX import TimeSeriesX
@@ -122,8 +122,8 @@ class TimeSeriesSessionEEGReader(PropertiedObject):
 
         # constructing xray Data Array with session eeg data - note we are adding event dimension to simplify
         # chopping of the data sample into events - single events will be concatenated allong events axis
-        eegdata_xray = xray.DataArray(eegdata, coords=[self.channels, np.arange(1), time_axis],
-                                      dims=['channels', 'events', 'time'])
+        eegdata_xray = xr.DataArray(eegdata, coords=[self.channels, np.arange(1), time_axis],
+                                    dims=['channels', 'events', 'time'])
         eegdata_xray.attrs['samplerate'] = self.samplerate
 
         print('last_time_stamp=',eegdata_xray['time'][-1])

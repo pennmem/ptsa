@@ -6,7 +6,7 @@ import warnings
 import numpy as np
 
 from ptsa.data.common import TypeValTuple, PropertiedObject
-from ptsa.data.common.xr import DataArray
+from xarray import DataArray
 from ptsa.data.readers import BaseReader
 
 

@@ -1,5 +1,5 @@
 import numpy as np
-import ptsa.data.common.xr as xr
+import xarray as xr
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.readers.ParamsReader import ParamsReader
@@ -280,4 +280,3 @@ class EEGReader(PropertiedObject,BaseReader):
         :return: TimeSeriesX object
         '''
         return self.read_fcn()
-

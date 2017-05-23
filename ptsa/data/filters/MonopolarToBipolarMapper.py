@@ -2,7 +2,7 @@ __author__ = 'm'
 
 
 import numpy as np
-import ptsa.data.common.xr as xr
+import xarray as xr
 
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import TypeValTuple, PropertiedObject

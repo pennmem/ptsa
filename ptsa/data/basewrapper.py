@@ -1,18 +1,6 @@
-#emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
-#ex: set sts=4 ts=4 sw=4 et:
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
-#
-#   See the COPYING file distributed along with the PTSA package for the
-#   copyright and license terms.
-#
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
-
-# local imports
-#from events import Events,TsEvents
-from .timeseries import TimeSeries,Dim
-
-# global imports
 import numpy as np
+from .timeseries import TimeSeries, Dim
+
 
 class BaseWrapper(object):
     """
@@ -273,29 +261,14 @@ class BaseWrapper(object):
         # when channels is an array of channels labels i.e. strings like  '002','003',...
         # we need to use xray arrays to do fancy indexing
         if channels.dtype.char=='S':
-            try:
-                # perhaps we should vectorize it...
-                selector_array = [np.where(self.channels.name == channel)[0][0] for channel in channels]
+            # perhaps we should vectorize it...
+            selector_array = [np.where(self.channels.name == channel)[0][0] for channel in channels]
 
-                selected_channels = self.channels[selector_array]
-
-                # from xray import DataArray
-                # self.channels_xray = DataArray(self.channels.number,coords=[self.channels.name],dims=['name'])
-                # self.channels_xray = self.channels_xray.loc[channels]
-                #
-                # self.channels_xray=np.rec.fromarrays([self.channels_xray.values,self.channels_xray.coords['name'].values],names='number,name')
-
-            except ImportError:
-                pass
+            selected_channels = self.channels[selector_array]
 
             dims = [Dim(selected_channels,'channels'),  # can index into channels
                     Dim(events,'events'),
                     Dim(time_range,'time')]
-
-            # dims = [Dim(self.channels_xray,'channels'),  # can index into channels
-            #         Dim(events,'events'),
-            #         Dim(time_range,'time')]
-
         else:
 
             # make it a timeseries
@@ -303,14 +276,6 @@ class BaseWrapper(object):
             dims = [Dim(self.channels[channels],'channels'),  # can index into channels
                     Dim(events,'events'),
                     Dim(time_range,'time')]
-
-
-        # # make it a timeseries
-        # dims = [Dim(self.channels[channels],'channels'),  # can index into channels
-        #         Dim(events,'events'),
-        #         Dim(time_range,'time')]
-
-
 
         eventdata = TimeSeries(np.asarray(eventdata),
                                'time',
@@ -358,7 +323,7 @@ class BaseWrapper(object):
         samp_end = samp_start + (dur_samp-1)*samplesize
         time_range = np.linspace(samp_start,samp_end,dur_samp)
 
-    # make it a timeseries
+        # make it a timeseries
         dims = [Dim(self.channels[channels],'channels'),
                 Dim(time_range,'time')]
         data = TimeSeries(np.asarray(data),
@@ -372,9 +337,9 @@ class BaseWrapper(object):
     nsamples = property(lambda self: self._get_nsamples())
     nchannels = property(lambda self: self._get_nchannels())
     annotations = property(lambda self: self._get_annotations(),
-                           lambda self,annot: self._set_annotations(annot))
+                           lambda self, annot: self._set_annotations(annot))
     channel_info = property(lambda self: self._get_channel_info(),
-                            lambda self,chan_info: self._set_channel_info(chan_info))
+                            lambda self, chan_info: self._set_channel_info(chan_info))
     channels = property(lambda self: self._get_channel_info(),
-                        lambda self,chan_info: self._set_channel_info(chan_info))
+                        lambda self, chan_info: self._set_channel_info(chan_info))
     data = property(lambda self: self.get_all_data())
