@@ -14,6 +14,7 @@ class ptsa.data.readers.IndexReader.JsonIndexReader(index_file)
    constraint through the use of aggregateValues() or the specific
    methods subject(), experiment(), session() or montage().
 
+
    aggregate_values(field, **kwargs)
 
       Aggregates values across different experiments, subjects,
@@ -67,11 +68,22 @@ class ptsa.data.readers.BaseEventReader.BaseEventReader(**kwds)
 
    Reader class that reads event file and returns them as np.recarray
 
+    :keyword filename {str}: the event file to read, either a MATLAB struct or a JSON file
+
+    :keyword common_root {str}: ??? It raises a RuntimeError when improperly set. 'data' is usually a safe value.
+
+    :keyword eliminate_events_with_no_eeg {bool}: Only load events that have an EEG file associated with them
+        Defaults to True.
+
+    :keyword use_reref_eeg {bool}: Whether to use eeg.reref or eeg.noreref.
+        Defaults to False (eeg files have not been rereferenced)
+
+
    correct_eegfile_field(events)
 
       Replaces 'eeg.reref' with 'eeg.noreref' in eegfile path :param
-      events: np.recarray representing events. One of hte field of
-      this array should be eegfile :return:
+      events: np.recarray representing events. One of the field of
+      this array should be eegfile
 
    find_data_dir_prefix()
 
