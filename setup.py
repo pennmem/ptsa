@@ -274,5 +274,11 @@ setup(
         'ptsa.stats',
         'dimarray',
         'dimarray.tests'
+    ],
+
+    # SWIG-generated Python modules seem to need separate listing
+    py_modules=[
+        "ptsa.extensions.morlet.morlet",
+        "ptsa.extensions.circular_stat.circular_stat"
     ]
 )
