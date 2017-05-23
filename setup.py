@@ -99,7 +99,7 @@ def get_libfftw_path():
     else:
         fftw_lib = 'fftw3'
         fftw_install_dir = third_party_install_dir
-        return osp.join(fftw_install_dir, 'lib', 'lib'+fftw_lib+'.a')
+        return osp.join(fftw_install_dir, 'lib', 'lib' + fftw_lib + '.a')
 
 
 def get_compiler_args():
@@ -147,6 +147,11 @@ class BuildFftw(Command):
                 except OSError:
                     print("WARNING: skipping copying fftw contents (already exist?)")
         else:
+            if osp.exists(get_libfftw_path()):
+                print("libfftw already built... skipping")
+                print("To force a rebuild, remove the build directory")
+                return
+
             # Extract
             name = "fftw-3.3.4"
             tarball = name + ".tar.gz"
