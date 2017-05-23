@@ -175,12 +175,14 @@ class BuildFftw(Command):
 class CustomBuild(build_py):
     def run(self):
         self.run_command("build_fftw")
+        self.run_command("build_ext")
         build_py.run(self)
 
 
 class CustomInstall(install):
     def run(self):
         self.run_command("build_fftw")
+        self.run_command("build_ext")
         install.run(self)
 
         if sys.platform.startswith("win"):
@@ -257,6 +259,7 @@ setup(
     ],
     packages=[
         'ptsa',
+        'ptsa.extensions',
         'ptsa.extensions.morlet',
         'ptsa.extensions.circular_stat',
         'ptsa.data',
@@ -273,8 +276,5 @@ setup(
         'ptsa.stats',
         'dimarray',
         'dimarray.tests'
-    ],
-
-    # Needs to be separate?
-    # py_modules=["ptsa.extensions.morlet", "ptsa.extensions.circular_stat"]
+    ]
 )
