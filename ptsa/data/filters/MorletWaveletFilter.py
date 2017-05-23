@@ -550,7 +550,7 @@ if __name__ == '__main__':
 #
 #
 #     plt.plot(np.arange(pow_wavelet_res.shape[0]),pow_wavelet_res)
-#     plt.plot(np.arange(edcw_res.shape[0])-0.5,edcw_res)
+#     plt.pl¡ot(np.arange(edcw_res.shape[0])-0.5,edcw_res)
 #
 #
 #     plt.show()
