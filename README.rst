@@ -1,7 +1,10 @@
-PTSA README
-===========
+PTSA
+====
 
-For installation instructions, documentation and tutorials please see
+.. image:: https://travis-ci.org/pennmem/ptsa_new.svg?branch=master
+    :target: https://travis-ci.org/pennmem/ptsa_new
+
+For installation instructions, documentation, and tutorials please see
 http://ptsa.readthedocs.io/en/latest/
 
 Installation
