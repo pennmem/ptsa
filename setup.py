@@ -257,6 +257,7 @@ setup(
     ],
     packages=[
         'ptsa',
+        'ptsa.extensions',
         'ptsa.extensions.morlet',
         'ptsa.extensions.circular_stat',
         'ptsa.data',
