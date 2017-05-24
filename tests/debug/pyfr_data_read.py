@@ -72,9 +72,8 @@ class TestPyFR(unittest.TestCase):
         # session_reader = EEGReader(session_dataroot=dataroot, channels=self.monopolar_channels)
         # self.session_eegs = session_reader.read()
 
-
-    def read_events(self,task, subject):
-        e_path = join(self.prefix, 'data/events/%s/%s_events.mat'%(task,subject))
+    def read_events(self, task, subject):
+        e_path = join(self.prefix, 'data/events/%s/%s_events.mat' % (task, subject))
 
         base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
 
@@ -83,7 +82,7 @@ class TestPyFR(unittest.TestCase):
 
     def read_electrode_info(self, subject):
 
-        tal_path = join(self.prefix,'data/eeg/%s/tal/%s_talLocs_database_bipol.mat' %(subject,subject))
+        tal_path = join(self.prefix, 'data/eeg/%s/tal/%s_talLocs_database_bipol.mat' % (subject, subject))
 
         tal_reader = TalReader(filename=tal_path)
 
@@ -94,6 +93,13 @@ class TestPyFR(unittest.TestCase):
         return tal_struct, monopolar_channels, bipolar_pairs
 
 
+    def read_eegs(self, events, channels):
+
+        eeg_reader = EEGReader(events=events, channels=channels,
+                               start_time=self.start_time, end_time=self.end_time, buffer_time=self.buffer_time)
+
+        self.base_eegs = eeg_reader.read()
+
 
     def test_event_reader(self):
         error_count = 0
@@ -103,16 +109,14 @@ class TestPyFR(unittest.TestCase):
             print 'processing subject ', subject
 
             try:
-                self.read_events(self.task,subject)
+                self.read_events(self.task, subject)
             except StandardError as e:
                 error_count += 1
                 print traceback.print_exc()
                 subjects_failed.append(subject)
                 print str(e)
 
-        assert_equal(error_count,0,'The following subjects failed event read %s'%(','.join(subjects_failed)))
-
-
+        assert_equal(error_count, 0, 'The following subjects failed event read %s' % (','.join(subjects_failed)))
 
     def test_tal_reader(self):
         error_count = 0
@@ -131,8 +135,8 @@ class TestPyFR(unittest.TestCase):
                 print str(e)
                 continue
 
-        assert_equal(error_count,0,'The following subjects failed electrode info read %s'%(','.join(subjects_failed)))
-
+        assert_equal(error_count, 0,
+                     'The following subjects failed electrode info read %s' % (','.join(subjects_failed)))
 
     def test_eeg_reader(self):
         num_test_failed = 0
@@ -144,33 +148,54 @@ class TestPyFR(unittest.TestCase):
 
             print 'processing subject ', subject
 
+
             try:
-                self.read_events(self.task,subject)
+                events = self.read_events(self.task, subject)
             except StandardError as e:
+                events = None
                 print traceback.print_exc()
                 subjects_failed_events.append(subject)
 
                 print str(e)
 
-
             try:
                 tal_struct, monopolar_channels, bipolar_pairs = self.read_electrode_info(subject)
             except StandardError as e:
+                tal_struct, monopolar_channels, bipolar_pairs = None,None,None
                 print traceback.print_exc()
                 subjects_failed_electrode_info.append(subject)
                 print str(e)
 
+            try:
+                if events is not None and monopolar_channels is not None:
+                    eegs = self.read_eegs(events=events,channels=monopolar_channels)
+            except StandardError as e:
+                print 'Error in subject: ', subject
+                print traceback.print_exc()
+
+                eegs = None
+                subject_failed_eeg.append(subject)
 
         try:
-            assert_equal(len(subjects_failed_electrode_info),0,'The following subjects failed electrode info read %s'%(','.join(subjects_failed_electrode_info)))
+            assert_equal(len(subjects_failed_electrode_info), 0,
+                         'The following subjects failed electrode info read %s' % (
+                         ','.join(subjects_failed_electrode_info)))
         except StandardError as e:
             print traceback.print_exc()
             num_test_failed += 1
 
         try:
-            assert_equal(len(subjects_failed_events),0,'The following subjects failed event read %s'%(','.join(subjects_failed_events)))
+            assert_equal(len(subjects_failed_events), 0,
+                         'The following subjects failed event read %s' % (','.join(subjects_failed_events)))
         except StandardError as e:
             print traceback.print_exc()
             num_test_failed += 1
+
+
+        print 'subjects_failed_events=', subjects_failed_events
+        print 'subjects_failed_electrode_info=', subjects_failed_electrode_info
+        print 'subject_failed_eeg=', subject_failed_eeg
+
 
         assert_equal(num_test_failed, 0, 'Certain read operations failed - see output above')
+
