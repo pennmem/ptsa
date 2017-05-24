@@ -15,7 +15,13 @@ Installing with conda from source
 
    where ``$VERSION`` is whatever Python version you're using.
 
-After cloning the git repository, install dependencies:
+Clone the git repository:
+
+.. code-block:: shell-session
+
+    git clone https://github.com/pennmem/ptsa_new.git
+
+Install dependencies with conda:
 
 .. code-block:: shell-session
 

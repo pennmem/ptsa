@@ -1,10 +1,10 @@
 .. _tutorial:
 
 PTSA Tutorial
-===============
+=============
 
 Prerequisites
---------------
+-------------
 To master PTSA you need to learn few standard packages that scientific Python relies on:
 
  1. numpy (`Check out this numpy tutorial <https://docs.scipy.org/doc/numpy-dev/user/quickstart.html>`__)
@@ -21,7 +21,7 @@ you should do before proceeding with this tutorial:
 
 
 TimeSeriesX
-------------
+-----------
 
 ``TimeSeriesX`` object is a basic PTSA object that we typically use to store eeg data and to annotate
 dimensions.
@@ -103,7 +103,7 @@ when analysing EEG signals
 
 
 Multi-dimensional TimeSeriesX
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Let us add another dimension to our ``TimeSeriesX`` object:
 
@@ -147,7 +147,7 @@ Now the ``ts`` array will look as follows:
 
 
 Concatenating Two TimeSeriesX objects
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Let us create a second ``TimeSeriesX`` object
 
@@ -198,7 +198,7 @@ the output is as expected:
     wheather you are working with ``xarray`` or its predecessor ``xray``
 
 Mean
-~~~~~~
+^^^^
 
 To compute mean array of teh time series along the specified axis type:
 
@@ -235,7 +235,7 @@ the output woudl look as follows:
 
 
 Min/Max
-~~~~~~~~
+^^^^^^^
 
 To find min/max along given axis we do the following:
 
@@ -257,7 +257,8 @@ I will leave this challenging exercise for you to complete by the end of the qua
 
 
 Standard Deviation
-~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
+
 Finding standard deviation is easy as well
 
 .. code-block:: python
@@ -275,7 +276,7 @@ with output being
 
 
 Transposing axes in TimeSeriesX
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Quite often you will find it very convenient to rearrange the order of axes in your multi-dimmensional array.
 TimeSeriesX makes it very easy:
@@ -320,7 +321,7 @@ All you have to do is to call ``transpose`` function and list names of all dimen
 
 
 Other useful aggregation operations
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Since ``TimeseriesX`` is a subclass of ``xarray.DataArray``, you can use all sorts of aggregation operations
 that ``xarray.DataArray`` provides. For a full list of those please consult

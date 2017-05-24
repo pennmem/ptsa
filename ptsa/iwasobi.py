@@ -1,12 +1,3 @@
-#emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
-#ex: set sts=4 ts=4 sw=4 et:
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
-#
-#   See the COPYING file distributed along with the PTSA package for the
-#   copyright and license terms.
-#
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
-
 # global imports
 import numpy as np
 from scipy.linalg import toeplitz,hankel
@@ -52,7 +43,7 @@ class IWASOBI():
         #     ik=d*(k-1);
         #     C0(:,ik+1:ik+d)=0.5*(C0(:,ik+1:ik+d)+C0(:,ik+1:ik+d)');
         # end      %%%%%%%%% symmetrization
-        for k in xrange(1,self.ar_max+1):
+        for k in range(1,self.ar_max+1):
             ik = d*(k)
             C0[:,ik:ik+d] = 0.5*(C0[:,ik:ik+d]+C0[:,ik:ik+d].T)
 
@@ -69,7 +60,7 @@ class IWASOBI():
         #     [H ARC]=weights(Ms,rmax,eps0);
         #     [W Ms]=wajd(C0,H,W,5);
         # end
-        for i in xrange(num_iterations):
+        for i in range(num_iterations):
             H,ARC = self.weights(Ms,self.rmax,self.eps0)
             W,Ms = self.wajd(C0,H,W,5)
 
@@ -84,30 +75,13 @@ class IWASOBI():
         return (W,Winit,ISR,signals)
 
     def THinv5(self,phi,K,M,eps):
-        """
-         function G=THinv5(phi,K,M,eps)
-         %
-         %%%% Implements fast (complexity O(M*K^2))
-         %%%% computation of the following piece of code:
-         %
-         %C=[];
-         %for im=1:M 
-         %  A=toeplitz(phi(1:K,im),phi(1:K,im)')+hankel(phi(1:K,im),phi(K:2*K-1,im)')+eps(im)*eye(K);
-         %  C=[C inv(A)];
-         %end  
-         %
-         % DEFAULT PARAMETERS: M=2; phi=randn(2*K-1,M); eps=randn(1,2);
-         %   SIZE of phi SHOULD BE (2*K-1,M).
-         %   SIZE of eps SHOULD BE (1,M).
-        """
-
         # %C=[];
         C = []
         # %for im=1:M 
         # %  A=toeplitz(phi(1:K,im),phi(1:K,im)')+hankel(phi(1:K,im),phi(K:2*K-1,im)')+eps(im)*eye(K);
         # %  C=[C inv(A)];
         # %end
-        for im in xrange(M):
+        for im in range(M):
             A = (toeplitz(phi[:K,im],phi[:K,im].T) + 
                  hankel(phi[:K,im],phi[K-1:2*K,im].T) +
                  eps[im]*np.eye(K))
@@ -115,82 +89,13 @@ class IWASOBI():
 
         return np.concatenate(C,axis=1)
 
-        # # phi(2*K,1:M)=0;
-        # phi[2*K-1,:M] = 0
-        # # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        # # almold=2*phi(1,:)+eps;
-        # almold = 2*phi[0,:]+eps
-        # # C0=1./almold;
-        # C0 = 1/almold
-        # # x1=zeros(K,M); x2=x1; x3=x1; x4=x1;
-        # x1 = np.zeros((K,M))
-        # x2 = np.zeros((K,M))
-        # x3 = np.zeros((K,M))
-        # x4 = np.zeros((K,M))
-        # # x1(1,:)=C0; x2(1,:)=C0;
-        # x1[0,:] = C0
-        # x2[0,:] = C0
-        # # x3(1,:)=-C0.*phi(2,:);
-        # x3[0,:] = -C0*phi[1,:]
-        # # x4(1,:)=-2*C0.*phi(2,:);
-        # x4[0,:] = -2.*C0*phi[1,:]
-        # # x4old=[];
-        # x4old = []
-        # # lalold=2*phi(2,:)./almold;
-        # lalold = 2*phi[1,:]/almold
-        # # for k=1:K-1
-        # for k in xrange(K-1):
-        #     #     f2o=phi(k+1:-1:2,:)+phi(k+1:2*k,:);
-        #     f2o = phi[k+1:0:-1,:] + phi[k+1:2*k+1,:]
-        #     #     alm=sum(f2o.*x4(1:k,:),1)+phi(1,:)+eps+phi(2*k+1,:);
-        #     #     a0=zeros(1,M); 
-        #     #     if k<K-1
-        #     #        a0=phi(k+2,:);
-        #     #     end   
-        #     #     gam1=sum(f2o.*x1(1:k,:),1);
-        #     #     gam3=sum(f2o.*x3(1:k,:),1)+a0+phi(k,:);
-        #     #     x4(k+1,:)=ones(1,M);
-        #     #     b1m=sum(([phi(2:k+1,:); a0]+[zeros(1,M); phi(1:k,:)]).*x4(1:k+1,:));
-        #     #     b2m=sum(([a0; phi(k+1:-1:2,:)]+phi(k+2:2*k+2,:)).*x4(1:k+1,:));
-        #     #     latemp=b2m./alm;
-        #     #     b2m=latemp-lalold; lalold=latemp;
-        #     #     bom=alm./almold;
-        #     #     ok=ones(k+1,1);
-        #     #     x2(1:k+1,:)=x4(1:k+1,:).*(ok*(1./alm));
-        #     #     x1(1:k+1,:)=[x1(1:k,:); zeros(1,M)]-(ok*gam1).*x2(1:k+1,:);
-        #     #     x3(1:k+1,:)=[x3(1:k,:); zeros(1,M)]-(ok*gam3).*x2(1:k+1,:);
-        #     #     x4temp=x4(1:k,:);
-        #     #     x4(1:k+1,:)=[zeros(1,M); x4(1:k,:)]+[x4(2:k,:); ones(1,M); zeros(1,M)]...
-        #     #        -(ok*bom).*[x4old; ones(1,M); zeros(1,M)]...
-        #     #        -(ok*b2m).*x4(1:k+1,:)-(ok*b1m).*x1(1:k+1,:)-(ok*x4(1,:)).*x3(1:k+1,:);
-        #     #     x4old=x4temp;
-        #     #     almold=alm;
-        # # end  % of for
-        # # MK=M*K;
-        # MK=M*K
-        # # G=zeros(K,MK);
-        # G = np.zeros((K,MK))
-        # # G(:,1:K:MK)=x1; clast=zeros(K,M);
-        # # f1=[phi(2:K,:); zeros(1,M)]+[zeros(1,M); phi(1:K-1,:)];
-        # # f2=[zeros(1,M); phi(K:-1:2,:)]+[phi(K+1:2*K-1,:); zeros(1,M)];
-        # # for k=2:K
-        # #     ck=G(:,k-1:K:MK);
-        # #     G(:,k:K:MK)=[ck(2:K,:); zeros(1,M)]+[zeros(1,M);  ck(1:K-1,:)]...
-        # #           -clast-(ok*sum(f1.*ck)).*x1-(ok*sum(f2.*ck)).*x2-(ok*ck(1,:)).*x3...
-        # #           -(ok*ck(K,:)).*x4;
-        # #     clast=ck;
-        # # end 
-
-        # # end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   of THinv5
-
-
     def armodel(self, R, rmax):
         """
         function [AR,sigmy]=armodel(R,rmax)
-        %
-        % to compute AR coefficients of the sources given covariance functions 
-        % but if the zeros have magnitude > rmax, the zeros are pushed back.
-        %
+
+          to compute AR coefficients of the sources given covariance functions
+          but if the zeros have magnitude > rmax, the zeros are pushed back.
+
         """
         # [M,d]=size(R);
         M,d = R.shape
@@ -199,7 +104,7 @@ class IWASOBI():
         AR = np.zeros((M,d))
 
         # for id=1:d
-        for id in xrange(d):
+        for id in range(d):
             # AR(:,id)=[1; -toeplitz(R(1:M-1,id),R(1:M-1,id)')\R(2:M,id)];
             AR[:,id] = np.r_[1,np.linalg.lstsq(-toeplitz(R[:M-1,id],R[:M-1,id].T),
                                                R[1:M,id])[0]]
@@ -233,12 +138,12 @@ class IWASOBI():
     def ar2r(self, a):
         """
         function [ r ] = ar2r( a )
-        %%%%%
-        %%%%% Computes covariance function of AR processes from 
-        %%%%% the autoregressive coefficients using an inverse Schur algorithm 
-        %%%%% and an inverse Levinson algorithm (for one column it is equivalent to  
-        %%%%%      "rlevinson.m" in matlab)
-        %
+
+         Computes covariance function of AR processes from
+         the autoregressive coefficients using an inverse Schur algorithm
+         and an inverse Levinson algorithm (for one column it is equivalent to
+         "rlevinson.m" in matlab)
+
         """
         #   if (size(a,1)==1)
         #       a=a'; % chci to jako sloupce
@@ -264,7 +169,7 @@ class IWASOBI():
         # XXX Check here if broken
         for n in range(p)[::-1]: #range(p-1,-1,-1):
             K[n,:] = -a[n+1,:]
-            for k in xrange(n):
+            for k in range(n):
                 alfa[k+1,:] = (a[k+1,:]+K[n,:]*a[n-k,:])/(1-K[n,:]**2)
             a = alfa.copy()
         # %  
@@ -286,7 +191,7 @@ class IWASOBI():
         #       r(k+1,:) = f(1,:);
         #   end
         # XXX Check here if broken
-        for k in xrange(p):
+        for k in range(p):
             for n in range(k+1)[::-1]: #range(k-1:-1,-1):
                 K_n = K[n,:]
                 f[n,:] = f[n+1,:] + K_n*b[k-n,:]
@@ -300,7 +205,6 @@ class IWASOBI():
     def corr_est(self,x,T,q):
         """
         # function R_est=corr_est(x,T,q)
-        # %
         """
         # NumOfSources = size(x,1);
         NumOfSources = x.shape[0]
@@ -309,7 +213,7 @@ class IWASOBI():
         # for index=1:q+1
         #     R_est(:,NumOfSources*(index-1) + (1:NumOfSources)) = 1/T*(x(:,1:T)*x(:,index:T+index-1)');
         # end
-        for index in xrange(q+1):
+        for index in range(q+1):
             #irange = NumOfSources*(index) + np.arange(NumOfSources)
             i = NumOfSources*(index)
             R_est[:,i:i+NumOfSources] = (1/np.float(T))*(np.dot(x[:,:T],x[:,index:T+index].T))
@@ -319,7 +223,6 @@ class IWASOBI():
     def weights(self,Ms,rmax,eps0):
         """
         function [H ARC]=weights(Ms,rmax,eps0)
-        %
         """
         # [d,Ld]=size(Ms);
         d,Ld = Ms.shape
@@ -334,7 +237,7 @@ class IWASOBI():
         #     R(index,:)=diag(Ms(:,id+1:id+d)).';  %%% columns of R will contain 
         #                            %%% covariance function of the separated components
         # end
-        for index in xrange(L):
+        for index in range(L):
             id = index*d
             R[index,:] = np.diag(Ms[:,id:id+d])
         # %
@@ -352,8 +255,8 @@ class IWASOBI():
         #   end  
         # end
         ll = 0
-        for i in xrange(1,d):
-            for k in xrange(i):
+        for i in range(1,d):
+            for k in range(i):
                 AR3[:,ll] = np.convolve(ARC[:,i],ARC[:,k])
                 ll += 1
         # phi=ar2r(AR3);     %%%%%%%%%% functions phi to evaluate CVinv
@@ -371,8 +274,8 @@ class IWASOBI():
         #   end
         # end
         im = 0
-        for i in xrange(1,d):
-            for k in xrange(i):
+        for i in range(1,d):
+            for k in range(i):
                 fact = 1/(sigmy[i]*sigmy[k])
                 imm = im*L
                 H[:,imm:imm+L] = H[:,imm:imm+L]*fact
@@ -384,7 +287,7 @@ class IWASOBI():
     def CRLB4(self,ARC):
         """
         function ISR = CRLB4(ARC)
-        %
+
         % CRLB4(ARC) generates the CRLB for gain matrix elements (in term 
         % of ISR) for blind separation of K Gaussian autoregressive sources 
         % whose AR coefficients (of the length M, where M-1 is the AR order)
@@ -404,8 +307,8 @@ class IWASOBI():
         #         sum_Rs_s=sum_Rs_s+(ARC(s+1,:).*ARC(t+1,:))'*Rs(abs(s-t)+1,:);
         #     end
         # end
-        for s in xrange(M):
-            for t in xrange(M):
+        for s in range(M):
+            for t in range(M):
                 sum_Rs_s += np.dot((ARC[s,:]*ARC[t,:])[np.newaxis,:].T,
                                   Rs[np.abs(s-t),:][np.newaxis,:])
 
@@ -421,7 +324,7 @@ class IWASOBI():
     def uwajd(self,M,maxnumiter=20,W_est0=None):
         """
         function [W_est Ms]=uwajd(M,maxnumiter,W_est0)
-        %
+
         % my approximate joint diagonalization with uniform weights
         %
         % Input: M .... the matrices to be diagonalized, stored as [M1 M2 ... ML]
@@ -472,7 +375,7 @@ class IWASOBI():
         #       Ms(:,ini+1:ini+d)=W_est*M(:,ini+1:ini+d)*W_est';
         #       Rs(:,k)=diag(Ms(:,ini+1:ini+d));
         # end
-        for k in xrange(L):
+        for k in range(L):
             ini = k*d
             M[:,ini:ini+d] = 0.5*(M[:,ini:ini+d]+M[:,ini:ini+d].T)
             Ms[:,ini:ini+d] = np.dot(np.dot(W_est,M[:,ini:ini+d]),W_est.T)
@@ -493,7 +396,7 @@ class IWASOBI():
             #     c2=[c2; (Rs(id,:)*Yim')'];
             #     c1=[c1; sum(Rs(1:id-1,:).*Yim,2)];
             #   end
-            for id in xrange(1,d):
+            for id in range(1,d):
                 Yim = Ms[0:id,id:Md:d]
                 b22.append(np.dot((Rs[id,:]**2).sum(0),np.ones((id,1))))
                 b12.append(np.dot(Rs[id,:],Rs[:id,:].T).T)
@@ -521,7 +424,7 @@ class IWASOBI():
             #       A0(1:id-1,id)=d2(m+1:m+id-1,1);
             #       m=m+id-1;
             #   end
-            for id in xrange(1,d):
+            for id in range(1,d):
                 A0[id,0:id] = d1[m:m+id]
                 A0[0:id,id] = d2[m:m+id]
                 m += id
@@ -541,7 +444,7 @@ class IWASOBI():
             #      Ms(:,ini+1:ini+d) = W_est*M(:,ini+1:ini+d)*W_est';
             #      Rs(:,k)=diag(Ms(:,ini+1:ini+d));
             #   end
-            for k in xrange(L):
+            for k in range(L):
                 ini = k*d
                 Ms[:,ini:ini+d] = np.dot(np.dot(W_est,M[:,ini:ini+d]),W_est.T)
                 Rs[:,k] = np.diag(Ms[:,ini:ini+d])
@@ -563,7 +466,7 @@ class IWASOBI():
     def wajd(self,M,H,W_est0=None,maxnumit=100):
         """
         function [W_est Ms]=wajd(M,H,W_est0,maxnumit)
-        %
+
         % my approximate joint diagonalization with non-uniform weights
         %
         % Input: M .... the matrices to be diagonalized, stored as [M1 M2 ... ML]
@@ -614,14 +517,14 @@ class IWASOBI():
         #       Ms(:,ini+1:ini+d)=W_est*M(:,ini+1:ini+d)*W_est';
         #       Rs(:,k)=diag(Ms(:,ini+1:ini+d));
         # end 
-        for k in xrange(L):
+        for k in range(L):
             ini = k*d
             M[:,ini:ini+d] = 0.5*(M[:,ini:ini+d]+M[:,ini:ini+d].T)
             Ms[:,ini:ini+d] = np.dot(np.dot(W_est,M[:,ini:ini+d]),W_est.T)
             Rs[:,k] = np.diag(Ms[:,ini:ini+d])
 
         # for iter=1:maxnumit
-        for iter in xrange(maxnumit):
+        for iter in range(maxnumit):
             #  b11=zeros(dd2,1); b12=b11; b22=b11; c1=b11; c2=c1;
             b11 = np.zeros((dd2,1))
             b12 = np.zeros((dd2,1))
@@ -646,8 +549,8 @@ class IWASOBI():
             #         c2(m)=Wlam1'*Yim';
             #      end
             #   end
-            for id in xrange(1,d):
-                for id2 in xrange(id):
+            for id in range(1,d):
+                for id2 in range(id):
                     im = m*L
                     Wm = H[:,im:im+L]
                     Yim = Ms[id,id2:Md:d]
@@ -676,7 +579,7 @@ class IWASOBI():
             #       A0(1:id-1,id)=d2(m+1:m+id-1,1);
             #       m=m+id-1;
             #   end
-            for id in xrange(1,d):
+            for id in range(1,d):
                 A0[id,0:id] = d1[m:m+id,0]
                 A0[0:id,id] = d2[m:m+id,0]
                 m += id
@@ -695,7 +598,7 @@ class IWASOBI():
             #      Ms(:,ini+1:ini+d) = W_est*M(:,ini+1:ini+d)*W_est';
             #      Rs(:,k)=diag(Ms(:,ini+1:ini+d));
             #   end
-            for k in xrange(L):
+            for k in range(L):
                 ini = k*d
                 Ms[:,ini:ini+d] = np.dot(np.dot(W_est,M[:,ini:ini+d]),W_est.T)
                 Rs[:,k] = np.diag(Ms[:,ini:ini+d])
@@ -705,8 +608,6 @@ class IWASOBI():
 
 
 def iwasobi(data, ar_max=10, rmax=0.99, eps0=5.0e-7):
-    """
-    """
     return IWASOBI(ar_max=ar_max, rmax=rmax, eps0=eps0)(data)
 
 
