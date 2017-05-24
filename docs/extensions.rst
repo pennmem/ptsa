@@ -1,7 +1,7 @@
 ptsa.extensions package
 =======================
 
-C extension modules, for accelerated calculations.
+C/C++ extension modules, for accelerated calculations.
 
 ptsa.extensions.circular_stat
 -----------------------------

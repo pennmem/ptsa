@@ -8,7 +8,6 @@ Subpackages
 
     data
     extensions
-    stats
 
 Submodules
 ----------
