@@ -52,8 +52,8 @@ def check_dependencies():
 
 
 def get_version_str():
-    from ptsa import versionString
-    return versionString.vstr
+    from ptsa.version import version
+    return version
 
 
 def get_numpy_include_dir():

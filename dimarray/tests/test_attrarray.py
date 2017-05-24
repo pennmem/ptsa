@@ -13,7 +13,11 @@ from numpy.testing import TestCase,\
 
 from dimarray import AttrArray
 
-import cPickle as pickle
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+
 
 class test_AttrArray(TestCase):
     def setUp(self):
