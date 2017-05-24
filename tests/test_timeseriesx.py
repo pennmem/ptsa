@@ -23,7 +23,6 @@ def test_init():
     ts = TimeSeriesX(data, dict(samplerate=rate))
     assert isinstance(ts, xr.DataArray)
     assert ts.shape == (10, 10, 10)
-    print(ts['samplerate'])
     assert ts['samplerate'] == rate
 
 
@@ -44,7 +43,15 @@ def test_filtered():
 
 
 def test_resampled():
-    pass
+    ts = TimeSeriesX.create(np.linspace(0, 100, 100), 10., dims=['time'])
+
+    resampled = ts.resampled(20.)
+    assert resampled.data.shape == (200,)
+    assert resampled['samplerate'] == 20
+
+    resampled = ts.resampled(5)
+    assert resampled.data.shape == (50,)
+    assert resampled['samplerate'] == 5
 
 
 def test_remove_buffer():

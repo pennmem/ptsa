@@ -1,3 +1,4 @@
+from copy import deepcopy
 import xarray as xr
 from xarray import concat
 import numpy as np
@@ -65,7 +66,7 @@ class TimeSeriesX(xr.DataArray):
 
     @classmethod
     def create(cls, data, samplerate, coords=None, dims=None, name=None,
-               attrs=None, encoding=None):
+               attrs=None):
         """Factory function for creating a new timeseries object with passing
         the sample rate as a parameter. See :meth:`__init__` for parameters.
 
@@ -73,7 +74,7 @@ class TimeSeriesX(xr.DataArray):
         if coords is None:
             coords = {}
         coords['samplerate'] = float(samplerate)
-        return cls(data, coords, dims, name, attrs, encoding)
+        return cls(data, coords=coords, dims=dims, name=name, attrs=attrs)
 
     def filtered(self, freq_range, filt_type='stop', order=4):
         """
@@ -100,12 +101,6 @@ class TimeSeriesX(xr.DataArray):
                                   order, axis=time_axis_index)
         new_ts = self.copy()
         new_ts.data = filtered_array
-
-        # filtered_time_series = TimeSeriesX(filtered_array, coords=self.coords,
-        #                                    dims=self.dims, name=self.name,
-        #                                    attrs=self.attrs, encoding
-
-        # return filtered_time_series
         return new_ts
 
     def resampled(self, resampled_rate, window=None,
@@ -144,16 +139,17 @@ class TimeSeriesX(xr.DataArray):
             else:
                 continue
 
+            if coord_name == "samplerate":
+                continue
+
             if coord_name == time_axis_name:
                 coords[coord_name] = new_time_axis
 
-        coords['samplerate'] = float(resampled_rate)
+        # coords['samplerate'] = float(resampled_rate)
 
-        resampled_time_series = TimeSeriesX(
-            resampled_array,
-            dims=[dim_name for dim_name in self.dims],
-            coords=coords
-        )
+        resampled_time_series = TimeSeriesX.create(
+            resampled_array, resampled_rate, coords=coords, dims=[dim for dim in self.dims],
+            name=self.name, attrs=self.attrs)
 
         return resampled_time_series
 
@@ -230,5 +226,4 @@ class TimeSeriesX(xr.DataArray):
             A TimeSeries instance with the baseline corrected data.
 
         """
-
         return self - self.isel(time=(self['time'] >= base_range[0]) & (self['time'] <= base_range[1])).mean(dim='time')
