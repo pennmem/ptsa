@@ -1,9 +1,10 @@
 import xarray as xr
 from xarray import concat
-
 import numpy as np
-from ptsa.data.common import get_axis_index
 from scipy.signal import resample
+
+from ptsa.data.common import get_axis_index
+from ptsa.filt import buttfilt
 
 
 class TimeSeriesX(xr.DataArray):
@@ -14,6 +15,8 @@ class TimeSeriesX(xr.DataArray):
     ----------
     data : array-like
         Time series data
+    samplerate : float
+        Sample rate in Hz
     coords : array-like
         Coordinate arrays
     dims : array-like
@@ -24,12 +27,17 @@ class TimeSeriesX(xr.DataArray):
         Dictionary of arbitrary metadata
     encoding : dict
 
+    See also
+    --------
+    xr.DataArray : Base class
+
     """
-    def __init__(self, data, coords=None, dims=None, name=None, attrs=None,
-                 encoding=None):
+    def __init__(self, data, samplerate, coords=None, dims=None, name=None,
+                 attrs=None, encoding=None):
         super(TimeSeriesX, self).__init__(data=data, coords=coords, dims=dims,
                                           name=name, attrs=attrs,
                                           encoding=encoding)
+        self['samplerate'] = float(samplerate)
 
     def filtered(self, freq_range, filt_type='stop', order=4):
         """
@@ -49,9 +57,8 @@ class TimeSeriesX(xr.DataArray):
         -------
         ts : {TimeSeries}
             A TimeSeries instance with the filtered data.
-        """
 
-        from ptsa.filt import buttfilt
+        """
         time_axis_index = get_axis_index(self, axis_name='time')
         filtered_array = buttfilt(self.values, freq_range, float(self['samplerate']), filt_type,
                                   order, axis=time_axis_index)
@@ -129,8 +136,8 @@ class TimeSeriesX(xr.DataArray):
         Remove the desired buffer duration (in seconds) and reset the
         time range.
 
-        Parameter
-        ---------
+        Parameters
+        ----------
         duration : {int,float,({int,float},{int,float})}
             The duration to be removed. The units depend on the samplerate:
             E.g., if samplerate is specified in Hz (i.e., samples per second),
