@@ -132,6 +132,7 @@ class TimeSeriesX(DataArray):
             dims=[dim_name for dim_name in self.dims],
             coords=coords
         )
+        resampled_time_series['samplerate']=samplerate
 
         return resampled_time_series
 
