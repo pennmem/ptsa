@@ -82,40 +82,31 @@ class TimeSeriesX(xr.DataArray):
 
         Parameters
         ----------
-        freq_range : {array_like}
+        freq_range : array-like
             The range of frequencies to filter.
-        filt_type = {scipy.signal.band_dict.keys()},optional
-            Filter type.
-        order = {int}
-            The order of the filter.
+        filt_type : str
+            Filter type (default: ``'stop'``).
+        order : int
+            The order of the filter (default: 4).
 
         Returns
         -------
-        ts : {TimeSeries}
-            A TimeSeries instance with the filtered data.
+        ts : TimeSeriesX
+            A TimeSeriesX instance with the filtered data.
 
         """
         time_axis_index = get_axis_index(self, axis_name='time')
         filtered_array = buttfilt(self.values, freq_range, float(self['samplerate']), filt_type,
                                   order, axis=time_axis_index)
+        new_ts = self.copy()
+        new_ts.data = filtered_array
 
+        # filtered_time_series = TimeSeriesX(filtered_array, coords=self.coords,
+        #                                    dims=self.dims, name=self.name,
+        #                                    attrs=self.attrs, encoding
 
-        coords = {}
-
-        for coord_name, coord in list(self.coords.items()):
-            if len(coord.shape):
-                coords[coord_name] = coord
-
-        filtered_time_series = TimeSeriesX(
-            filtered_array,
-            dims=[dim_name for dim_name in self.dims],
-            coords=coords
-        )
-        filtered_time_series['samplerate'] = self['samplerate']
-
-        filtered_time_series.attrs = self.attrs.copy()
-
-        return filtered_time_series
+        # return filtered_time_series
+        return new_ts
 
     def resampled(self, resampled_rate, window=None,
                   loop_axis=None, num_mp_procs=0, pad_to_pow2=False):
