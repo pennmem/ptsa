@@ -1,7 +1,7 @@
 .. _ramdata:
 
 Interacting with RAM Data
-===========================
+=========================
 
 Even though PTSA is a general Python framework for time series analysis, it has some built-in
 modules that facilitate working with various formats of EEG data and associated experimental data.
@@ -12,7 +12,7 @@ Let's start by looking at how to read experimental events stored in Matlab Forma
 ``BaseEventReader``.
 
 Reading events using BaseEventReader
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------
 
 To read events that RAM project uses  we need to mount RAM data directory on our computer. In my case I mounted it
 as ``/Users/rhino_root/data``.  Now, to read the events we first need to import ``BaseEventReader``
@@ -56,7 +56,7 @@ Indicating that the event object is in fact ``numpy.recarray``
 
 
 Finding Paths using JsonIndexReader
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 While one can always specify the path to the events structure by hand, PTSA has a class
 ``JsonIndexReader`` that tracks this information. The location of the various event files 
 is kept in JSON format, in `/protocols/r1.json`, and ``JsonIndexReader`` allows one to 
@@ -102,7 +102,7 @@ to a record array:
 and now the events structure is exactly as described in the previous section.  
 
 Reading Electrode Information using TalReader
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------------
 
 To read electrode information that is stored in the so called tal_structs we will use ``TalReader`` object.
 We first import TalReader:
@@ -200,7 +200,7 @@ that extract a list of individual channel numbers and a list of bipolar pairs.
 
 
 Reading EEG time series using EEGReader
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------
 
 To read EEG time series' associated with events we typically use ``EEGReader``. Here is the syntax:
 
@@ -237,6 +237,3 @@ Here is the output:
               3142.20516 ,  3147.52192 ],
             [ 3128.91326 ,  3136.8884  ,  3134.761696, ...,  3286.289356,
               3263.958964,  3272.46578 ]],
-
-
-
