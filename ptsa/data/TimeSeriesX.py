@@ -1,48 +1,35 @@
-from xarray import __version__, DataArray, concat
+import xarray as xr
+from xarray import concat
 
 import numpy as np
 from ptsa.data.common import get_axis_index
 from scipy.signal import resample
 
 
-def to_int(x):
-    try:
-        return int(x)
-    except:
-        return -999
+class TimeSeriesX(xr.DataArray):
+    """A thin wrapper around :class:`xr.DataArray` for dealing with time series
+    data.
 
-major_x_ver, minor_x_ver, build_x_ver = map(to_int, __version__.split('.'))
+    Parameters
+    ----------
+    data : array-like
+        Time series data
+    coords : array-like
+        Coordinate arrays
+    dims : array-like
+        Dimension labels
+    name : str
+        Name of the time series
+    attrs : dict
+        Dictionary of arbitrary metadata
+    encoding : dict
 
-
-class TimeSeriesX(DataArray):
-    def __init__(self, data,
-                 coords=None,
-                 dims=None,
-                 name=None,
-                 attrs=None,
-                 encoding=None,
-                 fastpath=False
-                 ):
-
-        if major_x_ver == 0 and minor_x_ver < 7:
-
-            DataArray.__init__(self, data=data,
-                               coords=coords,
-                               dims=dims,
-                               name=name,
-                               attrs=attrs,
-                               encoding=encoding,
-                               # fastpath=fastpath
-                               )
-        else:
-            DataArray.__init__(self, data=data,
-                               coords=coords,
-                               dims=dims,
-                               name=name,
-                               attrs=attrs,
-                               encoding=encoding,
-                               fastpath=fastpath
-                               )
+    """
+    def __init__(self, data, coords=None, dims=None, name=None, attrs=None,
+                 encoding=None):
+        super(TimeSeriesX, self).__init__(data=data, coords=coords, dims=dims,
+                                          name=name, attrs=attrs,
+                                          encoding=encoding)
 
     def filtered(self, freq_range, filt_type='stop', order=4):
         """
