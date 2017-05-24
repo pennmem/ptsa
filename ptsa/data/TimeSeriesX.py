@@ -63,6 +63,18 @@ class TimeSeriesX(xr.DataArray):
                                           name=name, attrs=attrs, encoding=encoding,
                                           fastpath=fastpath)
 
+    @classmethod
+    def create(cls, data, samplerate, coords=None, dims=None, name=None,
+               attrs=None, encoding=None):
+        """Factory function for creating a new timeseries object with passing
+        the sample rate as a parameter. See :meth:`__init__` for parameters.
+
+        """
+        if coords is None:
+            coords = {}
+        coords['samplerate'] = float(samplerate)
+        return cls(data, coords, dims, name, attrs, encoding)
+
     def filtered(self, freq_range, filt_type='stop', order=4):
         """
         Filter the data using a Butterworth filter and return a new
