@@ -7,18 +7,35 @@ from ptsa.data.common import get_axis_index
 from ptsa.filt import buttfilt
 
 
+@xr.register_dataarray_accessor('sample')
+class SampleAccessor(object):
+    def __init__(self, array):
+        self._obj = array
+
+    @property
+    def rate(self):
+        return self._obj['samplerate'].data
+
+    @rate.setter
+    def rate(self, rate):
+        self._obj['samplerate'] = rate
+
+
 class TimeSeriesX(xr.DataArray):
     """A thin wrapper around :class:`xr.DataArray` for dealing with time series
     data.
+
+    Note that xarray internals prevent us from overriding the constructor which
+    leads to some awkwardness: you must pass coords as a dict with a
+    ``samplerate`` entry.
 
     Parameters
     ----------
     data : array-like
         Time series data
-    samplerate : float
-        Sample rate in Hz
-    coords : array-like
-        Coordinate arrays
+    coords : dict-like
+        Coordinate arrays. This must contain at least a ``samplerate``
+        coordinate.
     dims : array-like
         Dimension labels
     name : str
@@ -26,18 +43,25 @@ class TimeSeriesX(xr.DataArray):
     attrs : dict
         Dictionary of arbitrary metadata
     encoding : dict
+    fastpath : bool
+        Not used, but required when subclassing :class:`xr.DataArray`.
+
+    Raises
+    ------
+    AssertionError
+        When ``samplerate`` is not present in ``coords``.
 
     See also
     --------
     xr.DataArray : Base class
 
     """
-    def __init__(self, data, samplerate, coords=None, dims=None, name=None,
-                 attrs=None, encoding=None):
+    def __init__(self, data, coords, dims=None, name=None,
+                 attrs=None, encoding=None, fastpath=False):
+        assert 'samplerate' in coords
         super(TimeSeriesX, self).__init__(data=data, coords=coords, dims=dims,
-                                          name=name, attrs=attrs,
-                                          encoding=encoding)
-        self['samplerate'] = float(samplerate)
+                                          name=name, attrs=attrs, encoding=encoding,
+                                          fastpath=fastpath)
 
     def filtered(self, freq_range, filt_type='stop', order=4):
         """
@@ -64,8 +88,7 @@ class TimeSeriesX(xr.DataArray):
                                   order, axis=time_axis_index)
 
 
-        coords={}
-
+        coords = {}
 
         for coord_name, coord in list(self.coords.items()):
             if len(coord.shape):
@@ -76,7 +99,7 @@ class TimeSeriesX(xr.DataArray):
             dims=[dim_name for dim_name in self.dims],
             coords=coords
         )
-        filtered_time_series['samplerate']=self['samplerate']
+        filtered_time_series['samplerate'] = self['samplerate']
 
         filtered_time_series.attrs = self.attrs.copy()
 
@@ -184,13 +207,10 @@ class TimeSeriesX(xr.DataArray):
         coords['time'] = t_axis
         coords['samplerate'] = float(self['samplerate'])
 
-
-
         return TimeSeriesX(mirrored_data, dims=self.dims, coords=coords)
 
     def baseline_corrected(self, base_range):
         """
-
         Return a baseline corrected timeseries by subtracting the
         average value in the baseline range from all other time points
         for each dimension.
