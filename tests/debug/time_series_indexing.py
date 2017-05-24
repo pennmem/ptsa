@@ -78,7 +78,7 @@ if __name__ == '__main__':
 
     print 'comparing both ways of selection:'
 
-    comp_eeg = eegs[:, eegs.events.data['recalled'] == True, :] -  eegs.sel(events=eegs.events.data['recalled'] == True)
+    comp_eeg = eegs[:, eegs.events.data['recalled'] == True, :] - eegs.sel(events=eegs.events.data['recalled'] == True)
 
     print comp_eeg
 
