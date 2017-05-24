@@ -4,5 +4,5 @@ ptsa.data
 ptsa.data.TimeSeriesX
 ---------------------
 
-.. automodule:: ptsa.data.TimeSeriesX
-   :members:
+.. autoclass:: ptsa.data.TimeSeriesX.TimeSeriesX
+    :members:

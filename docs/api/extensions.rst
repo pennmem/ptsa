@@ -7,7 +7,8 @@ ptsa.extensions.circular_stat
 -----------------------------
 
 .. automodule:: ptsa.extensions.circular_stat
-   :members:
+    :members:
+    :undoc-members:
 
 ptsa.extensions.morlet
 ----------------------

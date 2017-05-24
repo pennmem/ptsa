@@ -43,5 +43,5 @@ Contents:
    tutorial
    ramdata
    filters
-   ptsa
+   api/index
 
