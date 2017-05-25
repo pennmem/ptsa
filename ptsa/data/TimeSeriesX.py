@@ -139,7 +139,9 @@ class TimeSeriesX(xr.DataArray):
             coords_group = hfile['coords']
             names = json.loads(coords_group.attrs['names'].decode())
             coords = {name: coords_group[name].value for name in names}
-            name = root.attrs.get('name', None).decode()
+            name = root.attrs.get('name', None)
+            if name is not None:
+                name = name.decode()
             attrs = root.attrs.get('attrs', None)
             if attrs is not None:
                 attrs = json.loads(attrs.decode())
