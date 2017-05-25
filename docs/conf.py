@@ -36,6 +36,7 @@ extensions = [
     'sphinx.ext.extlinks',
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
+    'nbsphinx',
     # 'sphinxcontrib.restbuilder',
     # 'numpydoc',
     # 'IPython.sphinxext.ipython_directive',
