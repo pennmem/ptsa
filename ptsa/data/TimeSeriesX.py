@@ -1,8 +1,13 @@
-from copy import deepcopy
+import json
 import xarray as xr
 from xarray import concat
 import numpy as np
 from scipy.signal import resample
+
+try:
+    import h5py
+except ImportError:
+    h5py = None
 
 from ptsa.data.common import get_axis_index
 from ptsa.filt import buttfilt
@@ -73,8 +78,66 @@ class TimeSeriesX(xr.DataArray):
         """
         if coords is None:
             coords = {}
-        coords['samplerate'] = float(samplerate)
+        if samplerate is not None:
+            coords['samplerate'] = float(samplerate)
         return cls(data, coords=coords, dims=dims, name=name, attrs=attrs)
+
+    def to_hdf(self, filename, mode='w'):
+        """Save to disk using HDF5.
+
+        FIXME: save name and attrs
+
+        Parameters
+        ----------
+        filename : str
+            Full path to the HDF5 file
+        mode : str
+            File mode to use. See the :mod:`h5py` documentation for details.
+            Default: ``'w'``
+
+        """
+        if h5py is None:
+            raise RuntimeError("You must install h5py to save as HDF5")
+
+        with h5py.File(filename, mode) as hfile:
+            hfile.create_dataset("data", data=self.data, chunks=True)
+
+            dims = [dim.encode() for dim in self.dims]
+            hfile.create_dataset("dims", data=dims)
+
+            coords_group = hfile.create_group("coords")
+            coords = []
+            for name, data in self.coords.items():
+                coords.append(name)
+                coords_group.create_dataset(name, data=data)
+            names = json.dumps(coords).encode()
+            coords_group.attrs.update(names=names)
+
+    @classmethod
+    def from_hdf(cls, filename):
+        """Load from an HDF5 file.
+
+        FIXME: load name and attrs
+
+        Parameters
+        ----------
+        filename : str
+            Path to HDF5 file.
+
+        """
+        if h5py is None:
+            raise RuntimeError("You must install h5py to load from HDF5")
+
+        with h5py.File(filename, 'r') as hfile:
+            dims = hfile['dims'][:]
+
+            coords_group = hfile['coords']
+            names = json.loads(coords_group.attrs['names'].decode())
+            coords = {name: coords_group[name].value for name in names}
+
+            array = cls.create(hfile['data'].value, None, coords=coords,
+                               dims=[dim.decode() for dim in dims])
+            return array
 
     def filtered(self, freq_range, filt_type='stop', order=4):
         """
@@ -144,8 +207,6 @@ class TimeSeriesX(xr.DataArray):
 
             if coord_name == time_axis_name:
                 coords[coord_name] = new_time_axis
-
-        # coords['samplerate'] = float(resampled_rate)
 
         resampled_time_series = TimeSeriesX.create(
             resampled_array, resampled_rate, coords=coords, dims=[dim for dim in self.dims],

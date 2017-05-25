@@ -1,8 +1,19 @@
+from tempfile import mkdtemp
+import os.path as osp
+import shutil
 import pytest
 import numpy as np
 import xarray as xr
+import h5py
 
 from ptsa.data.TimeSeriesX import TimeSeriesX
+
+
+@pytest.fixture
+def tempdir():
+    path = mkdtemp()
+    yield path
+    shutil.rmtree(path, ignore_errors=True)
 
 
 def test_samplerate_accessor():
@@ -24,6 +35,31 @@ def test_init():
     assert isinstance(ts, xr.DataArray)
     assert ts.shape == (10, 10, 10)
     assert ts['samplerate'] == rate
+
+
+def test_hdf(tempdir):
+    """Test saving/loading with HDF5."""
+    data = np.random.random((10, 10, 10, 10))
+    dims = ('time', 'x', 'y', 'z')
+    coords = {label: np.linspace(0, 1, 10) for label in dims}
+    rate = 1
+
+    ts = TimeSeriesX.create(data, rate, coords=coords, dims=dims)
+
+    filename = osp.join(tempdir, "timeseries.h5")
+    ts.to_hdf(filename)
+
+    with h5py.File(filename, 'r') as hfile:
+        assert "data" in hfile
+        assert "dims" in hfile
+        assert "coords" in hfile
+
+    loaded = TimeSeriesX.from_hdf(filename)
+    assert (loaded.data == data).all()
+    for coord in loaded.coords:
+        assert (loaded.coords[coord] == ts.coords[coord]).all()
+    for n, dim in enumerate(dims):
+        assert loaded.dims[n] == dim
 
 
 def test_filtered():
