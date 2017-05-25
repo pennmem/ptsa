@@ -13,7 +13,7 @@ class ResampleFilter(PropertiedObject, BaseFilter):
     """Resample Filter"""
 
     _descriptors = [
-        TypeValTuple('time_series', TimeSeriesX, TimeSeriesX([0.0], dims=['time'])),
+        TypeValTuple('time_series', TimeSeriesX, TimeSeriesX([0.0], dict(samplerate=1), dims=['time'])),
         TypeValTuple('resamplerate', float, -1.0),
         TypeValTuple('time_axis_index', int, -1),
         TypeValTuple('round_to_original_timepoints', bool, False),

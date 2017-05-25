@@ -1,0 +1,4 @@
+python setup.py install
+cd tests
+python run.py "$@"
+
