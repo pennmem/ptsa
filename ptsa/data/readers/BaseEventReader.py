@@ -13,7 +13,8 @@ from ptsa.data.common.path_utils import find_dir_prefix
 from ptsa.data.common import pathlib
 import sys
 
-class BaseEventReader(PropertiedObject,BaseReader):
+
+class BaseEventReader(PropertiedObject, BaseReader):
     '''
     Reader class that reads event file and returns them as np.recarray
     '''
@@ -22,32 +23,70 @@ class BaseEventReader(PropertiedObject,BaseReader):
         TypeValTuple('eliminate_events_with_no_eeg', bool, True),
         TypeValTuple('eliminate_nans', bool, True),
         TypeValTuple('use_reref_eeg', bool, False),
+        TypeValTuple('normalize_eeg_path', bool, True),
         TypeValTuple('common_root', str, 'data/events')
     ]
-    def __init__(self,**kwds):
+
+    def __init__(self, **kwds):
         r'''
         Constructor:
 
-        :param kwds: allowed values are\:
+        :param kwds: allowed values are:
         -------------------------------------
         :param filename {str}: path to event file
+
         :param eliminate_events_with_no_eeg {bool}: flag to automatically remove events with no eegfile (default True)
+
         :param eliminate_nans {bool}: flag to automatically replace nans in the event structs with -999 (default True)
+
         :param use_reref_eeg {bool}: flag that changes eegfiles to point reref eegs. Default is False and eegs read
         are nonreref ones
+
+        :param normalize_eeg_path {bool}: flag that determines if 'data1', 'data2', etc... in eeg path will get
+        converted to 'data'. The flag is True by default meaning all 'data1', 'data2', etc... are converted to 'data'
 
         :return: None
         '''
         self.init_attrs(kwds)
 
+        self._alter_eeg_path_flag = not self.use_reref_eeg
 
-    def correct_eegfile_field(self, events):
-        '''
-        Replaces 'eeg.reref' with 'eeg.noreref' in eegfile path
+
+    # def correct_eegfile_field(self, events):
+    #     '''
+    #     Replaces 'eeg.reref' with 'eeg.noreref' in eegfile path
+    #     :param events: np.recarray representing events. One of the field of this array should be eegfile
+    #     :return:
+    #     '''
+    #
+    #     if sys.platform.startswith('win'):
+    #         data_dir_bad = r'\\data.*\\' + events[0].subject + r'\\eeg'
+    #         data_dir_good = r'\\data\\eeg\\' + events[0].subject + r'\\eeg'
+    #     else:
+    #         data_dir_bad = r'/data.*/' + events[0].subject + r'/eeg'
+    #         data_dir_good = r'/data/eeg/' + events[0].subject + r'/eeg'
+    #
+    #     for ev in events:
+    #         ev.eegfile = ev.eegfile.replace('eeg.reref', 'eeg.noreref')
+    #         ev.eegfile = re.sub(data_dir_bad, data_dir_good, ev.eegfile)
+    #     return events
+
+    @property
+    def alter_eeg_path_flag(self):
+        return self._alter_eeg_path_flag
+
+    @alter_eeg_path_flag.setter
+    def alter_eeg_path_flag(self, val):
+        self._alter_eeg_path_flag = val
+        self.use_reref_eeg = not self._alter_eeg_path_flag
+
+
+    def normalize_paths(self, events):
+        """
+        Replaces data1, data2 etc... in the eegfile column of the events with data
         :param events: np.recarray representing events. One of hte field of this array should be eegfile
-        :return:
-        '''
-
+        :return: None
+        """
         if sys.platform.startswith('win'):
             data_dir_bad = r'\\data.*\\' + events[0].subject + r'\\eeg'
             data_dir_good = r'\\data\\eeg\\' + events[0].subject + r'\\eeg'
@@ -56,8 +95,19 @@ class BaseEventReader(PropertiedObject,BaseReader):
             data_dir_good = r'/data/eeg/' + events[0].subject + r'/eeg'
 
         for ev in events:
-            ev.eegfile = ev.eegfile.replace('eeg.reref', 'eeg.noreref')
+            # ev.eegfile = ev.eegfile.replace('eeg.reref', 'eeg.noreref')
             ev.eegfile = re.sub(data_dir_bad, data_dir_good, ev.eegfile)
+        return events
+
+    def modify_eeg_path(self, events):
+        """
+        Replaces 'eeg.reref' with 'eeg.noreref' in eegfile path
+        :param events: np.recarray representing events. One of hte field of this array should be eegfile
+        :return:None
+        """
+
+        for ev in events:
+            ev.eegfile = ev.eegfile.replace('eeg.reref', 'eeg.noreref')
         return events
 
     def read(self):
@@ -66,10 +116,15 @@ class BaseEventReader(PropertiedObject,BaseReader):
         else:
             return self.read_matlab()
 
-    def read_json(self):
+
+    def check_reader_settings_for_json_read(self):
 
         if self.use_reref_eeg:
             raise NotImplementedError('Reref from JSON not implemented')
+
+    def read_json(self):
+
+        self.check_reader_settings_for_json_read()
 
         evs = self.from_json(self.filename)
 
@@ -124,10 +179,14 @@ class BaseEventReader(PropertiedObject,BaseReader):
         # determining data_dir_prefix in case rhino /data filesystem was mounted under different root
         data_dir_prefix = self.find_data_dir_prefix()
         for i, ev in enumerate(evs):
-            ev.eegfile=join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
+            ev.eegfile = join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
 
-        if not self.use_reref_eeg:
-            evs = self.correct_eegfile_field(evs)
+        if self.normalize_eeg_path:
+            evs = self.normalize_paths(evs)
+
+        # if not self.use_reref_eeg:
+        if self._alter_eeg_path_flag:
+            evs = self.modify_eeg_path(evs)
 
         if self.eliminate_nans:
             # this is
@@ -135,14 +194,14 @@ class BaseEventReader(PropertiedObject,BaseReader):
 
         return evs
 
-    def replace_nans(self,evs, replacement_val=-999):
+    def replace_nans(self, evs, replacement_val=-999):
 
         for descr in evs.dtype.descr:
             field_name = descr[0]
 
             try:
                 nan_selector = np.isnan(evs[field_name])
-                evs[field_name][nan_selector]=replacement_val
+                evs[field_name][nan_selector] = replacement_val
             except TypeError:
                 pass
         return evs
@@ -167,9 +226,6 @@ class BaseEventReader(PropertiedObject,BaseReader):
                 'Could not determine prefix from: %s using common_root: %s' % (self._filename, self.common_root))
 
         return find_dir_prefix(self._filename, self.common_root)
-
-
-
 
     ### TODO: CLEAN UP, COMMENT
 
@@ -291,14 +347,13 @@ class BaseEventReader(PropertiedObject,BaseReader):
 
 
 if __name__ == '__main__':
-
     e_path = '/Volumes/db_root/protocols/r1/subjects/R1001P/experiments/FR1/sessions/0/behavioral/current_processed/task_events.json'
     e_reader = BaseEventReader(filename=e_path)
     events = e_reader.read()
 
     from ptsa.data.readers import EEGReader
 
-    eeg_reader = EEGReader(events=events, channels=np.array(['006']), start_time = 0., end_time=1.6, buffer_time=1.0)
+    eeg_reader = EEGReader(events=events, channels=np.array(['006']), start_time=0., end_time=1.6, buffer_time=1.0)
     base_eeg = eeg_reader.read()
     print(base_eeg)
 
