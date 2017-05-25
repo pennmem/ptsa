@@ -30,129 +30,118 @@ class TestPyFR(unittest.TestCase):
         self.task = 'FR1'
         self.subject_list = ['R1111M', 'R1065J']
 
+    def read_events_BaseEventReader(self, e_path, **kwds):
 
-    def read_events_BaseEventReader(self, e_path,**kwds):
-
-        base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True,**kwds)
+        base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True, **kwds)
 
         base_events = base_e_reader.read()
         return base_events
 
-    def read_events_BaseEventReader_Matlab(self, task, subject,**kwds):
-        e_path = join(self.prefix, 'data/events/%s/%s_events.mat' % ('RAM_'+task, subject))
-        return self.read_events_BaseEventReader(e_path,**kwds)
+    def read_events_BaseEventReader_Matlab(self, task, subject, **kwds):
+        e_path = join(self.prefix, 'data/events/%s/%s_events.mat' % ('RAM_' + task, subject))
+        return self.read_events_BaseEventReader(e_path, **kwds)
 
-    def read_events_BaseEventReader_JSON(self, task, subject,**kwds):
+    def read_events_BaseEventReader_JSON(self, task, subject, **kwds):
         e_path = join(self.prefix, 'protocols/r1/subjects/%s/experiments/%s/sessions/0/behavioral/current_processed'
-                                  '/task_events.json'%(subject,task))
+                                   '/task_events.json' % (subject, task))
 
-        return self.read_events_BaseEventReader(e_path,**kwds)
-
-
+        return self.read_events_BaseEventReader(e_path, **kwds)
 
     def read_events_CMLEventReader(self, e_path, **kwds):
 
-        base_e_reader = CMLEventReader(filename=e_path, eliminate_events_with_no_eeg=True,**kwds)
+        base_e_reader = CMLEventReader(filename=e_path, eliminate_events_with_no_eeg=True, **kwds)
 
         base_events = base_e_reader.read()
         return base_events
 
-
     def read_events_CMLEventReader_Matlab(self, task, subject, **kwds):
-        e_path = join(self.prefix, 'data/events/%s/%s_events.mat' % ('RAM_'+task, subject))
+        e_path = join(self.prefix, 'data/events/%s/%s_events.mat' % ('RAM_' + task, subject))
         return self.read_events_CMLEventReader(e_path, **kwds)
 
-
-    def read_events_CMLEventReader_JSON(self, subject, task,  **kwds):
+    def read_events_CMLEventReader_JSON(self, task, subject, **kwds):
         e_path = join(self.prefix, 'protocols/r1/subjects/%s/experiments/%s/sessions/0/behavioral/current_processed'
-                                  '/task_events.json'%(subject,task))
+                                   '/task_events.json' % (subject, task))
 
         return self.read_events_CMLEventReader(e_path, **kwds)
-
-
-
 
     def test_event_readers(self):
-        error_count = 0
+
         subjects_failed = []
 
-        # cml_readers = [self.read_events_CMLEventReader_Matlab, self.read_events_CMLEventReader_JSON]
-        # base_readers = [self.read_events_BaseEventReader_Matlab, self.read_events_BaseEventReader_JSON]
+        cml_readers = [self.read_events_CMLEventReader_Matlab, self.read_events_CMLEventReader_JSON]
+        base_readers = [self.read_events_BaseEventReader_Matlab, self.read_events_BaseEventReader_JSON]
 
-        cml_readers = [self.read_events_CMLEventReader_Matlab]
-        base_readers = [self.read_events_BaseEventReader_Matlab]
+        # cml_readers = [self.read_events_CMLEventReader_Matlab]
+        # base_readers = [self.read_events_BaseEventReader_Matlab]
+
+        # cml_readers = [self.read_events_CMLEventReader_JSON]
+        # base_readers = [self.read_events_BaseEventReader_JSON]
 
         print 'Testing "unmodified" events'
 
         for subject in self.subject_list:
             print 'processing subject ', subject
 
-            for cml_reader, base_reader in zip(cml_readers,base_readers):
+            for cml_reader, base_reader in zip(cml_readers, base_readers):
                 cml_evs = cml_reader(self.task, subject)
-
-                evs = base_reader(self.task, subject,
-                                                       use_reref_eeg=True)
+                try:
+                    evs = base_reader(self.task, subject,
+                                      use_reref_eeg=True)
+                except NotImplementedError as e:
+                    if str(e).strip() == 'Reref from JSON not implemented':
+                        continue
 
                 num_path_diffs = np.sum(cml_evs.eegfile != evs.eegfile)
+                try:
+                    assert_equal(num_path_diffs, 0, 'paths in the eegfile field are different between events'
+                                                    'read with CMLEventReader and BaseEventReader')
+                except AssertionError:
 
-                assert_equal(num_path_diffs,0,'paths in the eegfile field are different between events'
-                                              'read with CMLEventReader and BaseEventReader')
-
-
-
-            # cml_evs = self.read_events_CMLEventReader_Matlab(self.task, subject)
-            #
-            # evs = self.read_events_BaseEventReader_Matlab(self.task, subject,
-            #                                        use_reref_eeg=True)
-            #
-            # num_path_diffs = np.sum(cml_evs.eegfile != evs.eegfile)
-            #
-            # assert_equal(num_path_diffs,0,'paths in the eegfile field are different between events'
-            #                               'read with CMLEventReader and BaseEventReader')
-
-
+                    subjects_failed.append(subject)
 
         print 'Testing noreref substitution in the events'
 
         for subject in self.subject_list:
             print 'processing subject ', subject
 
-            for cml_reader, base_reader in zip(cml_readers,base_readers):
-
+            for cml_reader, base_reader in zip(cml_readers, base_readers):
 
                 cml_evs = cml_reader(
-                            self.task, subject,
-                            eeg_fname_search_pattern='eeg.reref',
-                            eeg_fname_replace_pattern='eeg.noreref')
-
+                    self.task, subject,
+                    eeg_fname_search_pattern='eeg.reref',
+                    eeg_fname_replace_pattern='eeg.noreref')
 
                 evs = base_reader(self.task, subject,
-                                                   use_reref_eeg=False)
+                                  use_reref_eeg=False)
 
                 num_path_diffs = np.sum(cml_evs.eegfile != evs.eegfile)
 
-                assert_equal(num_path_diffs,0,'paths in the eegfile field are different between events'
-                                              'read with CMLEventReader and BaseEventReader')
+                try:
+                    assert_equal(num_path_diffs, 0, 'paths in the eegfile field are different between events'
+                                                    'read with CMLEventReader and BaseEventReader')
+                except AssertionError:
 
-
+                    subjects_failed.append(subject)
 
         for subject in self.subject_list:
             print 'processing subject ', subject
-            for cml_reader, base_reader in zip(cml_readers,base_readers):
+            for cml_reader, base_reader in zip(cml_readers, base_readers):
 
                 cml_evs = cml_reader(
-                                self.task, subject,
-                                eeg_fname_search_pattern='eeg.reref',
-                                eeg_fname_replace_pattern='eeg.noreref', normalize_eeg_path=False)
-
+                    self.task, subject,
+                    eeg_fname_search_pattern='eeg.reref',
+                    eeg_fname_replace_pattern='eeg.noreref', normalize_eeg_path=False)
 
                 evs = base_reader(self.task, subject,
-                                                       use_reref_eeg=False, normalize_eeg_path=False)
+                                  use_reref_eeg=False, normalize_eeg_path=False)
 
                 num_path_diffs = np.sum(cml_evs.eegfile != evs.eegfile)
 
-                assert_equal(num_path_diffs,0,'paths in the eegfile field are different between events'
-                                              'read with CMLEventReader and BaseEventReader')
+                try:
+                    assert_equal(num_path_diffs, 0, 'paths in the eegfile field are different between events'
+                                                    'read with CMLEventReader and BaseEventReader')
+                except AssertionError:
+                    subjects_failed.append(subject)
 
-
-
+        assert_equal(len(subjects_failed), 0,
+                     'The following subjects had event read errors %s' % ', '.join(subjects_failed))
