@@ -21,7 +21,7 @@ class MonopolarToBipolarMapper(PropertiedObject,BaseFilter):
     between time series corresponding to different electrodes as specified by bipolar pairs
     """
     _descriptors = [
-        TypeValTuple('time_series', TimeSeriesX, TimeSeriesX([0.0], dims=['time'])),
+        TypeValTuple('time_series', TimeSeriesX, TimeSeriesX([0.0], dict(samplerate=1), dims=['time'])),
         TypeValTuple('bipolar_pairs', np.recarray, np.recarray((0,), dtype=[('ch0', '|S3'), ('ch1', '|S3')])),
 
     ]

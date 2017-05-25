@@ -45,12 +45,15 @@ class BaseEventReader(PropertiedObject, BaseReader):
         :param normalize_eeg_path {bool}: flag that determines if 'data1', 'data2', etc... in eeg path will get
         converted to 'data'. The flag is True by default meaning all 'data1', 'data2', etc... are converted to 'data'
 
+        :param common_root {str}: partial path to root events folder e.g. if you events are placed in
+        /data/events/RAM_FR1 the path should be 'data/events'. If your events are placed in the '/data/scalp_events/catFR'
+        the common root should be 'data/scalp_events'. Note that you do not include opening '/' in the common_root
+
         :return: None
         '''
         self.init_attrs(kwds)
 
         self._alter_eeg_path_flag = not self.use_reref_eeg
-
 
     # def correct_eegfile_field(self, events):
     #     '''
@@ -79,7 +82,6 @@ class BaseEventReader(PropertiedObject, BaseReader):
     def alter_eeg_path_flag(self, val):
         self._alter_eeg_path_flag = val
         self.use_reref_eeg = not self._alter_eeg_path_flag
-
 
     def normalize_paths(self, events):
         """
@@ -115,7 +117,6 @@ class BaseEventReader(PropertiedObject, BaseReader):
             return self.read_json()
         else:
             return self.read_matlab()
-
 
     def check_reader_settings_for_json_read(self):
 
@@ -177,11 +178,12 @@ class BaseEventReader(PropertiedObject, BaseReader):
             evs = evs[indicator]
 
         # determining data_dir_prefix in case rhino /data filesystem was mounted under different root
-        data_dir_prefix = self.find_data_dir_prefix()
-        for i, ev in enumerate(evs):
-            ev.eegfile = join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
-
         if self.normalize_eeg_path:
+            data_dir_prefix = self.find_data_dir_prefix()
+            for i, ev in enumerate(evs):
+                ev.eegfile = join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
+
+        # if self.normalize_eeg_path:
             evs = self.normalize_paths(evs)
 
         # if not self.use_reref_eeg:
