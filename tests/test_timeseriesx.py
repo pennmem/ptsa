@@ -44,7 +44,7 @@ def test_hdf(tempdir):
     coords = {label: np.linspace(0, 1, 10) for label in dims}
     rate = 1
 
-    ts = TimeSeriesX.create(data, rate, coords=coords, dims=dims)
+    ts = TimeSeriesX.create(data, rate, coords=coords, dims=dims, name="test")
 
     filename = osp.join(tempdir, "timeseries.h5")
     ts.to_hdf(filename)
@@ -53,6 +53,7 @@ def test_hdf(tempdir):
         assert "data" in hfile
         assert "dims" in hfile
         assert "coords" in hfile
+        assert "name" in list(hfile['/'].attrs.keys())
 
     loaded = TimeSeriesX.from_hdf(filename)
     assert (loaded.data == data).all()
@@ -60,6 +61,13 @@ def test_hdf(tempdir):
         assert (loaded.coords[coord] == ts.coords[coord]).all()
     for n, dim in enumerate(dims):
         assert loaded.dims[n] == dim
+    assert loaded.name == "test"
+
+    ts_with_attrs = TimeSeriesX.create(data, rate, coords=coords, dims=dims,
+                                       name="test", attrs=dict(a=1, b=[1, 2]))
+    ts_with_attrs.to_hdf(filename)
+    loaded = TimeSeriesX.from_hdf(filename)
+    assert ts_with_attrs.attrs == loaded.attrs
 
 
 def test_filtered():

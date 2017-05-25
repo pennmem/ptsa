@@ -85,8 +85,6 @@ class TimeSeriesX(xr.DataArray):
     def to_hdf(self, filename, mode='w'):
         """Save to disk using HDF5.
 
-        FIXME: save name and attrs
-
         Parameters
         ----------
         filename : str
@@ -113,6 +111,12 @@ class TimeSeriesX(xr.DataArray):
             names = json.dumps(coords).encode()
             coords_group.attrs.update(names=names)
 
+            root = hfile['/']
+            if self.name is not None:
+                root.attrs['name'] = self.name.encode()
+            if self.attrs is not None:
+                root.attrs['attrs'] = json.dumps(self.attrs).encode()
+
     @classmethod
     def from_hdf(cls, filename):
         """Load from an HDF5 file.
@@ -131,12 +135,18 @@ class TimeSeriesX(xr.DataArray):
         with h5py.File(filename, 'r') as hfile:
             dims = hfile['dims'][:]
 
+            root = hfile['/']
             coords_group = hfile['coords']
             names = json.loads(coords_group.attrs['names'].decode())
             coords = {name: coords_group[name].value for name in names}
+            name = root.attrs.get('name', None).decode()
+            attrs = root.attrs.get('attrs', None)
+            if attrs is not None:
+                attrs = json.loads(attrs.decode())
 
             array = cls.create(hfile['data'].value, None, coords=coords,
-                               dims=[dim.decode() for dim in dims])
+                               dims=[dim.decode() for dim in dims],
+                               name=name, attrs=attrs)
             return array
 
     def __duration_to_samples(self, duration):
