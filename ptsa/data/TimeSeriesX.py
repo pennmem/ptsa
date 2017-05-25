@@ -168,14 +168,24 @@ class TimeSeriesX(xr.DataArray):
 
     def resampled(self, resampled_rate, window=None,
                   loop_axis=None, num_mp_procs=0, pad_to_pow2=False):
-        """
+        """Resamples the time series.
 
-        :param resampled_rate: resample rate
-        :param window: ignored for now - added for legacy reasons
-        :param loop_axis: ignored for now - added for legacy reasons
-        :param num_mp_procs: ignored for now - added for legacy reasons
-        :param pad_to_pow2: ignored for now - added for legacy reasons
-        :return: resampled time series
+        Parameters
+        ----------
+        resampled_rate : float
+           New sample rate
+        window
+            ignored for now - added for legacy reasons
+        loop_axis
+            ignored for now - added for legacy reasons
+        num_mp_procs
+            ignored for now - added for legacy reasons
+        pad_to_pow2
+            ignored for now - added for legacy reasons
+
+        Returns
+        -------
+        Resampled time series
 
         """
         # use ResampleFilter instead
@@ -233,7 +243,7 @@ class TimeSeriesX(xr.DataArray):
 
         Returns
         -------
-        ts : {TimeSeries}
+        ts : TimeSeriesX
             A TimeSeries instance with the requested durations removed from the
             beginning and/or end.
         """
@@ -245,11 +255,21 @@ class TimeSeriesX(xr.DataArray):
 
     def add_mirror_buffer(self, duration):
         """
-        Adds mirrors data at both ends of the time series (up to specified length/duration) and appends
-        such buffers at both ends of the series. The new series total time duration is:
-        original duration + 2*duration
-        :param duration: {float} buffer duration in seconde
-        :return: {TimeSeriesX} new time series with added mirrored buffer
+        Adds mirrors data at both ends of the time series (up to specified
+        length/duration) and appends such buffers at both ends of the series.
+        The new series total time duration is:
+
+            ``original duration + 2 * duration * samplerate``
+
+        Parameters
+        ----------
+        duration : float
+            Buffer duration in seconds.
+
+        Returns
+        -------
+        New time series with added mirrored buffer.
+
         """
         samplerate = float(self['samplerate'])
         nb_ = int(np.ceil(samplerate * duration))

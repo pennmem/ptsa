@@ -95,7 +95,17 @@ def test_remove_buffer():
 
 
 def test_add_mirror_buffer():
-    pass
+    points = 100
+
+    data = np.array([-1] * points + [1] * points)
+    samplerate = 10.
+    coords = {'time': np.linspace(-1, 1, points*2)}
+    dims = ['time']
+    ts = TimeSeriesX.create(data, samplerate, coords=coords, dims=dims)
+
+    duration = 10
+    buffered = ts.add_mirror_buffer(duration)
+    assert len(buffered.data) == len(data) + 2 * duration * samplerate
 
 
 def test_baseline_corrected():
