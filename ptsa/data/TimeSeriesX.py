@@ -6,7 +6,7 @@ from scipy.signal import resample
 
 try:
     import h5py
-except ImportError:
+except ImportError:  # pragma: nocover
     h5py = None
 
 from ptsa.data.common import get_axis_index
@@ -96,7 +96,7 @@ class TimeSeriesX(xr.DataArray):
             Default: ``'w'``
 
         """
-        if h5py is None:
+        if h5py is None:  # pragma: nocover
             raise RuntimeError("You must install h5py to save as HDF5")
 
         with h5py.File(filename, mode) as hfile:
@@ -125,7 +125,7 @@ class TimeSeriesX(xr.DataArray):
             Path to HDF5 file.
 
         """
-        if h5py is None:
+        if h5py is None:  # pragma: nocover
             raise RuntimeError("You must install h5py to load from HDF5")
 
         with h5py.File(filename, 'r') as hfile:
@@ -138,6 +138,13 @@ class TimeSeriesX(xr.DataArray):
             array = cls.create(hfile['data'].value, None, coords=coords,
                                dims=[dim.decode() for dim in dims])
             return array
+
+    def __duration_to_samples(self, duration):
+        """Convenience function to convert a duration in seconds to number of
+        samples.
+
+        """
+        return int(np.ceil(float(self['samplerate']) * duration))
 
     def filtered(self, freq_range, filt_type='stop', order=4):
         """
@@ -231,15 +238,13 @@ class TimeSeriesX(xr.DataArray):
 
         Parameters
         ----------
-        duration : {int,float,({int,float},{int,float})}
+        duration : float
             The duration to be removed. The units depend on the samplerate:
             E.g., if samplerate is specified in Hz (i.e., samples per second),
             the duration needs to be specified in seconds and if samplerate is
             specified in kHz (i.e., samples per millisecond), the duration needs
-            to be specified in milliseconds.
-            A single number causes the specified duration to be removed from the
-            beginning and end. A 2-tuple can be passed in to specify different
-            durations to be removed from the beginning and the end respectively.
+            to be specified in milliseconds. The specified duration is removed
+            from the beginning and end.
 
         Returns
         -------
@@ -247,11 +252,13 @@ class TimeSeriesX(xr.DataArray):
             A TimeSeries instance with the requested durations removed from the
             beginning and/or end.
         """
+        samples = self.__duration_to_samples(duration)
 
-        # number_of_buffer_samples = int(np.ceil(duration * self.attrs['samplerate']))
-        number_of_buffer_samples = int(np.ceil(duration * float(self['samplerate'])))
-        if number_of_buffer_samples > 0:
-            return self[..., number_of_buffer_samples:-number_of_buffer_samples]
+        if samples > len(self['time']):
+            raise ValueError("Requested removal time is longer than the data")
+
+        if samples > 0:
+            return self[..., samples:-samples]
 
     def add_mirror_buffer(self, duration):
         """
@@ -272,12 +279,14 @@ class TimeSeriesX(xr.DataArray):
 
         """
         samplerate = float(self['samplerate'])
-        nb_ = int(np.ceil(samplerate * duration))
+        samples = self.__duration_to_samples(duration)
+        if samples > len(self['time']):
+            raise ValueError("Requested buffer time is longer than the data")
 
         data = self.data
 
         mirrored_data = np.concatenate(
-            (data[..., 1:nb_ + 1][..., ::-1], data, data[..., -nb_ - 1:-1][..., ::-1]),
+            (data[..., 1:samples + 1][..., ::-1], data, data[..., -samples - 1:-1][..., ::-1]),
             axis=-1)
 
         start_time = self['time'].data[0] - duration

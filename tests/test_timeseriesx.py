@@ -91,7 +91,23 @@ def test_resampled():
 
 
 def test_remove_buffer():
-    pass
+    length = 100
+    data = np.array([0]*length)
+    samplerate = 10.
+    coords = {'time': np.linspace(-1, 1, length)}
+    dims = ['time']
+    ts = TimeSeriesX.create(data, samplerate, coords=coords, dims=dims)
+
+    with pytest.raises(ValueError):
+        # We can't remove this much
+        ts.remove_buffer(int(samplerate * length + 1))
+
+    buffer_dur = 0.1
+    buffered = ts.add_mirror_buffer(buffer_dur)
+    unbuffered = buffered.remove_buffer(buffer_dur)
+
+    assert len(unbuffered.data) == len(ts.data)
+    assert (unbuffered.data == ts.data).all()
 
 
 def test_add_mirror_buffer():
@@ -106,6 +122,10 @@ def test_add_mirror_buffer():
     duration = 10
     buffered = ts.add_mirror_buffer(duration)
     assert len(buffered.data) == len(data) + 2 * duration * samplerate
+
+    with pytest.raises(ValueError):
+        # 100 s is longer than the length of data
+        ts.add_mirror_buffer(100)
 
 
 def test_baseline_corrected():
