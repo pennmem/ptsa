@@ -31,6 +31,11 @@ def test_init():
     with pytest.raises(AssertionError):
         TimeSeriesX(data, {})
 
+    with pytest.raises(AssertionError):
+        TimeSeriesX.create(data, None, coords={})
+
+    assert TimeSeriesX.create(data, None, coords={'samplerate': 1}).samplerate == 1
+
     ts = TimeSeriesX(data, dict(samplerate=rate))
     assert isinstance(ts, xr.DataArray)
     assert ts.shape == (10, 10, 10)
