@@ -12,6 +12,8 @@ class CMLEventReader(BaseEventReader):
 
         TypeValTuple('eeg_fname_search_pattern', str, ''),
         TypeValTuple('eeg_fname_replace_pattern', str, ''),
+        TypeValTuple('normalize_eeg_path', bool, False),
+
 
     ]
 
@@ -35,7 +37,7 @@ class CMLEventReader(BaseEventReader):
         It will replace all occurrences specified by "eeg_fname_replace_pattern"
 
         :param normalize_eeg_path {bool}: flag that determines if 'data1', 'data2', etc... in eeg path will get
-        converted to 'data'. The flag is True by default meaning all 'data1', 'data2', etc... are converted to 'data'
+        converted to 'data'. The flag is False by default meaning all 'data1', 'data2', etc... are converted to 'data'
 
         :return: None
         """
