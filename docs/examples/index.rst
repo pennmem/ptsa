@@ -9,6 +9,7 @@ __ https://github.com/pennmem/ptsa_new/tree/master/docs/examples
 .. toctree::
     :maxdepth: 1
 
+    timeseriesx.ipynb
     eeg.ipynb
     events.ipynb
     pyFR_demo.ipynb
