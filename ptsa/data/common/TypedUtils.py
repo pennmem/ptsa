@@ -1,9 +1,8 @@
-__author__ = 'm'
-
-
 from collections import namedtuple
+from ptsa.six import with_metaclass
 
 TypeValTuple = namedtuple('TypeValTuple', ['name', 'type','default'], verbose=False)
+
 
 class TypedProperty(object):
     def __init__(self,name,type,default=None):
@@ -22,6 +21,7 @@ class TypedProperty(object):
 
     def __delete__(self,instance):
         raise AttributeError("Can't delete attribute")
+
 
 class MyMeta(type):
     def __new__(meta, name, bases, dct):
@@ -42,27 +42,21 @@ class MyMeta(type):
         return ret_obj
 
 
-class PropertiedObject(object):
-    __metaclass__ = MyMeta
+class PropertiedObject(with_metaclass(MyMeta, object)):
     _descriptors = []
 
     def init_attrs(self, kwds):
         for option_name, val in list(kwds.items()):
             try:
                 attr = getattr(self,option_name)
-                setattr(self,option_name,val)
+                setattr(self, option_name, val)
             except AttributeError:
-                s = 'Option: '+ option_name+' is not allowed'
+                s = 'Option: ' + option_name+' is not allowed'
                 print(s)
                 raise AttributeError(s)
 
 
-
-
-
-
-if __name__=='__main__':
-
+if __name__ == '__main__':
     class RF(PropertiedObject):
         _descriptors = [
             TypeValTuple('resamplerate', float, -1.0),
