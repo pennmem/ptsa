@@ -6,16 +6,16 @@ from ptsa.data.readers import BaseReader
 
 
 class TalReader(PropertiedObject,BaseReader):
-    '''
+    """
     Reader that reads tal structs Matlab file and converts it to numpy recarray
-    '''
+    """
     _descriptors = [
         TypeValTuple('filename', str, ''),
         TypeValTuple('struct_name', str, 'bpTalStruct'),
     ]
 
     def __init__(self, **kwds):
-        '''
+        """
         Constructor:
 
         :param kwds:allowed values are:
@@ -23,7 +23,7 @@ class TalReader(PropertiedObject,BaseReader):
         :param filename {str} -  path to tal file
         :param struct_name {str} -  name of the matlab struct to load
         :return: None
-        '''
+        """
 
         self.init_attrs(kwds)
         self.bipolar_channels=None
@@ -31,10 +31,10 @@ class TalReader(PropertiedObject,BaseReader):
         self.tal_structs_array = None
 
     def get_bipolar_pairs(self):
-        '''
+        """
 
         :return: numpy recarray where each record has two fields 'ch0' and 'ch1' storing  channel labels.
-        '''
+        """
         if self.bipolar_channels is None:
             if self.tal_structs_array is None:
                 self.read()
@@ -43,10 +43,10 @@ class TalReader(PropertiedObject,BaseReader):
         return self.bipolar_channels
 
     def get_monopolar_channels(self):
-        '''
+        """
 
         :return: numpy array of monopolar channel labels
-        '''
+        """
         bipolar_array = self.get_bipolar_pairs()
         monopolar_set = set(list(bipolar_array['ch0'])+list(bipolar_array['ch1']))
         return np.array(sorted(list(monopolar_set)))
@@ -61,10 +61,10 @@ class TalReader(PropertiedObject,BaseReader):
 
 
     def read(self):
-        '''
+        """
 
         :return:np.recarray representing tal struct array (originally defined in Matlab file)
-        '''
+        """
 
         from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
 

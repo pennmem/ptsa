@@ -1,4 +1,9 @@
-__author__ = 'm'
+import sys
+import unittest
+import pytest
+
+import numpy as np
+import numpy.testing as npt
 
 from ptsa.data.readers import BaseEventReader
 from ptsa.data.readers import PTSAEventReader
@@ -6,11 +11,9 @@ from ptsa.data.readers import TalStimOnlyReader
 from ptsa.data.readers import EEGReader
 from ptsa.data.readers import BaseRawReader
 from ptsa.data.events import Events
-import numpy as np
-import unittest
-import numpy.testing as npt
-import sys
 
+
+@pytest.mark.skip(reason="Hardcoded paths")
 class TestReaders(unittest.TestCase):
     def setUp(self):
         self.event_range = range(0, 30, 1)
