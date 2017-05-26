@@ -9,7 +9,8 @@ from dataset_utils import *
 class TestEventReaders(unittest.TestCase):
     def setUp(self):
 
-        self.prefix = '/Users/m'
+        # self.prefix = '/Users/m'
+        self.prefix = '/Volumes/rhino_root'
 
     def test_ram_event_readers(self):
 
@@ -29,7 +30,7 @@ class TestEventReaders(unittest.TestCase):
     def test_ram_event_readers_change_to_noreref(self):
 
         task = 'RAM_FR1'
-        subject_list = ['R1111M', 'R1065J']
+        subject_list = ['R1060M','R1111M', 'R1065J']
 
         for subject in subject_list:
             e_path = e_path_matlab(self.prefix, subject, task)
