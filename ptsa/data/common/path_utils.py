@@ -1,8 +1,7 @@
-__author__ = 'm'
-
 from . import pathlib
-def find_dir_prefix(path_with_prefix,common_root):
 
+
+def find_dir_prefix(path_with_prefix, common_root):
     common_root_parts = pathlib.Path(common_root).parts
     common_root_parts_length = len(common_root_parts)
     full_path_parts = pathlib.Path(path_with_prefix).parts

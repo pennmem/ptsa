@@ -1,23 +1,20 @@
-__author__ = 'm'
-
+import sys
+import os
 from os.path import *
-import numpy as np
 import re
 import json
 import unicodedata
-import os
 from collections import defaultdict
+import numpy as np
+
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
 from ptsa.data.common.path_utils import find_dir_prefix
 from ptsa.data.common import pathlib
-import sys
 
 
 class BaseEventReader(PropertiedObject, BaseReader):
-    '''
-    Reader class that reads event file and returns them as np.recarray
-    '''
+    """Reader class that reads event file and returns them as np.recarray"""
     _descriptors = [
         TypeValTuple('filename', str, ''),
         TypeValTuple('eliminate_events_with_no_eeg', bool, True),
@@ -28,51 +25,32 @@ class BaseEventReader(PropertiedObject, BaseReader):
     ]
 
     def __init__(self, **kwds):
-        r'''
-        Constructor:
+        r"""
+        Keyword arguments
+        -----------------
+        filename : str
+            path to event file
+        eliminate_events_with_no_eeg : bool
+            flag to automatically remove events with no eegfile (default True)
+        eliminate_nans : bool
+            flag to automatically replace nans in the event structs with -999 (default True)
+        use_reref_eeg : bool
+            flag that changes eegfiles to point reref eegs. Default is False
+            and eegs read are nonreref ones
+        normalize_eeg_path : bool
+            flag that determines if 'data1', 'data2', etc... in eeg path will
+            get converted to 'data'. The flag is True by default meaning all
+            'data1', 'data2', etc... are converted to 'data'
+        common_root : str
+            partial path to root events folder e.g. if you events are placed in
+            /data/events/RAM_FR1 the path should be 'data/events'. If your
+            events are placed in the '/data/scalp_events/catFR' the common root
+            should be 'data/scalp_events'. Note that you do not include opening
+            '/' in the common_root
 
-        :param kwds: allowed values are:
-        -------------------------------------
-        :param filename {str}: path to event file
-
-        :param eliminate_events_with_no_eeg {bool}: flag to automatically remove events with no eegfile (default True)
-
-        :param eliminate_nans {bool}: flag to automatically replace nans in the event structs with -999 (default True)
-
-        :param use_reref_eeg {bool}: flag that changes eegfiles to point reref eegs. Default is False and eegs read
-        are nonreref ones
-
-        :param normalize_eeg_path {bool}: flag that determines if 'data1', 'data2', etc... in eeg path will get
-        converted to 'data'. The flag is True by default meaning all 'data1', 'data2', etc... are converted to 'data'
-
-        :param common_root {str}: partial path to root events folder e.g. if you events are placed in
-        /data/events/RAM_FR1 the path should be 'data/events'. If your events are placed in the '/data/scalp_events/catFR'
-        the common root should be 'data/scalp_events'. Note that you do not include opening '/' in the common_root
-
-        :return: None
-        '''
+        """
         self.init_attrs(kwds)
-
         self._alter_eeg_path_flag = not self.use_reref_eeg
-
-    # def correct_eegfile_field(self, events):
-    #     '''
-    #     Replaces 'eeg.reref' with 'eeg.noreref' in eegfile path
-    #     :param events: np.recarray representing events. One of the field of this array should be eegfile
-    #     :return:
-    #     '''
-    #
-    #     if sys.platform.startswith('win'):
-    #         data_dir_bad = r'\\data.*\\' + events[0].subject + r'\\eeg'
-    #         data_dir_good = r'\\data\\eeg\\' + events[0].subject + r'\\eeg'
-    #     else:
-    #         data_dir_bad = r'/data.*/' + events[0].subject + r'/eeg'
-    #         data_dir_good = r'/data/eeg/' + events[0].subject + r'/eeg'
-    #
-    #     for ev in events:
-    #         ev.eegfile = ev.eegfile.replace('eeg.reref', 'eeg.noreref')
-    #         ev.eegfile = re.sub(data_dir_bad, data_dir_good, ev.eegfile)
-    #     return events
 
     @property
     def alter_eeg_path_flag(self):
@@ -89,16 +67,17 @@ class BaseEventReader(PropertiedObject, BaseReader):
         :param events: np.recarray representing events. One of hte field of this array should be eegfile
         :return: None
         """
+        subject = events[0].subject.decode()
         if sys.platform.startswith('win'):
-            data_dir_bad = r'\\data.*\\' + events[0].subject + r'\\eeg'
-            data_dir_good = r'\\data\\eeg\\' + events[0].subject + r'\\eeg'
+            data_dir_bad = r'\\data.*\\' + subject + r'\\eeg'
+            data_dir_good = r'\\data\\eeg\\' + subject + r'\\eeg'
         else:
-            data_dir_bad = r'/data.*/' + events[0].subject + r'/eeg'
-            data_dir_good = r'/data/eeg/' + events[0].subject + r'/eeg'
+            data_dir_bad = r'/data.*/' + subject + r'/eeg'
+            data_dir_good = r'/data/eeg/' + subject + r'/eeg'
 
         for ev in events:
             # ev.eegfile = ev.eegfile.replace('eeg.reref', 'eeg.noreref')
-            ev.eegfile = re.sub(data_dir_bad, data_dir_good, ev.eegfile)
+            ev.eegfile = re.sub(data_dir_bad, data_dir_good, ev.eegfile.decode())
         return events
 
     def modify_eeg_path(self, events):
@@ -109,7 +88,7 @@ class BaseEventReader(PropertiedObject, BaseReader):
         """
 
         for ev in events:
-            ev.eegfile = ev.eegfile.replace('eeg.reref', 'eeg.noreref')
+            ev.eegfile = ev.eegfile.replace(b'eeg.reref', b'eeg.noreref')
         return events
 
     def read(self):
@@ -149,14 +128,14 @@ class BaseEventReader(PropertiedObject, BaseReader):
         return evs
 
     def read_matlab(self):
-        '''
+        """
         Reads Matlab event file and returns corresponging np.recarray. Path to the eegfile is changed
         w.r.t original Matlab code to account for the following:
         1. /data dir of the database might have been mounted under different mount point e.g. /Users/m/data
         2. use_reref_eeg is set to True in which case we replaces 'eeg.reref' with 'eeg.noreref' in eegfile path
 
         :return: np.recarray representing events
-        '''
+        """
         from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
 
         # extract matlab matrix (called 'events') as numpy structured array
@@ -209,7 +188,7 @@ class BaseEventReader(PropertiedObject, BaseReader):
         return evs
 
     def find_data_dir_prefix(self):
-        '''
+        """
         determining dir_prefix
 
         data on rhino database is mounted as /data
@@ -220,7 +199,7 @@ class BaseEventReader(PropertiedObject, BaseReader):
         we use find_dir_prefix to determine prefix based on common_root in path with and without prefix
 
         :return: data directory prefix
-        '''
+        """
 
         prefix = find_dir_prefix(path_with_prefix=self._filename, common_root=self.common_root)
         if not prefix:
@@ -346,63 +325,3 @@ class BaseEventReader(PropertiedObject, BaseReader):
                                if unicodedata.category(c) != 'Mn'))
         except UnicodeError:  # If accents can't be converted, just remove them
             return str(re.sub(r'[^A-Za-z0-9 -_.]', '', s))
-
-
-if __name__ == '__main__':
-    e_path = '/Volumes/db_root/protocols/r1/subjects/R1001P/experiments/FR1/sessions/0/behavioral/current_processed/task_events.json'
-    e_reader = BaseEventReader(filename=e_path)
-    events = e_reader.read()
-
-    from ptsa.data.readers import EEGReader
-
-    eeg_reader = EEGReader(events=events, channels=np.array(['006']), start_time=0., end_time=1.6, buffer_time=1.0)
-    base_eeg = eeg_reader.read()
-    print(base_eeg)
-
-    #
-    # from ptsa.data.MatlabIO import *
-    #
-    # # d = deserialize_objects_from_matlab_format('/Volumes/rhino_root/home2/yezzyat/R1108J_1_sess2_rawEEG_chans1_2.mat', 'ye')
-    # d = deserialize_objects_from_matlab_format('/Volumes/rhino_root/home2/yezzyat/R1060M_FR1_sess0_rawEEG_chans2_3.mat', 'ye')
-    #
-    # print d
-    #
-    # from BaseEventReader import BaseEventReader
-    # # e_path = join('/Volumes/rhino_root', 'data/events/RAM_FR1/R1060M_math.mat')
-    # e_path = '/Volumes/rhino_root/data/events/RAM_PS/R1108J_1_events.mat'
-    # e_path = '/Volumes/rhino_root/data/events/RAM_PS/R1108J_1_events.mat'
-    # # e_path ='/Users/m/data/events/RAM_FR1/R1056M_events.mat'
-    # e_path = join('/Volumes/rhino_root', 'data/events/RAM_FR1/R1062J_events.mat')
-    #
-    # e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
-    #
-    #
-    # events = e_reader.read()
-    #
-    # print
-
-    # from ptsa.data.readers.TalReader import TalReader
-    #
-    # tal_path = '/Volumes/rhino_root/data/eeg/R1108J_1/tal/R1108J_1_talLocs_database_bipol.mat'
-    # tal_reader = TalReader(filename=tal_path)
-    # monopolar_channels = tal_reader.get_monopolar_channels()
-    # bipolar_pairs = tal_reader.get_bipolar_pairs()
-    #
-    # # ---------------- NEW STYLE PTSA -------------------
-    # base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
-    #
-    # base_events = base_e_reader.read()
-    #
-    # base_events = base_events[(base_events.type == 'STIMULATING') | (base_events.type == 'STIM_SINGLE_PULSE')]
-    # base_events = base_events[base_events.session == 2]
-    #
-    #
-    # from ptsa.data.readers.EEGReader import EEGReader
-    # eeg_reader = EEGReader(events=base_events, channels=monopolar_channels[0:3],
-    #                        start_time=-1.1, end_time=-0.1, buffer_time=1.0)
-    #
-    # base_eegs = eeg_reader.read()
-    #
-    # print
-    #
-    #
