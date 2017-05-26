@@ -6,7 +6,7 @@ from ptsa.data.readers import BaseEventReader
 from ptsa.data.readers import CMLEventReader
 from dataset_utils import *
 
-class TestPyFR(unittest.TestCase):
+class TestEventReaders(unittest.TestCase):
     def setUp(self):
 
         self.prefix = '/Users/m'
