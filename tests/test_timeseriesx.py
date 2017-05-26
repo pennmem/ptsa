@@ -42,6 +42,19 @@ def test_init():
     assert ts.shape == (10, 10, 10)
     assert ts['samplerate'] == rate
 
+def test_arithmetic_operations():
+    data = np.arange(1000).reshape(10,10,10)
+    rate = 1000
+
+    ts_1 =  TimeSeriesX.create(data, None, coords={'samplerate': 1})
+    ts_2 =  TimeSeriesX.create(data, None, coords={'samplerate': 1})
+
+    ts_out = ts_1 + ts_2
+
+    print 'ts_out=',ts_out
+
+
+
 
 def test_hdf(tempdir):
     """Test saving/loading with HDF5."""
@@ -154,3 +167,54 @@ def test_baseline_corrected():
     assert ts['samplerate'] == corrected['samplerate']
     assert all(corrected.data[:50] == 0)
     assert all(corrected.data[50:] == 1)
+
+
+
+@pytest.mark.parametrize("i,j,k,expected", [
+    (0, 0, 0, 0),
+    (0, 0, 1,2),
+    (9, 9, 9,1998),
+])
+
+def test_addition(i,j,k,expected):
+    data = np.arange(1000).reshape(10,10,10)
+    rate = 1000
+
+    ts_1 = TimeSeriesX.create(data, None, coords={'samplerate': 1})
+    ts_2 = TimeSeriesX.create(data, None, coords={'samplerate': 1})
+
+    ts_out = ts_1 + ts_2
+    assert ts_out[i,j,k] == expected
+
+def test_samplerate_prop():
+    data = np.arange(1000).reshape(10,10,10)
+    rate = 1000
+
+    ts_1 = TimeSeriesX.create(data, None, coords={'samplerate': 1})
+    ts_2 = TimeSeriesX.create(data, None, coords={'samplerate': 2})
+
+
+    with pytest.raises(AssertionError):
+        ts_out = ts_1 + ts_2
+
+
+def test_coords_ops():
+    data = np.arange(1000).reshape(10,10,10)
+    rate = 1000
+
+    ts_1 = TimeSeriesX.create(data, None, dims=['x','y','z'], coords={'x':np.arange(10),
+                                                                'y':np.arange(10),
+                                                                'z':np.arange(10)*2,
+                                                                    'samplerate': 1})
+    ts_2 = TimeSeriesX.create(data, None, dims=['x','y','z'], coords={'x':np.arange(10),
+                                                                'y':np.arange(10),
+                                                                'z':np.arange(10),
+                                                                    'samplerate': 1})
+
+
+    ts_out = ts_1 + ts_2
+    assert ts_out.z.shape[0] == 5
+
+    ts_out_1 = ts_1 + ts_2[...,::2]
+
+    assert (ts_out_1 == ts_out).all()
