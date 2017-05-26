@@ -9,10 +9,10 @@ import time
 
 
 class EEGReader(PropertiedObject,BaseReader):
-    '''
+    """
     Reader that knows how to read binary eeg files. It can read chunks of the eeg signal based on events input
     or can read entire session if session_dataroot is non empty
-    '''
+    """
     _descriptors = [
         TypeValTuple('channels', np.ndarray, np.array([], dtype='|S3')),
         TypeValTuple('start_time', float, 0.0),
@@ -23,7 +23,7 @@ class EEGReader(PropertiedObject,BaseReader):
     ]
 
     def __init__(self, **kwds):
-        '''
+        """
         Constructor
         :param kwds:allowed values are:
         -------------------------------------
@@ -35,7 +35,7 @@ class EEGReader(PropertiedObject,BaseReader):
         :param session_dataroot {str} -  path to session dataroot. When set the reader will read the entire session
 
         :return:None
-        '''
+        """
         self.init_attrs(kwds)
         self.removed_corrupt_events = False
         self.event_ok_mask_sorted = None
@@ -48,14 +48,14 @@ class EEGReader(PropertiedObject,BaseReader):
             self.read_fcn = self.read_session_data
 
     def compute_read_offsets(self, dataroot):
-        '''
+        """
         Reads Parameter file and exracts sampling rate that is used to convert from start_time, end_time, buffer_time
         (expressed in seconds)
         to start_offset, end_offset, buffer_offset expressed as integers indicating number of time series data points (not bytes!)
 
         :param dataroot: core name of the eeg datafile
         :return: tuple of 3 {int} - start_offset, end_offset, buffer_offset
-        '''
+        """
         p_reader = ParamsReader(dataroot=dataroot)
         params = p_reader.read()
         samplerate = params['samplerate']
@@ -70,38 +70,39 @@ class EEGReader(PropertiedObject,BaseReader):
         return start_offset, end_offset, buffer_offset
 
     def __create_base_raw_readers(self):
-        '''
+        """
         Creates BaseRawreader for each (unique) dataroot present in events recarray
         :return: list of BaseRawReaders and list of dataroots
-        '''
+        """
         evs = self.events
         dataroots = np.unique(evs.eegfile)
         raw_readers = []
         original_dataroots = []
 
         for dataroot in dataroots:
+            root = dataroot.decode()
             events_with_matched_dataroot = evs[evs.eegfile == dataroot]
 
-            start_offset, end_offset, buffer_offset = self.compute_read_offsets(dataroot=dataroot)
+            start_offset, end_offset, buffer_offset = self.compute_read_offsets(dataroot=root)
 
             read_size = end_offset - start_offset + 2 * buffer_offset
 
             # start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
             start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
 
-            brr = BaseRawReader(dataroot=dataroot, channels=self.channels, start_offsets=start_offsets,
+            brr = BaseRawReader(dataroot=root, channels=self.channels, start_offsets=start_offsets,
                                 read_size=read_size)
             raw_readers.append(brr)
 
-            original_dataroots.append(dataroot)
+            original_dataroots.append(root)
 
         return raw_readers, original_dataroots
 
     def read_session_data(self):
-        '''
+        """
         Reads entire session worth of data
         :return: TimeSeriesX object (channels x events x time) with data for entire session the events dimension has length 1
-        '''
+        """
         brr = BaseRawReader(dataroot=self.session_dataroot, channels=self.channels)
         session_array,read_ok_mask = brr.read()
 
@@ -136,10 +137,10 @@ class EEGReader(PropertiedObject,BaseReader):
         return self.event_ok_mask_sorted
 
     def read_events_data(self):
-        '''
+        """
         Reads eeg data for individual event
         :return: TimeSeriesX  object (channels x events x time) with data for individual events
-        '''
+        """
         self.event_ok_mask_sorted = None  # reset self.event_ok_mask_sorted
 
         evs = self.events
@@ -215,10 +216,10 @@ class EEGReader(PropertiedObject,BaseReader):
 
 
     # def read_events_data(self):
-    #     '''
+    #     """
     #     Reads eeg data for individual event
     #     :return: TimeSeriesX  object (channels x events x time) with data for individual events
-    #     '''
+    #     """
     #     evs = self.events
     #
     #     raw_readers, original_dataroots = self.__create_base_raw_readers()
@@ -275,8 +276,8 @@ class EEGReader(PropertiedObject,BaseReader):
     #     return eventdata
 
     def read(self):
-        '''
+        """
         Calls read_events_data or read_session_data depending on user selection
         :return: TimeSeriesX object
-        '''
+        """
         return self.read_fcn()

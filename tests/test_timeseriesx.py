@@ -1,6 +1,7 @@
 from tempfile import mkdtemp
 import os.path as osp
 import shutil
+import warnings
 import pytest
 import numpy as np
 import xarray as xr
@@ -95,13 +96,15 @@ def test_filtered():
     ts = TimeSeriesX.create(data, 10, dims=dims)
 
     # TODO: real test (i.e., actually care about the filtering)
-    new_ts = ts.filtered([1, 2])
-    assert ts['samplerate'] == new_ts['samplerate']
-    assert all(ts.data != new_ts.data)
-    for key, attr in ts.attrs.items():
-        assert attr == new_ts[key]
-    assert ts.name == new_ts.name
-    assert ts.dims == new_ts.dims
+    with warnings.catch_warnings(record=True) as w:
+        new_ts = ts.filtered([1, 2])
+        assert len(w) == 1
+        assert ts['samplerate'] == new_ts['samplerate']
+        assert all(ts.data != new_ts.data)
+        for key, attr in ts.attrs.items():
+            assert attr == new_ts[key]
+        assert ts.name == new_ts.name
+        assert ts.dims == new_ts.dims
 
 
 def test_resampled():

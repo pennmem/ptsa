@@ -1,4 +1,5 @@
 import json
+import warnings
 import xarray as xr
 from xarray import concat
 import numpy as np
@@ -178,6 +179,8 @@ class TimeSeriesX(xr.DataArray):
             A TimeSeriesX instance with the filtered data.
 
         """
+        warnings.warn("The filtered method is not very flexible. "
+                      "Consider using filters in ptsa.data.filters instead.")
         time_axis_index = get_axis_index(self, axis_name='time')
         filtered_array = buttfilt(self.values, freq_range, float(self['samplerate']), filt_type,
                                   order, axis=time_axis_index)
