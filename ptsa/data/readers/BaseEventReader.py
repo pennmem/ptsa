@@ -11,6 +11,7 @@ from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
 from ptsa.data.common.path_utils import find_dir_prefix
 from ptsa.data.common import pathlib
+from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
 
 
 class BaseEventReader(PropertiedObject, BaseReader):
@@ -136,8 +137,6 @@ class BaseEventReader(PropertiedObject, BaseReader):
 
         :return: np.recarray representing events
         """
-        from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
-
         # extract matlab matrix (called 'events') as numpy structured array
         struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.filename, 'events')
 
@@ -161,6 +160,10 @@ class BaseEventReader(PropertiedObject, BaseReader):
             data_dir_prefix = self.find_data_dir_prefix()
             for i, ev in enumerate(evs):
                 ev.eegfile = join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
+
+                # FIXME: figure out why ' gets appended
+                if ev.eegfile.endswith(b"'"):
+                    ev.eegfile = ev.eegfile[:-1]
 
         # if self.normalize_eeg_path:
             evs = self.normalize_paths(evs)

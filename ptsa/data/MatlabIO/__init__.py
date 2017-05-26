@@ -14,7 +14,7 @@ if sys.platform.startswith('win'):
         # type(np.float128()): '<f16',
         # type(np.complex256()): '<c32',
         type(complex()): '<c16',
-        type(str()): '|S1',
+        # type(str()): '|S1',  # added below depending on version
         type(bool()): '|b1',
         type(float()): '<f8',
     }
@@ -25,7 +25,7 @@ else:
         type(np.float128()): '<f16',
         type(np.complex256()): '<c32',
         type(complex()): '<c16',
-        type(str()): '|S1',
+        # type(str()): '|S1',  # added below depending on version
         type(bool()): '|b1',
         type(float()): '<f8',
     }
@@ -33,7 +33,13 @@ else:
 if sys.version_info[0] == 2:
     numpy_type_dict.update({
         type(long()): '<i8',
-        type(unicode()): '|U1'
+        type(unicode()): '|U1',
+        type(str()): '|S1'
+    })
+else:
+    numpy_type_dict.update({
+        type(str()): '|U1',
+        type(bytes()): '|S1'
     })
 
 

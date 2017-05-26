@@ -1,5 +1,6 @@
-import sys
+import os
 import unittest
+import os.path as osp
 import pytest
 
 import numpy as np
@@ -12,8 +13,11 @@ from ptsa.data.readers import EEGReader
 from ptsa.data.filters import DataChopper
 from ptsa.data.filters import MonopolarToBipolarMapper
 
+from .utils import get_rhino_root
 
-@pytest.mark.skip(reason="hardcoded paths")
+
+@pytest.mark.skipif("NO_RHINO" in os.environ,
+                    reason="Data not available on Travis CI")
 class TestFilters(unittest.TestCase):
     def setUp(self):
         self.start_time = -0.5
@@ -21,37 +25,26 @@ class TestFilters(unittest.TestCase):
         self.buffer_time = 0.5
 
         self.event_range = range(0, 30, 1)
-        self.e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
-        tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
 
-        if sys.platform.startswith('win'):
-            self.e_path = 'D:/data/events/RAM_FR1/R1060M_events.mat'
-            tal_path = 'D:/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
-
+        # here = osp.abspath(osp.dirname(__file__))
+        here = get_rhino_root()
+        self.e_path = osp.join(here, 'data', 'events', 'RAM_FR1', 'R1060M_events.mat')
+        tal_path = osp.join(here, 'data', 'eeg', 'R1060M', 'tal', 'R1060M_talLocs_database_bipol.mat')
 
         tal_reader = TalReader(filename=tal_path)
         self.monopolar_channels = tal_reader.get_monopolar_channels()
         self.bipolar_pairs = tal_reader.get_bipolar_pairs()
 
-        # ---------------- NEW STYLE PTSA -------------------
         base_e_reader = BaseEventReader(filename=self.e_path, eliminate_events_with_no_eeg=True)
-
         base_events = base_e_reader.read()
-
-        base_events = base_events[base_events.type == 'WORD']
-
+        base_events = base_events[base_events.type == b'WORD']
         base_ev_order = np.argsort(base_events, order=('session', 'list', 'mstime'))
         self.base_events = base_events[base_ev_order]
 
         # retaining first session
         dataroot = self.base_events[0].eegfile
         self.base_events = self.base_events[self.base_events.eegfile == dataroot]
-
         self.base_events = self.base_events[self.event_range]
-
-        # self.base_events = base_events[self.event_range]
-
-        # self.base_events = self.read_base_events()
 
         eeg_reader = EEGReader(events=self.base_events, channels=self.monopolar_channels,
                                start_time=self.start_time, end_time=self.end_time, buffer_time=self.buffer_time)
@@ -63,22 +56,20 @@ class TestFilters(unittest.TestCase):
 
     def test_event_data_chopper(self):
         dataroot = self.base_events[0].eegfile
-
         session_reader = EEGReader(session_dataroot=dataroot, channels=self.monopolar_channels)
         session_eegs = session_reader.read()
 
         sedc = DataChopper(events=self.base_events, session_data=session_eegs,
                            start_time=self.start_time, end_time=self.end_time, buffer_time=self.buffer_time)
         chopped_session = sedc.filter()
-
         assert_array_equal(chopped_session, self.base_eegs)
 
         sedc = DataChopper(start_offsets=self.base_events.eegoffset, session_data=session_eegs,
                            start_time=self.start_time, end_time=self.end_time, buffer_time=self.buffer_time)
         chopped_session = sedc.filter()
-
         assert_array_equal(chopped_session, self.base_eegs)
 
+    @pytest.mark.skip
     def test_monopolar_to_bipolar_filter(self):
         m2b = MonopolarToBipolarMapper(time_series=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
         bp_base_eegs = m2b.filter()
@@ -90,6 +81,7 @@ class TestFilters(unittest.TestCase):
             # res = e0.__sub__(e1)
             assert_array_equal(e0 - e1, bp_base_eegs[i])
 
+    @pytest.mark.skip
     def test_monopolar_to_bipolar_filter_and_data_chopper(self):
         dataroot = self.base_events[0].eegfile
 
@@ -109,6 +101,7 @@ class TestFilters(unittest.TestCase):
 
         assert_array_equal(bp_session_eegs_chopped, bp_base_eegs)
 
+    @pytest.mark.skip
     def test_wavelets_with_event_data_chopper(self):
         wf_session = MorletWaveletFilter(
             time_series=self.session_eegs[:, :, :self.session_eegs.shape[2] / 4],
@@ -143,7 +136,3 @@ class TestFilters(unittest.TestCase):
             np.zeros_like(pow_wavelet),
             decimal=5
         )
-
-
-if __name__ == '__main__':
-    unittest.main(verbosity=2)
