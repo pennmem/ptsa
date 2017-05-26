@@ -10,7 +10,7 @@ import pandas as pd
 
 class TalReader(PropertiedObject,BaseReader):
     '''
-    Reader that reads tal structs Matlab or JSON file and converts it to numpy recarray
+    Reader that reads tal structs Matlab file and converts it to numpy recarray
     '''
     _descriptors = [
         TypeValTuple('filename', str, ''),

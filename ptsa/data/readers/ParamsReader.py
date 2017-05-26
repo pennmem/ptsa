@@ -6,16 +6,16 @@ import collections
 import warnings
 
 class ParamsReader(PropertiedObject, BaseReader):
-    '''
+    """
     Reader for parameter file (e.g. params.txt)
-    '''
+    """
     _descriptors = [
         TypeValTuple('filename', str, ''),
         TypeValTuple('dataroot', str, ''),
     ]
 
     def __init__(self, **kwds):
-        '''
+        """
         Constructor
         :param kwds:allowed values are:
         -------------------------------------
@@ -23,7 +23,7 @@ class ParamsReader(PropertiedObject, BaseReader):
         :param dataroot {str} -  core name of the eegfiles
 
         :return: None
-        '''
+        """
         self.init_attrs(kwds)
 
         if self.filename:
@@ -62,7 +62,7 @@ class ParamsReader(PropertiedObject, BaseReader):
         if isfile(param_file):
             return param_file
 
-        raise IOError('No params file found in ' + str(dir) +
+        raise IOError('No params file found in ' + str(dataroot) +
                       '. Params files must be in the same directory ' +
                       'as the EEG data and must be named .params ' +
                       'or params.txt, or in the directory above and '
@@ -92,20 +92,21 @@ class ParamsReader(PropertiedObject, BaseReader):
         param_file = self.filename
 
         # we have a file, so open and process it
-        for line in open(param_file, 'r').readlines():
+        with open(param_file, 'r') as f:
+            for line in f.readlines():
 
-            stripped_line_list = line.strip().split()
-            if len(stripped_line_list) < 2:
-                continue
+                stripped_line_list = line.strip().split()
+                if len(stripped_line_list) < 2:
+                    continue
 
-            # get the columns by splitting
-            # param_name, str_to_convert = line.strip().split()[:2]
-            param_name, str_to_convert = stripped_line_list[:2]
-            try:
-                convert_tuple = self.param_to_convert_fcn[param_name]
-                params[convert_tuple.name] = convert_tuple.convert(str_to_convert)
-            except KeyError:
-                pass
+                # get the columns by splitting
+                # param_name, str_to_convert = line.strip().split()[:2]
+                param_name, str_to_convert = stripped_line_list[:2]
+                try:
+                    convert_tuple = self.param_to_convert_fcn[param_name]
+                    params[convert_tuple.name] = convert_tuple.convert(str_to_convert)
+                except KeyError:
+                    pass
 
         if not 'gain' in params.keys():
             params['gain'] = 1.0
