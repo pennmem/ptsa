@@ -32,7 +32,7 @@ class TalReader(PropertiedObject,BaseReader):
         self.bipolar_channels=None
 
         self.tal_structs_array = None
-        self._json = os.path.splitext(self.filename)[-1]=='json'
+        self._json = os.path.splitext(self.filename)[-1]=='.json'
 
 
     def get_bipolar_pairs(self):
