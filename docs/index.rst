@@ -41,6 +41,7 @@ Contents:
 
    installation
    tutorial
+   examples/index
    ramdata
    filters
    api/index

@@ -21,6 +21,8 @@ try:
 except ImportError:
     has_mp = False
 
+from .TimeSeriesX import TimeSeriesX  # for more pythonic imports
+
 __docformat__ = 'restructuredtext'
 
 
