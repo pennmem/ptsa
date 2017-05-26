@@ -218,3 +218,14 @@ def test_coords_ops():
     ts_out_1 = ts_1 + ts_2[...,::2]
 
     assert (ts_out_1 == ts_out).all()
+
+    ts_out_2 = ts_2[...,1::2] + ts_2[...,::2]
+
+    assert ts_out_2.shape[-1] ==0
+
+    ts_out_3 = ts_2[...,[0,2,3,4,8]] + ts_2[...,[3,4,8,9]]
+
+    assert (ts_out_3.z.data == np.array([3,4,8])).all()
+
+
+
