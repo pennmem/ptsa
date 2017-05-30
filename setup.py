@@ -138,6 +138,7 @@ class BuildFftw(Command):
             deb_path = "/usr/lib/x86_64-linux-gnu/libfftw3.a"
             if osp.exists(deb_path):
                 lib_path = deb_path
+                print("Found existing FFTW:", lib_path)
             else:
                 print("No installation of FFTW found")
         else:
