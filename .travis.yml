@@ -1,3 +1,5 @@
+dist: trusty
+sudo: false
 language: python
 python:
   # We don't actually use the Travis Python, but this keeps it organized.
@@ -9,7 +11,6 @@ notifications:
 env:
   - CC=gcc-4.9 CXX=g++-4.9 NO_RHINO=1
 install:
-  - sudo apt-get update
   # We do this conditionally because it saves us some downloading if the
   # version is the same.
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
@@ -30,7 +31,6 @@ install:
   # Debug. Please remove.
   - dpkg -L libfftw3-dev
 
-# Because Travis-CI is apparently stuck in the past...
 addons:
   apt:
     sources:
