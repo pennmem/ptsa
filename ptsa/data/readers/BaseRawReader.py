@@ -46,6 +46,7 @@ class BaseRawReader(PropertiedObject, BaseReader):
             'single': FileFormat(data_size=4, format_string='f'),
             'short': FileFormat(data_size=2, format_string='h'),
             'int16': FileFormat(data_size=2, format_string='h'),
+            'int32': FileFormat(data_size=4, format_string='i'),
             'double': FileFormat(data_size=8, format_string='d'),
         }
 
