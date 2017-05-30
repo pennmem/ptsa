@@ -16,7 +16,28 @@ Install dependencies:
 
    conda install -y numpy scipy xarray pywavelets swig
 
-Install:
+You can also optionally install FFTW. If it is not found, PTSA ships with a copy
+of it and will automatically compile it. To install FFTW with conda on Linux or
+Mac:
+
+.. code-block:: shell-session
+
+    conda install -y -c conda-forge fftw=3.3.4
+
+Alternatively, it can be installed with the system package manager on Linux
+(Debian-based command shown below):
+
+.. code-block:: shell-session
+
+    sudo apt-get install libfftw3-dev
+
+or on Mac using homebrew:
+
+.. code-block:: shell-session
+
+    brew install fftw
+
+Install PTSA:
 
 .. code-block:: shell-session
 
@@ -42,4 +63,3 @@ TODO:
 
 * Automate building for multiple Python versions
 * Automate building on Windows
-* Use conda-forge FFTW package for macOS/Linux to reduce build time

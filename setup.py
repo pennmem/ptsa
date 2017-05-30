@@ -122,11 +122,37 @@ class BuildFftw(Command):
     def finalize_options(self):
         pass
 
+    @staticmethod
+    def find_fftw():
+        """Check if we already have FFTW installed via conda-forge or otherwise.
+
+        Returns None if not found, otherwise the full path to the library.
+
+        """
+        import ctypes.util
+
+        ext = '.a' if sys.platform.startswith('linux') else '.dylib'
+        lib_path = ctypes.util.find_library('libfftw3' + ext)
+        if lib_path is None:
+            # FIXME: more elegant solution for Travis CI's nonsense
+            deb_path = "/usr/lib/x86_64-linux-gnu/libfftw3.a"
+            if osp.exists(deb_path):
+                lib_path = deb_path
+                print("Found existing FFTW:", lib_path)
+            else:
+                print("No installation of FFTW found")
+        else:
+            print("Found existing FFTW:", lib_path)
+        return lib_path
+
     def run(self):
         try:
             os.makedirs(third_party_build_dir)
         except OSError:  # directories likely already exist
             pass
+
+        if self.find_fftw():
+            return
 
         if sys.platform.startswith("win"):
             build_dir = osp.join(third_party_build_dir, "fftw")
