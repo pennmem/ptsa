@@ -200,7 +200,6 @@ def test_samplerate_prop():
 
 def test_coords_ops():
     data = np.arange(1000).reshape(10,10,10)
-    rate = 1000
 
     ts_1 = TimeSeriesX.create(data, None, dims=['x','y','z'], coords={'x':np.arange(10),
                                                                 'y':np.arange(10),
@@ -230,7 +229,38 @@ def test_coords_ops():
 def test_mean():
 
     """tests various ways to compute mean - collapsing different combination of axes"""
-    pass
+    data = np.arange(100).reshape(10,10)
+    ts_1 = TimeSeriesX.create(data, None, dims=['x','y'], coords={'x':np.arange(10)*2,
+                                                                'y':np.arange(10),
+                                                                    'samplerate': 1})
+    grand_mean = ts_1.mean()
+
+    assert grand_mean == 49.5
+
+    x_mean  = ts_1.mean(dim='x')
+    assert (x_mean == np.arange(45,55,1, dtype=np.float)).all()
+    # checking axes
+    assert(ts_1.y == x_mean.y).all()
+
+    y_mean = ts_1.mean(dim='y')
+    assert (y_mean == np.arange(4.5,95,10, dtype=np.float)).all()
+    # checking axes
+    assert (y_mean.x == ts_1.x).all()
+
+    # test mean NaN
+    data_2 = np.arange(100, dtype=np.float).reshape(10,10)
+    np.fill_diagonal(data_2,np.NaN)
+    # data_2[9,9] = 99
+
+
+    ts_2 = TimeSeriesX.create(data_2, None, dims=['x','y'], coords={'x':np.arange(10)*2,
+                                                                'y':np.arange(10),
+                                                                    'samplerate': 1})
+
+    grand_mean = ts_2.mean(skipna=True)
+    assert grand_mean == 49.5
+
+
 
 def test_concatenate():
     """make sure we can concatenate easily time series x - test it with rec array as one of the coords"""
