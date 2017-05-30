@@ -13,8 +13,8 @@ class TalReader(PropertiedObject,BaseReader):
     Reader that reads tal structs Matlab file and converts it to numpy recarray
     """
     _descriptors = [
-        TypeValTuple('filename', str, ''),
-        TypeValTuple('struct_name', str, 'bpTalStruct'),
+        TypeValTuple('filename', basestring, ''),
+        TypeValTuple('struct_name', basestring, 'bpTalStruct'),
     ]
 
     def __init__(self, **kwds):

@@ -19,7 +19,7 @@ class EEGReader(PropertiedObject,BaseReader):
         TypeValTuple('end_time', float, 0.0),
         TypeValTuple('buffer_time', float, 0.0),
         TypeValTuple('events', np.recarray, np.recarray((0,), dtype=[('x', int)])),
-        TypeValTuple('session_dataroot', str, ''),
+        TypeValTuple('session_dataroot', basestring, ''),
     ]
 
     def __init__(self, **kwds):

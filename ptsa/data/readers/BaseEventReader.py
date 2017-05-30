@@ -17,12 +17,12 @@ from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_arr
 class BaseEventReader(PropertiedObject, BaseReader):
     """Reader class that reads event file and returns them as np.recarray"""
     _descriptors = [
-        TypeValTuple('filename', str, ''),
+        TypeValTuple('filename', basestring, ''),
         TypeValTuple('eliminate_events_with_no_eeg', bool, True),
         TypeValTuple('eliminate_nans', bool, True),
         TypeValTuple('use_reref_eeg', bool, False),
         TypeValTuple('normalize_eeg_path', bool, True),
-        TypeValTuple('common_root', str, 'data/events')
+        TypeValTuple('common_root', basestring, 'data/events')
     ]
 
     def __init__(self, **kwds):

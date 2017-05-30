@@ -10,8 +10,8 @@ class CMLEventReader(BaseEventReader):
 
     _descriptors = [
 
-        TypeValTuple('eeg_fname_search_pattern', str, ''),
-        TypeValTuple('eeg_fname_replace_pattern', str, ''),
+        TypeValTuple('eeg_fname_search_pattern', basestring, ''),
+        TypeValTuple('eeg_fname_replace_pattern', basestring, ''),
         TypeValTuple('normalize_eeg_path', bool, False),
 
 

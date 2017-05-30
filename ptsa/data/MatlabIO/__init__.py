@@ -73,7 +73,15 @@ def read_single_matlab_matrix_as_numpy_structured_array(file_name, object_name, 
 
 
 def get_np_type(record, _fieldname, verbose=False):
-    kind_2_type = {'U': '|S256',
+    # kind_2_type = {'U': '|S256',
+    #                'S': 'S256',
+    #                'u': '<i8',
+    #                'i': '<i8',
+    #                'f': '<f8'
+    #                }
+    #
+
+    kind_2_type = {'U': '|U256',
                    'S': 'S256',
                    'u': '<i8',
                    'i': '<i8',
@@ -82,8 +90,7 @@ def get_np_type(record, _fieldname, verbose=False):
 
     attr = getattr(record, _fieldname)
     attr_dtype = np.dtype(type(attr))
-    # if _fieldname =='eegfile':
-    #     print
+
     if hasattr(attr, 'dtype'):
         attr_dtype = attr.dtype
         attr_shape = attr.shape
@@ -142,6 +149,9 @@ def get_np_format(record_array, verbose=False):
                 elif np.dtype(format).kind == 'S':
                     formats.append(format)
                     break
+                elif np.dtype(format).kind == 'U':
+                    formats.append(format)
+                    break
                 else:
                     formats.append(format)
 
@@ -196,10 +206,12 @@ def populate_record_array(source_array, target_array, format_dict, prepend_name=
         else:
 
             for index, x in np.ndenumerate(source_array):
+
                 try:
                     target_array[field_name][index] = rgetattr(source_array[index], prepend_name + field_name)
                 except ValueError:
                     pass
+
 
     if verbose:
         print(target_array)

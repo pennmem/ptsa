@@ -10,8 +10,8 @@ class ParamsReader(PropertiedObject, BaseReader):
     Reader for parameter file (e.g. params.txt)
     """
     _descriptors = [
-        TypeValTuple('filename', str, ''),
-        TypeValTuple('dataroot', str, ''),
+        TypeValTuple('filename', basestring, ''),
+        TypeValTuple('dataroot', basestring, ''),
     ]
 
     def __init__(self, **kwds):

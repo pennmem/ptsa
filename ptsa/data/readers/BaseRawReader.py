@@ -17,7 +17,7 @@ class BaseRawReader(PropertiedObject, BaseReader):
     Object that knows how to read binary eeg files
     """
     _descriptors = [
-        TypeValTuple('dataroot', str, ''),
+        TypeValTuple('dataroot', basestring, ''),
         # TypeValTuple('channels', list, []),
         TypeValTuple('channels', np.ndarray, np.array([], dtype='|S3')),
         TypeValTuple('start_offsets', np.ndarray, np.array([0], dtype=np.int)),
