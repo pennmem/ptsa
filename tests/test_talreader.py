@@ -13,7 +13,6 @@ def test_talreader_on_database():
     assert new_reader.get_monopolar_channels() == old_reader.get_monopolar_channels()
 
 
-
 def test_from_dict():
     pairs_dict ={u'R1111M': {u'code': u'R1111M',
   u'id': u'r1.111.0_0',

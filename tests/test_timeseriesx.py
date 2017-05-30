@@ -51,7 +51,7 @@ def test_arithmetic_operations():
 
     ts_out = ts_1 + ts_2
 
-    print 'ts_out=',ts_out
+    print('ts_out=', ts_out)
 
 
 
