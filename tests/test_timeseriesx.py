@@ -227,5 +227,14 @@ def test_coords_ops():
 
     assert (ts_out_3.z.data == np.array([3,4,8])).all()
 
+def test_mean():
+
+    """tests various ways to compute mean - collapsing different combination of axes"""
+    pass
+
+def test_concatenate():
+    """make sure we can concatenate easily time series x - test it with rec array as one of the coords"""
+    pass
+
 
 
