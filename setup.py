@@ -134,7 +134,12 @@ class BuildFftw(Command):
         ext = '.a' if sys.platform.startswith('linux') else '.dylib'
         lib_path = ctypes.util.find_library('libfftw3' + ext)
         if lib_path is None:
-            print("No installation of FFTW found")
+            # FIXME: more elegant solution for Travis CI's nonsense
+            deb_path = "/usr/lib/x86_64-linux-gnu/libfftw3.a"
+            if osp.exists(deb_path):
+                lib_path = deb_path
+            else:
+                print("No installation of FFTW found")
         else:
             print("Found existing FFTW:", lib_path)
         return lib_path

@@ -27,6 +27,8 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy xarray pywavelets h5py swig
   - source activate test-environment
   - pip install pytest pytest-cov
+  # Debug. Please remove.
+  - dpkg -L libfftw3-dev
 
 # Because Travis-CI is apparently stuck in the past...
 addons:
