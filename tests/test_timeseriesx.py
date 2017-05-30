@@ -261,10 +261,44 @@ def test_mean():
     assert grand_mean == 49.5
 
 
-
 def test_concatenate():
     """make sure we can concatenate easily time series x - test it with rec array as one of the coords"""
-    pass
+
+    p_data_1 = np.array([('John', 180), ('Stacy', 150), ('Dick',200)], dtype=[('name', '|S256'), ('height', int)])
+
+    p_data_2 = np.array([('Bernie', 170), ('Donald', 250), ('Hillary',150)], dtype=[('name', '|S256'), ('height', int)])
+
+
+    weights_data  = np.arange(50,80,1,dtype=np.float)
+
+
+    weights_ts_1 = TimeSeriesX.create(weights_data.reshape(10,3),
+                                      None,
+                                      dims=['measurement','participant'],
+                                      coords={'measurement':np.arange(10),
+                                              'participant':p_data_1,
+                                              'samplerate': 1}
+                                      )
+
+    weights_ts_2 = TimeSeriesX.create(weights_data.reshape(10,3)*2,
+                                      None,
+                                      dims=['measurement','participant'],
+                                      coords={'measurement':np.arange(10),
+                                              'participant':p_data_2,
+                                              'samplerate': 1}
+                                      )
+
+
+    weights_combined = xr.concat((weights_ts_1, weights_ts_2), dim='participant')
+
+    assert (weights_combined.participant.data['height'] ==
+            np.array([180,150,200,170, 250, 150])).all()
+
+    assert (weights_combined.participant.data['name'] ==
+            np.array(['John', 'Stacy', 'Dick', 'Bernie', 'Donald', 'Hillary'])).all()
+
+
+
 
 
 
