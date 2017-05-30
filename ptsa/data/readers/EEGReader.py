@@ -80,21 +80,20 @@ class EEGReader(PropertiedObject,BaseReader):
         original_dataroots = []
 
         for dataroot in dataroots:
-            root = dataroot.decode()
             events_with_matched_dataroot = evs[evs.eegfile == dataroot]
 
-            start_offset, end_offset, buffer_offset = self.compute_read_offsets(dataroot=root)
+            start_offset, end_offset, buffer_offset = self.compute_read_offsets(dataroot=dataroot)
 
             read_size = end_offset - start_offset + 2 * buffer_offset
 
             # start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
             start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
 
-            brr = BaseRawReader(dataroot=root, channels=self.channels, start_offsets=start_offsets,
+            brr = BaseRawReader(dataroot=dataroot, channels=self.channels, start_offsets=start_offsets,
                                 read_size=read_size)
             raw_readers.append(brr)
 
-            original_dataroots.append(root)
+            original_dataroots.append(dataroot)
 
         return raw_readers, original_dataroots
 

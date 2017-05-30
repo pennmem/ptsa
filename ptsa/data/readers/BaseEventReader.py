@@ -68,7 +68,7 @@ class BaseEventReader(PropertiedObject, BaseReader):
         :param events: np.recarray representing events. One of hte field of this array should be eegfile
         :return: None
         """
-        subject = events[0].subject.decode()
+        subject = events[0].subject
         if sys.platform.startswith('win'):
             data_dir_bad = r'\\data.*\\' + subject + r'\\eeg'
             data_dir_good = r'\\data\\eeg\\' + subject + r'\\eeg'
@@ -78,7 +78,7 @@ class BaseEventReader(PropertiedObject, BaseReader):
 
         for ev in events:
             # ev.eegfile = ev.eegfile.replace('eeg.reref', 'eeg.noreref')
-            ev.eegfile = re.sub(data_dir_bad, data_dir_good, ev.eegfile.decode())
+            ev.eegfile = re.sub(data_dir_bad, data_dir_good, ev.eegfile)
         return events
 
     def modify_eeg_path(self, events):
@@ -89,7 +89,7 @@ class BaseEventReader(PropertiedObject, BaseReader):
         """
 
         for ev in events:
-            ev.eegfile = ev.eegfile.replace(b'eeg.reref', b'eeg.noreref')
+            ev.eegfile = ev.eegfile.replace('eeg.reref', 'eeg.noreref')
         return events
 
     def read(self):
@@ -162,10 +162,9 @@ class BaseEventReader(PropertiedObject, BaseReader):
                 ev.eegfile = join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
 
                 # FIXME: figure out why ' gets appended
-                if ev.eegfile.endswith(b"'"):
+                if ev.eegfile.endswith("'"):
                     ev.eegfile = ev.eegfile[:-1]
 
-        # if self.normalize_eeg_path:
             evs = self.normalize_paths(evs)
 
         # if not self.use_reref_eeg:

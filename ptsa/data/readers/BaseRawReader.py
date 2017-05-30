@@ -74,7 +74,11 @@ class BaseRawReader(PropertiedObject, BaseReader):
         :return: {int} size of the files whose core name (dataroot) matches self.dataroot. Assumes ALL files with this
         dataroot are of the same length and uses first channel to determin the common file length
         """
-        eegfname = self.dataroot + '.' + self.channels[0]
+        if isinstance(self.channels[0], six.binary_type):
+            ch = self.channels[0].decode()
+        else:
+            ch = self.channels[0]
+        eegfname = self.dataroot + '.' + ch
         return os.path.getsize(eegfname)
 
     def read(self):

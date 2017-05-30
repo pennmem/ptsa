@@ -37,7 +37,7 @@ class TestFilters(unittest.TestCase):
 
         base_e_reader = BaseEventReader(filename=self.e_path, eliminate_events_with_no_eeg=True)
         base_events = base_e_reader.read()
-        base_events = base_events[base_events.type == b'WORD']
+        base_events = base_events[base_events.type == 'WORD']
         base_ev_order = np.argsort(base_events, order=('session', 'list', 'mstime'))
         self.base_events = base_events[base_ev_order]
 

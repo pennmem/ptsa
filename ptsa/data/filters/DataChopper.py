@@ -68,10 +68,9 @@ class DataChopper(PropertiedObject,BaseFilter):
 
         return len(selector_array), start_point_shift
 
-
     def filter(self):
         """
-        Chops session into chunks orresponding to events
+        Chops session into chunks corresponding to events
         :return: timeSeriesX object with chopped session
         """
         chop_on_start_offsets_flag = bool(len(self.start_offsets))
@@ -122,10 +121,10 @@ class DataChopper(PropertiedObject,BaseFilter):
         ev_concat_data = ev_concat_data.rename({'start_offsets':chopping_axis_name})
         ev_concat_data[chopping_axis_name] = chopping_axis_data
 
-        # ev_concat_data.attrs['samplerate'] = samplerate
+        attrs = {
+            "start_time": self.start_time,
+            "end_time": self.end_time,
+            "buffer_time": self.buffer_time
+        }
         ev_concat_data['samplerate'] = samplerate
-        ev_concat_data.attrs['start_time'] = self.start_time
-        ev_concat_data.attrs['end_time'] = self.end_time
-        ev_concat_data.attrs['buffer_time'] = self.buffer_time
-        return TimeSeriesX(ev_concat_data)
-
+        return TimeSeriesX.create(ev_concat_data, samplerate, attrs=attrs)
