@@ -13,24 +13,24 @@ from ptsa.data.readers import BaseReader
 
 
 class TalReader(PropertiedObject,BaseReader):
-    '''
+    """
     Reader that reads tal structs Matlab file and converts it to numpy recarray
-    '''
+    """
     _descriptors = [
         TypeValTuple('filename', str, ''),
         TypeValTuple('struct_name', str, 'bpTalStruct'),
     ]
 
     def __init__(self, **kwds):
-        '''
-        Constructor:
+        """
+        Keyword arguments
+        -----------------
 
-        :param kwds:allowed values are:
-        -------------------------------------
         :param filename {str} -  path to tal file or pairs.json file
         :param struct_name {str} -  name of the matlab struct to load
         :return: None
-        '''
+
+        """
 
         self.init_attrs(kwds)
         self.bipolar_channels=None
@@ -40,10 +40,10 @@ class TalReader(PropertiedObject,BaseReader):
 
 
     def get_bipolar_pairs(self):
-        '''
+        """
 
         :return: numpy recarray where each record has two fields 'ch0' and 'ch1' storing  channel labels.
-        '''
+        """
         if self.bipolar_channels is None:
             if self.tal_structs_array is None:
                 self.read()
@@ -52,10 +52,10 @@ class TalReader(PropertiedObject,BaseReader):
         return self.bipolar_channels
 
     def get_monopolar_channels(self):
-        '''
+        """
 
         :return: numpy array of monopolar channel labels
-        '''
+        """
         bipolar_array = self.get_bipolar_pairs()
         monopolar_set = set(list(bipolar_array['ch0'])+list(bipolar_array['ch1']))
         return np.array(sorted(list(monopolar_set)))
@@ -78,10 +78,10 @@ class TalReader(PropertiedObject,BaseReader):
         return pairs.to_records()
 
     def read(self):
-        '''
+        """
 
         :return:np.recarray representing tal struct array (originally defined in Matlab file)
-        '''
+        """
         if not self._json:
             from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
 
@@ -107,14 +107,11 @@ class TalReader(PropertiedObject,BaseReader):
             self.tal_struct_array = self.from_dict(pairs)
             return self.tal_struct_array
 
-
-
         raise AttributeError('Could not read tal struct data. Try specifying struct_name argument :'
                              '\nTalReader(filename=e_path, struct_name=<name_of_struc_to_read>)')
 
 
-
-if __name__=='__main__':
+if __name__ == '__main__':
     event_range = range(0, 30, 1)
     e_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
 
