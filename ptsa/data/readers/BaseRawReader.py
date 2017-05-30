@@ -10,14 +10,14 @@ from ptsa import six
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
 from ptsa.data.readers.ParamsReader import ParamsReader
-
+from ptsa import six
 
 class BaseRawReader(PropertiedObject, BaseReader):
     """
     Object that knows how to read binary eeg files
     """
     _descriptors = [
-        TypeValTuple('dataroot', basestring, ''),
+        TypeValTuple('dataroot', six.string_types, ''),
         # TypeValTuple('channels', list, []),
         TypeValTuple('channels', np.ndarray, np.array([], dtype='|S3')),
         TypeValTuple('start_offsets', np.ndarray, np.array([0], dtype=np.int)),

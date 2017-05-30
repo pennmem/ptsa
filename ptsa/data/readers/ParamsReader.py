@@ -4,14 +4,15 @@ from os.path import *
 import json
 import collections
 import warnings
+from ptsa import six
 
 class ParamsReader(PropertiedObject, BaseReader):
     """
     Reader for parameter file (e.g. params.txt)
     """
     _descriptors = [
-        TypeValTuple('filename', basestring, ''),
-        TypeValTuple('dataroot', basestring, ''),
+        TypeValTuple('filename', six.string_types, ''),
+        TypeValTuple('dataroot', six.string_types, ''),
     ]
 
     def __init__(self, **kwds):

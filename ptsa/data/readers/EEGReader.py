@@ -6,7 +6,7 @@ from ptsa.data.readers.ParamsReader import ParamsReader
 from ptsa.data.readers.BaseRawReader import BaseRawReader
 from ptsa.data.readers import BaseReader
 import time
-
+from ptsa import six
 
 class EEGReader(PropertiedObject,BaseReader):
     """
@@ -19,7 +19,7 @@ class EEGReader(PropertiedObject,BaseReader):
         TypeValTuple('end_time', float, 0.0),
         TypeValTuple('buffer_time', float, 0.0),
         TypeValTuple('events', np.recarray, np.recarray((0,), dtype=[('x', int)])),
-        TypeValTuple('session_dataroot', basestring, ''),
+        TypeValTuple('session_dataroot', six.string_types, ''),
     ]
 
     def __init__(self, **kwds):

@@ -1,20 +1,18 @@
 import os
 import json
-
 import numpy as np
 import pandas as pd
-
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
-
+from ptsa import six
 
 class TalReader(PropertiedObject,BaseReader):
     """
     Reader that reads tal structs Matlab file and converts it to numpy recarray
     """
     _descriptors = [
-        TypeValTuple('filename', basestring, ''),
-        TypeValTuple('struct_name', basestring, 'bpTalStruct'),
+        TypeValTuple('filename', six.string_types, ''),
+        TypeValTuple('struct_name', six.string_types, 'bpTalStruct'),
     ]
 
     def __init__(self, **kwds):

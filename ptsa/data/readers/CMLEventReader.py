@@ -1,6 +1,6 @@
 from ptsa.data.common import TypeValTuple
 from ptsa.data.readers import BaseEventReader
-
+from ptsa import six
 
 class CMLEventReader(BaseEventReader):
     '''
@@ -10,8 +10,8 @@ class CMLEventReader(BaseEventReader):
 
     _descriptors = [
 
-        TypeValTuple('eeg_fname_search_pattern', basestring, ''),
-        TypeValTuple('eeg_fname_replace_pattern', basestring, ''),
+        TypeValTuple('eeg_fname_search_pattern', six.string_types, ''),
+        TypeValTuple('eeg_fname_replace_pattern', six.string_types, ''),
         TypeValTuple('normalize_eeg_path', bool, False),
 
 

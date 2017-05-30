@@ -12,17 +12,17 @@ from ptsa.data.readers import BaseReader
 from ptsa.data.common.path_utils import find_dir_prefix
 from ptsa.data.common import pathlib
 from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
-
+from ptsa import six
 
 class BaseEventReader(PropertiedObject, BaseReader):
     """Reader class that reads event file and returns them as np.recarray"""
     _descriptors = [
-        TypeValTuple('filename', basestring, ''),
+        TypeValTuple('filename', six.string_types, ''),
         TypeValTuple('eliminate_events_with_no_eeg', bool, True),
         TypeValTuple('eliminate_nans', bool, True),
         TypeValTuple('use_reref_eeg', bool, False),
         TypeValTuple('normalize_eeg_path', bool, True),
-        TypeValTuple('common_root', basestring, 'data/events')
+        TypeValTuple('common_root', six.string_types, 'data/events')
     ]
 
     def __init__(self, **kwds):
