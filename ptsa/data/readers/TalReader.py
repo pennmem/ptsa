@@ -1,10 +1,6 @@
 import os
 import json
 
-# for Python 3 compatibility when using `list(d.values())`.
-# See http://python-future.org/compatible_idioms.html#dict-keys-values-items-as-a-list
-from builtins import dict
-
 import numpy as np
 import pandas as pd
 
@@ -38,7 +34,6 @@ class TalReader(PropertiedObject,BaseReader):
         self.tal_structs_array = None
         self._json = os.path.splitext(self.filename)[-1]=='.json'
 
-
     def get_bipolar_pairs(self):
         """
 
@@ -67,7 +62,6 @@ class TalReader(PropertiedObject,BaseReader):
         channel_record_array = self.tal_struct_array['channel']
         for i, channel_array in enumerate(channel_record_array):
             self.bipolar_channels[i] = tuple(map(lambda x: str(x).zfill(3), channel_array))
-
 
     @staticmethod
     def from_dict(pairs):
