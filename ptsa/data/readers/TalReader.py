@@ -1,11 +1,15 @@
-__author__ = 'm'
-
-import numpy as np
-from ptsa.data.common import TypeValTuple, PropertiedObject
-from ptsa.data.readers import BaseReader
 import os
 import json
+
+# for Python 3 compatibility when using `list(d.values())`.
+# See http://python-future.org/compatible_idioms.html#dict-keys-values-items-as-a-list
+from builtins import dict
+
+import numpy as np
 import pandas as pd
+
+from ptsa.data.common import TypeValTuple, PropertiedObject
+from ptsa.data.readers import BaseReader
 
 
 class TalReader(PropertiedObject,BaseReader):
@@ -67,7 +71,7 @@ class TalReader(PropertiedObject,BaseReader):
 
     @staticmethod
     def from_dict(pairs):
-        pairs = pd.DataFrame.from_dict(pairs.values()[0]['pairs'], orient='index').sort_values(by=['channel_1','channel_2'])
+        pairs = pd.DataFrame.from_dict(list(pairs.values())[0]['pairs'], orient='index').sort_values(by=['channel_1','channel_2'])
         pairs.index.name = 'tagName'
         pairs['channel'] = [[ch1, ch2] for ch1, ch2 in zip(pairs.channel_1.values, pairs.channel_2.values)]
         pairs['eType'] = pairs.type_1
