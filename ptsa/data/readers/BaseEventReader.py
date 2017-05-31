@@ -161,10 +161,6 @@ class BaseEventReader(PropertiedObject, BaseReader):
             for i, ev in enumerate(evs):
                 ev.eegfile = join(data_dir_prefix, str(pathlib.Path(str(ev.eegfile)).parts[1:]))
 
-                # FIXME: figure out why ' gets appended
-                if ev.eegfile.endswith("'"):
-                    ev.eegfile = ev.eegfile[:-1]
-
             evs = self.normalize_paths(evs)
 
         # if not self.use_reref_eeg:
