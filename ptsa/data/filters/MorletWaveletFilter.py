@@ -40,7 +40,7 @@ class MorletWaveletFilter(PropertiedObject,BaseFilter):
     def all_but_time_iterator(self, array):
         from itertools import product
         sizes_except_time = np.asarray(array.shape)[:-1]
-        ranges = map(lambda size: xrange(size), sizes_except_time)
+        ranges = map(lambda size: range(size), sizes_except_time)
         for cart_prod_idx_tuple in product(*ranges):
             yield cart_prod_idx_tuple, array[cart_prod_idx_tuple]
 
@@ -208,7 +208,7 @@ class MorletWaveletFilter(PropertiedObject,BaseFilter):
 
             signal_fft = fft(signal, convolution_size_pow2)
 
-            for w in xrange(num_wavelets):
+            for w in range(num_wavelets):
                 signal_wavelet_conv = ifft(wavelet_fft_array[w] * signal_fft)
 
                 # computting trim indices for the wavelet_coeff array

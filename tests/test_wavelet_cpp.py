@@ -28,7 +28,7 @@ def fixme():
 
     powers=np.empty(shape=(signal.shape[0]*num_freqs,), dtype=np.float)
     num_of_iterations = 100
-    # for i in xrange(num_of_iterations):
+    # for i in range(num_of_iterations):
     #     morlet_transform.multiphasevec(signal,powers)
     morlet_transform.multiphasevec(signal,powers)
 

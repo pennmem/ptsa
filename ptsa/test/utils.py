@@ -1,4 +1,6 @@
+import os
 import os.path as osp
+import pytest
 
 
 def get_rhino_root():
@@ -22,3 +24,8 @@ def get_rhino_root():
             except:
                 continue
     raise OSError("Rhino root not found!")
+
+
+# Decorator to skip tests that require data on rhino
+skip_without_rhino = pytest.mark.skipif("NO_RHINO" in os.environ,
+                                        reason="No access to rhino")

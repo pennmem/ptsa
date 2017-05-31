@@ -41,7 +41,7 @@ def buttfilt(dat,freq_range,sample_rate,filt_type,order,axis=-1):
     [b,a]=butter(order,freq_range/nyq,filt_type)
 
     # loop over final dimension
-    #for i in xrange(dat.shape[0]):
+    #for i in range(dat.shape[0]):
     #    dat[i] = filtfilt(b,a,dat[i])
     #dat = filtfilt2(b,a,dat,axis=axis)
     dat = filtfilt_future(b,a,dat,axis=axis)
@@ -98,7 +98,7 @@ def decimate(x, q, n=None, ftype='iir', axis=-1):
         y = reshape_to_2d(x,axis)
 
         # loop over final dimension
-        for i in xrange(y.shape[0]):
+        for i in range(y.shape[0]):
             y[i] = filtfilt(b,a,y[i])
         #y = filtfilt2(b,a,y)
 
