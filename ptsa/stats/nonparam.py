@@ -33,7 +33,7 @@ def gen_perms(dat, group_var, nperms):
     perms = [np.arange(len(dat))]
 
     # loop and shuffle for each perm
-    for p in xrange(nperms):
+    for p in range(nperms):
         # set the starting indices
         ind = np.arange(len(dat))
 
@@ -103,7 +103,7 @@ def permutation_test(X, Y=None, parametric=True, iterations=1000):
 
         # now on random shuffles
         sys.stdout.write('%d: '%iterations)
-        for i in xrange(iterations):
+        for i in range(iterations):
             # shuffle it
             sys.stdout.write('%d '%i)
             sys.stdout.flush()

@@ -34,7 +34,7 @@ class MorletWaveletFilterCppLegacy(PropertiedObject, BaseFilter):
     def all_but_time_iterator(self, array):
         from itertools import product
         sizes_except_time = np.asarray(array.shape)[:-1]
-        ranges = map(lambda size: xrange(size), sizes_except_time)
+        ranges = map(lambda size: range(size), sizes_except_time)
         for cart_prod_idx_tuple in product(*ranges):
             yield cart_prod_idx_tuple, array[cart_prod_idx_tuple]
 
@@ -54,7 +54,7 @@ class MorletWaveletFilterCppLegacy(PropertiedObject, BaseFilter):
 
         num_wavelets = self.freqs.shape[0]
         time_axis_size = self.time_series.shape[-1]
-        for w in xrange(num_wavelets):
+        for w in range(num_wavelets):
             out_idx_tuple = idx_tuple + (w,)
             target_array[out_idx_tuple] = source_array[w * time_axis_size:(w + 1) * time_axis_size]
 

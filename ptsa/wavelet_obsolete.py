@@ -106,12 +106,12 @@ def morlet_multi(freqs, widths, samplerate,
 
     #wavelets = N.empty((len(freqs),samples),dtype=N.complex128)
     wavelets = N.empty((len(freqs),samples),dtype=N.complex)
-    for i in xrange(len(freqs)):
+    for i in range(len(freqs)):
         wavelets[i] = morlet_wavelet(samples,w=widths[i],s=scales[i],
                                      complete=complete)
     #wavelets = N.array([morlet_wavelet(samples,w=widths[i],s=scales[i],
     #                                   complete=complete)
-    #                    for i in xrange(len(scales))])
+    #                    for i in range(len(scales))])
     energy = N.sqrt(N.sum(N.power(N.abs(wavelets),2.),axis=1)/samplerate)
     norm_factors = N.vstack([1./energy]*samples).T
     return wavelets*norm_factors
@@ -216,7 +216,7 @@ def morlet_multi2(freqs, widths, samplerate,fft_thresh=90,
 
         #fft_wavelets = N.empty((len(fft_freqs),fft_samples),dtype=N.complex128)
         fft_wavelets = N.empty((len(fft_freqs),fft_samples),dtype=N.complex)
-        for i in xrange(len(fft_freqs)):
+        for i in range(len(fft_freqs)):
             fft_wavelets[i] = morlet_wavelet(fft_samples,w=fft_widths[i],
                                              s=fft_scales[i],complete=complete)
         fft_energy = N.sqrt(N.sum(N.power(N.abs(fft_wavelets),2.),
@@ -234,11 +234,11 @@ def morlet_multi2(freqs, widths, samplerate,fft_thresh=90,
 
     reg_wavelets = [morlet_wavelet(reg_samples[i],w=reg_widths[i],
                                    s=reg_scales[i],complete=complete)
-                    for i in xrange(len(reg_scales))]
+                    for i in range(len(reg_scales))]
     reg_energy = [N.sqrt(N.sum(N.power(N.abs(reg_wavelets[i]),2.))/samplerate)
-                  for i in xrange(len(reg_scales))]
+                  for i in range(len(reg_scales))]
     reg_norm_wavelets = [reg_wavelets[i]/reg_energy[i]
-                         for i in xrange(len(reg_scales))]
+                         for i in range(len(reg_scales))]
 
     return (fft_wavelets,reg_norm_wavelets,fft_ind)
 
@@ -290,11 +290,11 @@ def fconv_multi(in1, in2, mode='full'):
     # perform the fft of each row of in1 and in2:
     #in1_fft = N.empty((num1,size),dtype=N.complex128)
     in1_fft = N.empty((num1,size),dtype=N.complex)
-    for i in xrange(num1):
+    for i in range(num1):
         in1_fft[i] = fft(in1[i],size)
     #in2_fft = N.empty((num2,size),dtype=N.complex128)
     in2_fft = N.empty((num2,size),dtype=N.complex)
-    for i in xrange(num2):
+    for i in range(num2):
         in2_fft[i] = fft(in2[i],size)
 
     # duplicate the signals and multiply before taking the inverse
@@ -501,7 +501,7 @@ def phase_pow_multi2(freqs, dat, samplerate, widths=5, to_return='both',
                            eegdat.shape[time_axis]),dtype=N.complex)
     conv_ind = N.repeat(~fft_ind,eegdat.shape[time_axis-1])
     i=0
-    for reg in xrange(len(reg_wavelets)):
+    for reg in range(len(reg_wavelets)):
         for ev,evDat in enumerate(dat):
             #print len(reg_wavelets), reg
             reg_wavCoef[i] = N.convolve(reg_wavelets[reg],evDat,'same')

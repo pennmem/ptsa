@@ -1,5 +1,6 @@
-import numpy as np
+import os.path as osp
 import unittest
+import numpy as np
 import pytest
 
 from ptsa.data.readers import BaseEventReader
@@ -7,22 +8,26 @@ from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
 from ptsa.data.readers.TalReader import TalReader
 from ptsa.data.readers import EEGReader
 from ptsa.data.filters import MonopolarToBipolarMapper
+from ptsa.test.utils import get_rhino_root, skip_without_rhino
 
 
-@pytest.mark.skip(reason="Hardcoded data paths")
-class test_classifier(unittest.TestCase):
+@skip_without_rhino
+class TestClassifier(unittest.TestCase):
     def setUp(self):
-        self.e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
-        tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
+        root = get_rhino_root()
+        self.e_path = osp.join(root, 'data', 'events', 'RAM_FR1',
+                               'R1060M_events.mat')
+        tal_path = osp.join(root, 'data', 'eeg', 'R1060M', 'tal',
+                            'R1060M_talLocs_database_bipol.mat')
 
-        base_e_reader = BaseEventReader(filename=self.e_path, eliminate_events_with_no_eeg=True)
+        base_e_reader = BaseEventReader(filename=self.e_path,
+                                        eliminate_events_with_no_eeg=True)
 
         self.base_events = base_e_reader.read()
 
         tal_reader = TalReader(filename=tal_path)
         self.monopolar_channels = tal_reader.get_monopolar_channels()
         self.bipolar_pairs = tal_reader.get_bipolar_pairs()
-
 
         self.base_events = self.base_events[self.base_events.type == 'WORD']
 
@@ -35,6 +40,7 @@ class test_classifier(unittest.TestCase):
 
         self.base_eegs = eeg_reader.read()
 
+    @pytest.mark.slow
     def test_classifier(self):
         m2b = MonopolarToBipolarMapper(time_series=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
         bp_eegs = m2b.filter()

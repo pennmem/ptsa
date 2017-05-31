@@ -1,3 +1,4 @@
+import os.path as osp
 import unittest
 from numpy.testing import assert_array_equal
 import pytest
@@ -6,17 +7,17 @@ from ptsa.data.filters.ButterworthFilter import ButterworthFilter
 from ptsa.data.filters.ResampleFilter import ResampleFilter
 from ptsa.data.events import Events
 from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
+from ptsa.test.utils import EventReadersTestBase, skip_without_rhino, get_rhino_root
 
-from EventReadersTestBase import EventReadersTestBase
 
-
-@pytest.mark.skip(reason="Hardcoded data paths")
+@skip_without_rhino
 class TestEEGRead(unittest.TestCase, EventReadersTestBase):
     def setUp(self):
-
+        root = get_rhino_root()
         self.event_range = range(0, 30, 1)
-        self.e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
+        self.e_path = osp.join(root, 'data', 'events', 'RAM_FR1', 'R1060M_events.mat')
 
+    @pytest.mark.xfail
     def test_eeg_read(self):
 
         events = self.read_ptsa_events()
@@ -45,6 +46,7 @@ class TestEEGRead(unittest.TestCase, EventReadersTestBase):
 
         assert_array_equal(eegs, base_eegs.data)
 
+    @pytest.mark.xfail
     def test_eeg_read_keep_buffer(self):
         # OLD READERS
         events = self.read_ptsa_events()
@@ -69,6 +71,7 @@ class TestEEGRead(unittest.TestCase, EventReadersTestBase):
         # testing
         assert_array_equal(eegs, base_eegs.data)
 
+    @pytest.mark.xfail
     def test_eeg_read_keep_buffer_butterworth_filtered(self):
         # old readers
         events = self.read_ptsa_events()
@@ -101,6 +104,7 @@ class TestEEGRead(unittest.TestCase, EventReadersTestBase):
         assert_array_equal(eegs_filtered, base_eegs_filtered.data)
         assert_array_equal(eegs, base_eegs.data)
 
+    @pytest.mark.xfail
     def test_eeg_resample(self):
         # old readers
         events = self.read_ptsa_events()

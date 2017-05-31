@@ -57,7 +57,7 @@ def swt(data, wavelet, level=None):
         # allocate
         cA = np.empty_like(data)
         cD = np.empty_like(data)
-        for first in xrange(last_index): # 0 to last_index - 1
+        for first in range(last_index): # 0 to last_index - 1
             # Getting the indices that we will transform 
             indices = np.arange(first, len(cD), step_size)
 
@@ -108,7 +108,7 @@ def iswt(coefficients, wavelet):
         step_size = int(math.pow(2, j-1))
         last_index = step_size
         _, cD = coefficients[num_levels - j]
-        for first in xrange(last_index): # 0 to last_index - 1
+        for first in range(last_index): # 0 to last_index - 1
 
             # Getting the indices that we will transform 
             indices = np.arange(first, len(cD), step_size)
@@ -241,15 +241,15 @@ def morlet_multi(freqs, widths, samplerates,
     # generate list of unnormalized wavelets:
     wavelets = [morlet_wavelet(samples[i],w=widths[i],s=scales[i],
                                complete=complete)
-                for i in xrange(len(scales))]
+                for i in range(len(scales))]
 
     # generate list of energies for the wavelets:
     energies = [np.sqrt(np.sum(np.power(np.abs(wavelets[i]),2.))/samplerates[i])
-                for i in xrange(len(scales))]
+                for i in range(len(scales))]
 
     # normalize the wavelets by dividing each one by its energy:
     norm_wavelets = [wavelets[i]/energies[i]
-                     for i in xrange(len(scales))]
+                     for i in range(len(scales))]
 
     return norm_wavelets
 
@@ -308,11 +308,11 @@ def fconv_multi(in1, in2, mode='full'):
     # perform the fft of each row of in1 and in2:
     #in1_fft = np.empty((num1,size),dtype=np.complex128)
     in1_fft = np.empty((num1,size),dtype=np.complex)
-    for i in xrange(num1):
+    for i in range(num1):
         in1_fft[i] = fft(in1[i],size)
     #in2_fft = np.empty((num2,size),dtype=np.complex128)
     in2_fft = np.empty((num2,size),dtype=np.complex)
-    for i in xrange(num2):
+    for i in range(num2):
         in2_fft[i] = fft(in2[i],size)
 
     # duplicate the signals and multiply before taking the inverse

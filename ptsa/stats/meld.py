@@ -207,7 +207,7 @@ def pick_stable_features(Z, nboot=500):
     """
     # generate the boots
     boots = [np.random.random_integers(0,len(Z)-1,len(Z))
-             for i in xrange(nboot)]
+             for i in range(nboot)]
 
     # calc bootstrap ratio
     Zb = np.array([Z[boots[b]].mean(0) for b in range(len(boots))])
@@ -547,7 +547,7 @@ class MELD(object):
                     sys.stdout.write('Ranking %s...'%(str(g)))
                     sys.stdout.flush()
 
-                for i in xrange(self._D[g].shape[1]):
+                for i in range(self._D[g].shape[1]):
                     # rank it
                     self._D[g][:,i] = rankdata(self._D[g][:,i])
 
@@ -581,7 +581,7 @@ class MELD(object):
                                          for c in self._svd_terms]).T
 
             if use_ranks:
-                for i in xrange(self._A[g].shape[1]):
+                for i in range(self._A[g].shape[1]):
                     # rank it
                     self._A[g][:,i] = rankdata(self._A[g][:,i])
 
@@ -686,7 +686,7 @@ class MELD(object):
 
             # gen the perms ahead of time
             perms = []
-            for p in xrange(nperms):
+            for p in range(nperms):
                 ind = {}
                 for k in self._groups:
                     # gen a perm for that subj

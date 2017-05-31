@@ -40,7 +40,7 @@ class MorletWaveletFilter(PropertiedObject,BaseFilter):
     def all_but_time_iterator(self, array):
         from itertools import product
         sizes_except_time = np.asarray(array.shape)[:-1]
-        ranges = map(lambda size: xrange(size), sizes_except_time)
+        ranges = map(lambda size: range(size), sizes_except_time)
         for cart_prod_idx_tuple in product(*ranges):
             yield cart_prod_idx_tuple, array[cart_prod_idx_tuple]
 
@@ -129,7 +129,9 @@ class MorletWaveletFilter(PropertiedObject,BaseFilter):
                 wavelet_phase_array_xray = self.construct_output_array(wavelet_phase_array, dims=dims, coords=coords)
 
             if wavelet_pow_array_xray is not None:
-                wavelet_pow_array_xray = TimeSeriesX(wavelet_pow_array_xray)
+                if 'samplerate' not in coords:
+                    coords['samplerate'] = self.time_series.coords['samplerate']
+                wavelet_pow_array_xray = TimeSeriesX(wavelet_pow_array_xray, coords=coords)
                 if len(transposed_dims):
                     wavelet_pow_array_xray = wavelet_pow_array_xray.transpose(*transposed_dims)
 
@@ -208,12 +210,12 @@ class MorletWaveletFilter(PropertiedObject,BaseFilter):
 
             signal_fft = fft(signal, convolution_size_pow2)
 
-            for w in xrange(num_wavelets):
+            for w in range(num_wavelets):
                 signal_wavelet_conv = ifft(wavelet_fft_array[w] * signal_fft)
 
                 # computting trim indices for the wavelet_coeff array
-                start_offset = (convolution_size_array[w] - time_axis_size) / 2
-                end_offset = start_offset + time_axis_size
+                start_offset = int((convolution_size_array[w] - time_axis_size) / 2)
+                end_offset = int(start_offset + time_axis_size)
 
                 wavelet_coef_single_array[:] = signal_wavelet_conv[start_offset:end_offset]
 

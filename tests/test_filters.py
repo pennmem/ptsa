@@ -12,12 +12,10 @@ from ptsa.data.readers.TalReader import TalReader
 from ptsa.data.readers import EEGReader
 from ptsa.data.filters import DataChopper
 from ptsa.data.filters import MonopolarToBipolarMapper
+from ptsa.test.utils import get_rhino_root, skip_without_rhino
 
-from .utils import get_rhino_root
 
-
-@pytest.mark.skipif("NO_RHINO" in os.environ,
-                    reason="Data not available on Travis CI")
+@skip_without_rhino
 class TestFilters(unittest.TestCase):
     def setUp(self):
         self.start_time = -0.5
@@ -54,6 +52,7 @@ class TestFilters(unittest.TestCase):
         session_reader = EEGReader(session_dataroot=dataroot, channels=self.monopolar_channels)
         self.session_eegs = session_reader.read()
 
+    @pytest.mark.slow
     def test_event_data_chopper(self):
         dataroot = self.base_events[0].eegfile
         session_reader = EEGReader(session_dataroot=dataroot, channels=self.monopolar_channels)

@@ -298,6 +298,7 @@ setup(
         'ptsa.data.experimental',
         # 'ptsa.data.tests',
         'ptsa.data.edf',
+        'ptsa.test',
         'ptsa.plotting',
         'ptsa.stats',
         'dimarray',

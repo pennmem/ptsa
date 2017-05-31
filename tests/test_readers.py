@@ -63,7 +63,7 @@ class TestReaders(unittest.TestCase):
                                start_time=self.start_time, end_time=self.end_time, buffer_time=0.0)
         base_eegs = eeg_reader.read()
 
-        for i in xrange(100):
+        for i in range(100):
             offset = base_events[i].eegoffset
             npt.assert_array_equal(array_session[:, 0, offset:offset + 100], base_eegs[:, i, :100])
 
