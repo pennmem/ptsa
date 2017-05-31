@@ -295,8 +295,9 @@ def test_concatenate():
 
     # print weights_combined.participant
 
-    # assert (weights_combined.participant.data['height'] ==
-    #         np.array([180,150,200,170, 250, 150])).all()
-    #
-    # assert (weights_combined.participant.data['name'] ==
-    #         np.array(['John', 'Stacy', 'Dick', 'Bernie', 'Donald', 'Hillary'])).all()
+    assert (weights_combined.participant.data['height'] ==
+            np.array([180,150,200,170, 250, 150])).all()
+
+    assert (weights_combined.participant.data['name'] ==
+            np.array(['John', 'Stacy', 'Dick', 'Bernie', 'Donald', 'Hillary'])).all()
+
