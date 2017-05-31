@@ -7,7 +7,7 @@ import numpy as np
 import xarray as xr
 import h5py
 
-from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.TimeSeriesX import TimeSeriesX, ConcatenationError
 
 
 @pytest.fixture
@@ -258,46 +258,118 @@ def test_mean():
 
 
 @pytest.mark.skipif(int(xr.__version__.split('.')[1]) > 7,
-                    reason="dtype lost on xarray >= 0.8")  # FIXME
+                    reason="dtype lost on xarray >= 0.8")
 def test_concatenate():
-    """make sure we can concatenate easily time series x - test it with rec array as one of the coords"""
+    """make sure we can concatenate easily time series x - test it with rec
+    array as one of the coords.
 
-    p_data_1 = np.array([('John', 180), ('Stacy', 150), ('Dick',200)], dtype=[('name', '|S256'), ('height', int)])
+    This fails for xarray > 0.7. See https://github.com/pydata/xarray/issues/1434
+    for details.
 
-    p_data_2 = np.array([('Bernie', 170), ('Donald', 250), ('Hillary',150)], dtype=[('name', '|S256'), ('height', int)])
+    """
+    p1 = np.array([('John', 180), ('Stacy', 150), ('Dick',200)], dtype=[('name', '|S256'), ('height', int)])
+    p2 = np.array([('Bernie', 170), ('Donald', 250), ('Hillary',150)], dtype=[('name', '|S256'), ('height', int)])
 
+    data = np.arange(50, 80, 1, dtype=np.float)
+    dims = ['measurement', 'participant']
 
-    weights_data  = np.arange(50,80,1,dtype=np.float)
+    ts1 = TimeSeriesX.create(data.reshape(10, 3), None, dims=dims,
+                             coords={
+                                 'measurement': np.arange(10),
+                                 'participant': p1,
+                                 'samplerate': 1
+                             })
 
+    ts2 = TimeSeriesX.create(data.reshape(10, 3)*2, None, dims=dims,
+                             coords={
+                                 'measurement': np.arange(10),
+                                 'participant': p2,
+                                 'samplerate': 1
+                             })
 
-    weights_ts_1 = TimeSeriesX.create(weights_data.reshape(10,3),
-                                      None,
-                                      dims=['measurement','participant'],
-                                      coords={'measurement':np.arange(10),
-                                              'participant':p_data_1,
-                                              'samplerate': 1}
-                                      )
+    combined = xr.concat((ts1, ts2), dim='participant')
 
-    weights_ts_2 = TimeSeriesX.create(weights_data.reshape(10,3)*2,
-                                      None,
-                                      dims=['measurement','participant'],
-                                      coords={'measurement':np.arange(10),
-                                              'participant':p_data_2,
-                                              'samplerate': 1}
-
-                                      )
-    # import os
-    # print os.environ
-    # print xr.__version__
-    # print xr.__file__
-
-    weights_combined = xr.concat((weights_ts_1, weights_ts_2), dim='participant')
-
-    # print weights_combined.participant
-
-    assert (weights_combined.participant.data['height'] ==
-            np.array([180,150,200,170, 250, 150])).all()
-
-    assert (weights_combined.participant.data['name'] ==
+    assert isinstance(combined, TimeSeriesX)
+    assert (combined.participant.data['height'] ==
+            np.array([180, 150, 200, 170, 250, 150])).all()
+    assert (combined.participant.data['name'] ==
             np.array(['John', 'Stacy', 'Dick', 'Bernie', 'Donald', 'Hillary'])).all()
 
+
+def test_append_simple():
+    """Test appending without regard to dimensions."""
+    points = 100
+    data1 = np.random.random(points)
+    data2 = np.random.random(points)
+    coords1 = {'time': np.linspace(0, points, points)}
+    coords2 = {'time': np.linspace(points, points*2, points)}
+    dims = ["time"]
+    samplerate = 10.
+
+    # Base case: everything should Just Work
+    ts1 = TimeSeriesX.create(data1, samplerate, coords=coords1, dims=dims)
+    ts2 = TimeSeriesX.create(data2, samplerate, coords=coords2, dims=dims)
+    combined = ts1.append(ts2)
+    assert combined.samplerate == samplerate
+    assert (combined.data == np.concatenate([data1, data2])).all()
+    assert combined.dims == ts1.dims
+    assert combined.dims == ts2.dims
+    assert (combined.coords['time'] == np.concatenate([coords1['time'], coords2['time']])).all()
+
+    # Incompatible sample rates
+    ts1 = TimeSeriesX.create(data1, samplerate, coords=coords1, dims=dims)
+    ts2 = TimeSeriesX.create(data2, samplerate + 1, coords=coords2, dims=dims)
+    with pytest.raises(ConcatenationError):
+        ts1.append(ts2)
+
+
+def test_append_recarray():
+    """Test appending along a dimension with a recarray."""
+    p1 = np.array([('John', 180), ('Stacy', 150), ('Dick',200)], dtype=[('name', '|S256'), ('height', int)])
+    p2 = np.array([('Bernie', 170), ('Donald', 250), ('Hillary',150)], dtype=[('name', '|S256'), ('height', int)])
+
+    data = np.arange(50, 80, 1, dtype=np.float)
+    dims = ['measurement', 'participant']
+
+    ts1 = TimeSeriesX.create(data.reshape(10, 3), None, dims=dims,
+                             coords={
+                                 'measurement': np.arange(10),
+                                 'participant': p1,
+                                 'samplerate': 1
+                             })
+
+    ts2 = TimeSeriesX.create(data.reshape(10, 3)*2, None, dims=dims,
+                             coords={
+                                 'measurement': np.arange(10),
+                                 'participant': p2,
+                                 'samplerate': 1
+                             })
+
+    ts3 = TimeSeriesX.create(data.reshape(10, 3)*2, None, dims=dims,
+                             coords={
+                                 'measurement': np.arange(10),
+                                 'participant': p2,
+                                 'samplerate': 2
+                             })
+
+    ts4 = TimeSeriesX.create(data.reshape(10, 3)*2, None, dims=dims,
+                             coords={
+                                 'measurement': np.linspace(0, 1, 10),
+                                 'participant': p2,
+                                 'samplerate': 2
+                             })
+
+    combined = ts1.append(ts2, dim='participant')
+
+    assert isinstance(combined, TimeSeriesX)
+    assert (combined.participant.data['height'] == np.array([180, 150, 200, 170, 250, 150])).all()
+    names = np.array([b'John', b'Stacy', b'Dick', b'Bernie', b'Donald', b'Hillary'])
+    assert (combined.participant.data['name'] == names).all()
+
+    # incompatible sample rates
+    with pytest.raises(ConcatenationError):
+        ts1.append(ts3)
+
+    # incompatible other dimensions (measurement)
+    with pytest.raises(ConcatenationError):
+        ts1.append(ts4)
