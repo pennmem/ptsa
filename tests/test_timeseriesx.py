@@ -42,6 +42,7 @@ def test_init():
     assert ts.shape == (10, 10, 10)
     assert ts['samplerate'] == rate
 
+
 def test_arithmetic_operations():
     data = np.arange(1000).reshape(10,10,10)
     rate = 1000
@@ -52,8 +53,6 @@ def test_arithmetic_operations():
     ts_out = ts_1 + ts_2
 
     print('ts_out=', ts_out)
-
-
 
 
 def test_hdf(tempdir):
@@ -86,7 +85,8 @@ def test_hdf(tempdir):
                                        name="test", attrs=dict(a=1, b=[1, 2]))
     ts_with_attrs.to_hdf(filename)
     loaded = TimeSeriesX.from_hdf(filename)
-    assert ts_with_attrs.attrs == loaded.attrs
+    for key in ts_with_attrs.attrs:
+        assert ts_with_attrs.attrs[key] == loaded.attrs[key]
 
 
 def test_filtered():
@@ -169,14 +169,12 @@ def test_baseline_corrected():
     assert all(corrected.data[50:] == 1)
 
 
-
 @pytest.mark.parametrize("i,j,k,expected", [
     (0, 0, 0, 0),
-    (0, 0, 1,2),
-    (9, 9, 9,1998),
+    (0, 0, 1, 2),
+    (9, 9, 9, 1998),
 ])
-
-def test_addition(i,j,k,expected):
+def test_addition(i, j, k, expected):
     data = np.arange(1000).reshape(10,10,10)
     rate = 1000
 
@@ -186,13 +184,13 @@ def test_addition(i,j,k,expected):
     ts_out = ts_1 + ts_2
     assert ts_out[i,j,k] == expected
 
+
 def test_samplerate_prop():
     data = np.arange(1000).reshape(10,10,10)
     rate = 1000
 
     ts_1 = TimeSeriesX.create(data, None, coords={'samplerate': 1})
     ts_2 = TimeSeriesX.create(data, None, coords={'samplerate': 2})
-
 
     with pytest.raises(AssertionError):
         ts_out = ts_1 + ts_2
@@ -209,8 +207,6 @@ def test_coords_ops():
                                                                 'y':np.arange(10),
                                                                 'z':np.arange(10),
                                                                     'samplerate': 1})
-
-
     ts_out = ts_1 + ts_2
     assert ts_out.z.shape[0] == 5
 
@@ -226,8 +222,8 @@ def test_coords_ops():
 
     assert (ts_out_3.z.data == np.array([3,4,8])).all()
 
-def test_mean():
 
+def test_mean():
     """tests various ways to compute mean - collapsing different combination of axes"""
     data = np.arange(100).reshape(10,10)
     ts_1 = TimeSeriesX.create(data, None, dims=['x','y'], coords={'x':np.arange(10)*2,
@@ -304,9 +300,3 @@ def test_concatenate():
     #
     # assert (weights_combined.participant.data['name'] ==
     #         np.array(['John', 'Stacy', 'Dick', 'Bernie', 'Donald', 'Hillary'])).all()
-
-
-
-
-
-
