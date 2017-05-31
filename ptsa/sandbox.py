@@ -13,7 +13,7 @@
 # import moved to top of file
 
 class BaseDict(dict):
-    '''
+    """
         A dict allows inputting data as adict.xxx as well as adict['xxx']
 
         In python obj:
@@ -33,7 +33,7 @@ class BaseDict(dict):
 
             This allows an easier access of the variables.        
 
-    '''
+    """
     def __init__(self, data=None):
         if data:  dict.__init__(self, data)
         else:     dict.__init__(self)
@@ -50,7 +50,7 @@ class BaseDict(dict):
         else:  return self[name] 
 
     def setDict(self, name, val): 
-        '''
+        """
             setDict(name, val): Assign *val* to the key *name* of __dict__.
 
             :Usage:
@@ -65,12 +65,12 @@ class BaseDict(dict):
             >>> bd.getDict()['height']
             160
 
-            '''
+            """
         self.__dict__[name] = val
         return self 
 
     def getDict(self): 
-        ''' 
+        """ 
             Return the internal __dict__.
 
             :Usage:
@@ -84,11 +84,11 @@ class BaseDict(dict):
             {}
             >>> bd.getDict()['height']
             160
-            '''
+            """
         return self.__dict__
 
     def setItem(self, name, val): 
-        ''' 
+        """ 
             Set the value of dict key *name* to *val*. Note this dict 
             is not the __dict__.
 
@@ -102,20 +102,20 @@ class BaseDict(dict):
             >>> bd['sex'] = 'female'
             >>> bd
             {'sex': 'female'}
-            '''
+            """
         self[name] = val
         return self
 
     def __getstate__(self): 
-        ''' Needed for cPickle in .copy() '''
+        """ Needed for cPickle in .copy() """
         return self.__dict__.copy() 
 
     def __setstate__(self,dict): 
-        ''' Needed for cPickle in .copy() '''
+        """ Needed for cPickle in .copy() """
         self.__dict__.update(dict)   
 
     def copy(self):   
-        ''' 
+        """ 
             Return a copy. 
 
             :Usage:
@@ -142,7 +142,7 @@ class BaseDict(dict):
             >>> bd2
             {'name': ['aa', 2, 3], 'height': 60}
 
-            '''
+            """
         return cPickle.loads(cPickle.dumps(self))
 
 
