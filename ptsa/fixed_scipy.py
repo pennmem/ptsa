@@ -51,7 +51,7 @@ def morlet(M, w=5.0, s=1.0, complete=True):
     by f = 2*s*w*r / M where r is the sampling rate.
 
     """
-    x = linspace(-s*2*pi,s*2*pi,M)
+    x = linspace(-s*2*pi, s*2*pi, int(M))
     output = exp(1j*w*x)
 
     if complete:

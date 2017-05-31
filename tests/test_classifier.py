@@ -12,7 +12,7 @@ from ptsa.test.utils import get_rhino_root, skip_without_rhino
 
 
 @skip_without_rhino
-class test_classifier(unittest.TestCase):
+class TestClassifier(unittest.TestCase):
     def setUp(self):
         root = get_rhino_root()
         self.e_path = osp.join(root, 'data', 'events', 'RAM_FR1',
