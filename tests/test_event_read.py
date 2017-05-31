@@ -3,8 +3,7 @@ import unittest
 import pytest
 
 from ptsa.data.events import Events
-
-from EventReadersTestBase import EventReadersTestBase
+from ptsa.test.utils import EventReadersTestBase
 
 
 @pytest.mark.skip(reason="Hardcoded data paths")

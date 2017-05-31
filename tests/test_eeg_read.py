@@ -6,8 +6,7 @@ from ptsa.data.filters.ButterworthFilter import ButterworthFilter
 from ptsa.data.filters.ResampleFilter import ResampleFilter
 from ptsa.data.events import Events
 from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
-
-from EventReadersTestBase import EventReadersTestBase
+from ptsa.test.utils import EventReadersTestBase
 
 
 @pytest.mark.skip(reason="Hardcoded data paths")

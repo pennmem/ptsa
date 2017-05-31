@@ -1,12 +1,8 @@
-__author__ = 'm'
-
 import sys
+import unittest
 import numpy as np
 from numpy.testing import *
-import unittest
-# from unittest import *
 
-from .EventReadersTestBase import EventReadersTestBase
 from ptsa.data.events import Events
 from ptsa.data.readers import BaseEventReader
 from ptsa.data.readers import PTSAEventReader
@@ -17,10 +13,8 @@ from ptsa.data.filters.ResampleFilter import ResampleFilter
 from ptsa.data.filters import DataChopper
 from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
 from ptsa.data.TimeSeriesX import TimeSeriesX
-from ptsa.data.timeseries import TimeSeries
 
 
-# class TestRegressionPTSA(unittest.TestCase, EventReadersTestBase):
 class TestRegressionPTSA(unittest.TestCase):
     # class TestRegressionPTSA(unittest.TestCase):
     def setUp(self):
