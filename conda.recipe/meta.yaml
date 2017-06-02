@@ -5,17 +5,28 @@ package:
 source:
   git_url: ../
 
+build:
+  # If this is a new build for the same version, increment the build
+  # number. If you do not include this key, it defaults to 0.
+  number: 1
+
+  # Specify additional env vars pass through
+  script_env:
+    - PYTHON_BUILD_VERSION
+
 requirements:
   build:
-    - python
+    - python {{ environ.get("PYTHON_BUILD_VERSION", "3.6") }}*
     - numpy
     - scipy
     - xarray
     - pywavelets
     - swig
+    - setuptools
 
   run:
-    - python
+    #- python {{ environ.get("PYTHON_BUILD_VERSION", "3.6") }}*
+    - python {{PY_VER}}*
     - numpy
     - scipy
     - xarray

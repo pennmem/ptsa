@@ -7,8 +7,16 @@ PTSA
 For installation instructions, documentation, and tutorials please see
 http://ptsa.readthedocs.io/en/latest/
 
-Installation
-------------
+Install via conda
+-----------------
+
+.. code-block:: shell-session
+
+    conda install -c pennmem ptsa
+
+
+Build from source
+-----------------
 
 Install dependencies:
 
