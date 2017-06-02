@@ -3,9 +3,6 @@
 Installation
 ============
 
-Installing with conda from source
----------------------------------
-
 .. tip::
 
    When experimenting with PTSA, you may want to create a fresh conda
@@ -14,6 +11,20 @@ Installing with conda from source
        conda create -n ptsa python=$VERSION
 
    where ``$VERSION`` is whatever Python version you're using.
+
+
+Installing pre-built binaries
+-----------------------------
+
+On Mac and Linux, there are conda packages that can be installed:
+
+.. code-block:: shell-session
+
+    conda install -c pennmem ptsa
+
+
+Installing with conda from source
+---------------------------------
 
 Clone the git repository:
 
