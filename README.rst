@@ -10,6 +10,8 @@ http://ptsa.readthedocs.io/en/latest/
 Install via conda
 -----------------
 
+(Only available on Linux and Mac)
+
 .. code-block:: shell-session
 
     conda install -c pennmem ptsa
@@ -70,4 +72,4 @@ Build packages with:
 TODO:
 
 * Automate building for multiple Python versions
-* Automate building on Windows
+* Make builds on Windows work
