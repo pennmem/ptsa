@@ -1,20 +1,19 @@
-__author__ = 'm'
-
 import inspect
 import scipy.io as sio
 
+
 class MatlabIO(object):
     __class_name = ''
+
     def __init__(self):
         pass
 
-
     def fill_dict(self,a_dict):
-        '''
+        """
         Recursively fills a dictionary of class members that are non-special
         :param a_dict: dictionary from previous recursion level
         :return: dictionary of class members that are non-special
-        '''
+        """
         for class_member in inspect.getmembers(self, lambda a : not(inspect.isroutine(a))):
 
             class_member_name = class_member[0]
@@ -31,12 +30,11 @@ class MatlabIO(object):
                     a_dict[class_member_name] = class_member_val
 
     def serialize(self, name, format='matlab'):
-        a_dict={}
+        a_dict = {}
         self.fill_dict(a_dict)
 
         print(a_dict)
         sio.savemat(name, a_dict)
-
 
     def deserialize(self, name, format='matlab'):
         res = sio.loadmat(name,squeeze_me=True, struct_as_record=False)

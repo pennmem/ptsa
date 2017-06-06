@@ -14,6 +14,13 @@ from ptsa.data.common import get_axis_index
 from ptsa.filt import buttfilt
 
 
+class ConcatenationError(Exception):
+    """Raised when an error occurs while trying to concatenate incompatible
+    :class:`TimeSeriesX` objects.
+
+    """
+
+
 @xr.register_dataarray_accessor('sample')
 class SampleAccessor(object):
     def __init__(self, array):
@@ -151,6 +158,64 @@ class TimeSeriesX(xr.DataArray):
                                dims=[dim.decode() for dim in dims],
                                name=name, attrs=attrs)
             return array
+
+    def append(self, other, dim=None):
+        """Append another :class:`TimeSeriesX` to this one.
+
+        Parameters
+        ----------
+        other : TimeSeriesX
+        dim : str or None
+            Dimension to concatenate on. If None, attempt to concatenate all
+            data (likely to fail with truly multidimensional data).
+
+        Returns
+        -------
+        Appended TimeSeriesX
+
+        """
+        if not self.dims == other.dims:
+            raise ConcatenationError("Dimensions are not identical")
+
+        dims = self.dims
+        coords = dict()
+
+        for key in self.coords:
+            if len(self[key].shape) == 0:
+                if self[key].data != other[key].data:
+                    raise ConcatenationError(
+                        "coordinate {:s} differs\n".format(key) +
+                        "self -> {!s}, other -> {!s}".format(self[key],
+                                                             other[key])
+                    )
+                else:
+                    coords[key] = self[key]
+            elif dim is None:
+                coords[key] = np.concatenate(
+                    [self.coords[key], other.coords[key]])
+            else:
+                if key != dim:
+                    if (self[key] != other[key]).all():
+                        raise ConcatenationError("Dimension {:s} doesn't match".format(key))
+                    coords[key] = self[key]
+                else:
+                    coords[key] = np.concatenate([self[key], other[key]])
+
+        if dim is None:
+            data = np.concatenate([self.data, other.data])
+        else:
+            if dim not in dims:
+                raise ConcatenationError("Dimension {!s} not found".format(dim))
+            axis = np.where(np.array(dims) == dim)[0][0]
+            data = np.concatenate([self.data, other.data], axis=axis)
+
+        attrs = self.attrs.copy()
+        attrs.update(other.attrs)
+        name = "{!s} appended with {!s}".format(self.name, other.name)
+
+        new = TimeSeriesX.create(data, self.samplerate, coords=coords,
+                                 dims=dims, attrs=attrs, name=name)
+        return new
 
     def __duration_to_samples(self, duration):
         """Convenience function to convert a duration in seconds to number of

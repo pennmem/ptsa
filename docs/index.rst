@@ -46,3 +46,4 @@ Contents:
    filters
    api/index
    development
+   changes

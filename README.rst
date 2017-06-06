@@ -7,8 +7,18 @@ PTSA
 For installation instructions, documentation, and tutorials please see
 http://ptsa.readthedocs.io/en/latest/
 
-Installation
-------------
+Install via conda
+-----------------
+
+(Only available on Linux and Mac)
+
+.. code-block:: shell-session
+
+    conda install -c pennmem ptsa
+
+
+Build from source
+-----------------
 
 Install dependencies:
 
@@ -62,4 +72,4 @@ Build packages with:
 TODO:
 
 * Automate building for multiple Python versions
-* Automate building on Windows
+* Make builds on Windows work

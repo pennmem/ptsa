@@ -1,0 +1,60 @@
+name: ptsa
+channels:
+- defaults
+dependencies:
+- freetype
+- icu
+- libpng
+- numpy
+- openssl
+- pandas
+- pip
+- pyparsing
+- python
+- python-dateutil
+- pytz
+- pywavelets
+- readline
+- scipy
+- setuptools
+- sip
+- six
+- sqlite
+- tk
+- wheel
+- xarray
+- xz
+- zlib
+- pip:
+  - alabaster
+  - babel
+  - bleach
+  - coverage
+  - decorator
+  - docutils
+  - entrypoints
+  - html5lib
+  - imagesize
+  - ipython-genutils
+  - jinja2
+  - jsonschema
+  - jupyter-core
+  - markupsafe
+  - mistune
+  - nbconvert
+  - nbformat
+  - nbsphinx
+  - pandocfilters
+  - py
+  - pygments
+  - pytest
+  - pytest-cov
+  - requests
+  - snowballstemmer
+  - sphinx
+  - sphinx-rtd-theme
+  - sphinxcontrib-websupport
+  - testpath
+  - traitlets
+  - typing
+  - webencodings
