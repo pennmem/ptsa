@@ -76,7 +76,7 @@ to CMLEventReader could look like:
 If you want to replace path segment in the eegfile field of the events' ``recarray`` you could use
 ``eeg_fname_search_pattern`` and ``eeg_fname_replace_pattern`` to specify replace procedure of the path segment.
 For example if we want to replace ``eeg.reref`` path segment of the ``eegfile`` with ``eeg.no_reref`` and if we want
-want to "normalize" path (*i.e.* replace ``data1``, ``data2`` *etc...* with ``data``) we woudl use the following call:
+want to "normalize" path (*i.e.* replace ``data1``, ``data2`` *etc...* with ``data``) we would use the following call:
 
 .. code-block:: python
 
