@@ -101,6 +101,7 @@ class TestEventReaders(unittest.TestCase):
         for subject in subject_list:
             e_path = e_path_matlab_scalp(self.prefix, subject, task)
 
+            force_
             evs = read_events(e_path=e_path,
                               reader_class=BaseEventReader,
                               common_root='data/scalp_events',
@@ -118,3 +119,14 @@ class TestEventReaders(unittest.TestCase):
                                             'read with CMLEventReader and BaseEventReader')
 
 
+
+    def test_nan_in_events_dboy(self):
+        e_paths = ['/Volumes/rhino_root/data/events/dBoy25/TJ005_1_events_sess0.mat',
+                  '/Volumes/rhino_root/data/events/dBoy25/TJ005_1_events_sess1.mat']
+
+        # e_paths = ['/Volumes/rhino_root/data/events/dBoy25/TJ005_1_events_sess1.mat']
+
+        for e_path in e_paths:
+
+            evs = read_events(e_path=e_path, reader_class=BaseEventReader, use_reref_eeg=True)
+            print
