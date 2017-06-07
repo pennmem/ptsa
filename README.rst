@@ -69,6 +69,31 @@ Build packages with:
 
    conda build conda.recipe
 
+To allow uploads you need to install anaconda-client:
+
+.. code-block:: shell-session
+
+    conda install anaconda-client
+
+After that installing ``anaconda-client`` you need to to provide your anaconda.io login credentials:
+
+.. code-block:: shell-session
+
+    anaconda login
+
+At this point you will be ready to upload newly built conda PTSA packages.
+After the build is successfully completed you go to the directory where package tarballs have been generated
+and type:
+
+.. code-block:: shell-session
+
+    anaconda upload --user pennmem ./ptsa-*.tar.bz2
+
+**Hint:**  conda packages will be most likely generated in ``<conda installation dir>/conda-bld/<architecture_folder>``
+where ``<architecture folder>`` denotes name of the arget architecture for which conda package was build. e.g. on 64-bit
+Windows the architecture folder will be called ``win-64`` (hence conda packages will be generated in
+``<conda installation dir>/conda-bld/win-64``
+
 TODO:
 
 * Automate building for multiple Python versions
