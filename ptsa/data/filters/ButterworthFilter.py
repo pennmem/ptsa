@@ -59,7 +59,7 @@ class ButterworthFilter(PropertiedObject, BaseFilter):
             coords=coords_dict
         )
 
-        filtered_time_series = TimeSeriesX(filtered_time_series)
+        # filtered_time_series = TimeSeriesX(filtered_time_series)
         filtered_time_series.attrs = self.time_series.attrs.copy()
         return filtered_time_series
 

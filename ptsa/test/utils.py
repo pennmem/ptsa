@@ -15,6 +15,7 @@ def get_rhino_root():
     data_roots = [
         '/',  # rhino
         '/Volumes/rhino',  # where some people mount rhino
+        '/Volumes/rhino_root',  # where some people mount rhino
         osp.expanduser('~/mnt/rhino'),  # where mvd mounts rhino
     ]
 
