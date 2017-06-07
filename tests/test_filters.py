@@ -12,6 +12,7 @@ from ptsa.data.readers.TalReader import TalReader
 from ptsa.data.readers import EEGReader
 from ptsa.data.filters import DataChopper
 from ptsa.data.filters import MonopolarToBipolarMapper
+from ptsa.data.filters import ButterworthFilter
 from ptsa.test.utils import get_rhino_root, skip_without_rhino
 
 
@@ -135,3 +136,18 @@ class TestFilters(unittest.TestCase):
             np.zeros_like(pow_wavelet),
             decimal=5
         )
+
+    def test_ButterwothFilter(self):
+
+        from xarray.testing import assert_equal
+
+        b_filter = ButterworthFilter(time_series=self.base_eegs, freq_range=[58., 62.], filt_type='stop', order=4)
+        base_eegs_filtered_1 = b_filter.filter()
+
+        base_eegs_filtered_2 = self.base_eegs.filtered(freq_range=[58., 62.], filt_type='stop', order=4)
+
+
+        assert_equal(base_eegs_filtered_1, base_eegs_filtered_2)
+
+        with self.assertRaises(AssertionError):
+            assert_equal(base_eegs_filtered_1, self.base_eegs)
