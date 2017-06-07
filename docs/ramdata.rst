@@ -54,6 +54,46 @@ when we print events to the screen we will get the following output:
 
 Indicating that the event object is in fact ``numpy.recarray``
 
+Reading events using CMLEventReader
+-----------------------------------
+
+CMLEventReader (CML stands for Computational Memory Lab) has the same functionality as BaseEventReader but in the
+most basic configuration it reads events "as-is" without any path manipulation. However, it will, by default, replace
+``NaN`` with sentinel values and will eliminate events that do not reference eeg file. For example the most basic call
+to CMLEventReader could look like:
+
+.. code-block:: python
+
+    from ptsa.data.readers import CMLEventReader
+
+    e_path = '/Volumes/rhino_root/data/events/RAM_FR1/R1111M_events.mat'
+    # ------------------- READING EVENTS
+    base_e_reader = CMLEventReader(filename=e_path)
+    base_events = base_e_reader.read()
+    base_events = base_events[base_events.type == 'WORD']
+
+
+If you want to replace path segment in the eegfile field of the events' ``recarray`` you could use
+``eeg_fname_search_pattern`` and ``eeg_fname_replace_pattern`` to specify replace procedure of the path segment.
+For example if we want to replace ``eeg.reref`` path segment of the ``eegfile`` with ``eeg.no_reref`` and if we want
+want to "normalize" path (*i.e.* replace ``data1``, ``data2`` *etc...* with ``data``) we would use the following call:
+
+.. code-block:: python
+
+    from ptsa.data.readers import CMLEventReader
+
+    e_path = '/Volumes/rhino_root/data/events/RAM_FR1/R1111M_events.mat'
+    # ------------------- READING EVENTS
+    base_e_reader = CMLEventReader(filename=e_path,
+                                  normalize_eeg_path=False,
+                                  eeg_fname_search_pattern='eeg.reref',
+                                  eeg_fname_replace_pattern='eeg.noreref'
+    )
+
+    base_events = base_e_reader.read()
+    base_events = base_events[base_events.type == 'WORD']
+
+Internally ``CMLReader`` uses code from ``BaseEventReader``
 
 Finding Paths using JsonIndexReader
 -----------------------------------
