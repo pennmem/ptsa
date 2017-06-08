@@ -6,6 +6,7 @@ import pytest
 import numpy as np
 import xarray as xr
 import h5py
+import tempfile
 
 from ptsa.data.TimeSeriesX import TimeSeriesX, ConcatenationError
 
@@ -373,3 +374,23 @@ def test_append_recarray():
     # incompatible other dimensions (measurement)
     with pytest.raises(ConcatenationError):
         ts1.append(ts4)
+
+# @pytest.mark.hdf5_with_struct_arrays
+# def test_hdf5_with_struct_arrays():
+#
+#     p1 = np.array([('John', 180), ('Stacy', 150), ('Dick',200)], dtype=[('name', '|U256'), ('height', int)])
+#     data = np.arange(50, 80, 1, dtype=np.float)
+#     dims = ['measurement', 'participant']
+#
+#     ts = TimeSeriesX.create(data.reshape(10, 3), None, dims=dims,
+#                              coords={
+#                                  'measurement': np.arange(10),
+#                                  'participant': p1,
+#                                  'samplerate': 1
+#                              })
+#
+#     print ('tempdir= ',tempfile.gettempdir())
+#     filename = osp.join(tempfile.gettempdir(), "timeseries.h5")
+#     print ('filename =',filename )
+#     ts.to_hdf(filename)
+

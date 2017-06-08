@@ -24,6 +24,9 @@ Fixed bugs related to missing ``samplerate`` in the TimeSeriesX. As of now ``Tim
 Known Issues
 ------------
 
-BaseEventReader and CMLEventReader are not "fool-proof" and may misinterpret types of certain columns and replace NaN with random integers
-This is due to the fact that numpy does not allow marking NaN in sht array of integers. Suggested solution is to use curate events files
-and replace NaNs with sentinel values (as was done for RAM dataset)
+- BaseEventReader and CMLEventReader are not "fool-proof" and may misinterpret types of certain columns and replace NaN with random integers
+  This is due to the fact that numpy does not allow marking NaN in sht array of integers. Suggested solution is to use curate events files
+  and replace NaNs with sentinel values (as was done for RAM dataset)
+- ``to_hdf`` function of the TimeSeriesX does not work when elements of the structured array it tries to save are unicode.
+  This is a known limitation of the h5py library. The temporary workaround it to replace all unicode strings with ASCII based equivalents
+
