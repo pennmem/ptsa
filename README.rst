@@ -10,7 +10,7 @@ http://ptsa.readthedocs.io/en/latest/
 Install via conda
 -----------------
 
-(Only available on Linux and Mac)
+(available on Linux, Mac and Windows 64 bit)
 
 .. code-block:: shell-session
 
