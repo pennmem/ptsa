@@ -9,7 +9,7 @@ For documentation and tutorials, please see https://pennmem.github.io/ptsa/
 Install via conda
 -----------------
 
-(available on Linux, Mac and Windows 64 bit)
+Available on Linux, Mac, and Windows 64 bit:
 
 .. code-block:: shell-session
 
