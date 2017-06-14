@@ -101,7 +101,10 @@ class BaseRawReader(PropertiedObject, BaseReader):
 
         # loop over channels
         for c, channel in enumerate(self.channels):
-            eegfname = self.dataroot + '.' + channel
+            try:
+                eegfname = self.dataroot + '.' + channel
+            except TypeError:
+                eegfname = self.dataroot + '.' + channel.decode()
 
             with open(eegfname, 'rb') as efile:
                 # loop over start offsets
