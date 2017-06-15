@@ -16,6 +16,11 @@ Available on Linux, Mac, and Windows 64 bit:
     conda install -c pennmem ptsa
 
 
+Report bug or feature request
+-----------------------------
+
+To report a bug or a feature request please use  https://github.com/pennmem/ptsa_new/issues.
+
 Build from source
 -----------------
 
