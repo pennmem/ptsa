@@ -168,14 +168,16 @@ class TestFiltersExecute(unittest.TestCase):
 
     def test_MorletWaveletFilter(self):
         mwf = MorletWaveletFilter(time_series=self.time_series,freqs=np.array([10.,20.,40.]),width=4)
-        mwf.filter()
-        return True
+        power,phase= mwf.filter()
+        assert power.shape == (3,1000)
+        assert phase.shape == (3,1000)
 
 
     def test_ResampleFilter(self):
         rf = ResampleFilter(time_series = self.time_series,resamplerate=50.)
-        rf.filter()
-        return True
+        new_ts = rf.filter()
+        assert len(new_ts) == int(len(self.time_series))
+        assert new_ts.samplerate == 50.
 
 
 
