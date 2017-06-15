@@ -87,13 +87,13 @@ class ResampleFilter(PropertiedObject, BaseFilter):
                                              new_length, t=time_axis_data,
                                              axis=self.time_axis_index, window=self.window)
 
-        coords = []
+        coords = {}
         for i, dim_name in enumerate(self.time_series.dims):
             if i != self.time_axis_index:
-                coords.append(self.time_series.coords[dim_name].copy())
+                coords[dim_name]= self.time_series.coords[dim_name].copy()
             else:
-                coords.append((dim_name,new_time_axis))
+                coords[dim_name]=new_time_axis
+        coords['samplerate']=self.resamplerate
 
-        filtered_time_series = xr.DataArray(filtered_array, coords=coords)
-        filtered_time_series['samplerate'] = self.resamplerate
-        return TimeSeriesX(filtered_time_series)
+        filtered_time_series = TimeSeriesX(filtered_array, coords=coords,dims=self.time_series.dims)
+        return filtered_time_series

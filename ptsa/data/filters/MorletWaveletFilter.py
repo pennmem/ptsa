@@ -97,7 +97,6 @@ class MorletWaveletFilter(PropertiedObject,BaseFilter):
     def build_output_arrays(self, wavelet_pow_array, wavelet_phase_array, time_axis):
         wavelet_pow_array_xray = None
         wavelet_phase_array_xray = None
-
         if isinstance(self.time_series, xr.DataArray):
 
             dims = list(self.time_series.dims[:-1] + ('frequency', 'time',))
@@ -119,26 +118,21 @@ class MorletWaveletFilter(PropertiedObject,BaseFilter):
             coords = {dim_name: self.time_series.coords[dim_name] for dim_name in self.time_series.dims[:-1]}
             coords['frequency'] = self.freqs
             coords['time'] = time_axis
+            if 'samplerate' not in coords:
+                coords['samplerate'] = self.time_series.coords['samplerate']
 
             if 'offsets' in list(self.time_series.coords.keys()):
                 coords['offsets'] = ('time',  self.time_series['offsets'])
 
             if wavelet_pow_array is not None:
-                wavelet_pow_array_xray = self.construct_output_array(wavelet_pow_array, dims=dims, coords=coords)
-            if wavelet_phase_array is not None:
-                wavelet_phase_array_xray = self.construct_output_array(wavelet_phase_array, dims=dims, coords=coords)
-
-            if wavelet_pow_array_xray is not None:
-                if 'samplerate' not in coords:
-                    coords['samplerate'] = self.time_series.coords['samplerate']
-                wavelet_pow_array_xray = TimeSeriesX(wavelet_pow_array_xray, coords=coords)
+                wavelet_pow_array_xray = TimeSeriesX(wavelet_pow_array, coords=coords,dims=dims)
                 if len(transposed_dims):
                     wavelet_pow_array_xray = wavelet_pow_array_xray.transpose(*transposed_dims)
 
                 wavelet_pow_array_xray.attrs = self.time_series.attrs.copy()
 
-            if wavelet_phase_array_xray is not None:
-                wavelet_phase_array_xray = TimeSeriesX(wavelet_phase_array_xray)
+            if wavelet_phase_array is not None:
+                wavelet_phase_array_xray = TimeSeriesX(wavelet_phase_array,coords=coords,dims=dims)
                 if len(transposed_dims):
                     wavelet_phase_array_xray = wavelet_phase_array_xray.transpose(*transposed_dims)
 
