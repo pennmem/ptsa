@@ -5,7 +5,7 @@ import pytest
 
 import numpy as np
 from numpy.testing import assert_array_equal, assert_array_almost_equal
-
+from ptsa.data import TimeSeriesX
 from ptsa.data.readers import BaseEventReader
 from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
 from ptsa.data.readers.TalReader import TalReader
@@ -13,6 +13,7 @@ from ptsa.data.readers import EEGReader
 from ptsa.data.filters import DataChopper
 from ptsa.data.filters import MonopolarToBipolarMapper
 from ptsa.data.filters import ButterworthFilter
+from ptsa.data.filters import ResampleFilter
 from ptsa.test.utils import get_rhino_root, skip_without_rhino
 
 
@@ -151,3 +152,31 @@ class TestFilters(unittest.TestCase):
 
         with self.assertRaises(AssertionError):
             assert_equal(base_eegs_filtered_1, self.base_eegs)
+
+
+class TestFiltersExecute(unittest.TestCase):
+    def setUp(self):
+        times = np.linspace(0,1,1000)
+        ts = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
+        self.time_series = TimeSeriesX.TimeSeriesX(data=ts,dims=('time'),coords = {'time':times,'samplerate':1000})
+
+
+    def test_ButterworthFilter(self):
+        bfilter = ButterworthFilter(time_series = self.time_series,freq_range = [10.,20.],filt_type='stop',order=2)
+        bfilter.filter()
+        return True
+
+    def test_MorletWaveletFilter(self):
+        mwf = MorletWaveletFilter(time_series=self.time_series,freqs=np.array([10.,20.,40.]),width=4)
+        mwf.filter()
+        return True
+
+
+    def test_ResampleFilter(self):
+        rf = ResampleFilter(time_series = self.time_series,resamplerate=50.)
+        rf.filter()
+        return True
+
+
+
+

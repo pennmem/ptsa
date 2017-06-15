@@ -107,10 +107,12 @@ class JsonIndexReader(object):
         for kwarg_f, kwarg_v in list(kwargs.items()):
             if len(indexes) == 0:
                 break
+
             if kwarg_f in indexes[0]:
                 for i, index in enumerate(indexes):
                     if str(index[kwarg_f]) != str(kwarg_v):
                         index.clear()
+
         cls._prune(*orig_indexes)
 
     @classmethod
@@ -200,8 +202,9 @@ class JsonIndexReader(object):
         return sorted(list(self.aggregate_values('montage', **kwargs)))
 
 if __name__ == '__main__':
-    reader = JsonIndexReader('/Users/iped/rhino_mount/data/eeg/protocols/r1.json')
+    reader = JsonIndexReader('/Volumes/rhino_root/data/eeg/protocols/r1.json')
     print(reader.aggregate_values('sessions', subject='R1093J', experiment='FR1'))
+    print(reader.aggregate_values('subjects',Recognition=True))
     print(reader.aggregate_values('subjects', experiment='PAL2'))
     print(reader.aggregate_values('experiments', subject='R1001P'))
     print(reader.get_value('task_events', subject='R1001P', experiment='FR1', session=0))
