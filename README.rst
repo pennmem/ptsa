@@ -4,18 +4,22 @@ PTSA
 .. image:: https://travis-ci.org/pennmem/ptsa_new.svg?branch=master
     :target: https://travis-ci.org/pennmem/ptsa_new
 
-For installation instructions, documentation, and tutorials please see
-http://ptsa.readthedocs.io/en/latest/
+For documentation and tutorials, please see https://pennmem.github.io/ptsa/
 
 Install via conda
 -----------------
 
-(Only available on Linux and Mac)
+Available on Linux, Mac, and Windows 64 bit:
 
 .. code-block:: shell-session
 
     conda install -c pennmem ptsa
 
+
+Report bug or feature request
+-----------------------------
+
+To report a bug or a feature request please use  https://github.com/pennmem/ptsa_new/issues.
 
 Build from source
 -----------------

@@ -1,7 +1,8 @@
 import json
 import warnings
+from io import BytesIO
+from base64 import b64encode, b64decode
 import xarray as xr
-from xarray import concat
 import numpy as np
 from scipy.signal import resample
 
@@ -101,6 +102,17 @@ class TimeSeriesX(xr.DataArray):
             File mode to use. See the :mod:`h5py` documentation for details.
             Default: ``'w'``
 
+        Notes
+        -----
+        Because recarrays can complicate things when unicode is involved, saving
+        coordinates is a multi-step process:
+
+        1. Save to a buffer using :func:`np.save`. This uses Numpy's own binary
+           format and should Just Work.
+        2. Base64-encode the buffer to eliminate NULL bytes which HDF5 can't
+           handle.
+        3. Write the bytes contained in the buffer to the HDF5 file.
+
         """
         if h5py is None:  # pragma: nocover
             raise RuntimeError("You must install h5py to save as HDF5")
@@ -115,7 +127,15 @@ class TimeSeriesX(xr.DataArray):
             coords = []
             for name, data in self.coords.items():
                 coords.append(name)
-                coords_group.create_dataset(name, data=data)
+                buffer = BytesIO()
+                np.save(buffer, data)
+                buffer.seek(0)
+                output = b64encode(buffer.read())
+                try:
+                    coords_group.create_dataset(name, data=output)
+                except:
+                    print(output)
+                    raise
             names = json.dumps(coords).encode()
             coords_group.attrs.update(names=names)
 
@@ -144,9 +164,15 @@ class TimeSeriesX(xr.DataArray):
             dims = hfile['dims'][:]
 
             root = hfile['/']
+
             coords_group = hfile['coords']
             names = json.loads(coords_group.attrs['names'].decode())
-            coords = {name: coords_group[name].value for name in names}
+            coords = dict()
+            for name in names:
+                buffer = BytesIO(b64decode(coords_group[name].value))
+                coord = np.load(buffer)
+                coords[name] = coord
+
             name = root.attrs.get('name', None)
             if name is not None:
                 name = name.decode()

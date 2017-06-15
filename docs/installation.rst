@@ -16,7 +16,7 @@ Installation
 Installing pre-built binaries
 -----------------------------
 
-On Mac and Linux, there are conda packages that can be installed:
+Install with conda:
 
 .. code-block:: shell-session
 
