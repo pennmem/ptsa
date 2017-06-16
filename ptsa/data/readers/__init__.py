@@ -8,4 +8,4 @@ from .TalReader import TalReader
 from .TalStimOnlyReader import TalStimOnlyReader
 from .BaseRawReader import BaseRawReader
 from .CMLEventReader import CMLEventReader
-
+from .IndexReader import JsonIndexReader
