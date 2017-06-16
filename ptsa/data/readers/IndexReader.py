@@ -90,6 +90,7 @@ class JsonIndexReader(object):
                 continue
             try:
                 v = f_v.format(**kwargs)
+                kwargs_k = [k for (k,_) in kwargs.items() if str(kwargs[k])==v][0] # This list comprehension matches exactly 1 item
                 for index in indexes:
                     if v not in index[f_k]:
                         del index[f_k]
@@ -97,21 +98,26 @@ class JsonIndexReader(object):
                         for k in list(index[f_k].keys()):
                             if k != v:
                                 del index[f_k][k]
+                del kwargs[kwargs_k]
             except KeyError:
                 pass
             indxs = []
             for indx in indexes:
                 if len(indx) > 0:
                     indxs.extend(list(indx[f_k].values()))
-            indexes = indxs
+            indexes = indxs # Recurse on the level of the index
+
+        # Post: 'protocol','subject','experiment','session' are not in kwargs.keys()
+
         for kwarg_f, kwarg_v in list(kwargs.items()):
             if len(indexes) == 0:
                 break
 
-            if kwarg_f in indexes[0]:
-                for i, index in enumerate(indexes):
-                    if str(index[kwarg_f]) != str(kwarg_v):
-                        index.clear()
+            for index in indexes:
+                if kwarg_f not in index:
+                    index.clear()
+                elif str(index[kwarg_f]) != str(kwarg_v):
+                    index.clear()
 
         cls._prune(*orig_indexes)
 
@@ -202,7 +208,7 @@ class JsonIndexReader(object):
         return sorted(list(self.aggregate_values('montage', **kwargs)))
 
 if __name__ == '__main__':
-    reader = JsonIndexReader('/Volumes/rhino_root/data/eeg/protocols/r1.json')
+    reader = JsonIndexReader('/Volumes/rhino_root/protocols/r1.json')
     print(reader.aggregate_values('sessions', subject='R1093J', experiment='FR1'))
     print(reader.aggregate_values('subjects',Recognition=True))
     print(reader.aggregate_values('subjects', experiment='PAL2'))
