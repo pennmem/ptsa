@@ -8,6 +8,8 @@ Version 1.1.1
 
 - Added support for recarray coordinates with unicode in the ``to_hdf`` and
   ``from_hdf`` methods of ``TimeSeriesX``.
+- Bug fixes for filters and readers to account for changes to ``TimeSeriesX``.
+- Simplified importing ``JsonIndexReader``.
 
 Version 1.1.0
 -------------
