@@ -4,14 +4,15 @@ Release Notes
 Version 1.1.1
 -------------
 
+**Unreleased**
 
 Bug Fixes:
 ----------
-- Patched MorletWaveletFilter, ResampleFilter, ButterworthFilter classes to work with the new ``TimeSeriesX`` constructor
-- Fixed bug in which filtering on the value of a field could fail if that field was not consistently present
-
-
-
+- Patched MorletWaveletFilter, ResampleFilter, ButterworthFilter classes to work with the new ``TimeSeriesX`` constructor.
+- Fixed bug in which filtering on the value of a field could fail if that field was not consistently present.
+- Added support for recarray coordinates with unicode in the ``to_hdf`` and
+  ``from_hdf`` methods of ``TimeSeriesX``.
+- Simplified importing ``JsonIndexReader``.
 
 
 Version 1.1.0
