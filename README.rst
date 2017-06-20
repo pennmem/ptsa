@@ -97,8 +97,3 @@ and type:
 where ``<architecture folder>`` denotes name of the arget architecture for which conda package was build. e.g. on 64-bit
 Windows the architecture folder will be called ``win-64`` (hence conda packages will be generated in
 ``<conda installation dir>/conda-bld/win-64``
-
-TODO:
-
-* Automate building for multiple Python versions
-* Make builds on Windows work
