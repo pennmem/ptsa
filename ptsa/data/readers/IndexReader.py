@@ -2,6 +2,8 @@ import os
 import json
 import copy
 from ptsa.data.common import pathlib
+from ptsa.six import string_types
+
 
 class JsonIndexReader(object):
     """
@@ -37,7 +39,7 @@ class JsonIndexReader(object):
         for k, v in list(index.items()):
             if isinstance(v, dict):
                 cls._prepend_db_root(protocols_root, v)
-            elif isinstance(v, basestring):
+            elif isinstance(v, string_types):
                 v_path = pathlib.Path(str(v))
                 root = str(v_path.parts[0])
                 if root == protocols_basename:
