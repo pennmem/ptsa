@@ -1,6 +1,6 @@
 package:
   name: ptsa
-  version: 1.1.0
+  version: 1.1.1
 
 source:
   git_url: ../
@@ -8,7 +8,7 @@ source:
 build:
   # If this is a new build for the same version, increment the build
   # number. If you do not include this key, it defaults to 0.
-  number: 2
+  number: 0
 
   # Specify additional env vars pass through
   script_env:
