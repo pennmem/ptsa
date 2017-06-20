@@ -176,7 +176,7 @@ class TestFiltersExecute(unittest.TestCase):
     def test_ResampleFilter(self):
         rf = ResampleFilter(time_series = self.time_series,resamplerate=50.)
         new_ts = rf.filter()
-        assert len(new_ts) == int(len(self.time_series))
+        assert len(new_ts) == 50
         assert new_ts.samplerate == 50.
 
 
