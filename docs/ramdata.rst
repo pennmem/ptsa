@@ -152,12 +152,14 @@ We first import TalReader:
     from ptsa.data.readers import TalReader
 
 Next we specify path to the actual ``.mat`` file containing information about electrodes ,
-construct ``tal_reader`` object and call ``read`` function to initiate reading of the ``tal_structs`` file.
+construct a ``tal_reader`` object and call ``read`` function to initiate reading of the ``tal_structs`` file.
+The ``struct_type`` parameter indicates whether the structure we are reading is organized by bipolar pair or by
+monopolar contact, using the values "bi" and "mono"; the default is "bi", which can be ommitted.
 
 .. code-block:: python
 
     tal_path = '/Volumes/rhino_root/data/eeg/R1111M/tal/R1111M_talLocs_database_bipol.mat'
-    tal_reader = TalReader(filename=tal_path)
+    tal_reader = TalReader(filename=tal_path,struct_type='bi')
     tal_structs = tal_reader.read()
 
 

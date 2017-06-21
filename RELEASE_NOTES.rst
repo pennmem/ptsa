@@ -1,18 +1,21 @@
 Release Notes
 =============
 
-Version 1.1.1
+Version 1.1.2
 -------------
 
+- Added support for monopolar structures to TalReader
+
+
+
+Version 1.1.1
+-------------
+**2017-06-20**
 
 Bug Fixes:
 ----------
 - Patched MorletWaveletFilter, ResampleFilter, ButterworthFilter classes to work with the new ``TimeSeriesX`` constructor
 - Fixed bug in which filtering on the value of a field could fail if that field was not consistently present
-
-
-
-
 
 Version 1.1.0
 -------------

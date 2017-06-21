@@ -13,6 +13,7 @@ class TalReader(PropertiedObject,BaseReader):
     _descriptors = [
         TypeValTuple('filename', six.string_types, ''),
         TypeValTuple('struct_name', six.string_types, 'bpTalStruct'),
+        TypeValTuple('struct_type',six.string_types,'bi')
     ]
 
     def __init__(self, **kwds):
@@ -22,6 +23,7 @@ class TalReader(PropertiedObject,BaseReader):
 
         :param filename {str} -  path to tal file or pairs.json file
         :param struct_name {str} -  name of the matlab struct to load
+        :param struct_type {str} - either 'mono', indicating a monopolar struct, or 'bi', indicating a bipolar struct
         :return: None
 
         """
@@ -29,8 +31,12 @@ class TalReader(PropertiedObject,BaseReader):
         self.init_attrs(kwds)
         self.bipolar_channels=None
 
-        self.tal_structs_array = None
+        self.tal_struct_array = None
         self._json = os.path.splitext(self.filename)[-1]=='.json'
+        if self.struct_type not in ['bi','mono']:
+            raise AttributeError('Value %s not a valid struct_type. Please choose either "mono" or "bi"'%self.struct_type)
+        if self.struct_type=='mono':
+            self.struct_name='talStruct'
 
     def get_bipolar_pairs(self):
         """
@@ -38,7 +44,7 @@ class TalReader(PropertiedObject,BaseReader):
         :return: numpy recarray where each record has two fields 'ch0' and 'ch1' storing  channel labels.
         """
         if self.bipolar_channels is None:
-            if self.tal_structs_array is None:
+            if self.tal_struct_array is None:
                 self.read()
             self.initialize_bipolar_pairs()
 
@@ -49,9 +55,14 @@ class TalReader(PropertiedObject,BaseReader):
 
         :return: numpy array of monopolar channel labels
         """
-        bipolar_array = self.get_bipolar_pairs()
-        monopolar_set = set(list(bipolar_array['ch0'])+list(bipolar_array['ch1']))
-        return np.array(sorted(list(monopolar_set)))
+        if self.struct_type=='bi':
+            bipolar_array = self.get_bipolar_pairs()
+            monopolar_set = set(list(bipolar_array['ch0'])+list(bipolar_array['ch1']))
+            return np.array(sorted(list(monopolar_set)))
+        else:
+            if self.tal_struct_array is None:
+                self.read()
+            return np.array(['{:03d}'.format(c) for c in self.tal_struct_array['channel']])
 
     def initialize_bipolar_pairs(self):
         # initialize bipolar pairs
@@ -61,13 +72,19 @@ class TalReader(PropertiedObject,BaseReader):
         for i, channel_array in enumerate(channel_record_array):
             self.bipolar_channels[i] = tuple(map(lambda x: str(x).zfill(3), channel_array))
 
-    @staticmethod
-    def from_dict(pairs):
-        pairs = pd.DataFrame.from_dict(list(pairs.values())[0]['pairs'], orient='index').sort_values(by=['channel_1','channel_2'])
-        pairs.index.name = 'tagName'
-        pairs['channel'] = [[ch1, ch2] for ch1, ch2 in zip(pairs.channel_1.values, pairs.channel_2.values)]
-        pairs['eType'] = pairs.type_1
-        return pairs.to_records()
+    def from_dict(self,pairs):
+        if self.struct_type=='bi':
+            pairs = pd.DataFrame.from_dict(list(pairs.values())[0]['pairs'], orient='index').sort_values(by=['channel_1','channel_2'])
+            pairs.index.name = 'tagName'
+            pairs['channel'] = [[ch1, ch2] for ch1, ch2 in zip(pairs.channel_1.values, pairs.channel_2.values)]
+            pairs['eType'] = pairs.type_1
+            return pairs.to_records()
+        elif self.struct_type == 'mono':
+            contacts = pd.DataFrame.from_dict(list(pairs.values())[0]['contacts'],orient='index').sort_values(by='channel')
+            contacts.index.name = 'tagName'
+            return contacts.to_records()
+
+
 
     def read(self):
         """
@@ -81,7 +98,6 @@ class TalReader(PropertiedObject,BaseReader):
             # struct_names = ['bpTalStruct']
             if self.struct_name not in struct_names:
                 self.tal_struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.filename, self.struct_name,verbose=False)
-
                 if self.tal_struct_array is not None:
                     return self.tal_struct_array
                 else:
