@@ -18,13 +18,6 @@ def tempdir():
     shutil.rmtree(path, ignore_errors=True)
 
 
-def test_samplerate_accessor():
-    ts = TimeSeriesX([1], dict(samplerate=1), ['t'])
-    assert ts.sample.rate == 1
-    ts.sample.rate = 2
-    assert ts.sample.rate == 2
-
-
 def test_init():
     """Test that everything is initialized properly."""
     data = np.random.random((10, 10, 10))
