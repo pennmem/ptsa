@@ -22,20 +22,6 @@ class ConcatenationError(Exception):
     """
 
 
-@xr.register_dataarray_accessor('sample')
-class SampleAccessor(object):
-    def __init__(self, array):
-        self._obj = array
-
-    @property
-    def rate(self):
-        return self._obj['samplerate'].data
-
-    @rate.setter
-    def rate(self, rate):
-        self._obj['samplerate'] = rate
-
-
 class TimeSeriesX(xr.DataArray):
     """A thin wrapper around :class:`xr.DataArray` for dealing with time series
     data.
