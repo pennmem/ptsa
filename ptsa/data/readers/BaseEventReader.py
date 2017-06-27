@@ -6,6 +6,7 @@ import json
 import unicodedata
 from collections import defaultdict
 import numpy as np
+import pandas as pd
 
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
@@ -97,6 +98,11 @@ class BaseEventReader(PropertiedObject, BaseReader):
             return self.read_json()
         else:
             return self.read_matlab()
+
+    def as_dataframe(self):
+        """Read events and return as a :class:`pd.DataFrame`."""
+        events = self.read()
+        return pd.DataFrame(events)
 
     def check_reader_settings_for_json_read(self):
 
