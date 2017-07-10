@@ -4,7 +4,7 @@ Changelog
 Version 1.1.1
 -------------
 
-**Unreleased**
+**2017-06-20**
 
 - Added support for recarray coordinates with unicode in the ``to_hdf`` and
   ``from_hdf`` methods of ``TimeSeriesX``.
