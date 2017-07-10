@@ -1,13 +1,6 @@
 Release Notes
 =============
 
-Version 1.1.2
--------------
-
-- Added support for monopolar structures to TalReader
-- Added 'float32', 'float64' as alternatives to 'single','double' in BaseRawReader.file_format_dict
-
-
 Version 1.1.1
 -------------
 
@@ -19,6 +12,9 @@ Bug Fixes:
 - Added support for recarray coordinates with unicode in the ``to_hdf`` and
   ``from_hdf`` methods of ``TimeSeriesX``.
 - Simplified importing ``JsonIndexReader``.
+- Added support for monopolar structures to TalReader
+- Added 'float32', 'float64' as alternatives to 'single','double' in BaseRawReader.file_format_dict
+
 
 
 Version 1.1.0
