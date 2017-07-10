@@ -10,16 +10,16 @@ Version 1.1.2
 
 Version 1.1.1
 -------------
-**2017-06-20**
-
-- Added support for recarray coordinates with unicode in the ``to_hdf`` and
-  ``from_hdf`` methods of ``TimeSeriesX``.
 
 
 Bug Fixes:
 ----------
-- Patched MorletWaveletFilter, ResampleFilter, ButterworthFilter classes to work with the new ``TimeSeriesX`` constructor
-- Fixed bug in which filtering on the value of a field could fail if that field was not consistently present
+- Patched MorletWaveletFilter, ResampleFilter, ButterworthFilter classes to work with the new ``TimeSeriesX`` constructor.
+- Fixed bug in which filtering on the value of a field could fail if that field was not consistently present.
+- Added support for recarray coordinates with unicode in the ``to_hdf`` and
+  ``from_hdf`` methods of ``TimeSeriesX``.
+- Simplified importing ``JsonIndexReader``.
+
 
 Version 1.1.0
 -------------
@@ -50,4 +50,3 @@ Known Issues
 - ``to_hdf`` function of the TimeSeriesX does not work when elements of the structured array it tries to save are unicode.
   This is a known limitation of the h5py library. The temporary workaround it to replace all unicode strings with ASCII based equivalents
 
-``

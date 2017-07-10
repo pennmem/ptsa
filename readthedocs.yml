@@ -1,9 +1,0 @@
-conda:
-    file: environment.yml
-
-# Don't build any extra formats
-formats:
-    - none
-
-python:
-   setup_py_install: true

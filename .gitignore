@@ -23,3 +23,4 @@ htmlcov/
 .coverage
 .ipynb_checkpoints/
 docs/examples/*.h5
+site/

@@ -1,0 +1,3 @@
+sphinx
+nbsphinx  # sphinx extension for processing Jupyter notebooks
+ipython   # for lexers

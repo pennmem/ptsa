@@ -14,6 +14,7 @@
 
 import sys
 import os
+sys.path.insert(0, '..')
 from ptsa import __version__
 
 # If extensions (or modules to document with autodoc) are in another directory,

@@ -106,6 +106,7 @@ We build the reader with:
 
 .. code-block:: python
 
+    from ptsa.data.readers import JsonIndexReader
     jr = JsonIndexReader('/protocols/r1.json')
 
 To get the location of the event files for subject R1111M from the FR1 experiment, 
