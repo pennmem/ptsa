@@ -5,12 +5,16 @@ Version 1.1.2
 -------------
 
 - Added support for monopolar structures to TalReader
-
+- Added 'float32', 'float64' as alternatives to 'single','double' in BaseRawReader.file_format_dict
 
 
 Version 1.1.1
 -------------
 **2017-06-20**
+
+- Added support for recarray coordinates with unicode in the ``to_hdf`` and
+  ``from_hdf`` methods of ``TimeSeriesX``.
+
 
 Bug Fixes:
 ----------
@@ -46,3 +50,4 @@ Known Issues
 - ``to_hdf`` function of the TimeSeriesX does not work when elements of the structured array it tries to save are unicode.
   This is a known limitation of the h5py library. The temporary workaround it to replace all unicode strings with ASCII based equivalents
 
+``

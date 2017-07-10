@@ -44,10 +44,12 @@ class BaseRawReader(PropertiedObject, BaseReader):
         FileFormat = namedtuple('FileFormat', ['data_size', 'format_string'])
         self.file_format_dict = {
             'single': FileFormat(data_size=4, format_string='f'),
+            'float32':FileFormat(data_size=4, format_string='f'),
             'short': FileFormat(data_size=2, format_string='h'),
             'int16': FileFormat(data_size=2, format_string='h'),
             'int32': FileFormat(data_size=4, format_string='i'),
             'double': FileFormat(data_size=8, format_string='d'),
+            'float64':FileFormat(data_size=8, format_string='d')
         }
 
         self.file_format = self.file_format_dict['int16']
