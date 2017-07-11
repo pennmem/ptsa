@@ -296,7 +296,7 @@ class BaseEventReader(PropertiedObject, BaseReader):
 
                 if isinstance(v, dict):
                     cls.copy_values([v], rec_arr[i][k])
-                elif isinstance(v, basestring):
+                elif isinstance(v, six.string_types):
                     rec_arr[i][k] = cls.strip_accents(v)
                 else:
                     rec_arr[i][k] = v
