@@ -1,6 +1,7 @@
 import os
 import json
 import copy
+import pandas as pd
 from ptsa.data.common import pathlib
 from ptsa.six import string_types
 
@@ -26,8 +27,38 @@ class JsonIndexReader(object):
         """
         self.protocols_root = os.path.dirname(index_file)
         self.index_file = index_file
-        self.index = json.load(open(index_file))
+        with open(index_file, 'r') as infile:
+            self.index = json.loads(infile.read())
         self._prepend_db_root(self.protocols_root, self.index)
+
+    def as_dataframe(self):
+        """Flatten the index and format as a pandas :class:`DataFrame`. The
+        returned :class:`DataFrame` uses a MultiIndex consisting of subject,
+        experiment, session.
+
+        Returns
+        -------
+        df : pd.DataFrame
+
+        """
+        subjects = self.index["protocols"]["r1"]["subjects"]
+        entries = []
+
+        for subject in subjects:
+            experiments = subjects[subject]["experiments"]
+            for experiment in experiments:
+                sessions = experiments[experiment]["sessions"]
+                for session in sessions:
+                    entry = sessions[session]
+                    entry["subject"] = subject
+                    entry["experiment"] = experiment
+                    entry["session"] = int(session)
+                    entries.append(entry)
+
+        df = pd.DataFrame(entries)
+        df.set_index(["subject", "experiment", "session"], inplace=True)
+
+        return df
 
     @classmethod
     def _prepend_db_root(cls, protocols_root, index):

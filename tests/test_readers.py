@@ -1,16 +1,27 @@
 import sys
+import os.path as osp
 import unittest
 import pytest
 
+import pandas as pd
 import numpy as np
 import numpy.testing as npt
 
-from ptsa.data.readers import BaseEventReader
-from ptsa.data.readers import PTSAEventReader
-from ptsa.data.readers import TalStimOnlyReader
-from ptsa.data.readers import EEGReader
-from ptsa.data.readers import BaseRawReader
+from ptsa.test.utils import skip_without_rhino, get_rhino_root
+from ptsa.data.readers import (
+    BaseEventReader, PTSAEventReader, TalStimOnlyReader, EEGReader,
+    BaseRawReader, JsonIndexReader
+)
 from ptsa.data.events import Events
+
+
+@skip_without_rhino  # FIXME: include testing r1.json
+class TestJsonIndexReader:
+    def test_as_dataframe(self):
+        index = osp.join(get_rhino_root(), "protocols", "r1.json")
+        reader = JsonIndexReader(index)
+        df = reader.as_dataframe()
+        assert isinstance(df, pd.DataFrame)
 
 
 @pytest.mark.skip(reason="Hardcoded paths")
@@ -156,7 +167,6 @@ class TestReaders(unittest.TestCase):
 
         npt.assert_array_equal(eegs[:, :, :-1], base_eegs.data)
 
-
     def test_tal_stim_only(self):
 
         # stim_only is no longer supported in RAM data
@@ -170,8 +180,6 @@ class TestReaders(unittest.TestCase):
 
         tal = tal_reader.read()
         print(tal)
-
-
 
     @unittest.expectedFailure
     def test_eventness(self):
