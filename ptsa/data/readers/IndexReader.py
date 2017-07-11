@@ -32,7 +32,9 @@ class JsonIndexReader(object):
         self._prepend_db_root(self.protocols_root, self.index)
 
     def as_dataframe(self):
-        """Flatten the index and format as a pandas :class:`DataFrame`.
+        """Flatten the index and format as a pandas :class:`DataFrame`. The
+        returned :class:`DataFrame` uses a MultiIndex consisting of subject,
+        experiment, session.
 
         Returns
         -------
