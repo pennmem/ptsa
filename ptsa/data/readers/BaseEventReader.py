@@ -215,7 +215,7 @@ class BaseEventReader(PropertiedObject, BaseReader):
             return cls.mkdtype(element)
         elif isinstance(element, int):
             return 'int64'
-        elif isinstance(element, (str, unicode)):
+        elif isinstance(element, six.string_types):
             return 'S256'
         elif isinstance(element, bool):
             return 'b'
@@ -296,7 +296,7 @@ class BaseEventReader(PropertiedObject, BaseReader):
 
                 if isinstance(v, dict):
                     cls.copy_values([v], rec_arr[i][k])
-                elif isinstance(v, basestring):
+                elif isinstance(v, six.string_types):
                     rec_arr[i][k] = cls.strip_accents(v)
                 else:
                     rec_arr[i][k] = v
@@ -320,7 +320,7 @@ class BaseEventReader(PropertiedObject, BaseReader):
     @classmethod
     def strip_accents(cls, s):
         try:
-            return str(''.join(c for c in unicodedata.normalize('NFD', unicode(s))
+            return str(''.join(c for c in unicodedata.normalize('NFD', six.text_type(s))
                                if unicodedata.category(c) != 'Mn'))
         except UnicodeError:  # If accents can't be converted, just remove them
             return str(re.sub(r'[^A-Za-z0-9 -_.]', '', s))

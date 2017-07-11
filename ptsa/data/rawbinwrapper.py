@@ -7,15 +7,14 @@
 #
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
 
-# local imports
-from .basewrapper import BaseWrapper
-
-# global imports
 import numpy as np
 import string
 import struct
 import os
 from glob import glob
+
+from .basewrapper import BaseWrapper
+from ..six import string_types
 
 class RawBinWrapper(BaseWrapper):
     """
@@ -156,7 +155,7 @@ class RawBinWrapper(BaseWrapper):
             #eegfname = self._dataroot+'.'+self._channel_info['name'][channel]
 
             #NEW CODE
-            if isinstance(channel, basestring):
+            if isinstance(channel, string_types):
                 eegfname = self._dataroot+'.'+channel
             else:
                 eegfname = self._dataroot+'.'+self._channel_info['name'][channel]

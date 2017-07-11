@@ -18,6 +18,7 @@ import os
 from glob import glob
 
 from .BaseWrapperXray import BaseWrapperXray
+from ..six import string_types
 
 
 class RawBinWrapperXray(BaseWrapperXray):
@@ -145,7 +146,7 @@ class RawBinWrapperXray(BaseWrapperXray):
 
     def get_eeg_file_name_for_channel(self,channel):
 
-        if isinstance(channel, basestring):
+        if isinstance(channel, string_types):
             eegfname = self._dataroot+'.'+channel
         else:
             eegfname = self._dataroot+'.'+self._channel_info['name'][channel]
@@ -245,7 +246,7 @@ class RawBinWrapperXray(BaseWrapperXray):
             #NEW CODE
             # eegfname = self._dataroot+'.'+self._channel_info['name'][c]
 
-            if isinstance(channel, basestring):
+            if isinstance(channel, string_types):
                 eegfname = self._dataroot+'.'+channel
             else:
                 eegfname = self._dataroot+'.'+self._channel_info['name'][channel]

@@ -7,10 +7,6 @@
 #
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
 
-# local imports
-from .basewrapper import BaseWrapper
-
-# global imports
 import numpy as np
 import os.path
 import io
@@ -18,6 +14,9 @@ try:
     from configparser import SafeConfigParser
 except ImportError:
     from ConfigParser import SafeConfigParser
+
+from .basewrapper import BaseWrapper
+from ..six import text_type
 
 class BVWrapper(BaseWrapper):
     """
@@ -89,7 +88,7 @@ class BVWrapper(BaseWrapper):
             numbers.append(i+1)
             names.append(info[0])
             scales.append(float(info[2]))
-            units.append(unicode(info[3],'utf-8'))
+            units.append(text_type(info[3]))
         # try and get the impedances
         impedances = np.ones(len(names))*-1
         for i,line in enumerate(lines[ind:]):
