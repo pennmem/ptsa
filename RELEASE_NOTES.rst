@@ -1,20 +1,25 @@
 Release Notes
 =============
 
+Upcoming
+--------
+
+- Added support for monopolar structures to TalReader
+- Added 'float32', 'float64' as alternatives to 'single','double' in BaseRawReader.file_format_dict
+- Added `as_dataframe` methods to `BaseEventReader` and `JsonIndexReader` to
+  simplify usage.
+
+
 Version 1.1.1
 -------------
 
+**2017-06-20**
 
-Bug Fixes:
-----------
 - Patched MorletWaveletFilter, ResampleFilter, ButterworthFilter classes to work with the new ``TimeSeriesX`` constructor.
 - Fixed bug in which filtering on the value of a field could fail if that field was not consistently present.
 - Added support for recarray coordinates with unicode in the ``to_hdf`` and
   ``from_hdf`` methods of ``TimeSeriesX``.
 - Simplified importing ``JsonIndexReader``.
-- Added support for monopolar structures to TalReader
-- Added 'float32', 'float64' as alternatives to 'single','double' in BaseRawReader.file_format_dict
-
 
 
 Version 1.1.0
