@@ -51,10 +51,10 @@ def read_single_matlab_matrix_as_numpy_structured_array(file_name, object_name, 
     except KeyError:
         return None
 
-    # picking first first elment  plus 20 randomly selected elements to determine type
-    selector_array = [0] + np.random.randint(len(matlab_matrix_as_python_obj), size=20)
-    selector_array = np.hstack(([0], selector_array))
-    template_element_array = matlab_matrix_as_python_obj[selector_array]
+    # # picking first first elment  plus 20 randomly selected elements to determine type
+    # selector_array = [0] + np.random.randint(len(matlab_matrix_as_python_obj), size=20)
+    # selector_array = np.hstack(([0], selector_array))
+    template_element_array = matlab_matrix_as_python_obj  # [selector_array]
 
     record = matlab_matrix_as_python_obj[0]
     # format_dict = get_np_format([record])
