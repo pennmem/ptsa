@@ -10,7 +10,21 @@ from ptsa.data.filters import BaseFilter
 
 
 class ResampleFilter(PropertiedObject, BaseFilter):
-    """Resample Filter"""
+    """Upsample or downsample a time series to a new sample rate.
+
+    Keyword Arguments
+    -----------------
+    time_series
+        TimeSeriesX object
+    resamplerate: float
+        new sampling frequency
+    time_axis_index: int
+        index of the time axis
+    round_to_original_timepoints: bool
+        Flag indicating if timepoints from original time axis
+        should be reused after proper rounding. Defaults to False
+
+"""
 
     _descriptors = [
         TypeValTuple('time_series', TimeSeriesX, TimeSeriesX([0.0], dict(samplerate=1), dims=['time'])),
@@ -27,19 +41,6 @@ class ResampleFilter(PropertiedObject, BaseFilter):
         self.round_to_original_timepoints = None
 
     def __init__(self,**kwds):
-        """
-
-        :param kwds: allowed values are:
-        -------------------------------------
-        :param resamplerate - new sampling frequency
-        :param time_series - TimeSeriesX object
-        :param time_axis_index - index of the time axis
-        :param round_to_original_timepoints  -  boolean flag indicating if timepoints from original time axis
-        should be reused after proper rounding. Default setting is False
-        -------------------------------------
-        :return:
-
-        """
         self.window = None
         # self.time_series = None
         self.init_attrs(kwds)
@@ -47,7 +48,10 @@ class ResampleFilter(PropertiedObject, BaseFilter):
     def filter(self):
         """resamples time series
 
-        :return:resampled time series with sampling frequency set to resamplerate
+        Returns
+        -------
+        resampled: TimeSeriesX
+            resampled time series with sampling frequency set to resamplerate
 
         """
         samplerate = float(self.time_series['samplerate'])

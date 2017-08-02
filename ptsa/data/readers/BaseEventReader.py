@@ -16,7 +16,31 @@ from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_arr
 from ptsa import six
 
 class BaseEventReader(PropertiedObject, BaseReader):
-    """Reader class that reads event file and returns them as np.recarray"""
+    """Reader class that reads event file and returns them as np.recarray.
+
+    Keyword arguments
+    -----------------
+    filename : str
+        path to event file
+    eliminate_events_with_no_eeg : bool
+        flag to automatically remove events with no eegfile (default True)
+    eliminate_nans : bool
+        flag to automatically replace nans in the event structs with -999 (default True)
+    use_reref_eeg : bool
+        flag that changes eegfiles to point reref eegs. Default is False
+        and eegs read are nonreref ones
+    normalize_eeg_path : bool
+        flag that determines if 'data1', 'data2', etc... in eeg path will
+        get converted to 'data'. The flag is True by default meaning all
+        'data1', 'data2', etc... are converted to 'data'
+    common_root : str
+        partial path to root events folder e.g. if you events are placed in
+        /data/events/RAM_FR1 the path should be 'data/events'. If your
+        events are placed in the '/data/scalp_events/catFR' the common root
+        should be 'data/scalp_events'. Note that you do not include opening
+        '/' in the common_root
+
+    """
     _descriptors = [
         TypeValTuple('filename', six.string_types, ''),
         TypeValTuple('eliminate_events_with_no_eeg', bool, True),
@@ -27,30 +51,6 @@ class BaseEventReader(PropertiedObject, BaseReader):
     ]
 
     def __init__(self, **kwds):
-        r"""
-        Keyword arguments
-        -----------------
-        filename : str
-            path to event file
-        eliminate_events_with_no_eeg : bool
-            flag to automatically remove events with no eegfile (default True)
-        eliminate_nans : bool
-            flag to automatically replace nans in the event structs with -999 (default True)
-        use_reref_eeg : bool
-            flag that changes eegfiles to point reref eegs. Default is False
-            and eegs read are nonreref ones
-        normalize_eeg_path : bool
-            flag that determines if 'data1', 'data2', etc... in eeg path will
-            get converted to 'data'. The flag is True by default meaning all
-            'data1', 'data2', etc... are converted to 'data'
-        common_root : str
-            partial path to root events folder e.g. if you events are placed in
-            /data/events/RAM_FR1 the path should be 'data/events'. If your
-            events are placed in the '/data/scalp_events/catFR' the common root
-            should be 'data/scalp_events'. Note that you do not include opening
-            '/' in the common_root
-
-        """
         self.init_attrs(kwds)
         self._alter_eeg_path_flag = not self.use_reref_eeg
 

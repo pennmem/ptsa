@@ -84,12 +84,11 @@ class TalReader(PropertiedObject,BaseReader):
             contacts.index.name = 'tagName'
             return contacts.to_records()
 
-
-
     def read(self):
+
         """
 
-        :return:np.recarray representing tal struct array (originally defined in Matlab file)
+        :return: np.recarray representing tal struct array (originally defined in Matlab file)
         """
         if not self._json:
             from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array

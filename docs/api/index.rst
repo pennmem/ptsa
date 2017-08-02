@@ -5,7 +5,6 @@ API Reference
 
     data
     extensions
-    filters
 
 Filtering
 ---------

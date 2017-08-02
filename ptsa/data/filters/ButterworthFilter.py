@@ -7,19 +7,20 @@ from ptsa.data.filters import BaseFilter
 
 
 class ButterworthFilter(PropertiedObject, BaseFilter):
-    """Applies Butterworth filter to a time series
+    """Applies Butterworth filter to a time series.
 
-    :param kwds: allowed values are:
+    Keyword Arguments
+    -----------------
 
-    :param time_series
+    time_series
          TimeSeriesX object
-    :param order
+    order
          Butterworth filter order
-    :param freq_range{list-like}
+    freq_range: list-like
        Array [min_freq, max_freq] describing the filter range
-    :return:None
 
     """
+
     _descriptors = [
         TypeValTuple('time_series', TimeSeriesX, TimeSeriesX([0.0], dict(samplerate=1.), dims=['time'])),
         TypeValTuple('order', int, 4),
@@ -28,21 +29,16 @@ class ButterworthFilter(PropertiedObject, BaseFilter):
     ]
 
     def __init__(self, **kwds):
-        """
-        Constructor
-        :param kwds:allowed values are:
-        -------------------------------------
-        :param time_series  -  TimeSeriesX object
-        :param order -  Butterworth filter order
-        :param freq_range -  array of frequencies [min_freq, max_freq] to filter out
-        :return: None
-        """
         self.init_attrs(kwds)
 
     def filter(self):
         """
         Applies Butterwoth filter to input time series and returns filtered TimeSeriesX object
-        :return: TimeSeriesX object
+
+        Returns
+        -------
+        filtered: TimeSeriesX
+            The filtered time series
 
         """
         time_axis_index = get_axis_index(self.time_series, axis_name='time')

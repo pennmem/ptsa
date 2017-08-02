@@ -1,8 +1,9 @@
 ptsa.data
 =========
 
-ptsa.data.TimeSeriesX
----------------------
+.. toctree::
+    :maxdepth: 1
 
-.. autoclass:: ptsa.data.TimeSeriesX.TimeSeriesX
-    :members:
+    data/timeseriesx
+    data/readers
+    data/filters

@@ -13,6 +13,29 @@ from ptsa.wavelet import morlet_multi, next_pow2
 
 
 class MorletWaveletFilter(PropertiedObject,BaseFilter):
+    """
+    Applies a Morlet wavelet transform to a time series, returning the power and phase spectra over time.
+
+    Arguments
+    ---------
+    time_series: TimeSeriesX
+        The time series to filter
+
+    Keyword Arguments
+    -----------------
+    freqs: np.ndarray
+        The frequencies to use in the decomposition
+    width: int
+        The width of the wavelet
+    output: str
+        Either 'power' or 'phase'; if given, the option not given will not be computed.
+    frequency_dim_pos: int
+        The position of the new frequency axis in the output array
+    verbose: bool
+        Print out the wavelet parameters
+    """
+
+
     _descriptors = [
         TypeValTuple('freqs', np.ndarray, np.array([], dtype=np.float)),
         TypeValTuple('width', int, 5),
@@ -183,6 +206,14 @@ class MorletWaveletFilter(PropertiedObject,BaseFilter):
         return wavelet_fft_array, convolution_size_array, convolution_size_pow2
 
     def filter(self):
+        """
+        Apply the constructed filter.
+
+        Returns
+        -------
+        (power,phase): tuple(TimeSeriesX or None, TimeSeriesX or None)
+            Returns a tuple containing the computed power and phase values.
+        """
 
         data_iterator = self.get_data_iterator()
 
