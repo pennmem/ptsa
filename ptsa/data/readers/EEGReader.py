@@ -11,7 +11,27 @@ from ptsa import six
 class EEGReader(PropertiedObject,BaseReader):
     """
     Reader that knows how to read binary eeg files. It can read chunks of the eeg signal based on events input
-    or can read entire session if session_dataroot is non empty
+    or can read entire session if session_dataroot is non empty.
+
+    Keyword Arguments
+    -----------------
+    channels : np.ndarray
+      numpy array of channel labels
+    start_time : float
+       read start offset in seconds w.r.t to the eegeffset specified in the events recarray
+    end_time:
+       read end offset in seconds w.r.t to the eegeffset specified in the events recarray
+    buffer_time : float
+       extra buffer in seconds (subtracted from start read and added to end read)
+    events : np.recarray
+       numpy recarray representing Events
+    session_dataroot : str
+       path to session dataroot. When set the reader will read the entire session
+
+    Returns
+    -------
+    None
+
     """
     _descriptors = [
         TypeValTuple('channels', np.ndarray, np.array([], dtype='|S3')),
@@ -24,17 +44,7 @@ class EEGReader(PropertiedObject,BaseReader):
 
     def __init__(self, **kwds):
         """
-        Constructor
-        :param kwds:allowed values are:
-        -------------------------------------
-        :param channels {np.ndarray} -  numpy array of channel labels
-        :param start_time {float} -  read start offset in seconds w.r.t to the eegeffset specified in the events recarray
-        :param end_time {float} -  read end offset in seconds w.r.t to the eegeffset specified in the events recarray
-        :param end_time {float} -  extra buffer in seconds (subtracted from start read and added to end read)
-        :param events {np.recarray} - numpy recarray representing Events
-        :param session_dataroot {str} -  path to session dataroot. When set the reader will read the entire session
 
-        :return:None
         """
         self.init_attrs(kwds)
         self.removed_corrupt_events = False
@@ -100,6 +110,7 @@ class EEGReader(PropertiedObject,BaseReader):
     def read_session_data(self):
         """
         Reads entire session worth of data
+
         :return: TimeSeriesX object (channels x events x time) with data for entire session the events dimension has length 1
         """
         brr = BaseRawReader(dataroot=self.session_dataroot, channels=self.channels)
@@ -138,6 +149,7 @@ class EEGReader(PropertiedObject,BaseReader):
     def read_events_data(self):
         """
         Reads eeg data for individual event
+
         :return: TimeSeriesX  object (channels x events x time) with data for individual events
         """
         self.event_ok_mask_sorted = None  # reset self.event_ok_mask_sorted
@@ -277,6 +289,7 @@ class EEGReader(PropertiedObject,BaseReader):
     def read(self):
         """
         Calls read_events_data or read_session_data depending on user selection
+
         :return: TimeSeriesX object
         """
         return self.read_fcn()
