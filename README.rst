@@ -67,6 +67,8 @@ In the root conda environment, install ``conda-build``:
 
    conda install conda-build
 
+Update the version number in ``conda.recipe/meta.yaml``.
+
 Build packages with:
 
 .. code-block:: shell-session
