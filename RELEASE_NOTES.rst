@@ -1,13 +1,16 @@
 Release Notes
 =============
 
-Upcoming
---------
+Version 1.1.2
+-------------
+
+**2017-08-29**
 
 - Added support for monopolar structures to TalReader
 - Added 'float32', 'float64' as alternatives to 'single','double' in BaseRawReader.file_format_dict
 - Added `as_dataframe` methods to `BaseEventReader` and `JsonIndexReader` to
   simplify usage.
+- Saving timeseries to HDF5 now includes attributes describing the PTSA version and creation time.
 
 
 Version 1.1.1
