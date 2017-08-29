@@ -1,32 +1,14 @@
-#emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
-#ex: set sts=4 ts=4 sw=4 et:
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
-#
-#   See the COPYING file distributed along with the PTSA package for the
-#   copyright and license terms.
-#
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
+# FIXME: update or remove this module
 
 import sys
-import numpy as np
-# from scipy import unwrap
-# import scipy.stats as stats
-from scipy.fftpack import fft,ifft
-# import scipy.signal
-# import scipy.ndimage
-# from ptsa.filt import decimate
-from ptsa.helper import reshape_to_2d,reshape_from_2d,centered,next_pow2
-from ptsa.data import TimeSeries,Dim
-from ptsa.fixed_scipy import morlet as morlet_wavelet
-
-import pywt
 import math
 
-# try:
-#     import multiprocessing as mp
-#     has_mp = True
-# except ImportError:
-#     has_mp = False
+import numpy as np
+from scipy.fftpack import fft, ifft
+import pywt
+
+from ptsa.helper import reshape_to_2d,reshape_from_2d,centered,next_pow2
+from ptsa.fixed_scipy import morlet as morlet_wavelet
 
 
 def swt(data, wavelet, level=None):
