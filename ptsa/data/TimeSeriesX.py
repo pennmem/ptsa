@@ -1,4 +1,5 @@
 import json
+import time
 import warnings
 from io import BytesIO
 from base64 import b64encode, b64decode
@@ -11,6 +12,7 @@ try:
 except ImportError:  # pragma: nocover
     h5py = None
 
+from ptsa.version import version as ptsa_version
 from ptsa.data.common import get_axis_index
 from ptsa.filt import buttfilt
 
@@ -104,6 +106,9 @@ class TimeSeriesX(xr.DataArray):
             raise RuntimeError("You must install h5py to save as HDF5")
 
         with h5py.File(filename, mode) as hfile:
+            hfile.attrs['ptsa_version'] = ptsa_version
+            hfile.attrs['created'] = time.time()
+
             hfile.create_dataset("data", data=self.data, chunks=True)
 
             dims = [dim.encode() for dim in self.dims]
