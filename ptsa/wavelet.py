@@ -5,10 +5,10 @@ import math
 
 import numpy as np
 from scipy.fftpack import fft, ifft
+from scipy.signal import morlet as morlet_wavelet
 import pywt
 
 from ptsa.helper import reshape_to_2d,reshape_from_2d,centered,next_pow2
-from ptsa.fixed_scipy import morlet as morlet_wavelet
 
 
 def swt(data, wavelet, level=None):
