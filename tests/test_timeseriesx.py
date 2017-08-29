@@ -66,6 +66,8 @@ def test_hdf(tempdir):
         assert "dims" in hfile
         assert "coords" in hfile
         assert "name" in list(hfile['/'].attrs.keys())
+        assert "ptsa_version" in hfile.attrs
+        assert "created" in hfile.attrs
 
     loaded = TimeSeriesX.from_hdf(filename)
     assert (loaded.data == data).all()
