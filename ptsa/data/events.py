@@ -1,34 +1,14 @@
-# emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
-# ex: set sts=4 ts=4 sw=4 et:
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
-#
-#   See the COPYING file distributed along with the PTSA package for the
-#   copyright and license terms.
-#
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
-
-# global imports
-import numpy as np
-from .timeseries import TimeSeries, Dim
 import time
+import numpy as np
 
 
-# import pdb
-
+# FIXME: update for TimeSeriesX or remove
 class Events(np.recarray):
     """
     A recarray with the events to be analyzed. Includes convenience
     functions to add and remove fields and a function to get a
     TimeSeries instance with the data linked to each event.
     """
-
-    # def __new__(subtype, shape, dtype=None, buf=None, offset=0, strides=None,
-    #             formats=None, names=None, titles=None,
-    #             byteorder=None, aligned=False):
-
-    # def __new__(*args,**kwargs):
-    #     return np.recarray.__new__(*args,**kwargs)
-
     def __new__(subtype, data):
         return data.view(subtype)
 

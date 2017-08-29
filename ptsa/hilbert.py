@@ -1,17 +1,8 @@
-#emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
-#ex: set sts=4 ts=4 sw=4 et:
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
-#
-#   See the COPYING file distributed along with the PTSA package for the
-#   copyright and license terms.
-#
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
-
 import sys
 import numpy as np
 from scipy.signal import hilbert
 
-from ptsa.data.timeseries import TimeSeries,Dim
+# from ptsa.data.timeseries import TimeSeries,Dim
 from ptsa.helper import next_pow2
 
 freq_bands = [('delta', [2.0,4.0]),
@@ -20,6 +11,9 @@ freq_bands = [('delta', [2.0,4.0]),
               ('beta', [16.0,26.0]),
               ('gamma_1', [28.0,42.0]),
               ('gamma_2', [44.0,100.0])]
+
+
+# FIXME: update for TimeSeriesX or remove
 def hilbert_pow(dat_ts, bands=None, pad_to_pow2=False, verbose=True):
     """
     """

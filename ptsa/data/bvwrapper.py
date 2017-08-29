@@ -18,6 +18,7 @@ except ImportError:
 from .basewrapper import BaseWrapper
 from ..six import text_type
 
+
 class BVWrapper(BaseWrapper):
     """
     Interface to data stored in a BrainVision Data Format.

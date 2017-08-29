@@ -1,5 +1,4 @@
 import numpy as np
-from .timeseries import TimeSeries, Dim
 
 
 class BaseWrapper(object):

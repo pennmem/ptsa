@@ -1,23 +1,14 @@
-#emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
-#ex: set sts=4 ts=4 sw=4 et:
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
-#
-#   See the COPYING file distributed along with the PTSA package for the
-#   copyright and license terms.
-#
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
-
-# local imports
-from .datawrapper import DataWrapper
-from .events import Events,TsEvents
-from .timeseries import TimeSeries,Dim
-
-# global imports
-import numpy as np
 import string
 import struct
 import os
+import numpy as np
 from scipy.io import loadmat
+
+from .datawrapper import DataWrapper
+from .events import Events
+
+# FIXME: update this or remove
+
 
 class RawBinaryEEG(DataWrapper):
     """
