@@ -20,6 +20,7 @@ dependencies:
 - sip
 - six
 - sqlite
+- swig
 - tk
 - wheel
 - xarray
