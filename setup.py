@@ -289,7 +289,5 @@ setup(
         # 'ptsa.data.tests',
         'ptsa.test',
         'ptsa.stats',
-        'dimarray',
-        'dimarray.tests'
     ]
 )
