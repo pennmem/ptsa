@@ -5,7 +5,10 @@ import warnings
 
 import numpy as np
 from xarray import DataArray
-import tables
+try:
+    import tables
+except ImportError:
+    raise ImportWarning('HDF5 support not available')
 
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
