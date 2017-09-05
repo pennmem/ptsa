@@ -5,8 +5,8 @@ import warnings
 
 import numpy as np
 from xarray import DataArray
+import tables
 
-from ptsa import six
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
 from ptsa.data.readers.ParamsReader import ParamsReader
@@ -14,7 +14,7 @@ from ptsa import six
 
 class BaseRawReader(PropertiedObject, BaseReader):
     """
-    Object that knows how to read binary eeg files
+    Object that knows how to read binary eeg files and hdf5 eeg files written out by RAMulator
     """
     _descriptors = [
         TypeValTuple('dataroot', six.string_types, ''),
@@ -84,6 +84,63 @@ class BaseRawReader(PropertiedObject, BaseReader):
         return os.path.getsize(eegfname)
 
     def read(self):
+        if not self.dataroot.endswith('h5'):
+            eventdata,read_ok_mask= self.read_binary()
+        else:
+            eventdata,read_ok_mask = self.read_hdf5()
+
+        # multiply by the gain
+        eventdata *= self.params_dict['gain']
+
+        eventdata = DataArray(eventdata,
+                              dims=['channels', 'start_offsets', 'offsets'],
+                              coords={
+                                  'channels': self.channels,
+                                  'start_offsets': self.start_offsets.copy(),
+                                  'offsets': np.arange(self.read_size),
+                                  'samplerate': self.params_dict['samplerate']
+
+                              }
+                              )
+
+        from copy import deepcopy
+        eventdata.attrs = deepcopy(self.params_dict)
+
+        return eventdata, read_ok_mask
+
+
+    def read_hdf5(self):
+        eegfile = tables.open_file(self.dataroot)
+        timeseries = eegfile.root.eeg_timeseries
+        ports = eegfile.root.ports
+        channels_to_read = np.in1d(ports,self.channels.astype(int))
+        if self.read_size < 0:
+            if 'by_row' in eegfile.root.attrs and eegfile.root.attrs['by_row'] == True:
+                eventdata = timeseries[:,channels_to_read].T
+            else:
+                eventdata = timeseries[channels_to_read,:]
+            eegfile.close()
+            return eventdata[:,None,:],np.ones((len(self.channels),1)).astype(bool)
+
+        else:
+            eventdata = np.empty((len(self.channels,len(self.start_offsets),self.read_size)),dtype=np.float)*np.nan
+            read_ok_mask = np.ones((len(self.channels),len(self.start_offsets))).astype(bool)
+            for i,start_offset in enumerate(self.start_offsets):
+                if 'by_row' in eegfile.root.attrs and eegfile.root.attrs['by_row'] == True:
+                    data = timeseries[start_offset:start_offset+self.read_size,channels_to_read].T
+                else:
+                    data = timeseries[channels_to_read,start_offset:start_offset+self.read_size]
+                if data.shape[-1]==self.read_size:
+                    eventdata[:,i,:] = data
+                else:
+                    print(
+                    'Cannot read full chunk of data for offset ' + str(start_offset) +
+                    'End of read interval  is outside the bounds of file ' + self.dataroot)
+                    read_ok_mask[:,i] = False
+            eegfile.close()
+            return eventdata,read_ok_mask
+
+    def read_binary(self):
         """
 
         :return: DataArray objects populated with data read from eeg files. The size of the output is
@@ -139,21 +196,5 @@ class BaseRawReader(PropertiedObject, BaseReader):
                         # append it to the eventdata
                         eventdata[c, e, :] = data
 
-        # multiply by the gain
-        eventdata *= self.params_dict['gain']
+        return eventdata,read_ok_mask
 
-        eventdata = DataArray(eventdata,
-                              dims=['channels', 'start_offsets', 'offsets'],
-                              coords={
-                                  'channels': self.channels,
-                                  'start_offsets': self.start_offsets.copy(),
-                                  'offsets': np.arange(self.read_size),
-                                  'samplerate': self.params_dict['samplerate']
-
-                              }
-                              )
-
-        from copy import deepcopy
-        eventdata.attrs = deepcopy(self.params_dict)
-
-        return eventdata, read_ok_mask
