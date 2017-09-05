@@ -8,7 +8,7 @@ from xarray import DataArray
 try:
     import tables
 except ImportError:
-    raise ImportWarning('HDF5 support not available')
+    warnings.warn('HDF5 support not available', RuntimeWarning)
 
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
