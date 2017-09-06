@@ -1,24 +1,10 @@
 from .BaseReader import BaseReader
-from ..common.TypedUtils import PropertiedObject,TypeValTuple
-from .ParamsReader import ParamsReader
+from .BaseRawReader import BaseRawReader
 import numpy as np
 import tables
 from xarray import DataArray
-import six
 
-class H5EEGReader(PropertiedObject,BaseReader):
-    _descriptors = [
-        TypeValTuple('dataroot',six.string_types,''),
-        TypeValTuple('channels',np.ndarray,np.array([],dtype='|S3')),
-        TypeValTuple('start_offsets',np.ndarray,np.array([0],dtype=float)),
-        TypeValTuple('read_size',int,-1)
-    ]
-
-    def __init__(self,**kwargs):
-        self.init_attrs(kwargs)
-        self.params_dict = ParamsReader(dataroot = self.dataroot).read()
-
-
+class H5EEGReader(BaseRawReader):
 
     def read(self):
         eegfile = tables.open_file(self.dataroot)
@@ -55,9 +41,9 @@ class H5EEGReader(PropertiedObject,BaseReader):
         eventdata *= self.params_dict['gain']
 
         eventdata = DataArray(eventdata,
-                              dims=['channel', 'start_offsets', 'offsets'],
+                              dims=['channels', 'start_offsets', 'offsets'],
                               coords={
-                                  'channel': self.channels,
+                                  'channels': self.channels,
                                   'start_offsets': self.start_offsets.copy(),
                                   'offsets': np.arange(self.read_size),
                                   'samplerate': self.params_dict['samplerate']
