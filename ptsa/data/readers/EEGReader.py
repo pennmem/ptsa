@@ -4,9 +4,12 @@ from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.readers.ParamsReader import ParamsReader
 from ptsa.data.readers.BaseRawReader import BaseRawReader
+from ptsa.data.readers.H5RawReader import H5EEGReader
 from ptsa.data.readers import BaseReader
 import time
 from ptsa import six
+from collections import defaultdict
+import os.path
 
 class EEGReader(PropertiedObject,BaseReader):
     """
@@ -41,6 +44,10 @@ class EEGReader(PropertiedObject,BaseReader):
         TypeValTuple('events', np.recarray, np.recarray((0,), dtype=[('x', int)])),
         TypeValTuple('session_dataroot', six.string_types, ''),
     ]
+
+    READER_FILETYPE_DICT = defaultdict(lambda : BaseRawReader,
+                                       h5=H5EEGReader)
+
 
     def __init__(self, **kwds):
         """
@@ -99,7 +106,7 @@ class EEGReader(PropertiedObject,BaseReader):
             # start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
             start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
 
-            brr = BaseRawReader(dataroot=dataroot, channels=self.channels, start_offsets=start_offsets,
+            brr = self.READER_FILETYPE_DICT[os.path.splitext(dataroot)[-1]](dataroot=dataroot, channels=self.channels, start_offsets=start_offsets,
                                 read_size=read_size)
             raw_readers.append(brr)
 
@@ -131,8 +138,6 @@ class EEGReader(PropertiedObject,BaseReader):
                                               'time': physical_time_array,
                                               'offsets': ('time', session_array['offsets']),
                                               'samplerate': session_array['samplerate']
-                                              # 'dataroot':self.session_dataroot
-
                                           }
                                           )
         session_time_series.attrs = session_array.attrs.copy()
