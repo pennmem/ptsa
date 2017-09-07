@@ -3,7 +3,7 @@ import numpy as np
 import tables
 from xarray import DataArray
 
-class H5EEGReader(BaseRawReader):
+class H5RawReader(BaseRawReader):
 
     def read(self):
         eventdata,read_ok_mask = self.read_h5file(self.dataroot,self.channels,self.start_offsets,self.read_size)
@@ -30,9 +30,9 @@ class H5EEGReader(BaseRawReader):
     @staticmethod
     def read_h5file(filename,channels,start_offsets,read_size):
         eegfile = tables.open_file(filename)
-        timeseries = eegfile.root.eeg_timeseries
+        timeseries = eegfile.root.timeseries
         ports = eegfile.root.ports
-        channels_to_read = np.in1d(ports, channels.astype(int))
+        channels_to_read = np.where(np.in1d(ports, channels.astype(int)))[0]
         if read_size < 0:
             if 'orient' in timeseries.attrs and timeseries.attrs['orient'] == 'row':
                 eventdata = timeseries[:, channels_to_read].T
@@ -42,11 +42,11 @@ class H5EEGReader(BaseRawReader):
             return eventdata[:, None, :], np.ones((len(channels), 1)).astype(bool)
 
         else:
-            eventdata = np.empty((len(channels, len(start_offsets), read_size)),
+            eventdata = np.empty((len(channels), len(start_offsets), read_size),
                                  dtype=np.float) * np.nan
             read_ok_mask = np.ones((len(channels), len(start_offsets))).astype(bool)
             for i, start_offset in enumerate(start_offsets):
-                if 'orient' in timeseries.attrs and timeseries.attrs['row'] == 'row':
+                if 'orient' in timeseries.attrs and timeseries.attrs['orient'] == 'row':
                     data = timeseries[start_offset:start_offset + read_size, channels_to_read].T
                 else:
                     data = timeseries[channels_to_read, start_offset:start_offset + read_size]
