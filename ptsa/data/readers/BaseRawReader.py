@@ -6,6 +6,7 @@ import warnings
 import numpy as np
 from xarray import DataArray
 
+from ptsa import six
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
 from ptsa.data.readers.ParamsReader import ParamsReader
@@ -139,16 +140,16 @@ class BaseRawReader(PropertiedObject, BaseReader):
                         eventdata[c, e, :] = data
 
         # multiply by the gain
-
         eventdata *= self.params_dict['gain']
 
         eventdata = DataArray(eventdata,
-                              dims=['channel', 'start_offsets', 'offsets'],
+                              dims=['channels', 'start_offsets', 'offsets'],
                               coords={
-                                  'channel': self.channels,
+                                  'channels': self.channels,
                                   'start_offsets': self.start_offsets.copy(),
                                   'offsets': np.arange(self.read_size),
                                   'samplerate': self.params_dict['samplerate']
+
                               }
                               )
 
@@ -156,4 +157,3 @@ class BaseRawReader(PropertiedObject, BaseReader):
         eventdata.attrs = deepcopy(self.params_dict)
 
         return eventdata, read_ok_mask
-
