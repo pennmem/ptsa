@@ -28,7 +28,7 @@ class H5RawReader(BaseRawReader):
 
 
     @staticmethod
-    def read_h5file(filename,channels,start_offsets,read_size):
+    def read_h5file(filename,channels,start_offsets=np.array([0]),read_size=-1):
         eegfile = tables.open_file(filename)
         timeseries = eegfile.root.timeseries
         ports = eegfile.root.ports
@@ -46,17 +46,24 @@ class H5RawReader(BaseRawReader):
                                  dtype=np.float) * np.nan
             read_ok_mask = np.ones((len(channels), len(start_offsets))).astype(bool)
             for i, start_offset in enumerate(start_offsets):
-                if 'orient' in timeseries.attrs and timeseries.attrs['orient'] == 'row':
-                    data = timeseries[start_offset:start_offset + read_size, channels_to_read].T
-                else:
-                    data = timeseries[channels_to_read, start_offset:start_offset + read_size]
-                if data.shape[-1] == read_size:
-                    eventdata[:, i, :] = data
-                else:
+                try:
+                    if 'orient' in timeseries.attrs and timeseries.attrs['orient'] == 'row':
+                        data = timeseries[start_offset:start_offset + read_size, channels_to_read].T
+                    else:
+                        data = timeseries[channels_to_read, start_offset:start_offset + read_size]
+                    if data.shape[-1] == read_size:
+                        eventdata[:, i, :] = data
+                    else:
+                        print(
+                            'Cannot read full chunk of data for offset ' + str(start_offset) +
+                            'End of read interval  is outside the bounds of file ' + filename)
+                        read_ok_mask[:, i] = False
+                except IndexError:
                     print(
                         'Cannot read full chunk of data for offset ' + str(start_offset) +
                         'End of read interval  is outside the bounds of file ' + filename)
                     read_ok_mask[:, i] = False
+
             eegfile.close()
 
         return eventdata, read_ok_mask
