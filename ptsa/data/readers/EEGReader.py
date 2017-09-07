@@ -4,7 +4,7 @@ from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.readers.ParamsReader import ParamsReader
 from ptsa.data.readers.BaseRawReader import BaseRawReader
-from ptsa.data.readers.H5RawReader import H5EEGReader
+from ptsa.data.readers.H5RawReader import H5RawReader
 from ptsa.data.readers import BaseReader
 import time
 from ptsa import six
@@ -46,7 +46,7 @@ class EEGReader(PropertiedObject,BaseReader):
     ]
 
     READER_FILETYPE_DICT = defaultdict(lambda : BaseRawReader,
-                                       h5=H5EEGReader)
+                                       h5=H5RawReader)
 
 
     def __init__(self, **kwds):
