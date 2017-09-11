@@ -1,34 +1,32 @@
 from .BaseRawReader import BaseRawReader
 import numpy as np
 import tables
-from xarray import DataArray
+import os.path as osp
 
 class H5RawReader(BaseRawReader):
 
-    def read(self):
-        eventdata,read_ok_mask = self.read_h5file(self.dataroot,self.channels,self.start_offsets,self.read_size)
-
-        eventdata *= self.params_dict['gain']
-
-        eventdata = DataArray(eventdata,
-                              dims=['channels', 'start_offsets', 'offsets'],
-                              coords={
-                                  'channels': self.channels,
-                                  'start_offsets': self.start_offsets.copy(),
-                                  'offsets': np.arange(self.read_size),
-                                  'samplerate': self.params_dict['samplerate']
-                              }
-                              )
-
-        from copy import deepcopy
-        eventdata.attrs = deepcopy(self.params_dict)
-
-        return eventdata, read_ok_mask
+    def __init__(self,**kwargs):
+        dataroot,data_ext = osp.splitext(kwargs['dataroot'])
+        assert data_ext=='.h5','Dataroot missing extension'
+        kwargs['dataroot']=dataroot
+        super(H5RawReader, self).__init__(**kwargs)
+        self.dataroot+=data_ext
 
 
+    def read_file(self,filename, channels, start_offsets=np.array([0]), read_size=-1):
+        event_data,read_ok_mask = self.read_h5file(filename, channels, start_offsets, read_size)
+        eegfile = tables.open_file(filename=filename)
+        if 'bipolar_info' in eegfile.root:
+            self.channels = np.array([eegfile.root.bipolar_info.ch0_label[:],eegfile.root.bipolar_info.ch1_label[:]],
+                                    dtype=[('ch0',int),('ch1',int)])
+
+            self.channel_name = 'bipolar_pairs'
+        if self.read_size==-1:
+            self.read_size = max(event_data.shape)
+        return event_data,read_ok_mask
 
     @staticmethod
-    def read_h5file(filename,channels,start_offsets=np.array([0]),read_size=-1):
+    def read_h5file(filename, channels, start_offsets=np.array([0]), read_size=-1):
         eegfile = tables.open_file(filename)
         timeseries = eegfile.root.timeseries
         ports = eegfile.root.ports
@@ -66,4 +64,4 @@ class H5RawReader(BaseRawReader):
 
             eegfile.close()
 
-        return eventdata, read_ok_mask
+        return eventdata,read_ok_mask,

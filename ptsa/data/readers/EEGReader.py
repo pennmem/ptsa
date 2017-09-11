@@ -8,8 +8,11 @@ from ptsa.data.readers.H5RawReader import H5RawReader
 from ptsa.data.readers import BaseReader
 import time
 from ptsa import six
-from collections import defaultdict
+from collections import defaultdict,namedtuple
 import os.path
+
+class IncompatibleDataError(Exception):
+    pass
 
 class EEGReader(PropertiedObject,BaseReader):
     """
@@ -63,6 +66,7 @@ class EEGReader(PropertiedObject,BaseReader):
         self.read_fcn = self.read_events_data
         if self.session_dataroot:
             self.read_fcn = self.read_session_data
+        self.channel_name = 'channels'
 
     def compute_read_offsets(self, dataroot):
         """
@@ -90,6 +94,7 @@ class EEGReader(PropertiedObject,BaseReader):
         """
         Creates BaseRawreader for each (unique) dataroot present in events recarray
         :return: list of BaseRawReaders and list of dataroots
+        :raises: [IncompatibleDataError] if the readers are not all the same class
         """
         evs = self.events
         dataroots = np.unique(evs.eegfile)
@@ -112,6 +117,10 @@ class EEGReader(PropertiedObject,BaseReader):
 
             original_dataroots.append(dataroot)
 
+        if not all([r.channel_name==raw_readers[0].channel_name for r in raw_readers]):
+            raise IncompatibleDataError('cannot read monopolar and bipolar data together')
+        self.channel_name = raw_readers[0].channel_name
+
         return raw_readers, original_dataroots
 
     def read_session_data(self):
@@ -120,8 +129,9 @@ class EEGReader(PropertiedObject,BaseReader):
 
         :return: TimeSeriesX object (channels x events x time) with data for entire session the events dimension has length 1
         """
-        brr = BaseRawReader(dataroot=self.session_dataroot, channels=self.channels)
+        brr = self.READER_FILETYPE_DICT[self.session_dataroot](dataroot=self.session_dataroot, channels=self.channels)
         session_array,read_ok_mask = brr.read()
+        self.channel_name = brr.channel_name
 
         offsets_axis = session_array['offsets']
         number_of_time_points = offsets_axis.shape[0]
@@ -131,9 +141,9 @@ class EEGReader(PropertiedObject,BaseReader):
         # session_array = session_array.rename({'start_offsets': 'events'})
 
         session_time_series = TimeSeriesX(session_array.values,
-                                          dims=['channels', 'start_offsets', 'time'],
+                                          dims=[self.channel_name, 'start_offsets', 'time'],
                                           coords={
-                                              'channels': session_array['channels'],
+                                              self.channel_name: session_array[self.channel_name],
                                               'start_offsets': session_array['start_offsets'],
                                               'time': physical_time_array,
                                               'offsets': ('time', session_array['offsets']),
@@ -197,15 +207,15 @@ class EEGReader(PropertiedObject,BaseReader):
         # samplerate=eventdata.attrs['samplerate'].data
         samplerate = float(eventdata['samplerate'])
         tdim = np.arange(eventdata.shape[-1]) * (1.0 / samplerate) + (self.start_time - self.buffer_time)
-        cdim = eventdata['channels']
+        cdim = eventdata[self.channel_name]
         edim = np.concatenate(events).view(np.recarray).copy()
 
         attrs = eventdata.attrs.copy()
         # constructing TimeSeries Object
         # eventdata = TimeSeriesX(eventdata.data,dims=['channels','events','time'],coords=[cdim,edim,tdim])
         eventdata = TimeSeriesX(eventdata.data,
-                                dims=['channels', 'events', 'time'],
-                                coords={'channels': cdim,
+                                dims=[self.channel_name, 'events', 'time'],
+                                coords={self.channel_name: cdim,
                                         'events': edim,
                                         'time': tdim,
                                         'samplerate': samplerate
