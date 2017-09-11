@@ -24,23 +24,32 @@ class TestH5Reader(unittest.TestCase):
 
     def test_h5reader_many_offsets(self):
         offsets = np.arange(0,210000,3000)
-        h5_data,_ = H5RawReader.read_h5file(self.h5_dataroot,self.channels,offsets,1000)
+        h5_data,_ = H5RawReader.read_h5file(self.h5_dataroot, self.channels, offsets, 1000)
         raw_timeseries,_ = BaseRawReader(dataroot=self.raw_dataroot,channels=self.channels,start_offsets=offsets,read_size=1000).read()
         assert (raw_timeseries.data==h5_data*raw_timeseries.gain).all()
 
     def test_h5reader_out_of_bounds(self):
         offsets = np.arange(1000000,4000000,1000000)
-        h5_data,h5_mask = H5RawReader.read_h5file(self.h5_dataroot,self.channels,offsets,1000)
+        h5_data,h5_mask = H5RawReader.read_h5file(self.h5_dataroot, self.channels, offsets, 1000)
         raw_data,raw_mask = BaseRawReader(dataroot=self.raw_dataroot,channels=self.channels,start_offsets=offsets,read_size=1000).read()
         assert(raw_mask==h5_mask).all()
         assert(h5_data[h5_mask]==raw_data.data[raw_mask]).all()
+
+
+    def test_h5reader_constructor(self):
+        dataroot = osp.join(osp.dirname(__file__),
+                            'data','R1308T','experiments','FR5','sessions','0','ephys','current_processed','noreref',
+                            'R1308T_FR5_0_08Sep17_1453.h5')
+        reader = H5RawReader(dataroot=dataroot,channels= self.channels)
+        reader.read()
+
 
     @pytest.mark.skip
     @pytest.mark.slow
     def test_h5_reader_timing(self):
         channels = np.array(['%.03d' % i for i in range(1, 100)])
         tic=time.time()
-        h5_data,_ = H5RawReader.read_h5file(self.h5_dataroot,channels=channels)
+        h5_data,_ = H5RawReader.read_h5file(self.h5_dataroot, channels=channels)
         toc = time.time()
         del h5_data
         h5dur = toc-tic
