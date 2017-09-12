@@ -4,6 +4,8 @@ import unittest,pytest
 import numpy as np
 from ptsa.data.readers.H5RawReader import H5RawReader
 from ptsa.data.readers.BaseRawReader import BaseRawReader
+from ptsa.data.readers.CMLEventReader import CMLEventReader
+from ptsa.data.readers import EEGReader
 import time
 
 @skip_without_rhino
@@ -38,10 +40,20 @@ class TestH5Reader(unittest.TestCase):
 
     def test_h5reader_constructor(self):
         dataroot = osp.join(osp.dirname(__file__),
-                            'data','R1308T','experiments','FR5','sessions','0','ephys','current_processed','noreref',
-                            'R1308T_FR5_0_08Sep17_1453.h5')
+                            'data','R1308T','experiments','FR1','sessions','3','ephys','current_processed','noreref',
+                            'R1308T_FR1_3_13Jun17_1917.h5')
         reader = H5RawReader(dataroot=dataroot,channels= self.channels)
         reader.read()
+        assert reader.channel_name=='bipolar_pairs'
+
+    def test_with_events(self):
+        dataroot_format = osp.join(osp.dirname(__file__),
+                                   'data','R1308T','experiments','FR1','sessions','%s','behavioral','current_processed',
+                                   'task_events.json')
+
+        events = np.concatenate([CMLEventReader(filename=dataroot_format%s).read() for s in [1,2,3]]).view(np.recarray)
+        events = events[(events.list==1) & (events.type=='WORD')]
+        EEGReader(events=events,channels=self.channels,start_time=0.0,end_time=0.5).read()
 
 
     @pytest.mark.skip
