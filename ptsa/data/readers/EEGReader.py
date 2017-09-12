@@ -48,8 +48,8 @@ class EEGReader(PropertiedObject,BaseReader):
         TypeValTuple('session_dataroot', six.string_types, ''),
     ]
 
-    READER_FILETYPE_DICT = defaultdict(lambda : BaseRawReader,
-                                       h5=H5RawReader)
+    READER_FILETYPE_DICT = defaultdict(lambda : BaseRawReader)
+    READER_FILETYPE_DICT.update({'.h5':H5RawReader})
 
 
     def __init__(self, **kwds):
@@ -116,10 +116,6 @@ class EEGReader(PropertiedObject,BaseReader):
             raw_readers.append(brr)
 
             original_dataroots.append(dataroot)
-
-        if not all([r.channel_name==raw_readers[0].channel_name for r in raw_readers]):
-            raise IncompatibleDataError('cannot read monopolar and bipolar data together')
-        self.channel_name = raw_readers[0].channel_name
 
         return raw_readers, original_dataroots
 
@@ -195,6 +191,15 @@ class EEGReader(PropertiedObject,BaseReader):
 
 
             ts_array_list.append(ts_array)
+
+
+        if not all([r.channel_name==raw_readers[0].channel_name for r in raw_readers]):
+            raise IncompatibleDataError('cannot read monopolar and bipolar data together')
+
+        self.channel_name = raw_readers[0].channel_name
+        # print('raw_reader_channel_names: \n%s'%[x.channel_name for x in raw_readers])
+        # print('self.channel_name: %s'%self.channel_name)
+
 
         event_indices_array = np.hstack(event_indices_list)
 
