@@ -3,6 +3,8 @@ import numpy as np
 import tables
 import os.path as osp
 
+
+
 class H5RawReader(BaseRawReader):
 
     def __init__(self,**kwargs):
@@ -12,15 +14,20 @@ class H5RawReader(BaseRawReader):
 
 
     def read_file(self,filename, channels, start_offsets=np.array([0]), read_size=-1):
-        event_data,read_ok_mask = self.read_h5file(filename, channels, start_offsets, read_size)
         eegfile = tables.open_file(filename=filename)
         if 'bipolar_info' in eegfile.root:
+            if not (np.in1d(channels,eegfile.root.bipolar_info.ch0_label).all()):
+                raise IndexError('Channel[s] %s not in recording'%(
+                    channels[~np.in1d(channels,eegfile.root.bipolar_info.ch0_label)])
+                                 )
             channel_mask = np.in1d(eegfile.root.bipolar_info.ch0_label, channels)
             self.channels = np.array(zip(eegfile.root.bipolar_info.ch0_label[channel_mask],
                                       eegfile.root.bipolar_info.ch1_label[channel_mask]),
                                     dtype=[('ch0',int),('ch1',int)]).view(np.recarray)
 
             self.channel_name = 'bipolar_pairs'
+        event_data,read_ok_mask = self.read_h5file(filename, channels if self.channel_name=='channels' else self.channels.ch0
+                                                   , start_offsets, read_size)
         if self.read_size==-1:
             self.read_size = max(event_data.shape)
         return event_data,read_ok_mask
