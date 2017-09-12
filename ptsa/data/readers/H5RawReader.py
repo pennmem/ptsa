@@ -6,19 +6,19 @@ import os.path as osp
 class H5RawReader(BaseRawReader):
 
     def __init__(self,**kwargs):
-        dataroot,data_ext = osp.splitext(kwargs['dataroot'])
+        _,data_ext = osp.splitext(kwargs['dataroot'])
         assert data_ext=='.h5','Dataroot missing extension'
-        kwargs['dataroot']=dataroot
         super(H5RawReader, self).__init__(**kwargs)
-        self.dataroot+=data_ext
 
 
     def read_file(self,filename, channels, start_offsets=np.array([0]), read_size=-1):
         event_data,read_ok_mask = self.read_h5file(filename, channels, start_offsets, read_size)
         eegfile = tables.open_file(filename=filename)
         if 'bipolar_info' in eegfile.root:
-            self.channels = np.array([eegfile.root.bipolar_info.ch0_label[:],eegfile.root.bipolar_info.ch1_label[:]],
-                                    dtype=[('ch0',int),('ch1',int)])
+            channel_mask = np.in1d(eegfile.root.bipolar_info.ch0_label, channels)
+            self.channels = np.array(zip(eegfile.root.bipolar_info.ch0_label[channel_mask],
+                                      eegfile.root.bipolar_info.ch1_label[channel_mask]),
+                                    dtype=[('ch0',int),('ch1',int)]).view(np.recarray)
 
             self.channel_name = 'bipolar_pairs'
         if self.read_size==-1:
