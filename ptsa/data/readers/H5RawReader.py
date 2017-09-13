@@ -15,7 +15,7 @@ class H5RawReader(BaseRawReader):
 
     def read_file(self,filename, channels, start_offsets=np.array([0]), read_size=-1):
         eegfile = tables.open_file(filename=filename)
-        if 'bipolar_info' in eegfile.root:
+        if 'bipolar_info' in eegfile.root and ('monopolar_possible' in eegfile.root and eegfile.root.monopolar_possible[:]==False):
             if not (np.in1d(channels,eegfile.root.bipolar_info.ch0_label).all()):
                 raise IndexError('Channel[s] %s not in recording'%(
                     channels[~np.in1d(channels,eegfile.root.bipolar_info.ch0_label)])
