@@ -31,10 +31,16 @@ class JsonIndexReader(object):
             self.index = json.loads(infile.read())
         self._prepend_db_root(self.protocols_root, self.index)
 
-    def as_dataframe(self):
+    def as_dataframe(self, multiindex=True):
         """Flatten the index and format as a pandas :class:`DataFrame`. The
         returned :class:`DataFrame` uses a MultiIndex consisting of subject,
         experiment, session.
+
+        Parameters
+        ----------
+        multiindex : bool
+            Set the :class:`pd.DataFrame` index to be a :class:`MultiIndex`
+            using subject, experiment, and session (default: True).
 
         Returns
         -------
@@ -56,7 +62,8 @@ class JsonIndexReader(object):
                     entries.append(entry)
 
         df = pd.DataFrame(entries)
-        df.set_index(["subject", "experiment", "session"], inplace=True)
+        if multiindex:
+            df.set_index(["subject", "experiment", "session"], inplace=True)
 
         return df
 

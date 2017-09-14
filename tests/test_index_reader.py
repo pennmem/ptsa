@@ -28,17 +28,21 @@ class TestJsonIndexReader:
     def test_montages(self, reader):
         assert len(reader.montages(subject='R1286J')) == 1
 
-    def test_as_dataframe(self, reader):
-        df = reader.as_dataframe()
+    @pytest.mark.parametrize('multi', [True, False])
+    def test_as_dataframe(self, reader, multi):
+        df = reader.as_dataframe(multiindex=multi)
 
-        assert df.index.levels[0].name == 'subject'
-        assert len(df.index.levels[0]) == 256
+        if multi:
+            assert df.index.levels[0].name == 'subject'
+            assert len(df.index.levels[0]) == 256
 
-        assert df.index.levels[1].name == 'experiment'
-        assert len(df.index.levels[1]) == 20
+            assert df.index.levels[1].name == 'experiment'
+            assert len(df.index.levels[1]) == 20
 
-        assert df.index.levels[2].name == 'session'
-        assert len(df.index.levels[2]) == 13
+            assert df.index.levels[2].name == 'session'
+            assert len(df.index.levels[2]) == 13
 
-        sessions = df.loc['R1111M', 'FR1']
-        assert len(sessions) == 4
+            sessions = df.loc['R1111M', 'FR1']
+            assert len(sessions) == 4
+        else:
+            assert len(df[(df.subject == 'R1111M') & (df.experiment == 'FR1')]) == 4

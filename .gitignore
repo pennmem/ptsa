@@ -1,3 +1,4 @@
+*.nc
 .DS_Store
 .cache/
 .idea/
