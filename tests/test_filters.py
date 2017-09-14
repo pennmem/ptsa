@@ -138,6 +138,7 @@ class TestFilters(unittest.TestCase):
             decimal=5
         )
 
+    @pytest.mark.slow
     def test_ButterwothFilter(self):
 
         from xarray.testing import assert_equal
