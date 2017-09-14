@@ -1,3 +1,4 @@
 sphinx
 nbsphinx  # sphinx extension for processing Jupyter notebooks
 ipython   # for lexers
+sphinx_rtd_theme
