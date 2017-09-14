@@ -130,7 +130,7 @@ class BaseEventReader(PropertiedObject, BaseReader):
             eeg_dir = os.path.join(os.path.dirname(self.filename), '..', '..', 'ephys', 'current_processed', 'noreref')
             eeg_dir = os.path.abspath(eeg_dir)
             for ev in evs:
-                ev.eegfile = os.path.join(eeg_dir, ev.eegfile)
+                ev.eegfile = os.path.join(eeg_dir, ev.eegfile.decode())
 
         return evs
 
