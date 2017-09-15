@@ -110,7 +110,8 @@ class BaseEventReader(PropertiedObject, BaseReader):
 
         """
         events = self.read()
-        return pd.DataFrame.from_records(events, exclude=['stim_params'])
+        exclude = ['stim_params'] if 'stim_params' in events.dtype.fields else None
+        return pd.DataFrame.from_records(events, exclude=exclude)
 
     def check_reader_settings_for_json_read(self):
 
