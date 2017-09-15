@@ -16,7 +16,7 @@ add_pyver("--py36", help="build for Python 3.6", const="3.6")
 args = parser.parse_args()
 
 py_versions = args.py_versions or ["2.7", "3.5", "3.6"]
-cmd = "conda build --python {version:s} -c conda-forge conda.recipe"
+cmd = "conda build --python {version:s} -c pennmem conda.recipe"
 
 for version in py_versions:
     cmd_str = cmd.format(version=version)
