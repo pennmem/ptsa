@@ -1,15 +1,9 @@
 import os
 import os.path as osp
-import shutil
 import sys
-from subprocess import check_call
-from contextlib import contextmanager
-from zipfile import ZipFile
 import site
 
-from setuptools import setup, Extension, Command
-from setuptools.command.build_py import build_py
-from setuptools.command.install import install
+from setuptools import setup, Extension
 import distutils
 import numpy as np
 
@@ -36,15 +30,6 @@ if sys.platform.startswith("win"):
     os.environ["VS90COMNTOOLS"] = os.environ["VS140COMNTOOLS"]
 
 
-@contextmanager
-def chdir(path):
-    """Change to a directory and then change back."""
-    orig_cwd = os.getcwd()
-    os.chdir(path)
-    yield
-    os.chdir(orig_cwd)
-
-
 def check_dependencies():
     """Checks for dependencies that aren't installable via pip."""
     if not distutils.spawn.find_executable('swig'):
@@ -67,11 +52,6 @@ def get_numpy_include_dir():
 def get_include_dirs():
     """Return extra include directories for building extensions."""
     dirs = [get_numpy_include_dir(), osp.join(extensions_dir, 'ThreadPool')]
-
-    if sys.platform.startswith("win"):
-        dirs += [third_party_install_dir]
-    else:
-        dirs += [osp.join(third_party_install_dir, 'include')]
     return dirs
 
 
@@ -93,18 +73,6 @@ def get_compiler_args():
         return ['-std=c++11']
 
 
-class CustomBuild(build_py):
-    def run(self):
-        self.run_command("build_ext")
-        build_py.run(self)
-
-
-class CustomInstall(install):
-    def run(self):
-        self.run_command("build_ext")
-        install.run(self)
-
-
 ext_modules = [
     Extension(
         'ptsa.extensions.morlet._morlet',
@@ -113,7 +81,7 @@ ext_modules = [
                  osp.join(morlet_dir, 'morlet.i')],
         swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
-        library_dirs=get_lib_dirs(),
+        # library_dirs=get_lib_dirs(),
         extra_compile_args=get_compiler_args(),
         # libraries=get_fftw_libs(),
     ),
@@ -126,7 +94,7 @@ ext_modules = [
         ],
         swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
-        library_dirs=get_lib_dirs(),
+        # library_dirs=get_lib_dirs(),
         extra_compile_args=get_compiler_args(),
         # libraries=get_fftw_libs(),
     ),
@@ -150,10 +118,6 @@ setup(
     maintainer=['Per B. Sederberg', 'Maciek Swat'],
     maintainer_email=['psederberg@gmail.com', 'maciekswat@gmail.com'],
     url='https://github.com/maciekswat/ptsa_new',
-    cmdclass={
-        'build_py': CustomBuild,
-        'install': CustomInstall
-    },
     ext_modules=ext_modules,
 
     # This doesn't seem to work because of custom commands. For now, just
