@@ -1,7 +1,7 @@
 import os
 import os.path as osp
 import sys
-import site
+from ctypes.util import find_library
 
 from setuptools import setup, Extension
 import distutils
@@ -12,15 +12,7 @@ build_subdir = 'build'
 morlet_dir = osp.join(root_dir, 'ptsa', 'extensions', 'morlet')
 extensions_dir = osp.join(root_dir, 'ptsa', 'extensions')
 circ_stat_dir = osp.join(root_dir, 'ptsa', 'extensions', 'circular_stat')
-third_party_build_dir = osp.join(root_dir, build_subdir, 'third_party_build')
-third_party_install_dir = osp.join(root_dir, build_subdir, 'third_party_install')
-
-for path in site.getsitepackages():
-    if path.endswith("site-packages"):
-        site_packages = path
-        break
-else:
-    raise RuntimeError("site-packages not found?!?")
+python_dir = osp.dirname(sys.executable)
 
 # see recipe http://stackoverflow.com/questions/12491328/python-distutils-not-include-the-swig-generated-module
 
@@ -51,16 +43,25 @@ def get_numpy_include_dir():
 
 def get_include_dirs():
     """Return extra include directories for building extensions."""
-    dirs = [get_numpy_include_dir(), osp.join(extensions_dir, 'ThreadPool')]
+    dirs = [
+        get_numpy_include_dir(),
+        osp.join(extensions_dir, 'ThreadPool')
+    ]
+
+    if sys.platform.startswith('win'):
+        include_dir = osp.join(python_dir, 'Library', 'include')
+    else:
+        include_dir = osp.join(python_dir, 'include')
+
+    if 'fftw3.h' in os.listdir(include_dir):
+        dirs.append(include_dir)
+
     return dirs
 
 
 def get_lib_dirs():
     """Return extra library directories for building extensions."""
-    if sys.platform.startswith('win'):
-        return [third_party_install_dir]
-    else:
-        return [osp.join(third_party_install_dir, 'lib')]
+    return [find_library('fftw3')]
 
 
 def get_compiler_args():
@@ -81,7 +82,7 @@ ext_modules = [
                  osp.join(morlet_dir, 'morlet.i')],
         swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
-        # library_dirs=get_lib_dirs(),
+        library_dirs=get_lib_dirs(),
         extra_compile_args=get_compiler_args(),
         # libraries=get_fftw_libs(),
     ),
@@ -94,7 +95,7 @@ ext_modules = [
         ],
         swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
-        # library_dirs=get_lib_dirs(),
+        library_dirs=get_lib_dirs(),
         extra_compile_args=get_compiler_args(),
         # libraries=get_fftw_libs(),
     ),
