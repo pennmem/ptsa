@@ -275,7 +275,7 @@ setup(
     ext_modules=ext_modules,
 
     # This doesn't seem to work because of custom commands. For now, just
-    # install the prereqs with conda/pip.
+    # install the prereqs with conda (see README).
     # See: http://stackoverflow.com/questions/20194565/running-custom-setuptools-build-during-install#20196065
     install_requires=[
         "numpy",
