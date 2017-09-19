@@ -7,14 +7,24 @@ import os.path as osp
 
 class H5RawReader(BaseRawReader):
 
+    def __del__(self):
+        self.eegfile.close()
+
     def __init__(self,**kwargs):
         _,data_ext = osp.splitext(kwargs['dataroot'])
         assert data_ext=='.h5','Dataroot missing extension'
         super(H5RawReader, self).__init__(**kwargs)
+        self._eegfile = None
+
+    @property
+    def eegfile(self):
+        if self._eegfile is None:
+            self._eegfile = tables.open_file(self.dataroot)
+        return self._eegfile
 
 
     def read_file(self,filename, channels, start_offsets=np.array([0]), read_size=-1):
-        eegfile = tables.open_file(filename=filename)
+        eegfile = self.eegfile
         if 'bipolar_info' in eegfile.root and ('monopolar_possible' in eegfile.root and eegfile.root.monopolar_possible[:]==False):
             if not (np.in1d(channels,eegfile.root.bipolar_info.ch0_label).all()):
                 raise IndexError('Channel[s] %s not in recording'%(
@@ -26,15 +36,14 @@ class H5RawReader(BaseRawReader):
                                     dtype=[('ch0',int),('ch1',int)]).view(np.recarray)
 
             self.channel_name = 'bipolar_pairs'
-        event_data,read_ok_mask = self.read_h5file(filename, channels if self.channel_name=='channels' else self.channels.ch0
+        event_data,read_ok_mask = self.read_h5file(eegfile, channels if self.channel_name=='channels' else self.channels.ch0
                                                    , start_offsets, read_size)
         if self.read_size==-1:
             self.read_size = max(event_data.shape)
         return event_data,read_ok_mask
 
     @staticmethod
-    def read_h5file(filename, channels, start_offsets=np.array([0]), read_size=-1):
-        eegfile = tables.open_file(filename)
+    def read_h5file(eegfile, channels, start_offsets=np.array([0]), read_size=-1):
         timeseries = eegfile.root.timeseries
         ports = eegfile.root.ports
         channels_to_read = np.where(np.in1d(ports, channels.astype(int)))[0]
@@ -43,7 +52,6 @@ class H5RawReader(BaseRawReader):
                 eventdata = timeseries[:, channels_to_read].T
             else:
                 eventdata = timeseries[channels_to_read, :]
-            eegfile.close()
             return eventdata[:, None, :], np.ones((len(channels), 1)).astype(bool)
 
         else:
@@ -61,14 +69,12 @@ class H5RawReader(BaseRawReader):
                     else:
                         print(
                             'Cannot read full chunk of data for offset ' + str(start_offset) +
-                            'End of read interval  is outside the bounds of file ' + filename)
+                            'End of read interval  is outside the bounds of file ' + eegfile.filename)
                         read_ok_mask[:, i] = False
                 except IndexError:
                     print(
                         'Cannot read full chunk of data for offset ' + str(start_offset) +
-                        'End of read interval  is outside the bounds of file ' + filename)
+                        'End of read interval  is outside the bounds of file ' + eegfile.filename)
                     read_ok_mask[:, i] = False
 
-            eegfile.close()
-
-        return eventdata,read_ok_mask,
+            return eventdata,read_ok_mask,
