@@ -7,40 +7,31 @@ import os.path as osp
 
 class H5RawReader(BaseRawReader):
 
-    def __del__(self):
-        self.eegfile.close()
-
     def __init__(self,**kwargs):
         _,data_ext = osp.splitext(kwargs['dataroot'])
         assert data_ext=='.h5','Dataroot missing extension'
         super(H5RawReader, self).__init__(**kwargs)
-        self._eegfile = None
 
-    @property
-    def eegfile(self):
-        if self._eegfile is None:
-            self._eegfile = tables.open_file(self.dataroot)
-        return self._eegfile
 
 
     def read_file(self,filename, channels, start_offsets=np.array([0]), read_size=-1):
-        eegfile = self.eegfile
-        if 'bipolar_info' in eegfile.root and ('monopolar_possible' in eegfile.root and eegfile.root.monopolar_possible[:]==False):
-            if not (np.in1d(channels,eegfile.root.bipolar_info.ch0_label).all()):
-                raise IndexError('Channel[s] %s not in recording'%(
-                    channels[~np.in1d(channels,eegfile.root.bipolar_info.ch0_label)])
-                                 )
-            channel_mask = np.in1d(eegfile.root.bipolar_info.ch0_label, channels)
-            self.channels = np.array(zip(eegfile.root.bipolar_info.ch0_label[channel_mask],
-                                      eegfile.root.bipolar_info.ch1_label[channel_mask]),
-                                    dtype=[('ch0',int),('ch1',int)]).view(np.recarray)
+        with tables.open_file(self.dataroot) as eegfile:
+            if 'bipolar_info' in eegfile.root and ('monopolar_possible' in eegfile.root and eegfile.root.monopolar_possible[:]==False):
+                if not (np.in1d(channels,eegfile.root.bipolar_info.ch0_label).all()):
+                    raise IndexError('Channel[s] %s not in recording'%(
+                        channels[~np.in1d(channels,eegfile.root.bipolar_info.ch0_label)])
+                                     )
+                channel_mask = np.in1d(eegfile.root.bipolar_info.ch0_label, channels)
+                self.channels = np.array(zip(eegfile.root.bipolar_info.ch0_label[channel_mask],
+                                          eegfile.root.bipolar_info.ch1_label[channel_mask]),
+                                        dtype=[('ch0',int),('ch1',int)]).view(np.recarray)
 
-            self.channel_name = 'bipolar_pairs'
-        event_data,read_ok_mask = self.read_h5file(eegfile, channels if self.channel_name=='channels' else self.channels.ch0
-                                                   , start_offsets, read_size)
-        if self.read_size==-1:
-            self.read_size = max(event_data.shape)
-        return event_data,read_ok_mask
+                self.channel_name = 'bipolar_pairs'
+            event_data,read_ok_mask = self.read_h5file(eegfile, channels if self.channel_name=='channels' else self.channels.ch0
+                                                       , start_offsets, read_size)
+            if self.read_size==-1:
+                self.read_size = max(event_data.shape)
+            return event_data,read_ok_mask
 
     @staticmethod
     def read_h5file(eegfile, channels, start_offsets=np.array([0]), read_size=-1):
