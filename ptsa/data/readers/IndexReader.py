@@ -13,10 +13,12 @@ class JsonIndexReader(object):
     specific methods subject(), experiment(), session() or montage().
     """
 
-    FIELDS = (('protocols', '{protocol}'),
-              ('subjects', '{subject}'),
-              ('experiments', '{experiment}'),
-              ('sessions', '{session}'),)
+    FIELD_KEYS = (('protocols', '{protocol}'),
+                  ('subjects', '{subject}'),
+                  ('experiments', '{experiment}'),
+                  ('sessions', '{session}'),)
+
+    FIELD_NAMES = ('protocol','subject','experiment','session')
 
     def __init__(self, index_file):
         """
@@ -116,14 +118,13 @@ class JsonIndexReader(object):
         :return: None
         """
         orig_indexes = indexes
-        for f_k, f_v in cls.FIELDS:
+        for f_k, f_v in cls.FIELD_KEYS:
             if len(indexes) == 0:
                 break
             if f_k not in indexes[0]:
                 continue
             try:
                 v = f_v.format(**kwargs)
-                kwargs_k = [k for (k,_) in kwargs.items() if str(kwargs[k])==v][0] # This list comprehension matches exactly 1 item
                 for index in indexes:
                     if v not in index[f_k]:
                         del index[f_k]
@@ -131,7 +132,6 @@ class JsonIndexReader(object):
                         for k in list(index[f_k].keys()):
                             if k != v:
                                 del index[f_k][k]
-                del kwargs[kwargs_k]
             except KeyError:
                 pass
             indxs = []
@@ -142,16 +142,18 @@ class JsonIndexReader(object):
 
         # Post: 'protocol','subject','experiment','session' are not in kwargs.keys()
 
-        for kwarg_f, kwarg_v in list(kwargs.items()):
+        for kwarg_f, kwarg_v in kwargs.items():
             if len(indexes) == 0:
                 break
-
             for index in indexes:
-                if kwarg_f not in index:
-                    index.clear()
-                elif str(index[kwarg_f]) != str(kwarg_v):
-                    index.clear()
-
+                try:
+                    if str(index[kwarg_f]) != str(kwarg_v):
+                        index.clear()
+                except KeyError:
+                    if index in cls.FIELD_NAMES:
+                        continue
+                    else:
+                        index.clear()
         cls._prune(*orig_indexes)
 
     @classmethod
@@ -160,7 +162,7 @@ class JsonIndexReader(object):
         cls._filter(*these_indexes, **kwargs)
         sub_indexes = {}
         is_leaf = True
-        for key, value in cls.FIELDS:
+        for key, value in cls.FIELD_KEYS:
             if not these_indexes or not key in these_indexes[0]:
                 continue
             sub_indexes = [indx[key] for indx in these_indexes]
