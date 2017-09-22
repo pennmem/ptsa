@@ -12,9 +12,9 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
+# import sys
 import os
-sys.path.insert(0, '..')
+# sys.path.insert(0, '..')
 from ptsa import __version__
 
 # If extensions (or modules to document with autodoc) are in another directory,

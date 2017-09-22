@@ -1,3 +1,5 @@
+.buildinfo
+doctrees/
 *.nc
 .DS_Store
 .cache/

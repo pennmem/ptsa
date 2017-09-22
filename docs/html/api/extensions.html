@@ -1,0 +1,390 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Extension Modules &mdash; PTSA 1.1.dev3 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="PTSA 1.1.dev3 documentation" href="../index.html"/>
+        <link rel="up" title="API Reference" href="index.html"/>
+        <link rel="next" title="Development guidelines" href="../development.html"/>
+        <link rel="prev" title="Filters" href="data/filters.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> PTSA
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.1.dev3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">PTSA Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ramdata.html">Interacting with RAM Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filters.html">Filtering Time Series</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="data.html">ptsa.data</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Extension Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-ptsa.extensions.circular_stat">ptsa.extensions.circular_stat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ptsa-extensions-morlet">ptsa.extensions.morlet</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-ptsa.filt">Filtering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-ptsa.helper">Helpers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-ptsa.hilbert">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Development guidelines</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PTSA</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">API Reference</a> &raquo;</li>
+        
+      <li>Extension Modules</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/extensions.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="extension-modules">
+<h1>Extension Modules<a class="headerlink" href="#extension-modules" title="Permalink to this headline">¶</a></h1>
+<p>C/C++ extension modules, for accelerated calculations.</p>
+<div class="section" id="module-ptsa.extensions.circular_stat">
+<span id="ptsa-extensions-circular-stat"></span><h2>ptsa.extensions.circular_stat<a class="headerlink" href="#module-ptsa.extensions.circular_stat" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ptsa.extensions.circular_stat.circ_diff">
+<code class="descclassname">ptsa.extensions.circular_stat.</code><code class="descname">circ_diff</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>Z</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the angular difference of the complex arrays X and Y, storing the value in Z</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong><strong>,</strong><strong>Y</strong><strong>,</strong><strong>Z</strong> – np.array[np.complex]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ptsa.extensions.circular_stat.circ_diff_par">
+<code class="descclassname">ptsa.extensions.circular_stat.</code><code class="descname">circ_diff_par</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>Z</em>, <em>n_threads</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_diff_par" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the angular difference of the complex arrays X and Y, storing the value in Z.
+The computation is performed in parallel over <code class="docutils literal"><span class="pre">n_threads</span></code> threads</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>X</strong><strong>,</strong><strong>Y</strong><strong>,</strong><strong>Z</strong> – np.array[np.complex]</li>
+<li><strong>n_threads</strong> – int</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ptsa.extensions.circular_stat.circ_mean">
+<code class="descclassname">ptsa.extensions.circular_stat.</code><code class="descname">circ_mean</code><span class="sig-paren">(</span><em>Z</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the average angle of a vector of complex numbers, weighted by the magnitude of each number.
+Thus, circ_mean([1+0j, 1+0j, 0+1j]) == circ_mean([2+0j, 0+1j])</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ptsa.extensions.circular_stat.circ_diff_time_bins">
+<code class="descclassname">ptsa.extensions.circular_stat.</code><code class="descname">circ_diff_time_bins</code><span class="sig-paren">(</span><em>c1</em>, <em>c2</em>, <em>c_diff</em>, <em>cdiff_means</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_diff_time_bins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the circular difference of <code class="docutils literal"><span class="pre">c1</span></code> and <code class="docutils literal"><span class="pre">c2</span></code>, stores the result in <code class="docutils literal"><span class="pre">c_diff</span></code>, then fills <code class="docutils literal"><span class="pre">cdiff_means</span></code> with the average
+binned differences.</p>
+<p><code class="docutils literal"><span class="pre">len(cdiff_means)</span></code> must divide <code class="docutils literal"><span class="pre">len(c1)</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ptsa.extensions.circular_stat.compute_f_stat">
+<code class="descclassname">ptsa.extensions.circular_stat.</code><code class="descname">compute_f_stat</code><span class="sig-paren">(</span><em>phase_diffs</em>, <em>classes</em>, <em>f_stat</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.compute_f_stat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs an F-test, i.e. a circular ANOVA, comparing the variance of <code class="docutils literal"><span class="pre">phase_diffs</span></code>
+when partitioned into two classes, and stores the results in fstat.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>phase_diffs</strong> – A matrix of phase differences</li>
+<li><strong>classes</strong> – A boolean vector indicating which observation belongs in which class. Should be the same length as
+the first dimension of <code class="docutils literal"><span class="pre">phase_diffs</span></code></li>
+<li><strong>f_stat</strong> – An empty vector the same length as the second dimension of <code class="docutils literal"><span class="pre">phase_diffs</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ptsa.extensions.circular_stat.compute_z_scores">
+<code class="descclassname">ptsa.extensions.circular_stat.</code><code class="descname">compute_z_scores</code><span class="sig-paren">(</span><em>m</em>, <em>n_perms</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.compute_z_scores" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ptsa.extensions.circular_stat.single_trial_ppc_all_features">
+<code class="descclassname">ptsa.extensions.circular_stat.</code><code class="descname">single_trial_ppc_all_features</code><span class="sig-paren">(</span><em>recalls</em>, <em>wavelets</em>, <em>ppc_output</em>, <em>theta_sum_recalls</em>, <em>theta_sum_non_recalls</em>, <em>n_freqs</em>, <em>n_bps</em>, <em>n_threads</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.single_trial_ppc_all_features" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descclassname">ptsa.extensions.circular_stat.</code><code class="descname">single_trial_ppc_all_features</code><span class="sig-paren">(</span><em>wavelets</em>, <em>theta_avg_recalls</em>, <em>theta_avg_non_recalls</em>, <em>outsample_features</em>, <em>n_freqs</em>, <em>n_bps</em>, <em>n_threads</em><span class="sig-paren">)</span></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="ptsa-extensions-morlet">
+<h2>ptsa.extensions.morlet<a class="headerlink" href="#ptsa-extensions-morlet" title="Permalink to this headline">¶</a></h2>
+<p>Low-level functions for quickly computing Morlet wavelet decompositions.
+<a class="reference internal" href="data/filters.html#ptsa.data.filters.MorletWaveletFilterCpp" title="ptsa.data.filters.MorletWaveletFilterCpp"><code class="xref py py-mod docutils literal"><span class="pre">MorletWaveletFilterCpp</span></code></a> provides a higher-level interface for these same functions.</p>
+<span class="target" id="module-ptsa.extensions.morlet"></span></div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../development.html" class="btn btn-neutral float-right" title="Development guidelines" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="data/filters.html" class="btn btn-neutral" title="Filters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.1.dev3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
