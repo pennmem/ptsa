@@ -14,6 +14,8 @@ class H5RawReader(BaseRawReader):
 
     def read_file(self,filename, channels, start_offsets=np.array([0]), read_size=-1):
         with tables.open_file(self.dataroot) as eegfile:
+            if len(channels)==0:
+                channels = self.channels = np.array(['{:03d}'.format(x) for x in eegfile.root.ports[:]])
             if 'bipolar_info' in eegfile.root and ('monopolar_possible' in eegfile.root and eegfile.root.monopolar_possible[:]==False):
                 if not (np.in1d(channels,eegfile.root.bipolar_info.ch0_label).all()):
                     raise IndexError('Channel[s] %s not in recording'%(
@@ -35,8 +37,6 @@ class H5RawReader(BaseRawReader):
     def read_h5file(eegfile, channels, start_offsets=np.array([0]), read_size=-1):
         timeseries = eegfile.root.timeseries
         ports = eegfile.root.ports
-        if len(channels)==0:
-            channels = np.array(ports[:])
         channels_to_read = np.where(np.in1d(ports, channels.astype(int)))[0]
         if read_size < 0:
             if 'orient' in timeseries.attrs and timeseries.attrs['orient'] == 'row':

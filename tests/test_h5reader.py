@@ -56,8 +56,12 @@ class TestH5Reader(unittest.TestCase):
         EEGReader(events=events,channels=np.array(['%.03d'%i for i in range(1,10)]),start_time=0.0,end_time=0.5).read()
 
     def test_h5reader_empty_channels(self):
-        h5_data,_ = H5RawReader.read_h5file(self.h5file,np.array([],dtype='S3'),[0],1000)
-        assert len(h5_data)>0
+        dataroot_format = osp.join(get_rhino_root(),'scratch','ptsa_test','R1308T', 'experiments', 'FR1', 'sessions', '3',
+                                   'behavioral','current_processed','task_events.json')
+        events = CMLEventReader(filename=dataroot_format).read()[:20]
+        eeg = EEGReader(events=events,channels=np.array([]),start_time=0.0,end_time=0.5).read()
+        assert len(eeg.bipolar_pairs)>0
+
 
 
     @pytest.mark.skip
