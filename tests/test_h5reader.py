@@ -55,6 +55,10 @@ class TestH5Reader(unittest.TestCase):
         events = CMLEventReader(filename=dataroot_format).read()[:20]
         EEGReader(events=events,channels=np.array(['%.03d'%i for i in range(1,10)]),start_time=0.0,end_time=0.5).read()
 
+    def test_h5reader_empty_channels(self):
+        h5_data,_ = H5RawReader.read_h5file(self.h5file,np.array([],dtype='S3'),[0],1000)
+        assert len(h5_data)>0
+
 
     @pytest.mark.skip
     @pytest.mark.slow
