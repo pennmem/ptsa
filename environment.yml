@@ -1,4 +1,4 @@
-name: ptsa_new
+name: ptsa
 channels:
 - defaults
 dependencies:
