@@ -150,7 +150,7 @@ class JsonIndexReader(object):
                     if str(index[kwarg_f]) != str(kwarg_v):
                         index.clear()
                 except KeyError:
-                    if index in cls.FIELD_NAMES:
+                    if kwarg_f in cls.FIELD_NAMES:
                         continue
                     else:
                         index.clear()
