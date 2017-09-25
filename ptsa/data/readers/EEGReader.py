@@ -4,9 +4,15 @@ from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.readers.ParamsReader import ParamsReader
 from ptsa.data.readers.BaseRawReader import BaseRawReader
+from ptsa.data.readers.H5RawReader import H5RawReader
 from ptsa.data.readers import BaseReader
 import time
 from ptsa import six
+from collections import defaultdict,namedtuple
+import os.path
+
+class IncompatibleDataError(Exception):
+    pass
 
 class EEGReader(PropertiedObject,BaseReader):
     """
@@ -42,6 +48,10 @@ class EEGReader(PropertiedObject,BaseReader):
         TypeValTuple('session_dataroot', six.string_types, ''),
     ]
 
+    READER_FILETYPE_DICT = defaultdict(lambda : BaseRawReader)
+    READER_FILETYPE_DICT.update({'.h5':H5RawReader})
+
+
     def __init__(self, **kwds):
         """
 
@@ -56,6 +66,7 @@ class EEGReader(PropertiedObject,BaseReader):
         self.read_fcn = self.read_events_data
         if self.session_dataroot:
             self.read_fcn = self.read_session_data
+        self.channel_name = 'channels'
 
     def compute_read_offsets(self, dataroot):
         """
@@ -83,6 +94,7 @@ class EEGReader(PropertiedObject,BaseReader):
         """
         Creates BaseRawreader for each (unique) dataroot present in events recarray
         :return: list of BaseRawReaders and list of dataroots
+        :raises: [IncompatibleDataError] if the readers are not all the same class
         """
         evs = self.events
         dataroots = np.unique(evs.eegfile)
@@ -99,7 +111,7 @@ class EEGReader(PropertiedObject,BaseReader):
             # start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
             start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
 
-            brr = BaseRawReader(dataroot=dataroot, channels=self.channels, start_offsets=start_offsets,
+            brr = self.READER_FILETYPE_DICT[os.path.splitext(dataroot)[-1]](dataroot=dataroot, channels=self.channels, start_offsets=start_offsets,
                                 read_size=read_size)
             raw_readers.append(brr)
 
@@ -113,8 +125,9 @@ class EEGReader(PropertiedObject,BaseReader):
 
         :return: TimeSeriesX object (channels x events x time) with data for entire session the events dimension has length 1
         """
-        brr = BaseRawReader(dataroot=self.session_dataroot, channels=self.channels)
+        brr = self.READER_FILETYPE_DICT[self.session_dataroot](dataroot=self.session_dataroot, channels=self.channels)
         session_array,read_ok_mask = brr.read()
+        self.channel_name = brr.channel_name
 
         offsets_axis = session_array['offsets']
         number_of_time_points = offsets_axis.shape[0]
@@ -124,15 +137,13 @@ class EEGReader(PropertiedObject,BaseReader):
         # session_array = session_array.rename({'start_offsets': 'events'})
 
         session_time_series = TimeSeriesX(session_array.values,
-                                          dims=['channels', 'start_offsets', 'time'],
+                                          dims=[self.channel_name, 'start_offsets', 'time'],
                                           coords={
-                                              'channels': session_array['channels'],
+                                              self.channel_name: session_array[self.channel_name],
                                               'start_offsets': session_array['start_offsets'],
                                               'time': physical_time_array,
                                               'offsets': ('time', session_array['offsets']),
                                               'samplerate': session_array['samplerate']
-                                              # 'dataroot':self.session_dataroot
-
                                           }
                                           )
         session_time_series.attrs = session_array.attrs.copy()
@@ -181,6 +192,15 @@ class EEGReader(PropertiedObject,BaseReader):
 
             ts_array_list.append(ts_array)
 
+
+        if not all([r.channel_name==raw_readers[0].channel_name for r in raw_readers]):
+            raise IncompatibleDataError('cannot read monopolar and bipolar data together')
+
+        self.channel_name = raw_readers[0].channel_name
+        # print('raw_reader_channel_names: \n%s'%[x.channel_name for x in raw_readers])
+        # print('self.channel_name: %s'%self.channel_name)
+
+
         event_indices_array = np.hstack(event_indices_list)
 
         event_indices_restore_sort_order_array = event_indices_array.argsort()
@@ -192,15 +212,15 @@ class EEGReader(PropertiedObject,BaseReader):
         # samplerate=eventdata.attrs['samplerate'].data
         samplerate = float(eventdata['samplerate'])
         tdim = np.arange(eventdata.shape[-1]) * (1.0 / samplerate) + (self.start_time - self.buffer_time)
-        cdim = eventdata['channels']
+        cdim = eventdata[self.channel_name]
         edim = np.concatenate(events).view(np.recarray).copy()
 
         attrs = eventdata.attrs.copy()
         # constructing TimeSeries Object
         # eventdata = TimeSeriesX(eventdata.data,dims=['channels','events','time'],coords=[cdim,edim,tdim])
         eventdata = TimeSeriesX(eventdata.data,
-                                dims=['channels', 'events', 'time'],
-                                coords={'channels': cdim,
+                                dims=[self.channel_name, 'events', 'time'],
+                                coords={self.channel_name: cdim,
                                         'events': edim,
                                         'time': tdim,
                                         'samplerate': samplerate

@@ -24,6 +24,8 @@ class BaseRawReader(PropertiedObject, BaseReader):
         TypeValTuple('read_size', int, -1),
     ]
 
+    channel_name = 'channels'
+
     def __init__(self, **kwds):
         """
         Constructor
@@ -92,25 +94,57 @@ class BaseRawReader(PropertiedObject, BaseReader):
 
         """
 
-        if self.read_size < 0:
-            self.read_size = int(self.get_file_size() / self.file_format.data_size)
+        eventdata, read_ok_mask = self.read_file(self.dataroot,self.channels,self.start_offsets,self.read_size)
+        # multiply by the gain
+        eventdata *= self.params_dict['gain']
+
+        eventdata = DataArray(eventdata,
+                              dims=[self.channel_name, 'start_offsets', 'offsets'],
+                              coords={
+                                  self.channel_name: self.channels,
+                                  'start_offsets': self.start_offsets.copy(),
+                                  'offsets': np.arange(self.read_size),
+                                  'samplerate': self.params_dict['samplerate']
+
+                              }
+                              )
+
+        from copy import deepcopy
+        eventdata.attrs = deepcopy(self.params_dict)
+
+        return eventdata, read_ok_mask
+    
+    def read_file(self,filename,channels,start_offsets=np.array([0]),read_size=-1):
+        """
+        Reads raw data from binary files into a numpy array of shape (len(channels),len(start_offsets), read_size).
+         For each channel and offset, indicates whether the data at that offset on that channel could be read successfully.
+
+        :param filename: The name of the file to read
+        :param channels: The channels to read from the file
+        :param start_offsets: The indices in the array to start reading at
+        :param read_size: The number of samples to read at each offset.
+        :return: event_data: The EEG data corresponding to each offset
+        :return: read_ok_mask: Boolean mask indicating whether each offset was read successfully.
+        """
+
+        if read_size < 0:
+            read_size = int(self.get_file_size() / self.file_format.data_size)
+            self.read_size=read_size
 
         # allocate space for data
-        eventdata = np.empty((len(self.channels), len(self.start_offsets), self.read_size),
+        eventdata = np.empty((len(channels), len(start_offsets), read_size),
                              dtype=np.float) * np.nan
-
-        read_ok_mask = np.ones(shape=(len(self.channels), len(self.start_offsets)), dtype=np.bool)
-
+        read_ok_mask = np.ones(shape=(len(channels), len(start_offsets)), dtype=np.bool)
         # loop over channels
-        for c, channel in enumerate(self.channels):
+        for c, channel in enumerate(channels):
             try:
-                eegfname = self.dataroot + '.' + channel
+                eegfname = filename + '.' + channel
             except TypeError:
-                eegfname = self.dataroot + '.' + channel.decode()
+                eegfname = filename + '.' + channel.decode()
 
             with open(eegfname, 'rb') as efile:
                 # loop over start offsets
-                for e, start_offset in enumerate(self.start_offsets):
+                for e, start_offset in enumerate(start_offsets):
                     # rejecting negative offset
                     if start_offset < 0:
                         read_ok_mask[c, e] = False
@@ -121,7 +155,7 @@ class BaseRawReader(PropertiedObject, BaseReader):
                     efile.seek(self.file_format.data_size * start_offset, 0)
 
                     # read the data
-                    data = efile.read(int(self.file_format.data_size * self.read_size))
+                    data = efile.read(int(self.file_format.data_size * read_size))
 
                     # convert from string to array based on the format
                     # hard-codes little endian
@@ -129,7 +163,7 @@ class BaseRawReader(PropertiedObject, BaseReader):
                     data = np.array(struct.unpack(fmt, data))
 
                     # make sure we got some data
-                    if len(data) < self.read_size:
+                    if len(data) < read_size:
                         read_ok_mask[c, e] = False
 
                         print((
@@ -138,22 +172,5 @@ class BaseRawReader(PropertiedObject, BaseReader):
                     else:
                         # append it to the eventdata
                         eventdata[c, e, :] = data
-
-        # multiply by the gain
-        eventdata *= self.params_dict['gain']
-
-        eventdata = DataArray(eventdata,
-                              dims=['channels', 'start_offsets', 'offsets'],
-                              coords={
-                                  'channels': self.channels,
-                                  'start_offsets': self.start_offsets.copy(),
-                                  'offsets': np.arange(self.read_size),
-                                  'samplerate': self.params_dict['samplerate']
-
-                              }
-                              )
-
-        from copy import deepcopy
-        eventdata.attrs = deepcopy(self.params_dict)
 
         return eventdata, read_ok_mask
