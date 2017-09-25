@@ -1,16 +1,13 @@
 from ptsa.test.utils import get_rhino_root,skip_without_rhino
 import os.path as osp
 import unittest,pytest
-import h5py
+import tables
 import numpy as np
 from ptsa.data.readers.H5RawReader import H5RawReader
 from ptsa.data.readers.BaseRawReader import BaseRawReader
 from ptsa.data.readers.CMLEventReader import CMLEventReader
 from ptsa.data.readers import EEGReader
 import time
-
-
-channels = np.array(['%.03d'%i for i in range(1,10)])
 
 @skip_without_rhino
 class TestH5Reader(unittest.TestCase):
@@ -19,8 +16,8 @@ class TestH5Reader(unittest.TestCase):
         self.h5_dataroot = osp.join(root,'data','eeg','R1275D','behavioral','FR1','session_0','host_pc','20170531_170954','eeg_timeseries.h5')
         self.raw_dataroot = osp.join(root,'protocols','r1','subjects','R1275D','experiments','FR1','sessions','0',
                                 'ephys','current_processed','noreref','R1275D_FR1_0_31May17_2109')
-        self.channels = channels
-        self.h5file = h5py.File(self.h5_dataroot,'r')
+        self.channels = np.array(['%.03d'%i for i in range(1,10)])
+        self.h5file = tables.open_file(self.h5_dataroot)
 
     def tearDown(self):
         self.h5file.close()
@@ -45,6 +42,25 @@ class TestH5Reader(unittest.TestCase):
         assert(raw_mask==h5_mask).all()
         assert(h5_data[h5_mask]==raw_data.data[raw_mask]).all()
 
+
+    def test_h5reader_constructor(self):
+        dataroot = osp.join(osp.dirname(__file__),
+                            'data','R1308T','experiments','FR1','sessions','3','ephys','current_processed','noreref',
+                            'R1308T_FR1_3_13Jun17_1917.h5')
+        reader = H5RawReader(dataroot=dataroot,channels= self.channels)
+        reader.read()
+        assert reader.channel_name=='bipolar_pairs'
+
+    def test_with_events(self):
+        dataroot_format = osp.join(osp.dirname(__file__),
+                                   'data','R1308T','experiments','FR1','sessions','3','behavioral','current_processed',
+                                   'task_events.json')
+
+        events = CMLEventReader(filename=dataroot_format).read()
+        events = events[(events.list==1) & (events.type=='WORD')]
+        EEGReader(events=events,channels=self.channels,start_time=0.0,end_time=0.5).read()
+
+
     @pytest.mark.skip
     @pytest.mark.slow
     def test_h5_reader_timing(self):
@@ -62,23 +78,3 @@ class TestH5Reader(unittest.TestCase):
         print('h5 file read in %s seconds'%h5dur)
         print('raw files read in %s seconds'%rawdur)
         assert h5dur<=rawdur
-
-
-def test_h5reader_constructor():
-    dataroot = osp.join(osp.dirname(__file__),
-                        'data','R1308T','experiments','FR1','sessions','3','ephys','current_processed','noreref',
-                        'R1308T_FR1_3_13Jun17_1917.h5')
-    reader = H5RawReader(dataroot=dataroot,channels= channels)
-    reader.read()
-    assert reader.channel_name=='bipolar_pairs'
-
-def test_with_events():
-    dataroot_format = osp.join(osp.dirname(__file__),
-                               'data','R1308T','experiments','FR1','sessions','%s','behavioral','current_processed',
-                               'task_events.json')
-
-    events = np.concatenate([CMLEventReader(filename=dataroot_format%s).read() for s in [1,2,3]]).view(np.recarray)
-    events = events[(events.list==1) & (events.type=='WORD')]
-    EEGReader(events=events,channels=channels,start_time=0.0,end_time=0.5).read()
-
-
