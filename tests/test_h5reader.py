@@ -43,24 +43,6 @@ class TestH5Reader(unittest.TestCase):
         assert(h5_data[h5_mask]==raw_data.data[raw_mask]).all()
 
 
-    def test_h5reader_constructor(self):
-        dataroot = osp.join(osp.dirname(__file__),
-                            'data','R1308T','experiments','FR1','sessions','3','ephys','current_processed','noreref',
-                            'R1308T_FR1_3_13Jun17_1917.h5')
-        reader = H5RawReader(dataroot=dataroot,channels= self.channels)
-        reader.read()
-        assert reader.channel_name=='bipolar_pairs'
-
-    def test_with_events(self):
-        dataroot_format = osp.join(osp.dirname(__file__),
-                                   'data','R1308T','experiments','FR1','sessions','3','behavioral','current_processed',
-                                   'task_events.json')
-
-        events = CMLEventReader(filename=dataroot_format).read()
-        events = events[(events.list==1) & (events.type=='WORD')]
-        EEGReader(events=events,channels=self.channels,start_time=0.0,end_time=0.5).read()
-
-
     @pytest.mark.skip
     @pytest.mark.slow
     def test_h5_reader_timing(self):
@@ -78,3 +60,21 @@ class TestH5Reader(unittest.TestCase):
         print('h5 file read in %s seconds'%h5dur)
         print('raw files read in %s seconds'%rawdur)
         assert h5dur<=rawdur
+
+
+def test_h5reader_constructor():
+    dataroot = osp.join(osp.dirname(__file__),
+                        'data','R1308T','experiments','FR1','sessions','3','ephys','current_processed','noreref',
+                        'R1308T_FR1_3_13Jun17_1917.h5')
+    reader = H5RawReader(dataroot=dataroot,channels= np.array(['%.03d'%i for i in range(1,10)]))
+    reader.read()
+    assert reader.channel_name=='bipolar_pairs'
+
+def test_with_events():
+    dataroot_format = osp.join(osp.dirname(__file__),
+                               'data','R1308T','experiments','FR1','sessions','3','behavioral','current_processed',
+                               'task_events.json')
+
+    events = CMLEventReader(filename=dataroot_format).read()
+    events = events[(events.list==1) & (events.type=='WORD')]
+    EEGReader(events=events,channels=np.array(['%.03d'%i for i in range(1,10)]),start_time=0.0,end_time=0.5).read()
