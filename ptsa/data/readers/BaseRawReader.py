@@ -115,6 +115,17 @@ class BaseRawReader(PropertiedObject, BaseReader):
         return eventdata, read_ok_mask
     
     def read_file(self,filename,channels,start_offsets=np.array([0]),read_size=-1):
+        """
+        Reads raw data from binary files into a numpy array of shape (len(channels),len(start_offsets), read_size).
+         For each channel and offset, indicates whether the data at that offset on that channel could be read successfully.
+
+        :param filename: The name of the file to read
+        :param channels: The channels to read from the file
+        :param start_offsets: The indices in the array to start reading at
+        :param read_size: The number of samples to read at each offset.
+        :return: event_data: The EEG data corresponding to each offset
+        :return: read_ok_mask: Boolean mask indicating whether each offset was read successfully.
+        """
 
         if read_size < 0:
             read_size = int(self.get_file_size() / self.file_format.data_size)
