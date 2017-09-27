@@ -1,6 +1,25 @@
 Release Notes
 =============
 
+Version 1.1.3
+-------------
+
+**Upcoming**
+New Features
+~~~~~~~~~~~~
+
+- Added H5RawReader as a subclass of BaseRawReader, to read raw EEG data stored in HDF5 format
+  - H5RawReader dataroots should have a file extension (e.g. '.h5'), as opposed to BaseRawReader dataroots
+    which should *not* have a file extension
+  - H5RawReader (and EEGReader, when reading data from HDF5 files) allow one to pass an empty list of channels to read,
+    in which case data from all channels will be read, similar to passing -1 as the read_size to read an entire session.
+
+Bug Fixes
+~~~~~~~~~
+- Fixed bug in JsonIndexReader in which passing two conditions with the same value (e.g "session=0,montage=0") would
+  cause the reader to not return any values.
+
+
 Version 1.1.2
 -------------
 
