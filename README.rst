@@ -61,6 +61,19 @@ Install PTSA:
 Building conda packages
 -----------------------
 
+Before we begin building conda PTSA packages we need to set the PYTHON_BUILD_NUMBER system variable. For example,
+if we are building PTSA conda package for Python 2.7 we set PYTHON_BUILD_NUMBER to be 2.7. On linux you do it via
+
+.. code-block:: shell-session
+
+    export PYTHON_BUILD_VERSION=2.7
+
+on Windows:
+
+.. code-block:: shell-session
+
+    set PYTHON_BUILD_VERSION=2.7
+
 In the root conda environment, install ``conda-build``:
 
 .. code-block:: shell-session
