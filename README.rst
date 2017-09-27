@@ -74,7 +74,7 @@ on Windows:
 
     set PYTHON_BUILD_VERSION=2.7
 
-In the root conda environment, install ``conda-build``:
+Next, in the root conda environment, install ``conda-build``:
 
 .. code-block:: shell-session
 
