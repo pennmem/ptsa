@@ -13,6 +13,8 @@ New Features
     which should *not* have a file extension
   - H5RawReader (and EEGReader, when reading data from HDF5 files) allow one to pass an empty list of channels to read,
     in which case data from all channels will be read, similar to passing -1 as the read_size to read an entire session.
+- EEGReader returns TimeSeriesX with 'bipolar_pairs' axis instead of 'channels' axis when loading data recorded using
+  bipolar referencing scheme.
 
 Bug Fixes
 ---------
