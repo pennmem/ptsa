@@ -4,7 +4,7 @@ Release Notes
 Version 1.1.3
 -------------
 
-**Upcoming**
+**2017-09-28**
 New Features
 ~~~~~~~~~~~~
 
