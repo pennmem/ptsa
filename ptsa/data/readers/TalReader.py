@@ -93,8 +93,7 @@ class TalReader(PropertiedObject,BaseReader):
         if not self._json:
             from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
 
-            struct_names = ['bpTalStruct','subjTalEvents']
-            # struct_names = ['bpTalStruct']
+            struct_names = ['bpTalStruct','subjTalEvents', 'virtualTalStruct']
             if self.struct_name not in struct_names:
                 self.tal_struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.filename, self.struct_name,verbose=False)
                 if self.tal_struct_array is not None:
@@ -103,7 +102,6 @@ class TalReader(PropertiedObject,BaseReader):
                     raise AttributeError('Could not read tal struct data for the specified struct_name='+self.struct_name)
 
             else:
-
                 for sn in struct_names:
                     self.tal_struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.filename,sn,verbose=False)
                     if self.tal_struct_array is not None:
