@@ -5,9 +5,9 @@ Version 1.1.3
 -------------
 
 **2017-09-28**
-New Features
-~~~~~~~~~~~~
 
+New Features
+------------
 - Added H5RawReader as a subclass of BaseRawReader, to read raw EEG data stored in HDF5 format
   - H5RawReader dataroots should have a file extension (e.g. '.h5'), as opposed to BaseRawReader dataroots
     which should *not* have a file extension
@@ -15,10 +15,11 @@ New Features
     in which case data from all channels will be read, similar to passing -1 as the read_size to read an entire session.
 
 Bug Fixes
-~~~~~~~~~
+---------
 - Fixed bug in JsonIndexReader in which passing two conditions with the same value (e.g "session=0,montage=0") would
   cause the reader to not return any values.
-
+- `BaseEventReader.as_dataframe()` excludes the 'stim_params' field from the DataFrame it returns, since Pandas doesn't
+  support nested DataFrames.
 
 Version 1.1.2
 -------------
