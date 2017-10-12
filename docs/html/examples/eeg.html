@@ -1,0 +1,1020 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Reading EEG Data from events &mdash; PTSA 1.1.dev3 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="PTSA 1.1.dev3 documentation" href="../index.html"/>
+        <link rel="up" title="Examples" href="index.html"/>
+        <link rel="next" title="1. pyFR" href="events_SPC.html"/>
+        <link rel="prev" title="Basic TimeSeriesX functionality" href="timeseriesx.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> PTSA
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.1.dev3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">PTSA Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="timeseriesx.html">Basic <code class="docutils literal"><span class="pre">TimeSeriesX</span></code> functionality</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Reading EEG Data from events</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#1.-pyFR-data-(and-old-RAM-data)">1. pyFR data (and old RAM data)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#2.-RAM-data-(new)">2. RAM data (new)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#3.-LTPFR/LTPFR2">3. LTPFR/LTPFR2</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="events_SPC.html">1. pyFR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="events_SPC.html#2.-RAM-FR1">2. RAM FR1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="events_SPC.html#3.-LTPFR2">3. LTPFR2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyFR_demo.html">pyFR Demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classifier_time_series.html">Classifier time series</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ramdata.html">Interacting with RAM Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filters.html">Filtering Time Series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Development guidelines</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PTSA</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Examples</a> &raquo;</li>
+        
+      <li>Reading EEG Data from events</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/examples/eeg.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="Reading-EEG-Data-from-events">
+<h1>Reading EEG Data from events<a class="headerlink" href="#Reading-EEG-Data-from-events" title="Permalink to this headline">¶</a></h1>
+<p>Each events array has an <code class="docutils literal"><span class="pre">eegfile</span></code> field, which points to the
+directory that contains the associated EEG files. To read this data, you
+use the EEGReader class.</p>
+<p>Two other important classes for loading EEG data are the TalReader
+class, which loads information about the electrodes in ECoG subjects,
+and the MonopolarToBipolarMapper, which performs a bipolar rereferencing
+on ECoG data.</p>
+<p>This notebook will go over loading EEG data from the three different CML
+formats.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">BaseEventReader</span><span class="p">,</span><span class="n">EEGReader</span><span class="p">,</span><span class="n">CMLEventReader</span>
+<span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">TalReader</span>
+<span class="kn">from</span> <span class="nn">ptsa.data.filters</span> <span class="kn">import</span> <span class="n">MonopolarToBipolarMapper</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="n">rhino_root</span><span class="o">=</span><span class="s1">&#39;/Volumes/rhino_root&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="1.-pyFR-data-(and-old-RAM-data)">
+<h2>1. pyFR data (and old RAM data)<a class="headerlink" href="#1.-pyFR-data-(and-old-RAM-data)" title="Permalink to this headline">¶</a></h2>
+<p>First, we load the events, which are found on rhino in
+<code class="docutils literal"><span class="pre">/data/events/pyFR</span></code>:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">events</span> <span class="o">=</span> <span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">rhino_root</span><span class="o">+</span><span class="s1">&#39;/data/events/pyFR/BW001_events.mat&#39;</span><span class="p">,</span><span class="n">use_reref_eeg</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">words</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="o">.</span><span class="n">type</span><span class="o">==</span><span class="s1">&#39;WORD&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>Next, we use the TalReader class to get information about the subject’s
+electrodes.</p>
+<p>Like the other readers, the TalReader class has a <code class="docutils literal"><span class="pre">read()</span></code> method that
+will return a record array; this one contains information about the
+location of each electrode. However, we’re really only interested in two
+things: each electrode’s number, and which electrodes are adjacent to
+each other. Therefore, TalReader has two convenience methods,
+<code class="docutils literal"><span class="pre">get_monopolar_channels</span></code> and <code class="docutils literal"><span class="pre">get_bipolar_pairs</span></code>, specifically for
+this purpose.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">tal_reader</span> <span class="o">=</span> <span class="n">TalReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">rhino_root</span><span class="o">+</span><span class="s1">&#39;/data/eeg/BW001/tal/BW001_talLocs_database_bipol.mat&#39;</span><span class="p">)</span>
+<span class="n">channels</span> <span class="o">=</span> <span class="n">tal_reader</span><span class="o">.</span><span class="n">get_monopolar_channels</span><span class="p">()</span>
+<span class="n">channels</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+WARNING: Could not retrieve the following objects:
+bpTalStruct
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[6]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>array([&#39;001&#39;, &#39;002&#39;, &#39;003&#39;, &#39;004&#39;, &#39;005&#39;, &#39;006&#39;, &#39;007&#39;, &#39;008&#39;, &#39;009&#39;,
+       &#39;010&#39;, &#39;011&#39;, &#39;012&#39;, &#39;013&#39;, &#39;014&#39;, &#39;015&#39;, &#39;016&#39;, &#39;017&#39;, &#39;018&#39;,
+       &#39;019&#39;, &#39;020&#39;, &#39;021&#39;, &#39;022&#39;, &#39;023&#39;, &#39;024&#39;, &#39;025&#39;, &#39;026&#39;, &#39;027&#39;,
+       &#39;028&#39;, &#39;029&#39;, &#39;030&#39;, &#39;031&#39;, &#39;032&#39;, &#39;033&#39;, &#39;034&#39;, &#39;035&#39;, &#39;036&#39;,
+       &#39;037&#39;, &#39;038&#39;, &#39;039&#39;, &#39;040&#39;, &#39;041&#39;, &#39;042&#39;, &#39;043&#39;, &#39;044&#39;, &#39;045&#39;,
+       &#39;046&#39;, &#39;047&#39;, &#39;048&#39;, &#39;049&#39;, &#39;050&#39;, &#39;051&#39;, &#39;052&#39;, &#39;053&#39;, &#39;054&#39;,
+       &#39;055&#39;, &#39;056&#39;, &#39;057&#39;, &#39;058&#39;, &#39;059&#39;, &#39;060&#39;, &#39;061&#39;, &#39;062&#39;, &#39;063&#39;, &#39;064&#39;],
+      dtype=&#39;|S3&#39;)
+</pre></div>
+</div>
+</div>
+<p>Note the format of the channel array: a numpy array of 3-character
+strings. These are literally the suffixes of binary files, telling the
+EEGReader which files to load.</p>
+<p>To load the EEG data into memory, we give the EEGReader the events and
+channels we want to load, and the time around each event that we are
+interested in. There is also a <code class="docutils literal"><span class="pre">buffer_time</span></code> parameter, that will add
+a buffer period to the timeseries we load at the beginning and the end.
+If you add a buffer period, you should remove it afterwards with
+<code class="docutils literal"><span class="pre">remove_buffer()</span></code>.</p>
+<p>All of these use time in seconds as their unit.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">eeg</span> <span class="o">=</span> <span class="n">EEGReader</span><span class="p">(</span><span class="n">events</span><span class="o">=</span><span class="n">events</span><span class="p">,</span><span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">,</span><span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">end_time</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">eeg</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="stderr output_area docutils container">
+<div class="highlight"><pre>
+/Users/leond/miniconda2/envs/ptsa/lib/python2.7/site-packages/ptsa/data/readers/ParamsReader.py:112: RuntimeWarning: Did not find &#34;gain&#34; in the params.txt file. Assuming gain=1.0
+  warnings.warn(&#39;Did not find &#34;gain&#34; in the params.txt file. Assuming gain=1.0&#39;, RuntimeWarning)
+/Users/leond/miniconda2/envs/ptsa/lib/python2.7/site-packages/ptsa/data/readers/BaseRawReader.py:66: RuntimeWarning: Could not find data format definition in the params file. Will read the file assuming data format is int16
+  &#39; data format is int16&#39;, RuntimeWarning)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;xarray.TimeSeriesX (channels: 64, events: 444, time: 200)&gt;
+array([[[ -93.,  -96.,  -87., ...,   -4.,   25.,   38.],
+        [-313., -296., -273., ...,  -99., -106.,  -90.],
+        [  86.,   76.,   91., ...,  218.,  214.,  192.],
+        ...,
+        [-291., -312., -287., ...,  -42.,  -24.,   -9.],
+        [ -90.,  -89.,  -84., ...,   42.,   70.,   53.],
+        [-123., -144., -135., ...,   -9.,  -27.,  -27.]],
+
+       [[  -2.,   -3.,   10., ...,  -21.,   -8.,   28.],
+        [-114., -107.,  -90., ...,  -40.,  -99., -158.],
+        [ 140.,  131.,  212., ...,  -28.,  -18.,  -23.],
+        ...,
+        [-160., -168., -129., ..., -130., -132., -136.],
+        [  75.,   80.,   99., ...,   14.,   48.,   18.],
+        [-186., -215., -203., ...,   23.,   11.,    7.]],
+
+       [[  45.,   38.,   38., ...,   69.,  135.,  210.],
+        [-261., -243., -218., ..., -125.,    2.,  129.],
+        [ 134.,  163.,  261., ...,   -5.,   -8.,  -15.],
+        ...,
+        [-247., -261., -226., ..., -127., -126., -110.],
+        [  74.,   66.,   48., ...,  -71., -146., -237.],
+        [ -59.,  -80.,  -87., ...,   54.,   52.,   41.]],
+
+       ...,
+       [[ -38.,  -54.,  -61., ...,   25.,   28.,   54.],
+        [ -73.,  -27.,   24., ...,    5.,  -27.,   10.],
+        [  29.,   23.,   29., ...,   23.,   18.,   -2.],
+        ...,
+        [ -39.,  -39.,  -14., ...,  -88.,  -81.,  -59.],
+        [  26.,   11.,    7., ...,   69.,  100.,   47.],
+        [ -38.,  -91., -127., ...,  115.,   91.,   91.]],
+
+       [[   0.,    8.,    8., ...,   62.,   91.,   73.],
+        [ -46.,  -51.,  -13., ...,   68.,   77.,  102.],
+        [  -9.,   13.,   35., ...,  -25.,  -26.,  -42.],
+        ...,
+        [ -48.,  -61.,  -42., ...,  -80.,  -88.,  -82.],
+        [ -25.,  -14.,    2., ...,   47.,   79.,   70.],
+        [ -30.,  -64., -104., ...,   45.,   28.,   13.]],
+
+       [[  -6.,  -30.,  -48., ...,   29.,   21.,    2.],
+        [ -29.,  -15.,   11., ...,   86.,   79.,   88.],
+        [ -53.,  -60.,  -54., ...,  -12.,   -7.,  -11.],
+        ...,
+        [   9.,  -27.,   14., ...,  -13.,  -16.,   11.],
+        [ -64.,  -55.,  -31., ...,   12.,   45.,   42.],
+        [  67.,   23.,  -13., ...,   47.,   13.,   -3.]]])
+Coordinates:
+  * channels    (channels) |S3 &#39;001&#39; &#39;002&#39; &#39;003&#39; &#39;004&#39; &#39;005&#39; &#39;006&#39; &#39;007&#39; ...
+    samplerate  float64 200.0
+  * events      (events) (numpy.record, [(&#39;subject&#39;, &#39;S256&#39;), (&#39;session&#39;, &#39;&lt;i8&#39;), (&#39;list&#39;, &#39;&lt;i8&#39;), (&#39;type&#39;, &#39;S256&#39;), (&#39;item&#39;, &#39;S256&#39;), (&#39;itemno&#39;, &#39;&lt;i8&#39;), (&#39;recalled&#39;, &#39;&lt;i8&#39;), (&#39;mstime&#39;, &#39;&lt;i8&#39;), (&#39;msoffset&#39;, &#39;&lt;i8&#39;), (&#39;rectime&#39;, &#39;&lt;i8&#39;), (&#39;intrusion&#39;, &#39;&lt;i8&#39;), (&#39;eegfile&#39;, &#39;S256&#39;), (&#39;eegoffset&#39;, &#39;&lt;i8&#39;), (&#39;serialpos&#39;, &#39;&lt;i8&#39;)]) (&#39;BW001&#39;, 1, -999, &#39;SESS_START&#39;, &#39;X&#39;, -999, -999, 683395115, -999, -999, -999, &#39;/Volumes/rhino_root/data/eeg/BW001/eeg.noreref/BW001_24Jul02_0001&#39;, 2841, 0) ...
+  * time        (time) float64 0.0 0.005 0.01 0.015 0.02 0.025 0.03 0.035 ...
+Attributes:
+    samplerate: 200.0
+    gain: 1.0
+</pre></div></div>
+</div>
+<p>The EEGReader returns a TimeSeriesX object, which is a subclass of
+xarray.DataArray. The DataArray class provides an interface for
+multi-dimensional arrays with labelled axes; the TimeSeriesX object adds
+some additional convenience methods.</p>
+<p>As an example of one might use a DataArray, let’s plot the average
+voltage across all channels and events.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">eeg</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">eeg</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;channels&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[8]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[&lt;matplotlib.lines.Line2D at 0x1162bfad0&gt;]
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_eeg_9_1.png" src="../_images/examples_eeg_9_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="k">print</span><span class="p">(</span><span class="n">eeg</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+<span class="k">print</span>
+<span class="k">print</span>
+<span class="k">print</span><span class="p">(</span><span class="n">eeg</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Coordinates:
+  * channels    (channels) |S3 &#39;001&#39; &#39;002&#39; &#39;003&#39; &#39;004&#39; &#39;005&#39; &#39;006&#39; &#39;007&#39; ...
+    samplerate  float64 200.0
+  * events      (events) (numpy.record, [(&#39;subject&#39;, &#39;S256&#39;), (&#39;session&#39;, &#39;&lt;i8&#39;), (&#39;list&#39;, &#39;&lt;i8&#39;), (&#39;type&#39;, &#39;S256&#39;), (&#39;item&#39;, &#39;S256&#39;), (&#39;itemno&#39;, &#39;&lt;i8&#39;), (&#39;recalled&#39;, &#39;&lt;i8&#39;), (&#39;mstime&#39;, &#39;&lt;i8&#39;), (&#39;msoffset&#39;, &#39;&lt;i8&#39;), (&#39;rectime&#39;, &#39;&lt;i8&#39;), (&#39;intrusion&#39;, &#39;&lt;i8&#39;), (&#39;eegfile&#39;, &#39;S256&#39;), (&#39;eegoffset&#39;, &#39;&lt;i8&#39;), (&#39;serialpos&#39;, &#39;&lt;i8&#39;)]) (&#39;BW001&#39;, 1, -999, &#39;SESS_START&#39;, &#39;X&#39;, -999, -999, 683395115, -999, -999, -999, &#39;/Volumes/rhino_root/data/eeg/BW001/eeg.noreref/BW001_24Jul02_0001&#39;, 2841, 0) ...
+  * time        (time) float64 0.0 0.005 0.01 0.015 0.02 0.025 0.03 0.035 ...
+
+
+OrderedDict([(&#39;samplerate&#39;, 200.0), (&#39;gain&#39;, 1.0)])
+</pre></div></div>
+</div>
+<p>“Data Coordinates” are marked with a star, and correspond to axes of our
+array. Other coordinates are not aligned to the data, but do persist
+under certain transformations.</p>
+<p>With ECoG data, it is usually more informative to look not at the
+voltage at each electrode, but at the difference across adjacent
+electrodes. The MonopolarToBipolarMapper class takes a list of which
+pairs are adjacent to each other, and returns a TimeSeriesX with the
+‘channels’ dimension replaced by ‘bipolar_pairs’.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">bipolar_pairs</span> <span class="o">=</span> <span class="n">tal_reader</span><span class="o">.</span><span class="n">get_bipolar_pairs</span><span class="p">()</span>
+<span class="n">bipolar_eeg</span><span class="o">=</span> <span class="n">MonopolarToBipolarMapper</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">eeg</span><span class="p">,</span><span class="n">bipolar_pairs</span><span class="o">=</span><span class="n">bipolar_pairs</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span>
+<span class="n">bipolar_eeg</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[10]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>&lt;xarray.TimeSeriesX (bipolar_pairs: 72, events: 444, time: 200)&gt;
+array([[[ -91.,  -93.,  -97., ...,   17.,   33.,   10.],
+        [-199., -189., -183., ...,  -59.,   -7.,   68.],
+        [ -54.,  -55., -121., ...,  246.,  232.,  215.],
+        ...,
+        [-131., -144., -158., ...,   88.,  108.,  127.],
+        [-165., -169., -183., ...,   28.,   22.,   35.],
+        [  63.,   71.,   68., ...,  -32.,  -38.,  -34.]],
+
+       [[ -47.,  -41.,  -28., ...,  -90., -143., -182.],
+        [ 147.,  136.,  128., ...,   85., -101., -287.],
+        [   6.,  -32.,  -49., ...,  -23.,  -10.,   -8.],
+        ...,
+        [  87.,   93.,   97., ...,   -3.,   -6.,  -26.],
+        [   1.,   14.,   51., ...,   85.,  194.,  255.],
+        [-127., -135., -116., ...,  -31.,  -41.,  -34.]],
+
+       [[ 103.,  103.,  104., ...,  255.,  449.,  625.],
+        [  43.,   42.,   50., ..., -384., -319., -269.],
+        [ 115.,  122.,  149., ...,  121.,  111.,  106.],
+        ...,
+        [  30.,   41.,   55., ...,   40.,   47.,   53.],
+        [  -5.,  -26.,  -70., ...,  120.,  -11.,  -86.],
+        [ -78.,  -73.,  -85., ..., -133.,  -66.,  -79.]],
+
+       ...,
+       [[  73.,   92.,  100., ...,   24.,   32.,   -2.],
+        [   1.,  -49.,  -91., ...,  140.,  170.,  131.],
+        [  -1.,   11.,   -1., ...,  -23.,   -4.,   13.],
+        ...,
+        [  39.,   29.,   40., ...,   37.,   38.,   39.],
+        [ -66.,  -61.,  -40., ...,  -39.,  -40.,   20.],
+        [  22.,   47.,   90., ...,  -59.,  -57.,  -48.]],
+
+       [[ -64.,  -72.,  -49., ...,   -4.,   -8.,   25.],
+        [ -55.,  -39.,  -65., ...,   41.,   21.,  -28.],
+        [ 153.,  142.,  134., ...,   85.,  116.,  156.],
+        ...,
+        [  -5.,   21.,   64., ...,  167.,  204.,  259.],
+        [  -2.,  -11.,  -13., ...,   36.,   41.,   34.],
+        [ -75.,  -82.,  -58., ...,    3.,  -20.,  -60.]],
+
+       [[ -20.,    3.,   38., ...,  -20.,   -9.,   11.],
+        [ -93.,  -97.,  -95., ...,   37.,   58.,   73.],
+        [  72.,   52.,   34., ...,  -72.,  -60.,  -44.],
+        ...,
+        [-111.,  -71.,  -59., ...,   46.,   46.,   25.],
+        [  12.,  -10.,   -9., ...,   31.,   38.,   33.],
+        [  19.,   35.,   66., ...,  -29.,    5.,   34.]]])
+Coordinates:
+  * bipolar_pairs  (bipolar_pairs) (numpy.record, [(&#39;ch0&#39;, &#39;S3&#39;), (&#39;ch1&#39;, &#39;S3&#39;)]) (&#39;001&#39;, &#39;002&#39;) ...
+    samplerate     float64 200.0
+  * events         (events) (numpy.record, [(&#39;subject&#39;, &#39;S256&#39;), (&#39;session&#39;, &#39;&lt;i8&#39;), (&#39;list&#39;, &#39;&lt;i8&#39;), (&#39;type&#39;, &#39;S256&#39;), (&#39;item&#39;, &#39;S256&#39;), (&#39;itemno&#39;, &#39;&lt;i8&#39;), (&#39;recalled&#39;, &#39;&lt;i8&#39;), (&#39;mstime&#39;, &#39;&lt;i8&#39;), (&#39;msoffset&#39;, &#39;&lt;i8&#39;), (&#39;rectime&#39;, &#39;&lt;i8&#39;), (&#39;intrusion&#39;, &#39;&lt;i8&#39;), (&#39;eegfile&#39;, &#39;S256&#39;), (&#39;eegoffset&#39;, &#39;&lt;i8&#39;), (&#39;serialpos&#39;, &#39;&lt;i8&#39;)]) (&#39;BW001&#39;, 1, -999, &#39;SESS_START&#39;, &#39;X&#39;, -999, -999, 683395115, -999, -999, -999, &#39;/Volumes/rhino_root/data/eeg/BW001/eeg.noreref/BW001_24Jul02_0001&#39;, 2841, 0) ...
+  * time           (time) float64 0.0 0.005 0.01 0.015 0.02 0.025 0.03 0.035 ...
+Attributes:
+    samplerate: 200.0
+    gain: 1.0
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;bipolar_pairs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[11]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[&lt;matplotlib.lines.Line2D at 0x11596a7d0&gt;]
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_eeg_13_1.png" src="../_images/examples_eeg_13_1.png" />
+</div>
+</div>
+<p>We can use the <code class="docutils literal"><span class="pre">sel</span></code> method of DataArrays to filter the timeseries
+under consideration; for example, we can only look at the events of type
+“WORD”:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">events</span><span class="o">=</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;WORD&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;bipolar_pairs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[12]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[&lt;matplotlib.lines.Line2D at 0x1162587d0&gt;]
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_eeg_15_1.png" src="../_images/examples_eeg_15_1.png" />
+</div>
+</div>
+<p>This data seems like it’s heavily contaminated by 60 Hz line noise. We
+can use the <code class="docutils literal"><span class="pre">filtered</span></code> method to filter out the 60 Hz component of the
+signal:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">filtered</span><span class="p">([</span><span class="mf">58.</span><span class="p">,</span><span class="mf">62.</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;bipolar_pairs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[13]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[&lt;matplotlib.lines.Line2D at 0x116b1cbd0&gt;]
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_eeg_17_1.png" src="../_images/examples_eeg_17_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="2.-RAM-data-(new)">
+<h2>2. RAM data (new)<a class="headerlink" href="#2.-RAM-data-(new)" title="Permalink to this headline">¶</a></h2>
+<p>The new system for storing the RAM data stores the information about
+each subject’s electrode montage in a file <code class="docutils literal"><span class="pre">pairs.json</span></code>, which we can
+find using a JsonIndexReader</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers.IndexReader</span> <span class="kn">import</span> <span class="n">JsonIndexReader</span>
+<span class="n">jr</span> <span class="o">=</span> <span class="n">JsonIndexReader</span><span class="p">(</span><span class="n">rhino_root</span><span class="o">+</span><span class="s1">&#39;/protocols/r1.json&#39;</span><span class="p">)</span>
+<span class="n">events</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">jr</span><span class="o">.</span><span class="n">aggregate_values</span><span class="p">(</span><span class="s1">&#39;task_events&#39;</span><span class="p">,</span><span class="n">subject</span><span class="o">=</span><span class="s1">&#39;R1111M&#39;</span><span class="p">,</span><span class="n">experiment</span><span class="o">=</span><span class="s1">&#39;FR1&#39;</span><span class="p">)]</span>
+<span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">recarray</span><span class="p">)</span>
+<span class="n">words</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="o">.</span><span class="n">type</span><span class="o">==</span><span class="s1">&#39;WORD&#39;</span><span class="p">]</span>
+<span class="n">pairs_path</span> <span class="o">=</span> <span class="n">jr</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s1">&#39;pairs&#39;</span><span class="p">,</span><span class="n">subject</span><span class="o">=</span><span class="s1">&#39;R1111M&#39;</span><span class="p">,</span><span class="n">experiment</span><span class="o">=</span><span class="s1">&#39;FR1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Once we have this path, we can create a TalReader object with it, and
+use that to load the list of channels and the list of bipolar pairs</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">tal_reader</span> <span class="o">=</span> <span class="n">TalReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">pairs_path</span><span class="p">)</span>
+<span class="n">channels</span> <span class="o">=</span> <span class="n">tal_reader</span><span class="o">.</span><span class="n">get_monopolar_channels</span><span class="p">()</span>
+<span class="n">eeg</span> <span class="o">=</span> <span class="n">EEGReader</span><span class="p">(</span><span class="n">events</span><span class="o">=</span><span class="n">words</span><span class="p">,</span><span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">,</span><span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">end_time</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">eeg</span><span class="o">.</span><span class="n">coords</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[15]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>Coordinates:
+  * channels    (channels) |S3 &#39;001&#39; &#39;002&#39; &#39;003&#39; &#39;004&#39; &#39;005&#39; &#39;006&#39; &#39;007&#39; ...
+    samplerate  float64 500.0
+  * events      (events) (numpy.record, [(&#39;session&#39;, &#39;&lt;i8&#39;), (&#39;eegoffset&#39;, &#39;&lt;i8&#39;), (&#39;protocol&#39;, &#39;S256&#39;), (&#39;intrusion&#39;, &#39;&lt;i8&#39;), (&#39;item_name&#39;, &#39;S256&#39;), (&#39;serialpos&#39;, &#39;&lt;i8&#39;), (&#39;rectime&#39;, &#39;&lt;i8&#39;), (&#39;stim_params&#39;, &#39;&lt;f8&#39;, (0,)), (&#39;list&#39;, &#39;&lt;i8&#39;), (&#39;subject&#39;, &#39;S256&#39;), (&#39;eegfile&#39;, &#39;S256&#39;), (&#39;montage&#39;, &#39;S256&#39;), (&#39;experiment&#39;, &#39;S256&#39;), (&#39;recalled&#39;, &#39;&lt;i8&#39;), (&#39;msoffset&#39;, &#39;&lt;i8&#39;), (&#39;stim_list&#39;, &#39;&lt;i8&#39;), (&#39;item_num&#39;, &#39;&lt;i8&#39;), (&#39;mstime&#39;, &#39;&lt;i8&#39;), (&#39;is_stim&#39;, &#39;&lt;i8&#39;), (&#39;type&#39;, &#39;S256&#39;), (&#39;exp_version&#39;, &#39;S256&#39;)]) (2, 183362, &#39;r1&#39;, -999, &#39;JUICE&#39;, 1, -999, array([], dtype=float64), 1, &#39;R1111M&#39;, &#39;/Volumes/rhino_root/protocols/r1/subjects/R1111M/experiments/FR1/sessions/2/ephys/current_processed/noreref/R1111M_FR1_2_26Jan16_1408&#39;, &#39;0.0&#39;, &#39;FR1&#39;, 0, 1, 0, 138, 1453836066458, 0, &#39;WORD&#39;, &#39;1.05&#39;) ...
+  * time        (time) float64 0.0 0.002 0.004 0.006 0.008 0.01 0.012 0.014 ...
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">bipolar_eeg</span><span class="o">=</span> <span class="n">MonopolarToBipolarMapper</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">eeg</span><span class="p">,</span><span class="n">bipolar_pairs</span><span class="o">=</span><span class="n">tal_reader</span><span class="o">.</span><span class="n">get_bipolar_pairs</span><span class="p">())</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;bipolar_pairs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Coordinates:
+  * bipolar_pairs  (bipolar_pairs) (numpy.record, [(&#39;ch0&#39;, &#39;S3&#39;), (&#39;ch1&#39;, &#39;S3&#39;)]) (&#39;001&#39;, &#39;002&#39;) ...
+    samplerate     float64 500.0
+  * events         (events) (numpy.record, [(&#39;session&#39;, &#39;&lt;i8&#39;), (&#39;eegoffset&#39;, &#39;&lt;i8&#39;), (&#39;protocol&#39;, &#39;S256&#39;), (&#39;intrusion&#39;, &#39;&lt;i8&#39;), (&#39;item_name&#39;, &#39;S256&#39;), (&#39;serialpos&#39;, &#39;&lt;i8&#39;), (&#39;rectime&#39;, &#39;&lt;i8&#39;), (&#39;stim_params&#39;, &#39;&lt;f8&#39;, (0,)), (&#39;list&#39;, &#39;&lt;i8&#39;), (&#39;subject&#39;, &#39;S256&#39;), (&#39;eegfile&#39;, &#39;S256&#39;), (&#39;montage&#39;, &#39;S256&#39;), (&#39;experiment&#39;, &#39;S256&#39;), (&#39;recalled&#39;, &#39;&lt;i8&#39;), (&#39;msoffset&#39;, &#39;&lt;i8&#39;), (&#39;stim_list&#39;, &#39;&lt;i8&#39;), (&#39;item_num&#39;, &#39;&lt;i8&#39;), (&#39;mstime&#39;, &#39;&lt;i8&#39;), (&#39;is_stim&#39;, &#39;&lt;i8&#39;), (&#39;type&#39;, &#39;S256&#39;), (&#39;exp_version&#39;, &#39;S256&#39;)]) (2, 183362, &#39;r1&#39;, -999, &#39;JUICE&#39;, 1, -999, array([], dtype=float64), 1, &#39;R1111M&#39;, &#39;/Volumes/rhino_root/protocols/r1/subjects/R1111M/experiments/FR1/sessions/2/ephys/current_processed/noreref/R1111M_FR1_2_26Jan16_1408&#39;, &#39;0.0&#39;, &#39;FR1&#39;, 0, 1, 0, 138, 1453836066458, 0, &#39;WORD&#39;, &#39;1.05&#39;) ...
+  * time           (time) float64 0.0 0.002 0.004 0.006 0.008 0.01 0.012 ...
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[16]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[&lt;matplotlib.lines.Line2D at 0x1167ecd10&gt;]
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_eeg_22_2.png" src="../_images/examples_eeg_22_2.png" />
+</div>
+</div>
+</div>
+<div class="section" id="3.-LTPFR/LTPFR2">
+<h2>3. LTPFR/LTPFR2<a class="headerlink" href="#3.-LTPFR/LTPFR2" title="Permalink to this headline">¶</a></h2>
+<p>There are two main differences between reading scalp data and reading
+ECoG data. The first is that scalp data are usually rereferenced so that
+the data are relative to the average over all electrodes. This helps to
+eliminate artifacts due to muscle movement. To load the referenced data,
+we pass set the parameter <code class="docutils literal"><span class="pre">use_reref_eeg</span></code> to <code class="docutils literal"><span class="pre">True</span></code> when reading the
+events.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">events</span> <span class="o">=</span> <span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">rhino_root</span><span class="o">+</span><span class="s1">&#39;/data/eeg/scalp/ltp/ltpFR2/behavioral/events/events_all_LTP093.mat&#39;</span><span class="p">,</span>
+                         <span class="n">use_reref_eeg</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">common_root</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">words</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="o">.</span><span class="n">type</span><span class="o">==</span><span class="s1">&#39;WORD&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>The second difference between reading scalp EEG data and ECoG data is
+that the scalp experiments have a fixed set of electrodes. We therefore
+construct the array of channel labels ourselves, rather than reading it
+with a TalReader.</p>
+<p>The scalp EEG in the CML lab has 128 channels, but for purposes of speed
+we’ll only load a few of them.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">channels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;{:03}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">)])</span>
+<span class="n">channels</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>array([&#39;020&#39;, &#39;021&#39;, &#39;022&#39;, &#39;023&#39;, &#39;024&#39;, &#39;025&#39;, &#39;026&#39;, &#39;027&#39;, &#39;028&#39;, &#39;029&#39;],
+      dtype=&#39;|S3&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">eeg</span> <span class="o">=</span> <span class="n">EEGReader</span><span class="p">(</span><span class="n">events</span><span class="o">=</span><span class="n">words</span><span class="p">,</span><span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">,</span><span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">end_time</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">eeg</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;channels&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="events_SPC.html" class="btn btn-neutral float-right" title="1. pyFR" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="timeseriesx.html" class="btn btn-neutral" title="Basic TimeSeriesX functionality" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.1.dev3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
