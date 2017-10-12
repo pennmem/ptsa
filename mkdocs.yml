@@ -1,6 +1,0 @@
-# Dummy mkdocs.yml file so that we can redirect from readthedocs to the new PTSA
-# documentation home on Github.
-site_name: PTSA docs have moved
-pages:
-  - Home: index.md
-theme_dir: docs/redirect
