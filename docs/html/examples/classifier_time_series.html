@@ -1,0 +1,1066 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Classifier time series &mdash; PTSA 1.1.dev3 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="PTSA 1.1.dev3 documentation" href="../index.html"/>
+        <link rel="up" title="Examples" href="index.html"/>
+        <link rel="next" title="Interacting with RAM Data" href="../ramdata.html"/>
+        <link rel="prev" title="pyFR Demo" href="pyFR_demo.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> PTSA
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.1.dev3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">PTSA Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="timeseriesx.html">Basic <code class="docutils literal"><span class="pre">TimeSeriesX</span></code> functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="eeg.html">Reading EEG Data from events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="events_SPC.html">1. pyFR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="events_SPC.html#2.-RAM-FR1">2. RAM FR1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="events_SPC.html#3.-LTPFR2">3. LTPFR2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyFR_demo.html">pyFR Demo</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Classifier time series</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ramdata.html">Interacting with RAM Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filters.html">Filtering Time Series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Development guidelines</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PTSA</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Examples</a> &raquo;</li>
+        
+      <li>Classifier time series</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/examples/classifier_time_series.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="Classifier-time-series">
+<h1>Classifier time series<a class="headerlink" href="#Classifier-time-series" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;/Users/m/PTSA_NEW_GIT/&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">BaseEventReader</span>
+<span class="kn">from</span> <span class="nn">ptsa.data.filters.MorletWaveletFilter</span> <span class="kn">import</span> <span class="n">MorletWaveletFilter</span>
+<span class="kn">from</span> <span class="nn">ptsa.data.readers.TalReader</span> <span class="kn">import</span> <span class="n">TalReader</span>
+<span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">EEGReader</span>
+<span class="kn">from</span> <span class="nn">ptsa.data.filters</span> <span class="kn">import</span> <span class="n">MonopolarToBipolarMapper</span>
+<span class="kn">from</span> <span class="nn">ptsa.data.filters</span> <span class="kn">import</span> <span class="n">DataChopper</span>
+<span class="kn">from</span> <span class="nn">ptsa.data.TimeSeriesX</span> <span class="kn">import</span> <span class="n">TimeSeriesX</span>
+<span class="kn">from</span> <span class="nn">ptsa.data.common</span> <span class="kn">import</span> <span class="n">xr</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_auc_score</span><span class="p">,</span> <span class="n">roc_curve</span>
+<span class="kn">from</span> <span class="nn">scipy.stats.mstats</span> <span class="kn">import</span> <span class="n">zscore</span>
+<span class="kn">import</span> <span class="nn">numpy.testing</span> <span class="kn">as</span> <span class="nn">npt</span>
+<span class="kn">import</span> <span class="nn">cPickle</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">describe</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+
+<span class="c1"># ------------ SETTING UP MATPLOTLIB</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Could not find compiled version of c library for handing edf files. If you want edf support, please run setup.py and compile this library
+Could not import MorletWaveletFilterCpp (C++ version of MorletWaveletFilter): No module named morlet
+You can still use MorletWaveletFilter
+</pre></div></div>
+</div>
+<p>When runing first time set compute_classifier_flag to True. Subsequent
+run can be executed with flag set to False because classifier will be
+computed and stored on the hard drive at that time.
+use_session_chopper_for_wavelets flag will cause that wavelets will
+be computted for the entire session and then chopped into segments
+correcponding to events</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="c1"># -------------- INITIAL SETUP</span>
+<span class="n">subject</span> <span class="o">=</span> <span class="s1">&#39;R1111M&#39;</span>
+<span class="n">compute_classifier_flag</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">use_session_chopper_for_wavelets</span> <span class="o">=</span> <span class="bp">False</span>
+
+<span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span>
+<span class="n">end_time</span><span class="o">=</span><span class="mf">1.6</span>
+<span class="n">buffer_time</span><span class="o">=</span><span class="mf">1.0</span>
+<span class="n">freqs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mi">180</span><span class="p">),</span> <span class="mi">8</span><span class="p">)</span>
+
+
+<span class="n">e_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;/Users/m/data/events/RAM_FR1/&#39;</span><span class="p">,</span> <span class="n">subject</span> <span class="o">+</span> <span class="s1">&#39;_events.mat&#39;</span><span class="p">)</span>
+
+<span class="n">tal_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;/Users/m/data/eeg&#39;</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;tal&#39;</span><span class="p">,</span> <span class="n">subject</span> <span class="o">+</span> <span class="s1">&#39;_talLocs_database_bipol.mat&#39;</span><span class="p">)</span>
+
+<span class="n">ClassifierData</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;ClassifierData&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;lr_classifier&#39;</span><span class="p">,</span> <span class="s1">&#39;z_score_dict&#39;</span><span class="p">,</span> <span class="s1">&#39;features&#39;</span><span class="p">,</span> <span class="s1">&#39;recalls&#39;</span><span class="p">])</span>
+<span class="n">ZScoreParams</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;ZScoreParams&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">get_monopolar_and_bipolar_electrodes</span><span class="p">():</span>
+    <span class="n">tal_reader</span> <span class="o">=</span> <span class="n">TalReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">tal_path</span><span class="p">)</span>
+    <span class="n">monopolar_channels</span> <span class="o">=</span> <span class="n">tal_reader</span><span class="o">.</span><span class="n">get_monopolar_channels</span><span class="p">()</span>
+    <span class="n">bipolar_pairs</span> <span class="o">=</span> <span class="n">tal_reader</span><span class="o">.</span><span class="n">get_bipolar_pairs</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">monopolar_channels</span><span class="p">,</span> <span class="n">bipolar_pairs</span>
+
+<span class="k">def</span> <span class="nf">get_events</span><span class="p">():</span>
+    <span class="c1"># ---------------- NEW STYLE PTSA -------------------</span>
+    <span class="n">base_e_reader</span> <span class="o">=</span> <span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">e_path</span><span class="p">,</span> <span class="n">eliminate_events_with_no_eeg</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="n">base_events</span> <span class="o">=</span> <span class="n">base_e_reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">base_events</span> <span class="o">=</span> <span class="n">base_events</span><span class="p">[</span><span class="n">base_events</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;WORD&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">base_events</span>
+
+<span class="k">def</span> <span class="nf">get_bp_data</span><span class="p">(</span><span class="n">evs</span><span class="p">):</span>
+    <span class="n">eeg_reader</span> <span class="o">=</span> <span class="n">EEGReader</span><span class="p">(</span><span class="n">events</span><span class="o">=</span><span class="n">evs</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="n">monopolar_channels</span><span class="p">,</span>
+                           <span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="n">end_time</span><span class="p">,</span> <span class="n">buffer_time</span><span class="o">=</span><span class="n">buffer_time</span><span class="p">)</span>
+
+    <span class="n">base_eegs</span> <span class="o">=</span> <span class="n">eeg_reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">m2b</span> <span class="o">=</span> <span class="n">MonopolarToBipolarMapper</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">base_eegs</span><span class="p">,</span> <span class="n">bipolar_pairs</span><span class="o">=</span><span class="n">bipolar_pairs</span><span class="p">)</span>
+    <span class="n">bp_eegs</span> <span class="o">=</span> <span class="n">m2b</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">bp_eegs</span>
+
+<span class="k">def</span> <span class="nf">compute_wavelets</span><span class="p">(</span><span class="n">evs</span><span class="p">):</span>
+    <span class="n">bp_eegs</span> <span class="o">=</span> <span class="n">get_bp_data</span><span class="p">(</span><span class="n">evs</span><span class="p">)</span>
+    <span class="n">wf</span> <span class="o">=</span> <span class="n">MorletWaveletFilter</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">bp_eegs</span><span class="p">,</span>
+                             <span class="n">freqs</span><span class="o">=</span><span class="n">freqs</span><span class="p">,</span>
+                             <span class="n">output</span><span class="o">=</span><span class="s1">&#39;power&#39;</span><span class="p">,</span>
+                             <span class="n">frequency_dim_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                             <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span>
+                             <span class="p">)</span>
+    <span class="n">pow_wavelet</span><span class="p">,</span> <span class="n">phase_wavelet</span> <span class="o">=</span> <span class="n">wf</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span>
+    <span class="n">pow_wavelet</span> <span class="o">=</span> <span class="n">pow_wavelet</span><span class="o">.</span><span class="n">remove_buffer</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">buffer_time</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pow_wavelet</span>
+
+<span class="k">def</span> <span class="nf">chop_time_series</span><span class="p">(</span><span class="n">time_series</span><span class="p">,</span> <span class="n">start_offsets</span><span class="p">):</span>
+    <span class="n">dc</span> <span class="o">=</span> <span class="n">DataChopper</span><span class="p">(</span><span class="n">start_offsets</span><span class="o">=</span><span class="n">start_offsets</span><span class="p">,</span> <span class="n">session_data</span><span class="o">=</span><span class="n">time_series</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="n">end_time</span><span class="p">)</span>
+    <span class="n">chopped_time_series</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">chopped_time_series</span>
+
+
+<span class="k">def</span> <span class="nf">compute_continuous_wavelets</span><span class="p">(</span><span class="n">dataroot</span><span class="p">):</span>
+    <span class="n">session_reader</span> <span class="o">=</span> <span class="n">EEGReader</span><span class="p">(</span><span class="n">session_dataroot</span><span class="o">=</span><span class="n">dataroot</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="n">monopolar_channels</span><span class="p">)</span>
+    <span class="n">session_eegs</span> <span class="o">=</span> <span class="n">session_reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">m2b</span> <span class="o">=</span> <span class="n">MonopolarToBipolarMapper</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">session_eegs</span><span class="p">,</span> <span class="n">bipolar_pairs</span><span class="o">=</span><span class="n">bipolar_pairs</span><span class="p">)</span>
+    <span class="n">session_bp_eegs</span> <span class="o">=</span> <span class="n">m2b</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span>
+
+    <span class="n">wf</span> <span class="o">=</span> <span class="n">MorletWaveletFilter</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">session_bp_eegs</span><span class="p">,</span>
+                             <span class="n">freqs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mi">180</span><span class="p">),</span> <span class="mi">8</span><span class="p">),</span>
+                             <span class="n">output</span><span class="o">=</span><span class="s1">&#39;power&#39;</span><span class="p">,</span>
+                             <span class="n">frequency_dim_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                             <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span>
+                             <span class="p">)</span>
+
+    <span class="n">pow_wavelet_session</span><span class="p">,</span> <span class="n">phase_wavelet_session</span> <span class="o">=</span> <span class="n">wf</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">pow_wavelet_session</span>
+
+<span class="k">def</span> <span class="nf">compute_event_wavelets_from_session_wavelets</span><span class="p">(</span><span class="n">evs</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">evs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">session</span>
+    <span class="n">dataroot</span> <span class="o">=</span> <span class="n">base_events</span><span class="p">[</span><span class="n">base_events</span><span class="o">.</span><span class="n">session</span> <span class="o">==</span> <span class="n">session</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">eegfile</span>
+
+    <span class="n">session_wavelet</span> <span class="o">=</span> <span class="n">compute_continuous_wavelets</span><span class="p">(</span><span class="n">dataroot</span><span class="o">=</span><span class="n">dataroot</span><span class="p">)</span>
+
+    <span class="n">session_wavelet_chopped</span> <span class="o">=</span> <span class="n">chop_time_series</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">session_wavelet</span><span class="p">,</span> <span class="n">start_offsets</span><span class="o">=</span><span class="n">evs</span><span class="o">.</span><span class="n">eegoffset</span><span class="p">)</span>
+    <span class="n">session_wavelet_chopped</span> <span class="o">=</span> <span class="n">session_wavelet_chopped</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;start_offsets&#39;</span><span class="p">:</span> <span class="s1">&#39;events&#39;</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">session_wavelet_chopped</span>
+
+<span class="k">def</span> <span class="nf">compute_zscored_features</span><span class="p">(</span><span class="n">log_pow_wavelet</span><span class="p">):</span>
+    <span class="n">transposed_log_pow_wavelet</span> <span class="o">=</span> <span class="n">log_pow_wavelet</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">,</span> <span class="s2">&quot;bipolar_pairs&quot;</span><span class="p">,</span> <span class="s2">&quot;frequency&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">)</span>
+    <span class="n">mean_powers_nd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">transposed_log_pow_wavelet</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">mean_powers_rs</span> <span class="o">=</span> <span class="n">mean_powers_nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">mean_powers_nd</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mean_powers_rs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">mean_powers_rs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">z_score_mean_powers</span> <span class="o">=</span> <span class="p">(</span><span class="n">mean_powers_rs</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span> <span class="o">/</span> <span class="n">s</span>
+
+    <span class="k">return</span> <span class="n">z_score_mean_powers</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span>
+
+<span class="k">def</span> <span class="nf">compute_features_recalls_normalization_params</span><span class="p">(</span><span class="n">session_list</span><span class="p">,</span> <span class="n">use_session_chopper_for_wavelets</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="n">z_score_params_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="n">sessions_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">base_events</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="n">session_list</span><span class="p">:</span>
+        <span class="n">sessions_mask</span> <span class="o">=</span> <span class="n">sessions_mask</span> <span class="o">|</span> <span class="p">(</span><span class="n">base_events</span><span class="o">.</span><span class="n">session</span> <span class="o">==</span> <span class="n">session</span><span class="p">)</span>
+
+    <span class="n">sessions_evs</span> <span class="o">=</span> <span class="n">base_events</span><span class="p">[</span><span class="n">sessions_mask</span><span class="p">]</span>
+
+
+    <span class="k">if</span> <span class="n">use_session_chopper_for_wavelets</span><span class="p">:</span>
+        <span class="n">pow_wavelet_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="n">session_list</span><span class="p">:</span>
+            <span class="n">session_mask</span> <span class="o">=</span> <span class="n">sessions_evs</span><span class="o">.</span><span class="n">session</span> <span class="o">==</span> <span class="n">session</span>
+            <span class="n">single_session_evs</span> <span class="o">=</span> <span class="n">sessions_evs</span><span class="p">[</span><span class="n">session_mask</span><span class="p">]</span>
+            <span class="n">pow_wavelet</span> <span class="o">=</span> <span class="n">compute_event_wavelets_from_session_wavelets</span><span class="p">(</span><span class="n">single_session_evs</span><span class="p">)</span>
+            <span class="n">pow_wavelet_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pow_wavelet</span><span class="p">)</span>
+
+        <span class="n">pow_wavelet</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">pow_wavelet_list</span><span class="p">,</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;events&#39;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pow_wavelet</span> <span class="o">=</span> <span class="n">compute_wavelets</span><span class="p">(</span><span class="n">sessions_evs</span><span class="p">)</span>
+        <span class="c1"># pow_wavelet = pow_wavelet.remove_buffer(duration=1.0)</span>
+
+    <span class="c1"># -------------- TAKING LOG10</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">pow_wavelet</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">pow_wavelet</span><span class="o">.</span><span class="n">data</span><span class="p">);</span>
+
+    <span class="n">features_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">recalls_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="n">session_list</span><span class="p">:</span>
+        <span class="n">session_mask</span> <span class="o">=</span> <span class="n">sessions_evs</span><span class="o">.</span><span class="n">session</span> <span class="o">==</span> <span class="n">session</span>
+        <span class="n">single_session_evs</span> <span class="o">=</span> <span class="n">sessions_evs</span><span class="p">[</span><span class="n">session_mask</span><span class="p">]</span>
+        <span class="n">log_session_wavelet</span> <span class="o">=</span> <span class="n">pow_wavelet</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">session_mask</span><span class="p">,</span> <span class="p">:]</span>
+
+<span class="c1">#         mean, std = compute_zscoring_params(log_pow_wavelet=log_session_wavelet)</span>
+<span class="c1">#         # session_zscore_mean_powers has two axes - 1 -&gt;events , 2-&gt;bp x freq</span>
+<span class="c1">#         session_zscore_mean_powers = compute_features_using_zscoring_params(log_session_wavelet, mean, std)</span>
+
+        <span class="n">session_zscore_mean_powers</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span> <span class="o">=</span> <span class="n">compute_zscored_features</span><span class="p">(</span><span class="n">log_pow_wavelet</span><span class="o">=</span><span class="n">log_session_wavelet</span><span class="p">)</span>
+
+
+
+        <span class="n">recalls_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">single_session_evs</span><span class="o">.</span><span class="n">recalled</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">))</span>
+        <span class="n">features_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">session_zscore_mean_powers</span><span class="p">)</span>
+
+        <span class="n">z_score_params_dict</span><span class="p">[</span><span class="n">session</span><span class="p">]</span> <span class="o">=</span> <span class="n">ZScoreParams</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">std</span><span class="p">)</span>  <span class="c1"># packaging int namedtuple for saving</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">features_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">recalls</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">recalls_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">features</span><span class="p">,</span> <span class="n">recalls</span><span class="p">,</span> <span class="n">z_score_params_dict</span>
+
+<span class="k">def</span> <span class="nf">compute_features_using_zscoring_params</span><span class="p">(</span><span class="n">pow_wavelet</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">):</span>
+    <span class="n">transposed_log_pow_wavelet</span> <span class="o">=</span> <span class="n">pow_wavelet</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">,</span> <span class="s2">&quot;bipolar_pairs&quot;</span><span class="p">,</span> <span class="s2">&quot;frequency&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">)</span>
+
+    <span class="n">mean_powers_nd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">transposed_log_pow_wavelet</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">mean_powers_rs</span> <span class="o">=</span> <span class="n">mean_powers_nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">mean_powers_nd</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">mean_powers_rs</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">z_score_mean_powers</span> <span class="o">=</span> <span class="p">(</span><span class="n">mean_powers_rs</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">std</span>
+
+    <span class="k">return</span> <span class="n">z_score_mean_powers</span>
+
+<span class="k">def</span> <span class="nf">compute_classifier</span><span class="p">(</span><span class="n">session_list</span><span class="p">,</span> <span class="n">use_session_chopper_for_wavelets</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="n">features</span><span class="p">,</span> <span class="n">recalls</span><span class="p">,</span> <span class="n">z_score_params_dict</span> <span class="o">=</span> <span class="n">compute_features_recalls_normalization_params</span><span class="p">(</span>
+        <span class="n">session_list</span><span class="o">=</span><span class="n">session_list</span><span class="p">,</span>
+        <span class="n">use_session_chopper_for_wavelets</span><span class="o">=</span><span class="n">use_session_chopper_for_wavelets</span>
+    <span class="p">)</span>
+
+    <span class="n">lr_classifier</span> <span class="o">=</span> <span class="n">train_classifier</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">recalls</span><span class="p">)</span>
+
+    <span class="n">recall_prob_array</span> <span class="o">=</span> <span class="n">lr_classifier</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">features</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">recalls</span><span class="p">,</span> <span class="n">recall_prob_array</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s1">&#39;auc=&#39;</span><span class="p">,</span> <span class="n">auc</span>
+
+    <span class="n">classifier_data</span> <span class="o">=</span> <span class="n">ClassifierData</span><span class="p">(</span><span class="n">lr_classifier</span><span class="o">=</span><span class="n">lr_classifier</span><span class="p">,</span> <span class="n">z_score_dict</span><span class="o">=</span><span class="n">z_score_params_dict</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">,</span>
+                                     <span class="n">recalls</span><span class="o">=</span><span class="n">recalls</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">classifier_data</span>
+
+<span class="k">def</span> <span class="nf">train_classifier</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">recalls</span><span class="p">):</span>
+    <span class="n">lr_classifier</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">C</span><span class="o">=</span><span class="mf">7.2e-4</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;l2&#39;</span><span class="p">,</span> <span class="n">class_weight</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="s1">&#39;liblinear&#39;</span><span class="p">)</span>
+    <span class="n">lr_classifier</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">recalls</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lr_classifier</span>
+</pre></div>
+</div>
+</div>
+<p>This function will tak as an input the following: 1. wavelets computed
+for the entire session 2. ClassifierData tuple - containing trained
+classifier, mean and std dev for z scoring 3. start_time (in seconds) -
+determines the time location of the epoch at which we being computting
+probs tgime series 4. end_time (in seconds) - determines the last epoch
+of thr probs time series 5. resolution - separation of the time points
+(in seconds) at which we calculate recall probabilities 5. slice_size -
+determines the number of choping operations DataChopper performs - since
+Data Chopper returns eeg time series using smaller slice_size has less
+strain on memory. in principle call Data Chopper only once but if the
+number of chops is large we might run out of memory…</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">compute_probs_ts</span><span class="p">(</span><span class="n">pow_wavelet_session</span><span class="p">,</span> <span class="n">classifier_data</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">slice_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                     <span class="n">resolution</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">session_num</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">lr_classifier</span> <span class="o">=</span> <span class="n">classifier_data</span><span class="o">.</span><span class="n">lr_classifier</span>
+    <span class="n">z_score_dict</span> <span class="o">=</span> <span class="n">classifier_data</span><span class="o">.</span><span class="n">z_score_dict</span>
+
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">z_score_dict</span><span class="p">[</span><span class="n">session_num</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span>
+    <span class="n">std</span> <span class="o">=</span> <span class="n">z_score_dict</span><span class="p">[</span><span class="n">session_num</span><span class="p">]</span><span class="o">.</span><span class="n">std</span>
+
+    <span class="c1"># resolution is in seconds</span>
+    <span class="n">samplerate</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">pow_wavelet_session</span><span class="p">[</span><span class="s1">&#39;samplerate&#39;</span><span class="p">])</span>
+
+    <span class="n">number_of_samples_in_resolution</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">resolution</span> <span class="o">*</span> <span class="n">samplerate</span><span class="p">))</span>
+
+    <span class="n">total_number_of_items</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">/</span> <span class="n">resolution</span><span class="p">))</span>
+
+    <span class="n">number_of_compute_iterations</span> <span class="o">=</span> <span class="n">total_number_of_items</span> <span class="o">/</span> <span class="n">slice_size</span>
+
+    <span class="n">probs_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">number_of_compute_iterations</span><span class="p">):</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="n">start_time</span> <span class="o">+</span> <span class="n">n</span> <span class="o">*</span> <span class="n">slice_size</span> <span class="o">*</span> <span class="n">resolution</span>
+        <span class="n">initial_offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">st</span> <span class="o">*</span> <span class="n">samplerate</span><span class="p">))</span>
+        <span class="n">start_offsets</span> <span class="o">=</span> <span class="n">initial_offset</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">slice_size</span><span class="p">)</span> <span class="o">*</span> <span class="n">number_of_samples_in_resolution</span>
+
+        <span class="n">pow_wavelet_chopped</span> <span class="o">=</span> <span class="n">chop_time_series</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">pow_wavelet_session</span><span class="p">,</span> <span class="n">start_offsets</span><span class="o">=</span><span class="n">start_offsets</span><span class="p">)</span>
+        <span class="n">pow_wavelet_chopped</span> <span class="o">=</span> <span class="n">pow_wavelet_chopped</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;start_offsets&#39;</span><span class="p">:</span> <span class="s1">&#39;events&#39;</span><span class="p">})</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">pow_wavelet_chopped</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">pow_wavelet_chopped</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="n">features</span> <span class="o">=</span> <span class="n">compute_features_using_zscoring_params</span><span class="p">(</span><span class="n">pow_wavelet_chopped</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">lr_classifier</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">features</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">probs_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+
+    <span class="n">probs_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">probs_list</span><span class="p">)</span>
+    <span class="n">time_axis</span> <span class="o">=</span> <span class="n">start_time</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">probs_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">resolution</span>
+    <span class="k">return</span> <span class="n">time_axis</span><span class="p">,</span> <span class="n">probs_array</span>
+</pre></div>
+</div>
+</div>
+<p>Begining of the computational pipeline that computes classifiers</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">base_events</span> <span class="o">=</span> <span class="n">get_events</span><span class="p">()</span>
+<span class="n">monopolar_channels</span><span class="p">,</span> <span class="n">bipolar_pairs</span> <span class="o">=</span> <span class="n">get_monopolar_and_bipolar_electrodes</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="k">if</span> <span class="n">compute_classifier_flag</span><span class="p">:</span>
+    <span class="n">training_sesssions</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">use_session_chopper</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="n">classifier_data</span> <span class="o">=</span> <span class="n">compute_classifier</span><span class="p">(</span>
+        <span class="n">session_list</span><span class="o">=</span><span class="n">training_sesssions</span><span class="p">,</span>
+        <span class="n">use_session_chopper_for_wavelets</span><span class="o">=</span><span class="n">use_session_chopper_for_wavelets</span>
+    <span class="p">)</span>
+    <span class="c1"># save the classifier</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;new_classifier_data_&#39;</span> <span class="o">+</span> <span class="n">subject</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
+        <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">classifier_data</span><span class="p">,</span> <span class="n">fid</span><span class="p">)</span>
+
+    <span class="n">training_classifier</span> <span class="o">=</span> <span class="n">classifier_data</span><span class="o">.</span><span class="n">lr_classifier</span>
+
+    <span class="n">validation_sesssions</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">validation_classifier_data</span> <span class="o">=</span> \
+    <span class="n">compute_classifier</span><span class="p">(</span>
+        <span class="n">session_list</span><span class="o">=</span><span class="n">validation_sesssions</span><span class="p">,</span>
+        <span class="n">use_session_chopper_for_wavelets</span><span class="o">=</span><span class="n">use_session_chopper_for_wavelets</span>
+    <span class="p">)</span>
+
+    <span class="n">validation_features</span> <span class="o">=</span> <span class="n">validation_classifier_data</span><span class="o">.</span><span class="n">features</span>
+    <span class="n">validation_recalls</span> <span class="o">=</span> <span class="n">validation_classifier_data</span><span class="o">.</span><span class="n">recalls</span>
+
+    <span class="n">validation_recall_prob_array</span> <span class="o">=</span> <span class="n">training_classifier</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">validation_features</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">validation_recalls</span><span class="p">,</span> <span class="n">validation_recall_prob_array</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s1">&#39;validation auc=&#39;</span><span class="p">,</span> <span class="n">auc</span>
+
+<span class="c1"># we read classifier from the disk</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;new_classifier_data_&#39;</span> <span class="o">+</span> <span class="n">subject</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
+    <span class="n">classifier_data</span> <span class="o">=</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fid</span><span class="p">)</span>
+
+<span class="n">lr_classifier</span> <span class="o">=</span> <span class="n">classifier_data</span><span class="o">.</span><span class="n">lr_classifier</span>
+<span class="n">z_score_dict</span> <span class="o">=</span> <span class="n">classifier_data</span><span class="o">.</span><span class="n">z_score_dict</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+total time wavelet loop:  139.483090878
+total time wavelet loop:  133.395081997
+auc= 0.884154414327
+total time wavelet loop:
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="stderr output_area docutils container">
+<div class="highlight"><pre>
+/Users/m/miniconda/envs/ram/lib/python2.7/site-packages/sklearn/utils/class_weight.py:62: DeprecationWarning: The class_weight=&#39;auto&#39; heuristic is deprecated in 0.17 in favor of a new heuristic class_weight=&#39;balanced&#39;. &#39;auto&#39; will be removed in 0.19
+  &#34; 0.19&#34;, DeprecationWarning)
+/Users/m/miniconda/envs/ram/lib/python2.7/site-packages/sklearn/utils/class_weight.py:62: DeprecationWarning: The class_weight=&#39;auto&#39; heuristic is deprecated in 0.17 in favor of a new heuristic class_weight=&#39;balanced&#39;. &#39;auto&#39; will be removed in 0.19
+  &#34; 0.19&#34;, DeprecationWarning)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+ 135.17332387
+auc= 0.905418180009
+validation auc= 0.698392954873
+</pre></div></div>
+</div>
+<p>Here we will compute classifier time series. We begin by computing
+continuous wavelets for the session</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">session</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">dataroot</span> <span class="o">=</span> <span class="n">base_events</span><span class="p">[</span><span class="n">base_events</span><span class="o">.</span><span class="n">session</span> <span class="o">==</span> <span class="n">session</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">eegfile</span>
+
+<span class="n">pow_wavelet_session</span> <span class="o">=</span> <span class="n">compute_continuous_wavelets</span><span class="p">(</span><span class="n">dataroot</span><span class="o">=</span><span class="n">dataroot</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+total time wavelet loop:  136.65112114
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">time_axis</span><span class="p">,</span> <span class="n">classifier_array</span> <span class="o">=</span> <span class="n">compute_probs_ts</span><span class="p">(</span><span class="n">pow_wavelet_session</span><span class="p">,</span>
+                                          <span class="n">classifier_data</span><span class="p">,</span>
+                                          <span class="n">start_time</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span>
+                                          <span class="n">end_time</span><span class="o">=</span><span class="mf">70.0</span><span class="p">,</span>
+                                          <span class="n">slice_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                          <span class="n">resolution</span><span class="o">=</span><span class="mf">0.1</span>
+                                          <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_axis</span><span class="p">,</span> <span class="n">classifier_array</span><span class="p">)</span>
+<span class="c1"># plt.savefig(&#39;classifier_time_series.png&#39;)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[9]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[&lt;matplotlib.lines.Line2D at 0x114fbac90&gt;]
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_classifier_time_series_13_1.png" src="../_images/examples_classifier_time_series_13_1.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="k">if</span> <span class="n">use_session_chopper_for_wavelets</span><span class="p">:</span>
+    <span class="n">label</span><span class="o">=</span><span class="s1">&#39;chopped&#39;</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">label</span><span class="o">=</span><span class="s1">&#39;non_chopped&#39;</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;classifier_time_series_&#39;</span><span class="o">+</span><span class="n">label</span><span class="o">+</span><span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">subject</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
+    <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">([</span><span class="n">time_axis</span><span class="p">,</span><span class="n">classifier_array</span><span class="p">],</span> <span class="n">fid</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;classifier_time_series_&#39;</span><span class="o">+</span><span class="s1">&#39;chopped&#39;</span><span class="o">+</span><span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">subject</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
+    <span class="n">time_axis_chopped</span><span class="p">,</span><span class="n">classifier_array_chopped</span> <span class="o">=</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fid</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;classifier_time_series_&#39;</span><span class="o">+</span><span class="s1">&#39;non_chopped&#39;</span><span class="o">+</span><span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">subject</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
+    <span class="n">time_axis_non_chopped</span><span class="p">,</span><span class="n">classifier_array_non_chopped</span> <span class="o">=</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fid</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_axis_non_chopped</span><span class="p">,</span> <span class="n">classifier_array_non_chopped</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_axis_chopped</span><span class="p">,</span> <span class="n">classifier_array_chopped</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[21]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[&lt;matplotlib.lines.Line2D at 0x111518610&gt;]
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_classifier_time_series_16_1.png" src="../_images/examples_classifier_time_series_16_1.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="c1"># long time interval classifier time series</span>
+<span class="n">time_axis_long</span><span class="p">,</span> <span class="n">classifier_array_long</span> <span class="o">=</span> <span class="n">compute_probs_ts</span><span class="p">(</span><span class="n">pow_wavelet_session</span><span class="p">,</span>
+                                          <span class="n">classifier_data</span><span class="p">,</span>
+                                          <span class="n">start_time</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span>
+                                          <span class="n">end_time</span><span class="o">=</span><span class="mf">1250.0</span><span class="p">,</span>
+                                          <span class="n">slice_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                          <span class="n">resolution</span><span class="o">=</span><span class="mf">0.1</span>
+                                          <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">s</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span><span class="mi">3000</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_axis_long</span><span class="p">[</span><span class="n">s</span><span class="p">],</span> <span class="n">classifier_array_long</span><span class="p">[</span><span class="n">s</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[30]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[&lt;matplotlib.lines.Line2D at 0x11567d350&gt;]
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_classifier_time_series_18_1.png" src="../_images/examples_classifier_time_series_18_1.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">time_axis_chopped</span><span class="o">=</span><span class="n">time_axis</span>
+<span class="n">classifier_array_chopped</span> <span class="o">=</span> <span class="n">classifier_array</span>
+<span class="n">auc_v_chopped</span><span class="o">=</span><span class="mf">0.698392954873</span>
+<span class="n">auc_t_chopped</span> <span class="o">=</span> <span class="mf">0.884154414327</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [51]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_axis</span><span class="p">,</span> <span class="n">classifier_array</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_axis_chopped</span><span class="p">,</span> <span class="n">classifier_array_chopped</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[51]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[&lt;matplotlib.lines.Line2D at 0x111535690&gt;]
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_classifier_time_series_20_1.png" src="../_images/examples_classifier_time_series_20_1.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../ramdata.html" class="btn btn-neutral float-right" title="Interacting with RAM Data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pyFR_demo.html" class="btn btn-neutral" title="pyFR Demo" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.1.dev3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
