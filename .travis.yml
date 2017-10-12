@@ -9,7 +9,7 @@ python:
 notifications:
   email: false
 env:
-  - CC=gcc-7 CXX=g++-7 NO_RHINO=1
+  - CC=gcc-4.9 CXX=g++-4.9 NO_RHINO=1
 install:
   # We do this conditionally because it saves us some downloading if the
   # version is the same.
@@ -34,8 +34,8 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - gcc-7
-      - g++-7
+      - gcc-4.9
+      - g++-4.9
       - libfftw3-dev
 
 script:
