@@ -4,7 +4,7 @@ PTSA
 .. image:: https://travis-ci.org/pennmem/ptsa_new.svg?branch=master
     :target: https://travis-ci.org/pennmem/ptsa_new
 
-For documentation and tutorials, please see https://pennmem.github.io/ptsa/
+For documentation and tutorials, please see https://pennmem.github.io/ptsa_new/
 
 Install via conda
 -----------------
