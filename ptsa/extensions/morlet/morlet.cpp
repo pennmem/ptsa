@@ -99,16 +99,6 @@ MorletWaveletTransform::~MorletWaveletTransform() {
 
 void MorletWaveletTransform::init_flex(size_t width, double *freqs, size_t nf, double sample_freq,
                                        size_t signal_len) {
-
-
-//    cerr << "got freq array size " << nf << endl;
-//    cout << "got freq array size " << nf << endl;
-
-//    for (size_t i=0 ; i < nf; ++i ){
-//        cerr<<"freqs["<<i<<"]="<<freqs[i]<<endl;
-//
-//    }
-
     signal_len_ = signal_len;
     n_freqs = nf;
     morlet_wave_ffts = new MorletWaveFFT[nf];
@@ -295,8 +285,6 @@ void MorletWaveletTransform::wavelet_pow_phase(double *signal, double *powers, d
 
 void MorletWaveletTransform::multiphasevec_powers_and_phases(double *signal, double *powers, double *phases) {
     memcpy(signal_buf, signal, signal_len_ * sizeof(double));
-
-//    cerr<<"THIS IS multiphasevec_powers_and_phases"<<endl;
 
     size_t last_len = 0;
     size_t plan = 0;

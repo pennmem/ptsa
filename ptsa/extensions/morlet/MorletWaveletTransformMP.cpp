@@ -31,19 +31,12 @@ void MorletWaveletTransformMP ::prepare_run() {
         mwt_ptr->set_output_type(output_type);
 
     }
-
-    cerr << "num_freq=" << num_freq << endl;
-    cerr << "signal_len=" << signal_len << endl;
-    cerr << "samplfreq=" << sample_freq << endl;
-    cerr << "num_signals=" << num_signals << endl;
 }
 
 
 int MorletWaveletTransformMP ::compute_wavelets_worker_fcn(unsigned int thread_no) {
 
-//    cerr << "\n\n\n INSIDE compute_wavelets_worker_fcn" << endl;
     auto &mwt = mwt_vec[thread_no];
-
 
     size_t chunk = num_signals / cpus;
 
@@ -80,30 +73,13 @@ int MorletWaveletTransformMP ::compute_wavelets_worker_fcn(unsigned int thread_n
         wavelet_compute_fcn = mitr->second;
     }
 
-
-
-//    decltype(mwt_wavelet_pow_phase) wavelet_compute_fcn;
-//
-//    wavelet_compute_fcn = mwt_wavelet_pow_phase;
-
-//    cerr << "thread num = " << thread_no << endl;
-//    cerr << "idx_start=" << idx_start << " idx_stop=" << idx_stop << endl;
-//    cerr << "wavelet_phase_array=" << wavelet_phase_array << endl;
-
     for (size_t sig_num = idx_start; sig_num < idx_stop; ++sig_num) {
         size_t idx_signal = index(sig_num, 0, signal_len);
         auto signal = signal_array + idx_signal;
-//        mwt->multiphasevec_powers(signal, &powers[0]);
 
         size_t idx_out = index(num_freq * sig_num, 0, signal_len);
-//        mwt->multiphasevec_powers(signal, wavelet_pow_array + idx_out);
-
-//        mwt->wavelet_pow_phase(signal, wavelet_pow_array + idx_out,wavelet_phase_array+idx_out);
-
-//        mwt_wavelet_pow_phase(signal,idx_out);
 
         wavelet_compute_fcn(signal, idx_out);
-
 
     }
 
@@ -111,46 +87,9 @@ int MorletWaveletTransformMP ::compute_wavelets_worker_fcn(unsigned int thread_n
 
 }
 
-// void MorletWaveletTransformMP ::compute_wavelets_threads() {
-
-// //    cerr << "THREADED FUNCTION" << endl;
-
-    // std::list<std::thread> thread_list;
-    // for (unsigned int i = 0; i < cpus; ++i) {
-// //        thread_list.push_back(std::thread([=] { process_wavelets_out_threads(i); }));
-        // thread_list.push_back(std::thread([=] { compute_wavelets_worker_fcn(i); }));
-
-    // }
-
-    // for (auto &t: thread_list) {
-
-        // t.join();
-
-    // }
-
-// }
-
 
 void MorletWaveletTransformMP ::compute_wavelets_threads() {
-
-        // ThreadPool pool(4);
-    // std::vector< std::future<int> > results;
-
-    // for(int i = 0; i < 8; ++i) {
-        // results.emplace_back(
-            // pool.enqueue([i] {
-                // std::cout << "hello " << i << std::endl;
-                // std::this_thread::sleep_for(std::chrono::seconds(1));
-                // std::cout << "world " << i << std::endl;
-                // return i*i;
-            // })
-        // );
-    // }
-
-//    cerr<<"compute_wavelets_threads - threadpool"<<endl;
-//    cerr<<"cpus="<<cpus<<endl;
     std::vector< std::future<int> > results;
-
 
     for (unsigned int i = 0; i < cpus; ++i) {
         results.emplace_back(
@@ -158,15 +97,10 @@ void MorletWaveletTransformMP ::compute_wavelets_threads() {
                 [=] { return compute_wavelets_worker_fcn(i); }
             )
         );
-
     }
 
     //barrier
     for(auto && result: results){
          result.get();
     }
-
 }
-
-
-
