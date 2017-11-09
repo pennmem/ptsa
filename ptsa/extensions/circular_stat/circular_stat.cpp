@@ -14,7 +14,7 @@ void circ_diff(std::complex<double>* c1, size_t n1, std::complex<double>* c2, si
 void circ_diff_par(std::complex<double>* c1, size_t n1, std::complex<double>* c2, size_t n2, std::complex<double>* cdiff, size_t n3, size_t n_threads) {
     size_t chunk_length = n1 / n_threads;
     std::thread * threads = new std::thread[n_threads];
-    
+
     for (size_t thread_id=0; thread_id<n_threads; ++thread_id) {
         size_t offset{thread_id*chunk_length};
         size_t length = (thread_id < n_threads-1 ? chunk_length : n1-offset);
@@ -22,7 +22,7 @@ void circ_diff_par(std::complex<double>* c1, size_t n1, std::complex<double>* c2
     }
     //for (auto& tr : threads) tr.join();
     for(size_t th_idx = 0 ; th_idx < n_threads ; ++th_idx) threads[th_idx].join();
-    
+
     delete [] threads;
 }
 
@@ -68,19 +68,13 @@ void compute_f_stat(std::complex<double>* phase_diff_mat, size_t n_phase_diffs, 
         for (size_t j=0; j<n_events; ++j) {
             if (recalls[j]) {
                 s_rec += pdm_i[j];
-                // printf("Recall angle: %lg\n", atan2(pdm_i[j].imag(),pdm_i[j].real()));
             } else {
                 s_nrec += pdm_i[j];
-                // printf("Nonrecall angle: %lg\n", atan2(pdm_i[j].imag(),pdm_i[j].real()));
             }
-            // if (j<10) printf("%lg ", atan2(pdm_i[j].imag(),pdm_i[j].real()));
         }
         double r_recalls = std::abs(s_rec);
         double r_non_recalls = std::abs(s_nrec);
-        //f_stat_mat[i] = ((n_recalls-1)*(n_non_recalls-r_non_recalls)) / ((n_non_recalls-1)*(n_recalls-r_recalls));
         f_stat_mat[i] = ((n_non_recalls-1)*(n_recalls-r_recalls)) / ((n_recalls-1)*(n_non_recalls-r_non_recalls));
-        // printf("\nn_recalls %ld, n_non_recalls %ld, r_recalls %lg r_non_recalls %lg fstat %lg\n", n_recalls, n_non_recalls, r_recalls, r_non_recalls, f_stat_mat[i]);
-        // getc(stdin);
     }
 }
 
@@ -248,7 +242,7 @@ void single_trial_ppc_all_features(
         std::complex<double>* theta_sum_non_recalls, size_t n_theta_sum_non_recalls,
         size_t n_freqs, size_t n_bps, size_t n_threads)
 {
-    
+
     std::thread * threads = new std::thread[n_threads];
 
     size_t t_size = n_wavelets / (n_freqs*n_bps*n_events);
@@ -256,10 +250,8 @@ void single_trial_ppc_all_features(
     size_t feature_idx{0};
     size_t thread_idx{0};
     for (size_t f=0; f<n_freqs; ++f) {
-        printf("Frequency %ld\n", f);
         std::complex<double>* wavelets_f = wavelets + (f*n_bps*n_events*t_size);
         for (size_t bp1=1; bp1<n_bps; ++bp1) {
-            printf("Bipolar pair %ld\n", bp1);
             std::complex<double>* wavelets_bp1 = wavelets_f + (bp1*n_events*t_size);
             for (size_t bp2=0; bp2<bp1; ++bp2) {
                 std::complex<double>* wavelets_bp2 = wavelets_f + (bp2*n_events*t_size);
@@ -315,10 +307,8 @@ void single_trial_outsample_ppc_features(
     size_t feature_idx{0};
     size_t thread_idx{0};
     for (size_t f=0; f<n_freqs; ++f) {
-        // printf("Frequency %ld\n", f);
         std::complex<double>* wavelets_f = wavelets + (f*n_bps*t_size);
         for (size_t bp1=1; bp1<n_bps; ++bp1) {
-            // printf("Bipolar pair %ld\n", bp1);
             std::complex<double>* wavelets_bp1 = wavelets_f + (bp1*t_size);
             for (size_t bp2=0; bp2<bp1; ++bp2) {
                 std::complex<double>* wavelets_bp2 = wavelets_f + (bp2*t_size);
@@ -335,6 +325,6 @@ void single_trial_outsample_ppc_features(
     }
 
     for (size_t i=0; i<thread_idx; ++i) threads[i].join();
-    
+
     delete [] threads;
 }
