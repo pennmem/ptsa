@@ -20,7 +20,7 @@ class H5RawReader(BaseRawReader):
         --------------------------------------
         :return:None
         """
-        _,data_ext = osp.splitext(kwargs['dataroot'])
+        _, data_ext = osp.splitext(kwargs['dataroot'])
         assert len(data_ext), 'Dataroot missing extension'
         super(H5RawReader, self).__init__(**kwargs)
 
