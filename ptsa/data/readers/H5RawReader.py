@@ -1,4 +1,4 @@
-from .BaseRawReader import BaseRawReader
+from ptsa.data.readers.BaseRawReader import BaseRawReader
 import numpy as np
 import h5py
 import os.path as osp
@@ -94,7 +94,7 @@ class H5RawReader(BaseRawReader):
             read_ok_mask = np.ones((len(channels), len(start_offsets))).astype(bool)
             for i, start_offset in enumerate(start_offsets):
                 try:
-                    if 'orient' in timeseries.attrs and timeseries.attrs['orient'] == 'row':
+                    if 'orient' in timeseries.attrs.keys() and timeseries.attrs['orient'] == b'row':
                         data = timeseries[start_offset:start_offset + read_size, channels_to_read].T
                     else:
                         data = timeseries[channels_to_read, start_offset:start_offset + read_size]
@@ -111,4 +111,14 @@ class H5RawReader(BaseRawReader):
                         'End of read interval  is outside the bounds of file ' + eegfile.filename)
                     read_ok_mask[:, i] = False
 
+            if np.isnan(eventdata).all():
+                raise RuntimeError("All eventdata is nan!")
+
             return eventdata, read_ok_mask
+
+
+if __name__ == "__main__":
+    filename = osp.expanduser("~/mnt/rhino/data/eeg/R1275D/behavioral/FR1/session_0/host_pc/20170531_170954/eeg_timeseries.h5")
+    channels = np.array(['%.03d' % i for i in range(1, 10)])
+    with h5py.File(filename, 'r') as hfile:
+        reader = H5RawReader.read_h5file(hfile, channels, [0], 1000)

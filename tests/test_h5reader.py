@@ -45,7 +45,7 @@ class TestH5Reader(unittest.TestCase):
             timestamp='20171026_160648'
         )
 
-        self.raw_dataroot = osp.join(
+        self.monopolar_dataroot = osp.join(
             root, 'protocols', 'r1', 'subjects', 'R1275D', 'experiments', 'FR1',
             'sessions', '0', 'ephys', 'current_processed', 'noreref',
             'R1275D_FR1_0_31May17_2109'
@@ -58,7 +58,10 @@ class TestH5Reader(unittest.TestCase):
         with h5py.File(self.monopolar_file, 'r') as hfile:
             h5_data, _ = H5RawReader.read_h5file(hfile, channels, [0], 1000)
 
-        raw_timeseries,_ = BaseRawReader(dataroot=self.raw_dataroot,channels=channels,start_offsets=np.array([0]),read_size=1000).read()
+        raw_timeseries, _ = BaseRawReader(dataroot=self.monopolar_dataroot,
+                                          channels=channels,
+                                          start_offsets=np.array([0]),
+                                          read_size=1000).read()
         assert (raw_timeseries.data == h5_data*raw_timeseries.gain).all()
 
     def test_h5reader_many_offsets(self):
@@ -66,14 +69,22 @@ class TestH5Reader(unittest.TestCase):
 
         with h5py.File(self.monopolar_file, 'r') as hfile:
             h5_data, _ = H5RawReader.read_h5file(hfile, self.channels, offsets, 1000)
-        raw_timeseries, _ = BaseRawReader(dataroot=self.raw_dataroot, channels=self.channels, start_offsets=offsets, read_size=1000).read()
+
+        raw_timeseries, _ = BaseRawReader(dataroot=self.monopolar_dataroot,
+                                          channels=self.channels,
+                                          start_offsets=offsets,
+                                          read_size=1000).read()
         assert (raw_timeseries.data == h5_data*raw_timeseries.gain).all()
 
     def test_h5reader_out_of_bounds(self):
         offsets = np.arange(1000000, 4000000, 1000000)
         with h5py.File(self.monopolar_file, 'r') as hfile:
             h5_data, h5_mask = H5RawReader.read_h5file(hfile, self.channels, offsets, 1000)
-        raw_data,raw_mask = BaseRawReader(dataroot=self.raw_dataroot,channels=self.channels,start_offsets=offsets,read_size=1000).read()
+
+        raw_data,raw_mask = BaseRawReader(dataroot=self.monopolar_dataroot,
+                                          channels=self.channels,
+                                          start_offsets=offsets,
+                                          read_size=1000).read()
         assert(raw_mask == h5_mask).all()
         assert(h5_data[h5_mask] == raw_data.data[raw_mask]).all()
 
@@ -111,7 +122,7 @@ class TestH5Reader(unittest.TestCase):
         del h5_data
         h5dur = toc-tic
         tic=time.time()
-        raw_data,_ = BaseRawReader(dataroot=self.raw_dataroot,channels=channels).read()
+        raw_data,_ = BaseRawReader(dataroot=self.monopolar_dataroot, channels=channels).read()
         toc=time.time()
         del raw_data
         rawdur = toc-tic
