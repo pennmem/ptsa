@@ -1,17 +1,14 @@
-from .BaseRawReader import BaseRawReader
+from ptsa.data.readers.BaseRawReader import BaseRawReader
 import numpy as np
-import tables
+import h5py
 import os.path as osp
 
-class H5RawReader(BaseRawReader):
-    """
-    Class for reading raw EEG data stored in HDF5 format.
-    """
 
-    def __init__(self,**kwargs):
+class H5RawReader(BaseRawReader):
+    """Class for reading raw EEG data stored in HDF5 format."""
+    def __init__(self, **kwargs):
         """
-        Constructor
-        :param kwds:allowed values are:
+        :param kwargs: allowed values are:
         -------------------------------------
         :param dataroot {str} -  Full name of hdf5 file. Normally this is the eegfile field from events record
 
@@ -23,15 +20,11 @@ class H5RawReader(BaseRawReader):
         --------------------------------------
         :return:None
         """
-
-
-        _,data_ext = osp.splitext(kwargs['dataroot'])
+        _, data_ext = osp.splitext(kwargs['dataroot'])
         assert len(data_ext), 'Dataroot missing extension'
         super(H5RawReader, self).__init__(**kwargs)
 
-
-
-    def read_file(self,filename, channels, start_offsets=np.array([0]), read_size=-1):
+    def read_file(self, filename, channels, start_offsets=np.array([0]), read_size=-1):
         """
         Overloads BaseRawReader.read_file(). Does some mangling of the channels parameter if it is empty or if the
         HDF5 file is a bipolar recording
@@ -43,25 +36,35 @@ class H5RawReader(BaseRawReader):
         :return: event_data: The EEG data corresponding to each offset
         :return: read_ok_mask: Boolean mask indicating whether each offset was read successfully.
         """
-        with tables.open_file(self.dataroot) as eegfile:
-            if len(channels)==0:
-                channels = self.channels = np.array(['{:03d}'.format(x) for x in eegfile.root.ports[:]])
-            if 'bipolar_info' in eegfile.root and ('monopolar_possible' in eegfile.root and eegfile.root.monopolar_possible[:]==False):
-                if not (np.in1d(channels,eegfile.root.bipolar_info.ch0_label).all()):
-                    raise IndexError('Channel[s] %s not in recording'%(
-                        channels[~np.in1d(channels,eegfile.root.bipolar_info.ch0_label)])
-                                     )
-                channel_mask = np.in1d(eegfile.root.bipolar_info.ch0_label, channels)
-                self.channels = np.array(zip(eegfile.root.bipolar_info.ch0_label[channel_mask],
-                                          eegfile.root.bipolar_info.ch1_label[channel_mask]),
-                                        dtype=[('ch0',int),('ch1',int)]).view(np.recarray)
+        with h5py.File(self.dataroot, 'r') as eegfile:
+            if len(channels) == 0:
+                channels = self.channels = np.array(['{:03d}'.format(x).encode() for x in eegfile['/ports'][:]])
 
-                self.channel_name = 'bipolar_pairs'
-            event_data,read_ok_mask = self.read_h5file(eegfile, channels if self.channel_name=='channels' else self.channels.ch0
-                                                       , start_offsets, read_size)
-            if self.read_size==-1:
+            try:
+                monopolar_possible = bool(eegfile['/monopolar_possible'][0])
+
+                if 'bipolar_info' in eegfile and not monopolar_possible:
+                    if not (np.in1d(channels, eegfile['/bipolar_info/ch0_label']).all()):
+                        raise IndexError('Channel[s] %s not in recording' % (
+                            channels[~np.in1d(channels, eegfile['/bipolar_info/ch0_label'])]))
+                    channel_mask = np.in1d(eegfile['/bipolar_info/ch0_label'], channels)
+                    self.channels = np.array(
+                        list(
+                            zip(eegfile['/bipolar_info/ch0_label'][channel_mask],
+                                eegfile['/bipolar_info/ch1_label'][channel_mask]),
+                        ),
+                        dtype=[('ch0', int), ('ch1', int)]).view(np.recarray)
+
+                    self.channel_name = 'bipolar_pairs'
+            except KeyError:
+                pass
+
+            channels_ = channels if self.channel_name == 'channels' else self.channels.ch0
+            event_data, read_ok_mask = self.read_h5file(eegfile, channels_,
+                                                        start_offsets, read_size)
+            if self.read_size == -1:
                 self.read_size = max(event_data.shape)
-            return event_data,read_ok_mask
+            return event_data, read_ok_mask
 
     @staticmethod
     def read_h5file(eegfile, channels, start_offsets=np.array([0]), read_size=-1):
@@ -77,8 +80,8 @@ class H5RawReader(BaseRawReader):
         :return: read_ok_mask: Boolean mask indicating whether each offset was read successfully.
 
         """
-        timeseries = eegfile.root.timeseries
-        ports = eegfile.root.ports
+        timeseries = eegfile['/timeseries']
+        ports = eegfile['/ports']
         channels_to_read = np.where(np.in1d(ports, channels.astype(int)))[0]
         if read_size < 0:
             if 'orient' in timeseries.attrs and timeseries.attrs['orient'] == 'row':
@@ -93,7 +96,7 @@ class H5RawReader(BaseRawReader):
             read_ok_mask = np.ones((len(channels), len(start_offsets))).astype(bool)
             for i, start_offset in enumerate(start_offsets):
                 try:
-                    if 'orient' in timeseries.attrs and timeseries.attrs['orient'] == 'row':
+                    if 'orient' in timeseries.attrs.keys() and timeseries.attrs['orient'] == b'row':
                         data = timeseries[start_offset:start_offset + read_size, channels_to_read].T
                     else:
                         data = timeseries[channels_to_read, start_offset:start_offset + read_size]
@@ -110,4 +113,14 @@ class H5RawReader(BaseRawReader):
                         'End of read interval  is outside the bounds of file ' + eegfile.filename)
                     read_ok_mask[:, i] = False
 
-            return eventdata,read_ok_mask,
+            if np.isnan(eventdata).all():
+                raise RuntimeError("All eventdata is nan!")
+
+            return eventdata, read_ok_mask
+
+
+if __name__ == "__main__":
+    filename = osp.expanduser("~/mnt/rhino/data/eeg/R1275D/behavioral/FR1/session_0/host_pc/20170531_170954/eeg_timeseries.h5")
+    channels = np.array(['%.03d' % i for i in range(1, 10)])
+    with h5py.File(filename, 'r') as hfile:
+        reader = H5RawReader.read_h5file(hfile, channels, [0], 1000)

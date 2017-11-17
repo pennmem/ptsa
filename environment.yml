@@ -10,7 +10,6 @@ dependencies:
 - pandas
 - pip
 - pyparsing
-- pytables
 - python
 - python-dateutil
 - pytz
