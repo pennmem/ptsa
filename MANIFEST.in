@@ -1,5 +1,6 @@
 include AUTHOR COPYING MANIFEST.in setup.*
 recursive-include docs *
 recursive-include examples *
+recursive-exclude tests *
 prune docs/_build
 prune *~

@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from zipfile import ZipFile
 import site
 
-from setuptools import setup, Extension, Command
+from setuptools import setup, Extension, Command, find_packages
 from setuptools.command.build_py import build_py
 from setuptools.command.install import install
 import distutils
@@ -283,25 +283,28 @@ setup(
         "xarray",
         "PyWavelets"
     ],
-    packages=[
-        'ptsa',
-        'ptsa.extensions',
-        'ptsa.extensions.morlet',
-        'ptsa.extensions.circular_stat',
-        'ptsa.data',
-        'ptsa.data.readers',
-        'ptsa.data.MatlabIO',
-        'ptsa.data.common',
-        'ptsa.data.filters',
-        'ptsa.data.readers',
-        'ptsa.data.writers',
-        'ptsa.data.experimental',
-        # 'ptsa.data.tests',
-        'ptsa.data.edf',
-        'ptsa.test',
-        'ptsa.plotting',
-        'ptsa.stats',
-        'dimarray',
-        'dimarray.tests'
-    ]
+    packages=find_packages(
+        exclude=['*.tests', 'tests', 'tests.*', '*.outdated_tests']
+    ),
+    # [
+    #     'ptsa',
+    #     'ptsa.extensions',
+    #     'ptsa.extensions.morlet',
+    #     'ptsa.extensions.circular_stat',
+    #     'ptsa.data',
+    #     'ptsa.data.readers',
+    #     'ptsa.data.MatlabIO',
+    #     'ptsa.data.common',
+    #     'ptsa.data.filters',
+    #     'ptsa.data.readers',
+    #     'ptsa.data.writers',
+    #     'ptsa.data.experimental',
+    #     # 'ptsa.data.tests',
+    #     'ptsa.data.edf',
+    #     'ptsa.test',
+    #     'ptsa.plotting',
+    #     'ptsa.stats',
+    #     'dimarray',
+    #     'dimarray.tests'
+    # ]
 )
