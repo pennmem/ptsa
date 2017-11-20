@@ -1,5 +1,4 @@
 import json
-import time
 import warnings
 from io import BytesIO
 from base64 import b64encode, b64decode
@@ -11,8 +10,12 @@ try:
     import h5py
 except ImportError:  # pragma: nocover
     h5py = None
-
-from ptsa.version import version as ptsa_version
+"""Start Logan Monkey Patching"""    
+try:
+    from mne.io import read_raw_edf 
+except ImportError:  
+    read_raw_edf = None
+"""End Logan Monkey Patching"""  
 from ptsa.data.common import get_axis_index
 from ptsa.filt import buttfilt
 
@@ -22,6 +25,20 @@ class ConcatenationError(Exception):
     :class:`TimeSeriesX` objects.
 
     """
+
+
+@xr.register_dataarray_accessor('sample')
+class SampleAccessor(object):
+    def __init__(self, array):
+        self._obj = array
+
+    @property
+    def rate(self):
+        return self._obj['samplerate'].data
+
+    @rate.setter
+    def rate(self, rate):
+        self._obj['samplerate'] = rate
 
 
 class TimeSeriesX(xr.DataArray):
@@ -106,9 +123,6 @@ class TimeSeriesX(xr.DataArray):
             raise RuntimeError("You must install h5py to save as HDF5")
 
         with h5py.File(filename, mode) as hfile:
-            hfile.attrs['ptsa_version'] = ptsa_version
-            hfile.attrs['created'] = time.time()
-
             hfile.create_dataset("data", data=self.data, chunks=True)
 
             dims = [dim.encode() for dim in self.dims]
@@ -175,6 +189,77 @@ class TimeSeriesX(xr.DataArray):
                                dims=[dim.decode() for dim in dims],
                                name=name, attrs=attrs)
             return array
+        
+    """Start Logan Monkey Patching"""
+    @classmethod
+    def from_edf(cls, filename, *args,**kwargs):
+        """Takes a file located at filename and returns it as a TimeSeriesX object
+        
+        FIXME: automate the generation of 'events' based upon raw signal for sleep data
+        
+        ------
+        INPUTS
+        filename: str, path to the edf file, e.g. '/Volumes/rhino/home2/loganf/data.edf'
+        
+        ------
+        OUTPUTS
+        ts: TimeSeriesX
+        
+        """
+        if read_raw_edf is None:
+            raise RuntimeError("You must install mne to load from EDF")
+        print('Extracting edf signal from {}'.format(filename))
+        # Use MNE to read in raw edf file
+        raw_data=read_raw_edf((filename),preload=True, verbose=False,
+                              *args,**kwargs)
+        # Get data, channel labels, sampling freq
+        data, chs, sfreq = raw_data._data, raw_data.ch_names, np.round(raw_data.info['sfreq'])
+        # Construct time from number of points and sampling freq
+        time = np.arange(0, data.shape[-1])/sfreq
+        # Set coords for timeseries
+        coords = {'channels': chs, "time": time, "samplerate": sfreq}
+        # Create TimeSeriesX object
+        ts = cls.create(data, sfreq, coords=coords, 
+                        dims = ['channels', 'time'])
+        print('Ready.')
+        return ts
+    
+    @classmethod
+    def concat(cls, ts_list, dim = 'events', *args,**kwargs):
+        """Concatenates a list of TimeSeriesX objects along a dimension 
+        
+        FIX ME: Change to check if any dim is np.recarray and reset any that are.
+        -----
+        INPUTS
+        ts_list: list, a list of time_series seperated, e.g. list of sessions
+        dim: str, dimension to concatenate over, you can also choose a new name (e.g. 'subjects' 
+             across all a list of all subjects). By default tries to do events
+        -----
+        OUTPUTS
+        ts: TimeSeriesX Object, a functional timeseries object with indexable events
+        """
+        
+        # Check if events is in the dims
+        if all(['events' in y for y in [x.dims for x in ts_list]]):
+            # Extract events before overwriting them
+            evs = np.concatenate([x.events.data for x in ts_list]).view(np.recarray)
+            ts = xr.concat(objs = ts_list, dim = dim, *args, **kwargs)
+            ts['events'] = evs # Reset the events to the correct np.recarray
+            return ts
+        
+        # Try to just concat normally, if that doesn't work show them why.
+        else: 
+            try:
+                ts = xr.concat(objs = ts_list, dim = dim, *args, **kwargs)
+                return ts
+            except:
+                print(ts_list[0].dims)
+                print('There needs to be an "events" dim for each of the TimeSeriesX in the passed list')
+                assert all(['events' in y for y in [x.dims for x in ts_list]])
+                
+    """End Logan Monkey Patching"""
+       
+
 
     def append(self, other, dim=None):
         """Append another :class:`TimeSeriesX` to this one.
