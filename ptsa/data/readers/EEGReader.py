@@ -26,17 +26,19 @@ class EEGReader(PropertiedObject, BaseReader):
     Keyword Arguments
     -----------------
     channels : np.ndarray
-      numpy array of channel labels
+        numpy array of channel labels
     start_time : float
-       read start offset in seconds w.r.t to the eegeffset specified in the events recarray
+        read start offset in seconds w.r.t to the eegeffset specified in the events recarray
     end_time:
-       read end offset in seconds w.r.t to the eegeffset specified in the events recarray
+        read end offset in seconds w.r.t to the eegeffset specified in the events recarray
     buffer_time : float
-       extra buffer in seconds (subtracted from start read and added to end read)
+        extra buffer in seconds (subtracted from start read and added to end read)
     events : np.recarray
-       numpy recarray representing Events
+        numpy recarray representing Events
     session_dataroot : str
-       path to session dataroot. When set the reader will read the entire session
+        path to session dataroot. When set the reader will read the entire session
+    remove_bad_events : bool
+        Remove "bad" events. Defaults to True.
 
     Returns
     -------
@@ -50,6 +52,7 @@ class EEGReader(PropertiedObject, BaseReader):
         TypeValTuple('buffer_time', float, 0.0),
         TypeValTuple('events', object, object),
         TypeValTuple('session_dataroot', six.string_types, ''),
+        TypeValTuple('remove_bad_events', bool, True)
     ]
 
     READER_FILETYPE_DICT = defaultdict(lambda : BaseRawReader)
@@ -80,9 +83,6 @@ class EEGReader(PropertiedObject, BaseReader):
         p_reader = ParamsReader(dataroot=dataroot)
         params = p_reader.read()
         samplerate = params['samplerate']
-        # start_offset = int(np.ceil(self.start_time * samplerate))
-        # end_offset = int(np.ceil(self.end_time * samplerate))
-        # buffer_offset = int(np.ceil(self.buffer_time * samplerate))
 
         start_offset = int(np.round(self.start_time * samplerate))
         end_offset = int(np.round(self.end_time * samplerate))
@@ -223,10 +223,11 @@ class EEGReader(PropertiedObject, BaseReader):
         event_ok_mask_sorted = event_ok_mask[event_indices_restore_sort_order_array]
 
         # removing bad events
-        if np.any(~event_ok_mask_sorted):
-            warnings.warn("Found some bad events. Removing!", UserWarning)
-            self.removed_corrupt_events = True
-            self.event_ok_mask_sorted = event_ok_mask_sorted
+        if self.remove_bad_events:
+            if np.any(~event_ok_mask_sorted):
+                warnings.warn("Found some bad events. Removing!", UserWarning)
+                self.removed_corrupt_events = True
+                self.event_ok_mask_sorted = event_ok_mask_sorted
 
         eventdata = eventdata[:, event_ok_mask_sorted, :]
 
