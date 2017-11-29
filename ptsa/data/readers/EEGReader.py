@@ -1,20 +1,24 @@
+from collections import defaultdict
+import os.path
+import warnings
+
 import numpy as np
 import xarray as xr
+
 from ptsa.data.common import TypeValTuple, PropertiedObject
-from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.readers.ParamsReader import ParamsReader
 from ptsa.data.readers.BaseRawReader import BaseRawReader
 from ptsa.data.readers.H5RawReader import H5RawReader
 from ptsa.data.readers import BaseReader
-import time
 from ptsa import six
-from collections import defaultdict,namedtuple
-import os.path
+from ptsa.data.TimeSeriesX import TimeSeriesX
+
 
 class IncompatibleDataError(Exception):
     pass
 
-class EEGReader(PropertiedObject,BaseReader):
+
+class EEGReader(PropertiedObject, BaseReader):
     """
     Reader that knows how to read binary eeg files. It can read chunks of the eeg signal based on events input
     or can read entire session if session_dataroot is non empty.
@@ -51,11 +55,7 @@ class EEGReader(PropertiedObject,BaseReader):
     READER_FILETYPE_DICT = defaultdict(lambda : BaseRawReader)
     READER_FILETYPE_DICT.update({'.h5':H5RawReader})
 
-
     def __init__(self, **kwds):
-        """
-
-        """
         self.init_attrs(kwds)
         self.removed_corrupt_events = False
         self.event_ok_mask_sorted = None
@@ -178,7 +178,6 @@ class EEGReader(PropertiedObject,BaseReader):
 
         event_ok_mask_list = []
 
-
         for s, (raw_reader, dataroot) in enumerate(zip(raw_readers, original_dataroots)):
 
             ts_array, read_ok_mask = raw_reader.read()
@@ -189,35 +188,23 @@ class EEGReader(PropertiedObject,BaseReader):
             event_indices_list.append(ordered_indices[ind])
             events.append(evs[ind])
 
-
             ts_array_list.append(ts_array)
-
 
         if not all([r.channel_name==raw_readers[0].channel_name for r in raw_readers]):
             raise IncompatibleDataError('cannot read monopolar and bipolar data together')
 
         self.channel_name = raw_readers[0].channel_name
-        # print('raw_reader_channel_names: \n%s'%[x.channel_name for x in raw_readers])
-        # print('self.channel_name: %s'%self.channel_name)
-
 
         event_indices_array = np.hstack(event_indices_list)
-
         event_indices_restore_sort_order_array = event_indices_array.argsort()
 
-        start_extend_time = time.time()
-        # new code
         eventdata = xr.concat(ts_array_list, dim='start_offsets')
-        # tdim = np.linspace(self.start_time-self.buffer_time,self.end_time+self.buffer_time,num=eventdata['offsets'].shape[0])
-        # samplerate=eventdata.attrs['samplerate'].data
         samplerate = float(eventdata['samplerate'])
         tdim = np.arange(eventdata.shape[-1]) * (1.0 / samplerate) + (self.start_time - self.buffer_time)
         cdim = eventdata[self.channel_name]
         edim = np.concatenate(events).view(np.recarray).copy()
 
         attrs = eventdata.attrs.copy()
-        # constructing TimeSeries Object
-        # eventdata = TimeSeriesX(eventdata.data,dims=['channels','events','time'],coords=[cdim,edim,tdim])
         eventdata = TimeSeriesX(eventdata.data,
                                 dims=[self.channel_name, 'events', 'time'],
                                 coords={self.channel_name: cdim,
@@ -234,77 +221,16 @@ class EEGReader(PropertiedObject,BaseReader):
 
         event_ok_mask = np.hstack(event_ok_mask_list)
         event_ok_mask_sorted = event_ok_mask[event_indices_restore_sort_order_array]
-        #removing bad events
+
+        # removing bad events
         if np.any(~event_ok_mask_sorted):
-            self.removed_corrupt_events=True
+            warnings.warn("Found some bad events. Removing!", UserWarning)
+            self.removed_corrupt_events = True
             self.event_ok_mask_sorted = event_ok_mask_sorted
 
         eventdata = eventdata[:, event_ok_mask_sorted, :]
 
         return eventdata
-
-
-
-
-    # def read_events_data(self):
-    #     """
-    #     Reads eeg data for individual event
-    #     :return: TimeSeriesX  object (channels x events x time) with data for individual events
-    #     """
-    #     evs = self.events
-    #
-    #     raw_readers, original_dataroots = self.__create_base_raw_readers()
-    #
-    #     # used for restoring original order of the events
-    #     ordered_indices = np.arange(len(evs))
-    #     event_indices_list = []
-    #     events = []
-    #
-    #     ts_array_list = []
-    #
-    #     for s, (raw_reader, dataroot) in enumerate(zip(raw_readers, original_dataroots)):
-    #         ind = np.atleast_1d(evs.eegfile == dataroot)
-    #         event_indices_list.append(ordered_indices[ind])
-    #         events.append(evs[ind])
-    #
-    #         ts_array = raw_reader.read()
-    #
-    #         read_ok_mask = raw_reader.get_read_ok_mask()
-    #
-    #         ts_array_list.append(ts_array)
-    #
-    #     event_indices_array = np.hstack(event_indices_list)
-    #
-    #     event_indices_restore_sort_order_array = event_indices_array.argsort()
-    #
-    #     start_extend_time = time.time()
-    #     # new code
-    #     eventdata = xr.concat(ts_array_list, dim='start_offsets')
-    #     # tdim = np.linspace(self.start_time-self.buffer_time,self.end_time+self.buffer_time,num=eventdata['offsets'].shape[0])
-    #     # samplerate=eventdata.attrs['samplerate'].data
-    #     samplerate = float(eventdata['samplerate'])
-    #     tdim = np.arange(eventdata.shape[-1]) * (1.0 / samplerate) + (self.start_time - self.buffer_time)
-    #     cdim = eventdata['channels']
-    #     edim = np.concatenate(events).view(np.recarray).copy()
-    #
-    #     attrs = eventdata.attrs.copy()
-    #     # constructing TimeSeries Object
-    #     # eventdata = TimeSeriesX(eventdata.data,dims=['channels','events','time'],coords=[cdim,edim,tdim])
-    #     eventdata = TimeSeriesX(eventdata.data,
-    #                             dims=['channels', 'events', 'time'],
-    #                             coords={'channels': cdim,
-    #                                     'events': edim,
-    #                                     'time': tdim,
-    #                                     'samplerate': samplerate
-    #                                     }
-    #                             )
-    #
-    #     eventdata.attrs = attrs
-    #
-    #     # restoring original order of the events
-    #     eventdata = eventdata[:, event_indices_restore_sort_order_array, :]
-    #
-    #     return eventdata
 
     def read(self):
         """
