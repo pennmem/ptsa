@@ -97,7 +97,7 @@ class TestReaders(unittest.TestCase):
         sess_1[444].eegoffset = 2000000000000
         sess_1[434].eegoffset = 2000000000000
 
-        shuffled_sess_events = np.hstack((sess_3, sess_7, sess_1, sess_5)).view(np.recarray)
+        shuffled_sess_events = np.rec.array(np.hstack((sess_3, sess_7, sess_1, sess_5)))
 
         eeg_reader = EEGReader(events=shuffled_sess_events, channels=np.array(['002', '003']),
                                start_time=self.start_time, end_time=self.end_time, buffer_time=self.buffer_time)
@@ -106,7 +106,7 @@ class TestReaders(unittest.TestCase):
         if eeg_reader.removed_bad_data():
             print('REMOVED BAD DATA !!!!!!!!!!!!!')
 
-        events = base_eegs['events'].data.view(np.recarray)
+        events = np.rec.array(base_eegs['events'].data)
 
         if not isinstance(events, Events):
             events = Events(events)

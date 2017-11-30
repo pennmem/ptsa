@@ -48,12 +48,12 @@ class H5RawReader(BaseRawReader):
                         raise IndexError('Channel[s] %s not in recording' % (
                             channels[~np.in1d(channels, eegfile['/bipolar_info/ch0_label'])]))
                     channel_mask = np.in1d(eegfile['/bipolar_info/ch0_label'], channels)
-                    self.channels = np.array(
+                    self.channels = np.rec.array(
                         list(
                             zip(eegfile['/bipolar_info/ch0_label'][channel_mask],
                                 eegfile['/bipolar_info/ch1_label'][channel_mask]),
                         ),
-                        dtype=[('ch0', int), ('ch1', int)]).view(np.recarray)
+                        dtype=[('ch0', int), ('ch1', int)])
 
                     self.channel_name = 'bipolar_pairs'
             except KeyError:

@@ -202,7 +202,7 @@ class EEGReader(PropertiedObject, BaseReader):
         samplerate = float(eventdata['samplerate'])
         tdim = np.arange(eventdata.shape[-1]) * (1.0 / samplerate) + (self.start_time - self.buffer_time)
         cdim = eventdata[self.channel_name]
-        edim = np.concatenate(events).view(np.recarray).copy()
+        edim = np.rec.array(np.concatenate(events))
 
         attrs = eventdata.attrs.copy()
         eventdata = TimeSeriesX(eventdata.data,
