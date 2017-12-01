@@ -4,6 +4,12 @@ PTSA
 .. image:: https://travis-ci.org/pennmem/ptsa_new.svg?branch=master
     :target: https://travis-ci.org/pennmem/ptsa_new
 
+.. image:: https://codecov.io/gh/pennmem/ptsa_new/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/pennmem/ptsa_new
+
+.. image:: https://img.shields.io/conda/v/pennmem/ptsa.svg
+    :target: https://anaconda.org/pennmem/ptsa
+
 For documentation and tutorials, please see https://pennmem.github.io/ptsa_new/
 
 Warning
