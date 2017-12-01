@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>BEHAVIORAL ANALYSES &mdash; PTSA 1.1.dev3 documentation</title>
+  <title>BEHAVIORAL ANALYSES &mdash; PTSA 1.1.4 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="PTSA 1.1.dev3 documentation" href="../index.html"/> 
+    <link rel="top" title="PTSA 1.1.4 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.1.dev3
+                1.1.4
               </div>
             
           
@@ -367,8 +367,8 @@ dataframes</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">BaseEventReader</span>
-<span class="n">rhino_root</span> <span class="o">=</span> <span class="s1">&#39;/Volumes/rhino_root&#39;</span> <span class="c1"># Since I&#39;m writing this tutorial with rhino mounted to my local machine</span>
+<span></span>from ptsa.data.readers import BaseEventReader
+rhino_root = &#39;/Volumes/rhino_root&#39; # Since I&#39;m writing this tutorial with rhino mounted to my local machine
 </pre></div>
 </div>
 </div>
@@ -379,8 +379,8 @@ dataframes</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">events</span> <span class="o">=</span> <span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">rhino_root</span><span class="o">+</span><span class="s1">&#39;/data/events/pyFR/BW001_events.mat&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">events</span>
+<span></span>events = BaseEventReader(filename=rhino_root+&#39;/data/events/pyFR/BW001_events.mat&#39;).read()
+events
 </pre></div>
 </div>
 </div>
@@ -846,7 +846,7 @@ dataframes</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="nb">type</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+<span></span>type(events)
 </pre></div>
 </div>
 </div>
@@ -871,7 +871,7 @@ this table has:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">events</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+<span></span>events.dtype.names
 </pre></div>
 </div>
 </div>
@@ -928,8 +928,8 @@ samples</li>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">events</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+<span></span>import numpy as np
+np.unique(events.type)
 </pre></div>
 </div>
 </div>
@@ -992,7 +992,7 @@ samples</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.1.dev3',
+            VERSION:'1.1.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

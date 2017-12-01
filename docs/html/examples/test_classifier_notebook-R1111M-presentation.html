@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>RAM Computational Pipeline &mdash; PTSA 1.1.dev3 documentation</title>
+  <title>RAM Computational Pipeline &mdash; PTSA 1.1.4 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="PTSA 1.1.dev3 documentation" href="../index.html"/> 
+    <link rel="top" title="PTSA 1.1.4 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.1.dev3
+                1.1.4
               </div>
             
           
@@ -399,22 +399,22 @@ computational pipeline:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;/Users/m/PTSA_NEW_GIT/&#39;</span><span class="p">)</span>
-<span class="kn">import</span> <span class="nn">numpy.testing</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">BaseEventReader</span>
-<span class="kn">from</span> <span class="nn">ptsa.data.readers.TalReader</span> <span class="kn">import</span> <span class="n">TalReader</span>
-<span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">EEGReader</span>
-<span class="kn">from</span> <span class="nn">ptsa.data.filters</span> <span class="kn">import</span> <span class="n">MonopolarToBipolarMapper</span>
-<span class="kn">from</span> <span class="nn">ptsa.data.filters</span> <span class="kn">import</span> <span class="n">ButterworthFilter</span>
-<span class="kn">from</span> <span class="nn">ptsa.data.filters.MorletWaveletFilter</span> <span class="kn">import</span> <span class="n">MorletWaveletFilter</span>
-<span class="kn">from</span> <span class="nn">ptsa.data.common</span> <span class="kn">import</span> <span class="n">xr</span>
-<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_auc_score</span><span class="p">,</span> <span class="n">roc_curve</span>
-<span class="kn">from</span> <span class="nn">scipy.stats.mstats</span> <span class="kn">import</span> <span class="n">zscore</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
-<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<span></span>import sys
+sys.path.append(&#39;/Users/m/PTSA_NEW_GIT/&#39;)
+import numpy.testing
+import numpy as np
+from ptsa.data.readers import BaseEventReader
+from ptsa.data.readers.TalReader import TalReader
+from ptsa.data.readers import EEGReader
+from ptsa.data.filters import MonopolarToBipolarMapper
+from ptsa.data.filters import ButterworthFilter
+from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
+from ptsa.data.common import xr
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score, roc_curve
+from scipy.stats.mstats import zscore
+from time import time
+start_time = time()
 </pre></div>
 </div>
 </div>
@@ -440,16 +440,16 @@ those:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">e_path</span> <span class="o">=</span> <span class="s1">&#39;/Users/m/data/events/RAM_FR1/R1111M_events.mat&#39;</span>
-<span class="n">tal_path</span> <span class="o">=</span> <span class="s1">&#39;/Users/m/data/eeg/R1111M/tal/R1111M_talLocs_database_bipol.mat&#39;</span>
-<span class="c1"># ------------------- READING TAL STRUCTS</span>
-<span class="n">tal_reader</span> <span class="o">=</span> <span class="n">TalReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">tal_path</span><span class="p">)</span>
-<span class="n">monopolar_channels</span> <span class="o">=</span> <span class="n">tal_reader</span><span class="o">.</span><span class="n">get_monopolar_channels</span><span class="p">()</span>
-<span class="n">bipolar_pairs</span> <span class="o">=</span> <span class="n">tal_reader</span><span class="o">.</span><span class="n">get_bipolar_pairs</span><span class="p">()</span>
-<span class="c1"># ------------------- READING EVENTS</span>
-<span class="n">base_e_reader</span> <span class="o">=</span> <span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">e_path</span><span class="p">,</span> <span class="n">eliminate_events_with_no_eeg</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">base_events</span> <span class="o">=</span> <span class="n">base_e_reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">base_events</span> <span class="o">=</span> <span class="n">base_events</span><span class="p">[</span><span class="n">base_events</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;WORD&#39;</span><span class="p">]</span>
+<span></span>e_path = &#39;/Users/m/data/events/RAM_FR1/R1111M_events.mat&#39;
+tal_path = &#39;/Users/m/data/eeg/R1111M/tal/R1111M_talLocs_database_bipol.mat&#39;
+# ------------------- READING TAL STRUCTS
+tal_reader = TalReader(filename=tal_path)
+monopolar_channels = tal_reader.get_monopolar_channels()
+bipolar_pairs = tal_reader.get_bipolar_pairs()
+# ------------------- READING EVENTS
+base_e_reader = BaseEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
+base_events = base_e_reader.read()
+base_events = base_events[base_events.type == &#39;WORD&#39;]
 </pre></div>
 </div>
 </div>
@@ -473,10 +473,10 @@ before start_time_position and after end_time position</li>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">eeg_reader</span> <span class="o">=</span> <span class="n">EEGReader</span><span class="p">(</span><span class="n">events</span><span class="o">=</span><span class="n">base_events</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="n">monopolar_channels</span><span class="p">,</span>
-                       <span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">buffer_time</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span></span>eeg_reader = EEGReader(events=base_events, channels=monopolar_channels,
+                       start_time=0.0, end_time=1.6, buffer_time=1.0)
 
-<span class="n">base_eegs</span> <span class="o">=</span> <span class="n">eeg_reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+base_eegs = eeg_reader.read()
 </pre></div>
 </div>
 </div>
@@ -493,7 +493,7 @@ output by using <em>base_eegs[0:2,0:2,0:300]</em></p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">base_eegs</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">300</span><span class="p">]</span>
+<span></span>base_eegs[0:2,0:2,0:300]
 </pre></div>
 </div>
 </div>
@@ -536,7 +536,7 @@ would type:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">base_eegs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span>
+<span></span>base_eegs[0,0,:]
 </pre></div>
 </div>
 </div>
@@ -569,11 +569,11 @@ ipython notebook can inline the plots</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span></span>%matplotlib inline
 
-<span class="kn">import</span> <span class="nn">matplotlib</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+import matplotlib
+import numpy as np
+import matplotlib.pyplot as plt
 </pre></div>
 </div>
 </div>
@@ -584,7 +584,7 @@ ipython notebook can inline the plots</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">base_eegs</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span><span class="n">base_eegs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,:])</span>
+<span></span>plt.plot(base_eegs[&#39;time&#39;],base_eegs[0,0,:])
 </pre></div>
 </div>
 </div>
@@ -616,7 +616,7 @@ voltage difference between the two channels</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">base_eegs</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span><span class="n">base_eegs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,:])</span>
+<span></span>plt.plot(base_eegs[&#39;time&#39;],base_eegs[1,0,:])
 </pre></div>
 </div>
 </div>
@@ -643,7 +643,7 @@ voltage difference between the two channels</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">base_eegs</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span><span class="n">base_eegs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span><span class="o">-</span><span class="n">base_eegs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,:])</span>
+<span></span>plt.plot(base_eegs[&#39;time&#39;],base_eegs[1,0,:]-base_eegs[0,0,:])
 </pre></div>
 </div>
 </div>
@@ -672,7 +672,7 @@ bipolar pairs</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">bipolar_pairs</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+<span></span>bipolar_pairs[0:3]
 </pre></div>
 </div>
 </div>
@@ -694,7 +694,7 @@ bipolar pairs</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">monopolar_channels</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+<span></span>monopolar_channels[0:10]
 </pre></div>
 </div>
 </div>
@@ -721,8 +721,8 @@ these operations for us:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">m2b</span> <span class="o">=</span> <span class="n">MonopolarToBipolarMapper</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">base_eegs</span><span class="p">,</span> <span class="n">bipolar_pairs</span><span class="o">=</span><span class="n">bipolar_pairs</span><span class="p">)</span>
-<span class="n">bp_eegs</span> <span class="o">=</span> <span class="n">m2b</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span>
+<span></span>m2b = MonopolarToBipolarMapper(time_series=base_eegs, bipolar_pairs=bipolar_pairs)
+bp_eegs = m2b.filter()
 </pre></div>
 </div>
 </div>
@@ -735,17 +735,17 @@ values we woudld obtain using manual calculations:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">first_bp</span> <span class="o">=</span> <span class="n">bp_eegs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span>
-<span class="n">second_bp</span> <span class="o">=</span> <span class="n">bp_eegs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span>
+<span></span>first_bp = bp_eegs[0,0,:]
+second_bp = bp_eegs[1,0,:]
 
-<span class="n">first_bp_manual</span> <span class="o">=</span> <span class="n">base_eegs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span><span class="o">-</span><span class="n">base_eegs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span>
-<span class="n">second_bp_manual</span> <span class="o">=</span> <span class="n">base_eegs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span><span class="o">-</span><span class="n">base_eegs</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span>
+first_bp_manual = base_eegs[0,0,:]-base_eegs[1,0,:]
+second_bp_manual = base_eegs[0,0,:]-base_eegs[8,0,:]
 
-<span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">first_bp_manual</span><span class="p">,</span> <span class="n">first_bp</span><span class="p">)</span>
-<span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">second_bp_manual</span><span class="p">,</span> <span class="n">second_bp</span><span class="p">)</span>
+numpy.testing.assert_array_equal(first_bp_manual, first_bp)
+numpy.testing.assert_array_equal(second_bp_manual, second_bp)
 
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">first_bp</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">100</span><span class="p">],</span> <span class="n">first_bp</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">100</span><span class="p">],</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">first_bp_manual</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">100</span><span class="p">],</span> <span class="n">first_bp_manual</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">100</span><span class="p">],</span><span class="s1">&#39;r--&#39;</span><span class="p">)</span>
+plt.plot(first_bp[&#39;time&#39;][0:100], first_bp[0:100],&#39;b&#39;)
+plt.plot(first_bp_manual[&#39;time&#39;][0:100], first_bp_manual[0:100],&#39;r--&#39;)
 </pre></div>
 </div>
 </div>
@@ -777,8 +777,8 @@ bandwidth:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">b_filter</span> <span class="o">=</span> <span class="n">ButterworthFilter</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">bp_eegs</span><span class="p">,</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">[</span><span class="mf">58.</span><span class="p">,</span> <span class="mf">62.</span><span class="p">],</span> <span class="n">filt_type</span><span class="o">=</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-<span class="n">bp_eegs_filtered</span> <span class="o">=</span> <span class="n">b_filter</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span>
+<span></span>b_filter = ButterworthFilter(time_series=bp_eegs, freq_range=[58., 62.], filt_type=&#39;stop&#39;, order=4)
+bp_eegs_filtered = b_filter.filter()
 </pre></div>
 </div>
 </div>
@@ -801,14 +801,14 @@ set to <em>None</em>.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">s</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-<span class="n">wf</span> <span class="o">=</span> <span class="n">MorletWaveletFilter</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">bp_eegs_filtered</span><span class="p">,</span>
-                         <span class="n">freqs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mi">180</span><span class="p">),</span> <span class="mi">8</span><span class="p">),</span>
-                         <span class="n">output</span><span class="o">=</span><span class="s1">&#39;power&#39;</span>
-                         <span class="p">)</span>
+<span></span>s = time()
+wf = MorletWaveletFilter(time_series=bp_eegs_filtered,
+                         freqs=np.logspace(np.log10(3), np.log10(180), 8),
+                         output=&#39;power&#39;
+                         )
 
-<span class="n">pow_wavelet</span><span class="p">,</span> <span class="n">phase_wavelet</span> <span class="o">=</span> <span class="n">wf</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span>
-<span class="k">print</span> <span class="s1">&#39;TOTAL WAVELET TIME=&#39;</span><span class="p">,</span> <span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">s</span>
+pow_wavelet, phase_wavelet = wf.filter()
+print &#39;TOTAL WAVELET TIME=&#39;, time()-s
 </pre></div>
 </div>
 </div>
@@ -832,8 +832,8 @@ show power-law decay with increasing frequencies</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">pow_wavelet</span> <span class="o">=</span> <span class="n">pow_wavelet</span><span class="o">.</span><span class="n">remove_buffer</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">pow_wavelet</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">pow_wavelet</span><span class="o">.</span><span class="n">data</span><span class="p">);</span>
+<span></span>pow_wavelet = pow_wavelet.remove_buffer(duration=1.0)
+np.log10(pow_wavelet.data, out=pow_wavelet.data);
 </pre></div>
 </div>
 </div>
@@ -846,8 +846,8 @@ follows:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">pow_wavelet</span> <span class="o">=</span> <span class="n">pow_wavelet</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="s2">&quot;events&quot;</span><span class="p">,</span><span class="s2">&quot;bipolar_pairs&quot;</span><span class="p">,</span><span class="s2">&quot;frequency&quot;</span><span class="p">,</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="n">mean_powers_nd</span> <span class="o">=</span> <span class="n">pow_wavelet</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">skipna</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span></span>pow_wavelet = pow_wavelet.transpose(&quot;events&quot;,&quot;bipolar_pairs&quot;,&quot;frequency&quot;,&quot;time&quot;)
+mean_powers_nd = pow_wavelet.mean(skipna=True,axis=-1)
 </pre></div>
 </div>
 </div>
@@ -857,10 +857,10 @@ follows:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
-<span class="k">print</span> <span class="n">a</span>
-<span class="n">a_z</span> <span class="o">=</span> <span class="n">zscore</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">a_z</span>
+<span></span>a = np.arange(12).reshape(3,4)
+print a
+a_z = zscore(a, axis=0, ddof=1)
+a_z
 </pre></div>
 </div>
 </div>
@@ -900,7 +900,7 @@ correspond to events and the other one will be a Cartesian product of
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">mean_powers_rs</span> <span class="o">=</span> <span class="n">mean_powers_nd</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">mean_powers_nd</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span></span>mean_powers_rs = mean_powers_nd.data.reshape(mean_powers_nd.data.shape[0],-1)
 </pre></div>
 </div>
 </div>
@@ -915,7 +915,7 @@ starting from 0 in Python) :</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">zscore_mean_powers</span> <span class="o">=</span> <span class="n">zscore</span><span class="p">(</span><span class="n">mean_powers_rs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span></span>zscore_mean_powers = zscore(mean_powers_rs, axis=0, ddof=1)
 </pre></div>
 </div>
 </div>
@@ -926,7 +926,7 @@ starting from 0 in Python) :</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">base_events</span><span class="o">.</span><span class="n">session</span><span class="p">)</span>
+<span></span>np.unique(base_events.session)
 </pre></div>
 </div>
 </div>
@@ -956,31 +956,31 @@ to select events and zscored powers for training and validation sessions</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">sess_min</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">sess_max</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">validation_sess_min</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">validation_sess_max</span> <span class="o">=</span> <span class="mi">2</span>
+<span></span>sess_min = 0
+sess_max = 1
+validation_sess_min = 2
+validation_sess_max = 2
 
-<span class="n">evs</span> <span class="o">=</span> <span class="n">base_events</span>
-<span class="c1"># ----------------------- computting training and validation session mask arrays to facilitate event selection</span>
-<span class="n">training_session_mask</span> <span class="o">=</span><span class="p">(</span><span class="n">evs</span><span class="o">.</span><span class="n">session</span><span class="o">&gt;=</span><span class="n">sess_min</span><span class="p">)</span> <span class="o">&amp;</span><span class="p">(</span><span class="n">evs</span><span class="o">.</span><span class="n">session</span><span class="o">&lt;=</span><span class="n">sess_max</span><span class="p">)</span>
-<span class="n">validation_session_mask</span> <span class="o">=</span><span class="p">(</span><span class="n">evs</span><span class="o">.</span><span class="n">session</span><span class="o">&gt;=</span><span class="n">validation_sess_min</span><span class="p">)</span> <span class="o">&amp;</span><span class="p">(</span><span class="n">evs</span><span class="o">.</span><span class="n">session</span><span class="o">&lt;=</span><span class="n">validation_sess_max</span><span class="p">)</span>
+evs = base_events
+# ----------------------- computting training and validation session mask arrays to facilitate event selection
+training_session_mask =(evs.session&gt;=sess_min) &amp;(evs.session&lt;=sess_max)
+validation_session_mask =(evs.session&gt;=validation_sess_min) &amp;(evs.session&lt;=validation_sess_max)
 
 
 
-<span class="c1"># --------------- selecting training events</span>
-<span class="n">evs_sel</span> <span class="o">=</span> <span class="n">evs</span><span class="p">[</span><span class="n">training_session_mask</span><span class="p">]</span>
-<span class="c1"># ---------- converting recalled field of the events into integer array (recalled items are 1&#39;s and non-recalled are 0s)</span>
-<span class="n">recalls_array</span> <span class="o">=</span> <span class="n">evs_sel</span><span class="o">.</span><span class="n">recalled</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
-<span class="c1"># --------------- selecting zscored powers for training data</span>
-<span class="n">training_data</span> <span class="o">=</span> <span class="n">zscore_mean_powers</span><span class="p">[</span><span class="n">training_session_mask</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
+# --------------- selecting training events
+evs_sel = evs[training_session_mask]
+# ---------- converting recalled field of the events into integer array (recalled items are 1&#39;s and non-recalled are 0s)
+recalls_array = evs_sel.recalled.astype(np.int)
+# --------------- selecting zscored powers for training data
+training_data = zscore_mean_powers[training_session_mask,...]
 
-<span class="c1"># --------------- selecting validation events (out session data)</span>
-<span class="n">evs_val</span> <span class="o">=</span> <span class="n">evs</span><span class="p">[</span><span class="n">validation_session_mask</span><span class="p">]</span>
-<span class="c1"># --------------- selecting zscored powers for out session data</span>
-<span class="n">validation_data</span> <span class="o">=</span> <span class="n">zscore_mean_powers</span><span class="p">[</span><span class="n">validation_session_mask</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
-<span class="c1"># ---------- converting recalled field of the events into integer array for out session data</span>
-<span class="n">validation_recalls_array</span> <span class="o">=</span> <span class="n">evs_val</span><span class="o">.</span><span class="n">recalled</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+# --------------- selecting validation events (out session data)
+evs_val = evs[validation_session_mask]
+# --------------- selecting zscored powers for out session data
+validation_data = zscore_mean_powers[validation_session_mask,...]
+# ---------- converting recalled field of the events into integer array for out session data
+validation_recalls_array = evs_val.recalled.astype(np.int)
 </pre></div>
 </div>
 </div>
@@ -993,8 +993,8 @@ zscored mean powers for each combination of bipoar pair and frequency):</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">lr_classifier</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">C</span><span class="o">=</span><span class="mf">7.2e-4</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;l2&#39;</span><span class="p">,</span> <span class="n">class_weight</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="s1">&#39;liblinear&#39;</span><span class="p">)</span>
-<span class="n">lr_classifier</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="n">recalls_array</span><span class="p">)</span>
+<span></span>lr_classifier = LogisticRegression(C=7.2e-4, penalty=&#39;l2&#39;, class_weight=&#39;auto&#39;, solver=&#39;liblinear&#39;)
+lr_classifier.fit(training_data, recalls_array)
 </pre></div>
 </div>
 </div>
@@ -1028,9 +1028,9 @@ data.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">recall_prob_array</span> <span class="o">=</span> <span class="n">lr_classifier</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">training_data</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">recalls_array</span><span class="p">,</span> <span class="n">recall_prob_array</span><span class="p">)</span>
-<span class="k">print</span> <span class="n">auc</span>
+<span></span>recall_prob_array = lr_classifier.predict_proba(training_data)[:,1]
+auc = roc_auc_score(recalls_array, recall_prob_array)
+print auc
 </pre></div>
 </div>
 </div>
@@ -1050,14 +1050,14 @@ positives rate (TPR) ) for in-session (aka training) data</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">roc_curve_data_in</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">recalls_array</span><span class="p">,</span><span class="n">recall_prob_array</span><span class="p">)</span>
-<span class="n">fpr_in</span> <span class="o">=</span> <span class="n">roc_curve_data_in</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">tpr_in</span> <span class="o">=</span> <span class="n">roc_curve_data_in</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fpr_in</span><span class="p">,</span><span class="n">tpr_in</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">),(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">),</span><span class="s1">&#39;k--&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;FPR&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;TPR&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;In-session ROC-curve&#39;</span><span class="p">)</span>
+<span></span>roc_curve_data_in = roc_curve(recalls_array,recall_prob_array)
+fpr_in = roc_curve_data_in[0]
+tpr_in = roc_curve_data_in[1]
+plt.plot(fpr_in,tpr_in)
+plt.plot((0.0,1.0),(0.,1.),&#39;k--&#39;)
+plt.xlabel(&#39;FPR&#39;)
+plt.ylabel(&#39;TPR&#39;)
+plt.title(&#39;In-session ROC-curve&#39;)
 </pre></div>
 </div>
 </div>
@@ -1088,9 +1088,9 @@ AUC and ROC curve:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">validation_recall_prob_array</span> <span class="o">=</span> <span class="n">lr_classifier</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">validation_data</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">validation_auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">validation_recalls_array</span><span class="p">,</span> <span class="n">validation_recall_prob_array</span><span class="p">)</span>
-<span class="n">validation_auc</span>
+<span></span>validation_recall_prob_array = lr_classifier.predict_proba(validation_data)[:,1]
+validation_auc = roc_auc_score(validation_recalls_array, validation_recall_prob_array)
+validation_auc
 </pre></div>
 </div>
 </div>
@@ -1110,14 +1110,14 @@ AUC and ROC curve:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">roc_curve_data_out</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">validation_recalls_array</span><span class="p">,</span> <span class="n">validation_recall_prob_array</span><span class="p">)</span>
-<span class="n">fpr_out</span> <span class="o">=</span> <span class="n">roc_curve_data_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">tpr_out</span> <span class="o">=</span> <span class="n">roc_curve_data_out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fpr_out</span><span class="p">,</span><span class="n">tpr_out</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">),(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">),</span><span class="s1">&#39;k--&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;FPR&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;TPR&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Out-Session ROC-curve&#39;</span><span class="p">)</span>
+<span></span>roc_curve_data_out = roc_curve(validation_recalls_array, validation_recall_prob_array)
+fpr_out = roc_curve_data_out[0]
+tpr_out = roc_curve_data_out[1]
+plt.plot(fpr_out,tpr_out)
+plt.plot((0.0,1.0),(0.,1.),&#39;k--&#39;)
+plt.xlabel(&#39;FPR&#39;)
+plt.ylabel(&#39;TPR&#39;)
+plt.title(&#39;Out-Session ROC-curve&#39;)
 </pre></div>
 </div>
 </div>
@@ -1151,7 +1151,7 @@ set.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start_time</span>
+<span></span>time()-start_time
 </pre></div>
 </div>
 </div>
@@ -1204,7 +1204,7 @@ get assigned low probability</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">w_tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">lr_classifier</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span>
+<span></span>w_tmp = np.squeeze(lr_classifier.coef_)
 </pre></div>
 </div>
 </div>
@@ -1225,9 +1225,9 @@ get assigned low probability</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">w</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">w_tmp</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">lr_classifier</span><span class="o">.</span><span class="n">intercept_</span>
-<span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">=</span><span class="n">w_tmp</span>
+<span></span>w=np.zeros(len(w_tmp)+1)
+w[0]=lr_classifier.intercept_
+w[1:]=w_tmp
 </pre></div>
 </div>
 </div>
@@ -1237,9 +1237,9 @@ get assigned low probability</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">x_project</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">training_data</span><span class="p">[:,:</span><span class="mi">200</span><span class="p">],</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">201</span><span class="p">])</span>
-<span class="n">y_project</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">training_data</span><span class="p">[:,</span><span class="mi">200</span><span class="p">:],</span><span class="n">w</span><span class="p">[</span><span class="mi">201</span><span class="p">:])</span>
-<span class="n">recalled_ind</span> <span class="o">=</span> <span class="n">recalls_array</span><span class="o">==</span><span class="mi">0</span>
+<span></span>x_project=np.dot(training_data[:,:200],w[1:201])
+y_project=np.dot(training_data[:,200:],w[201:])
+recalled_ind = recalls_array==0
 </pre></div>
 </div>
 </div>
@@ -1249,14 +1249,14 @@ get assigned low probability</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span></span>fig = plt.figure(figsize=(10, 10))
 
-<span class="c1"># plt.plot(x_line, y_line)</span>
-<span class="c1"># plt.ylabel(&#39;uniform sample&#39;)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-.</span><span class="mi">5</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_project</span><span class="p">[</span><span class="n">recalled_ind</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">y_project</span><span class="p">[</span><span class="n">recalled_ind</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">facecolors</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_project</span><span class="p">[</span><span class="o">~</span><span class="n">recalled_ind</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">y_project</span><span class="p">[</span><span class="o">~</span><span class="n">recalled_ind</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">facecolors</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+# plt.plot(x_line, y_line)
+# plt.ylabel(&#39;uniform sample&#39;)
+x = np.linspace(-.5,.5)
+plt.plot(x, -w[0]-x)
+plt.scatter(x=x_project[recalled_ind], y=y_project[recalled_ind], s=80, facecolors=&#39;none&#39;, edgecolors=&#39;r&#39;)
+plt.scatter(x=x_project[~recalled_ind], y=y_project[~recalled_ind], s=80, facecolors=&#39;none&#39;, edgecolors=&#39;b&#39;)
 </pre></div>
 </div>
 </div>
@@ -1284,17 +1284,17 @@ get assigned low probability</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">x_project_val</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">validation_data</span><span class="p">[:,:</span><span class="mi">200</span><span class="p">],</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">201</span><span class="p">])</span>
-<span class="n">y_project_val</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">validation_data</span><span class="p">[:,</span><span class="mi">200</span><span class="p">:],</span><span class="n">w</span><span class="p">[</span><span class="mi">201</span><span class="p">:])</span>
-<span class="n">validation_recalled_ind</span> <span class="o">=</span> <span class="n">validation_recalls_array</span><span class="o">==</span><span class="mi">0</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span></span>x_project_val=np.dot(validation_data[:,:200],w[1:201])
+y_project_val=np.dot(validation_data[:,200:],w[201:])
+validation_recalled_ind = validation_recalls_array==0
+fig = plt.figure(figsize=(10, 10))
 
-<span class="c1"># plt.plot(x_line, y_line)</span>
-<span class="c1"># plt.ylabel(&#39;uniform sample&#39;)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-.</span><span class="mi">5</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_project_val</span><span class="p">[</span><span class="n">validation_recalled_ind</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">y_project_val</span><span class="p">[</span><span class="n">validation_recalled_ind</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">facecolors</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_project_val</span><span class="p">[</span><span class="o">~</span><span class="n">validation_recalled_ind</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">y_project_val</span><span class="p">[</span><span class="o">~</span><span class="n">validation_recalled_ind</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">facecolors</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+# plt.plot(x_line, y_line)
+# plt.ylabel(&#39;uniform sample&#39;)
+x = np.linspace(-.5,.5)
+plt.plot(x, -w[0]-x)
+plt.scatter(x=x_project_val[validation_recalled_ind], y=y_project_val[validation_recalled_ind], s=80, facecolors=&#39;none&#39;, edgecolors=&#39;r&#39;)
+plt.scatter(x=x_project_val[~validation_recalled_ind], y=y_project_val[~validation_recalled_ind], s=80, facecolors=&#39;none&#39;, edgecolors=&#39;b&#39;)
 </pre></div>
 </div>
 </div>
@@ -1362,7 +1362,7 @@ get assigned low probability</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.1.dev3',
+            VERSION:'1.1.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
