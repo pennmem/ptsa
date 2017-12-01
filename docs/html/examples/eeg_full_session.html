@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyFR Demo &mdash; PTSA 1.1.4 documentation</title>
+  <title>&lt;no title&gt; &mdash; PTSA 1.1.4 documentation</title>
   
 
   
@@ -35,10 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="PTSA 1.1.4 documentation" href="../index.html"/>
-        <link rel="up" title="Examples" href="index.html"/>
-        <link rel="next" title="Classifier time series" href="classifier_time_series.html"/>
-        <link rel="prev" title="1. pyFR" href="events_SPC.html"/> 
+    <link rel="top" title="PTSA 1.1.4 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -91,19 +88,10 @@
               
             
             
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html">PTSA Tutorial</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Examples</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="timeseriesx.html">Basic <code class="docutils literal"><span class="pre">TimeSeriesX</span></code> functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="eeg.html">Reading EEG Data from events</a></li>
-<li class="toctree-l2"><a class="reference internal" href="events_SPC.html">1. pyFR</a></li>
-<li class="toctree-l2"><a class="reference internal" href="events_SPC.html#2.-RAM-FR1">2. RAM FR1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="events_SPC.html#3.-LTPFR2">3. LTPFR2</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">pyFR Demo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="classifier_time_series.html">Classifier time series</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ramdata.html">Interacting with RAM Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filters.html">Filtering Time Series</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
@@ -152,15 +140,13 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="index.html">Examples</a> &raquo;</li>
-        
-      <li>pyFR Demo</li>
+      <li>&lt;no title&gt;</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/examples/pyFR_demo.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/examples/eeg_full_session.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -367,208 +353,96 @@ div.nboutput div.output_area.stderr {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
 </style>
-<div class="section" id="pyFR-Demo">
-<h1>pyFR Demo<a class="headerlink" href="#pyFR-Demo" title="Permalink to this headline">¶</a></h1>
+<p>In this tutorial we will demonstrate how to read the entire session of
+the EEG data. We will use EEGReader for this purpose. Additionally we
+will need to provide the list of channels and this is easily
+accomplished with TalReader. Let’s start coding. First “regiular ” PTSA
+imports</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [14]:
+<span></span>In [5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span>import sys
-from ptsa.data.readers import BaseEventReader
-from ptsa.data.readers.TalReader import TalReader
-from ptsa.data.readers import EEGReader
-</pre></div>
-</div>
-</div>
-<p>To read behavioral events we need to first localize the directory where
-the events are stored. If you are running the code on rhino then pyFR
-events are stored in /data/events/pyFR. Since I mounted rhino filesystem
-remotely I have to prepend /Volumes/rhino_root to this path - in my
-case /Volumes/rhino_root specifies the folder where I mounted rhino
-file system. Once you know the location you simply ocnstruct the path to
-the event file by using subject code (here TJ011).</p>
-<p>BaseEventReader takes a path to the event file and optional flag
-<em>eliminate_events_with_no_eegs</em> that lets you pre-filter events to
-include only those that have eeg data associated with them.</p>
-<p>Finally, after you create BaseEventReader object you call its <em>read</em>
-function that returns a Numpy recarray with behavioral events</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [15]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span>ev_path = &#39;/Volumes/rhino_root/data/events/pyFR/TJ011_events.mat&#39;
-base_e_reader = BaseEventReader(filename=ev_path, eliminate_events_with_no_eeg=True)
-base_events = base_e_reader.read()
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [16]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span>base_events = base_events[base_events.type == &#39;WORD&#39;]
-</pre></div>
-</div>
-</div>
-<p>To examine the conten of the event recarray we can print its columns one
-by one and do some filtering that matches our criteria. For example
-let’s print all the columns of the recarray</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [17]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span>base_events.dtype
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[17]:
-</pre></div>
-</div>
-<div class="output_area highlight-none"><div class="highlight"><pre>
-<span></span>dtype((numpy.record, [(&#39;subject&#39;, &#39;S256&#39;), (&#39;session&#39;, &#39;&lt;i8&#39;), (&#39;list&#39;, &#39;&lt;i8&#39;), (&#39;serialpos&#39;, &#39;&lt;i8&#39;), (&#39;type&#39;, &#39;S256&#39;), (&#39;item&#39;, &#39;S256&#39;), (&#39;itemno&#39;, &#39;&lt;i8&#39;), (&#39;recalled&#39;, &#39;&lt;i8&#39;), (&#39;mstime&#39;, &#39;&lt;f8&#39;), (&#39;msoffset&#39;, &#39;&lt;i8&#39;), (&#39;rectime&#39;, &#39;&lt;i8&#39;), (&#39;intrusion&#39;, &#39;&lt;i8&#39;), (&#39;eegfile&#39;, &#39;S256&#39;), (&#39;eegoffset&#39;, &#39;&lt;i8&#39;)]))
-</pre></div>
-</div>
-</div>
-<p>Above you can see a summary of the fields that are available in the
-record array. Let’s print first 2 events to see actual content of the
-record array:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [18]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span>base_events[:2]
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[18]:
-</pre></div>
-</div>
-<div class="output_area highlight-none"><div class="highlight"><pre>
-<span></span>rec.array([ (&#39;TJ011&#39;, 0, 1, 1, &#39;WORD&#39;, &#39;CUBE&#39;, 72, 0, 1270575931057.0, 1, -999, -999, &#39;/Volumes/rhino_root/data/eeg/TJ011/eeg.noreref/TJ011_06Apr10_1319&#39;, 235074),
- (&#39;TJ011&#39;, 0, 1, 2, &#39;WORD&#39;, &#39;JUDGE&#39;, 142, 0, 1270575933544.0, 1, -999, -999, &#39;/Volumes/rhino_root/data/eeg/TJ011/eeg.noreref/TJ011_06Apr10_1319&#39;, 235572)],
-          dtype=[(&#39;subject&#39;, &#39;S256&#39;), (&#39;session&#39;, &#39;&lt;i8&#39;), (&#39;list&#39;, &#39;&lt;i8&#39;), (&#39;serialpos&#39;, &#39;&lt;i8&#39;), (&#39;type&#39;, &#39;S256&#39;), (&#39;item&#39;, &#39;S256&#39;), (&#39;itemno&#39;, &#39;&lt;i8&#39;), (&#39;recalled&#39;, &#39;&lt;i8&#39;), (&#39;mstime&#39;, &#39;&lt;f8&#39;), (&#39;msoffset&#39;, &#39;&lt;i8&#39;), (&#39;rectime&#39;, &#39;&lt;i8&#39;), (&#39;intrusion&#39;, &#39;&lt;i8&#39;), (&#39;eegfile&#39;, &#39;S256&#39;), (&#39;eegoffset&#39;, &#39;&lt;i8&#39;)])
-</pre></div>
-</div>
-</div>
-<p>As you can tell from the output above each event contains subject,
-session number, list number, serial position number, type of the event
-(here all events are WORD events because we have performed filtering
-base_events = base_events[base_events.type == ‘WORD’]) etc…. Let’s
-see what words were displayed on the screen:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [19]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span>base_events[&quot;item&quot;][:20]
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[19]:
-</pre></div>
-</div>
-<div class="output_area highlight-none"><div class="highlight"><pre>
-<span></span>array([&#39;CUBE&#39;, &#39;JUDGE&#39;, &#39;BRUSH&#39;, &#39;HILL&#39;, &#39;STEM&#39;, &#39;HOUSE&#39;, &#39;HORSE&#39;, &#39;ROCK&#39;,
-       &#39;HOOF&#39;, &#39;GEESE&#39;, &#39;APE&#39;, &#39;YARD&#39;, &#39;TANK&#39;, &#39;HOOK&#39;, &#39;CROW&#39;, &#39;PIT&#39;,
-       &#39;PLATE&#39;, &#39;GIRL&#39;, &#39;DUCK&#39;, &#39;BOMB&#39;],
-      dtype=&#39;|S256&#39;)
-</pre></div>
-</div>
-</div>
-<p>base_events[“item”] is an array of all the words displayed during
-entire experiment. Since I wanted to display only first 20 words I used
-slicing operation base_events[“item”][:20]</p>
-<p>Notice that if we want to display e.g. serialpos column we can use the
-following syntax:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [20]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span>base_events.serialpos[:20]
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[20]:
-</pre></div>
-</div>
-<div class="output_area highlight-none"><div class="highlight"><pre>
-<span></span>array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,  1,  2,
-        3,  4,  5])
-</pre></div>
-</div>
-</div>
-<p>or we could use another equivalent syntax:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [21]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span>base_events[&quot;serialpos&quot;][:20]
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[21]:
-</pre></div>
-</div>
-<div class="output_area highlight-none"><div class="highlight"><pre>
-<span></span>array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,  1,  2,
-        3,  4,  5])
-</pre></div>
-</div>
-</div>
-<p>However when we try to use the first syntax for <em>item</em> we will get into
-trouble:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [22]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span>base_events.item[:20]
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-22-4b9f7b78e61d&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>base_events<span class="ansi-blue-fg">.</span>item<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">:</span><span class="ansi-cyan-fg">20</span><span class="ansi-blue-fg">]</span>
+<span></span>from os.path import *
+from ptsa.data.readers import EEGReader, TalReader
+import numpy as np
+abs_join = lambda *args: abspath(join(*args))
 
-<span class="ansi-red-fg">TypeError</span>: &#39;builtin_function_or_method&#39; object has no attribute &#39;__getitem__&#39;
-</pre></div></div>
+
+</pre></div>
 </div>
-<p>This happens because <em>item</em> is built-in name of of the funuction
-belonging to recarray and by typing <em>base_events.item</em> you are
-referring to the function not the column of the array. Thus to access
-words on the screen via <em>item</em> you have to use base_events[“item”][:20]</p>
+</div>
+<p>Next we define subject vriable and rhino_root variable that points to
+the top level folder where the eeg data is stored. If you are on rhino
+you change this variable to “/data”. We also locate core name of the eeg
+session that we want to read - here it is “R1060M_12Aug15_1425”
+becasuse split-eeg files are called R1060M_12Aug15_1425.001,
+R1060M_12Aug15_1425.002 and so on</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span>subject = &#39;R1060M&#39;
+rhino_root = &#39;d:/data&#39;
+
+session_dataroot = abs_join(rhino_root, &#39;eeg&#39;,subject,&#39;eeg.noreref&#39;, &#39;R1060M_12Aug15_1425&#39;)
+tal_file path = abs_join(rhino_root, &#39;eeg&#39;,subject, &#39;tal&#39;, subject+&#39;_talLocs_database_bipol.mat&#39;)
+</pre></div>
+</div>
+</div>
+<p>Finally we read the channels and the eegs for the full session:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span># reading channel information
+tal_reader = TalReader(filename=abs_join(rhino_root, &#39;eeg&#39;,subject, &#39;tal&#39;, subject+&#39;_talLocs_database_bipol.mat&#39;))
+channels = tal_reader.get_monopolar_channels()
+
+# reading eegs
+eeg_reader = EEGReader(session_dataroot=session_dataroot, channels=channels)
+full_session_eegs = eeg_reader.read()
+</pre></div>
+</div>
+</div>
+<p>Note the dimension of the full_session_eegs:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span>full_session_eegs.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[4]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(68L, 1L, 834190L)
+</pre></div>
+</div>
+</div>
+<p>The size of the second dimension is 1. To get rid of it apply .
+np.squeeze() function:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2"><div class="highlight"><pre>
+<span></span>full_session_eegs = np.squeeze(full_session_eegs)
+</pre></div>
+</div>
+</div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [ ]:
@@ -579,7 +453,6 @@ words on the screen via <em>item</em> you have to use base_events[“item”][:2
 </pre></div>
 </div>
 </div>
-</div>
 
 
            </div>
@@ -588,15 +461,6 @@ words on the screen via <em>item</em> you have to use base_events[“item”][:2
            </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="classifier_time_series.html" class="btn btn-neutral float-right" title="Classifier time series" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="events_SPC.html" class="btn btn-neutral" title="1. pyFR" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

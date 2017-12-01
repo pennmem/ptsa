@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Basic TimeSeriesX functionality &mdash; PTSA 1.1.dev3 documentation</title>
+  <title>Basic TimeSeriesX functionality &mdash; PTSA 1.1.4 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="PTSA 1.1.dev3 documentation" href="../index.html"/>
+    <link rel="top" title="PTSA 1.1.4 documentation" href="../index.html"/>
         <link rel="up" title="Examples" href="index.html"/>
         <link rel="next" title="Reading EEG Data from events" href="eeg.html"/>
         <link rel="prev" title="Examples" href="index.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.1.dev3
+                1.1.4
               </div>
             
           
@@ -383,14 +383,14 @@ In the following examples, you will learn the basics.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span>import numpy as np
 
-<span class="c1"># For plotting</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+# For plotting
+%matplotlib inline
+from matplotlib import pyplot as plt
 
-<span class="c1"># The class in question; also available in the less-Pythonic ptsa.data.TimeSeriesX module.</span>
-<span class="kn">from</span> <span class="nn">ptsa.data.timeseries</span> <span class="k">import</span> <span class="n">TimeSeriesX</span>
+# The class in question; also available in the less-Pythonic ptsa.data.TimeSeriesX module.
+from ptsa.data.timeseries import TimeSeriesX
 </pre></div>
 </div>
 </div>
@@ -407,13 +407,13 @@ channel of data. We will generate a noisy sinuosoidal signal:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">num_points</span> <span class="o">=</span> <span class="mi">5000</span>  <span class="c1"># number of points to generate</span>
-<span class="n">sample_rate</span> <span class="o">=</span> <span class="mf">10.</span>  <span class="c1"># the sample rate in Hz</span>
-<span class="n">frequency</span> <span class="o">=</span> <span class="mf">8.</span>  <span class="c1"># generated sine wave frequency in Hz</span>
+<span></span>num_points = 5000  # number of points to generate
+sample_rate = 10.  # the sample rate in Hz
+frequency = 8.  # generated sine wave frequency in Hz
 
-<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_points</span><span class="p">)</span> <span class="o">/</span> <span class="n">sample_rate</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">frequency</span><span class="o">*</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">num_points</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+t = np.linspace(0, 1, num_points) / sample_rate
+data = np.sin(2*np.pi*frequency*t) + np.random.uniform(-0.1, 0.1, num_points)
+plt.plot(t, data)
 </pre></div>
 </div>
 </div>
@@ -442,9 +442,9 @@ coordinate:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">coords</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">t</span><span class="p">,</span> <span class="s2">&quot;samplerate&quot;</span><span class="p">:</span> <span class="n">sample_rate</span><span class="p">}</span>
-<span class="n">ts</span> <span class="o">=</span> <span class="n">TimeSeriesX</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+<span></span>coords = {&quot;time&quot;: t, &quot;samplerate&quot;: sample_rate}
+ts = TimeSeriesX(data, coords=coords, dims=[&#39;time&#39;])
+print(ts)
 </pre></div>
 </div>
 </div>
@@ -467,9 +467,9 @@ Coordinates:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">coords</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
-<span class="n">ts</span> <span class="o">=</span> <span class="n">TimeSeriesX</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sample_rate</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+<span></span>coords = dict(time=t)
+ts = TimeSeriesX.create(data, sample_rate, coords=coords, dims=[&#39;time&#39;])
+print(ts)
 </pre></div>
 </div>
 </div>
@@ -497,12 +497,12 @@ resolution than necessary. This can be done using the
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">new_rate</span> <span class="o">=</span> <span class="mf">1.</span>
-<span class="n">resampled</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">resampled</span><span class="p">(</span><span class="n">new_rate</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">resampled</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Original number of data points:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ts</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;New number of data points:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">resampled</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
-<span class="n">resampled</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span></span>new_rate = 1.
+resampled = ts.resampled(new_rate)
+print(resampled)
+print(&quot;Original number of data points:&quot;, len(ts.data))
+print(&quot;New number of data points:&quot;, len(resampled.data))
+resampled.plot()
 </pre></div>
 </div>
 </div>
@@ -548,7 +548,7 @@ the <code class="docutils literal"><span class="pre">TimeSeriesX.to_hdf</span></
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">resampled</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="s2">&quot;resampled.h5&quot;</span><span class="p">)</span>
+<span></span>resampled.to_hdf(&quot;resampled.h5&quot;)
 </pre></div>
 </div>
 </div>
@@ -558,10 +558,10 @@ the <code class="docutils literal"><span class="pre">TimeSeriesX.to_hdf</span></
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">other_resampled</span> <span class="o">=</span> <span class="n">TimeSeriesX</span><span class="o">.</span><span class="n">from_hdf</span><span class="p">(</span><span class="s2">&quot;resampled.h5&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">resampled</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">other_resampled</span><span class="p">)</span>
-<span class="n">other_resampled</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span></span>other_resampled = TimeSeriesX.from_hdf(&quot;resampled.h5&quot;)
+print(resampled)
+print(other_resampled)
+other_resampled.plot()
 </pre></div>
 </div>
 </div>
@@ -614,13 +614,13 @@ Instead, they should be constructed automatically with readers found in the <cod
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">noisy_sinusoid</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">f</span><span class="o">*</span><span class="n">t</span> <span class="o">+</span> <span class="n">phase</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">num_points</span><span class="p">)</span>
+<span></span>def noisy_sinusoid(t, f, phase=0):
+    return np.sin(2*np.pi*f*t + phase) + np.random.uniform(-0.1, 0.1, num_points)
 
-<span class="n">n_channels</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_channels</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)))</span>
-<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-    <span class="n">data</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">noisy_sinusoid</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">frequency</span><span class="p">,</span> <span class="n">n</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">10.</span><span class="p">)</span>
+n_channels = 10
+data = np.empty((n_channels, len(t)))
+for n in range(10):
+    data[n,...] = noisy_sinusoid(t, frequency, n*np.pi/10.)
 </pre></div>
 </div>
 </div>
@@ -630,13 +630,13 @@ Instead, they should be constructed automatically with readers found in the <cod
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">coords</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;channel&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_channels</span><span class="p">,</span> <span class="n">n_channels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
-    <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">t</span>
-<span class="p">}</span>
-<span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;channel&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">]</span>
-<span class="n">ts</span> <span class="o">=</span> <span class="n">TimeSeriesX</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sample_rate</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;multichannel&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+<span></span>coords = {
+    &#39;channel&#39;: np.linspace(1, n_channels, n_channels, dtype=int),
+    &#39;time&#39;: t
+}
+dims = [&#39;channel&#39;, &#39;time&#39;]
+ts = TimeSeriesX.create(data, sample_rate, coords=coords, dims=dims, name=&#39;multichannel&#39;)
+print(ts)
 </pre></div>
 </div>
 </div>
@@ -669,7 +669,7 @@ access provides us a quick way to access coordinates:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">ts</span><span class="p">[</span><span class="s1">&#39;channel&#39;</span><span class="p">]</span>
+<span></span>ts[&#39;channel&#39;]
 </pre></div>
 </div>
 </div>
@@ -694,7 +694,7 @@ Coordinates:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">ts</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s1">&#39;channel&#39;</span><span class="p">]</span>
+<span></span>ts.coords[&#39;channel&#39;]
 </pre></div>
 </div>
 </div>
@@ -719,9 +719,9 @@ Coordinates:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">ts</span><span class="p">[</span><span class="s1">&#39;channel&#39;</span><span class="p">]:</span>
-    <span class="n">ts</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">channel</span><span class="o">=</span><span class="n">ch</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span></span>fig, ax = plt.subplots()
+for ch in ts[&#39;channel&#39;]:
+    ts.sel(channel=ch).plot(ax=ax)
 </pre></div>
 </div>
 </div>
@@ -779,7 +779,7 @@ Coordinates:
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.1.dev3',
+            VERSION:'1.1.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

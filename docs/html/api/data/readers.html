@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Readers &mdash; PTSA 1.1.dev3 documentation</title>
+  <title>Readers &mdash; PTSA 1.1.4 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="PTSA 1.1.dev3 documentation" href="../../index.html"/>
+    <link rel="top" title="PTSA 1.1.4 documentation" href="../../index.html"/>
         <link rel="up" title="ptsa.data" href="../data.html"/>
         <link rel="next" title="Filters" href="filters.html"/>
         <link rel="prev" title="TimeSeriesX" href="timeseriesx.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.1.dev3
+                1.1.4
               </div>
             
           
@@ -378,6 +378,7 @@ or can read entire session if session_dataroot is non empty.</p>
 <li><strong>buffer_time</strong> (<em>float</em>) – extra buffer in seconds (subtracted from start read and added to end read)</li>
 <li><strong>events</strong> (<em>np.recarray</em>) – numpy recarray representing Events</li>
 <li><strong>session_dataroot</strong> (<em>str</em>) – path to session dataroot. When set the reader will read the entire session</li>
+<li><strong>remove_bad_events</strong> (<em>bool</em>) – Remove “bad” events. Defaults to True.</li>
 </ul>
 </td>
 </tr>
@@ -521,7 +522,7 @@ to start_offset, end_offset, buffer_offset expressed as integers indicating numb
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'1.1.dev3',
+            VERSION:'1.1.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

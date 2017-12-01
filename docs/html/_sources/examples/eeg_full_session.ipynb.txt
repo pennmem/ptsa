@@ -1,0 +1,151 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "In this tutorial we will demonstrate how to read the entire session of the EEG data. We will use EEGReader for this purpose. Additionally we will need to provide the list of channels and this is easily accomplished with TalReader. Let's start coding. First \"regiular \" PTSA imports"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "from os.path import *\n",
+    "from ptsa.data.readers import EEGReader, TalReader\n",
+    "import numpy as np\n",
+    "abs_join = lambda *args: abspath(join(*args))\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Next we define subject vriable and rhino_root variable that points to the top level folder where the eeg data is stored. If you are on rhino you change this variable to \"/data\". We also locate core name of the eeg session that we want to read - here it is \"R1060M_12Aug15_1425\" becasuse split-eeg files are called R1060M_12Aug15_1425.001, R1060M_12Aug15_1425.002 and so on"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "subject = 'R1060M'\n",
+    "rhino_root = 'd:/data'\n",
+    "\n",
+    "session_dataroot = abs_join(rhino_root, 'eeg',subject,'eeg.noreref', 'R1060M_12Aug15_1425')\n",
+    "tal_file path = abs_join(rhino_root, 'eeg',subject, 'tal', subject+'_talLocs_database_bipol.mat')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Finally we read the channels and the eegs for the full session:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "# reading channel information \n",
+    "tal_reader = TalReader(filename=abs_join(rhino_root, 'eeg',subject, 'tal', subject+'_talLocs_database_bipol.mat'))\n",
+    "channels = tal_reader.get_monopolar_channels()\n",
+    "\n",
+    "# reading eegs\n",
+    "eeg_reader = EEGReader(session_dataroot=session_dataroot, channels=channels)\n",
+    "full_session_eegs = eeg_reader.read()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Note the dimension of the full_session_eegs:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(68L, 1L, 834190L)"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "full_session_eegs.shape"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The size of the second dimension is 1. To get rid of it apply . np.squeeze() function:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "full_session_eegs = np.squeeze(full_session_eegs)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 2",
+   "language": "python",
+   "name": "python2"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 2
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython2",
+   "version": "2.7.13"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}

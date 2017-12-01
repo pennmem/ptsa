@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>1. pyFR &mdash; PTSA 1.1.dev3 documentation</title>
+  <title>1. pyFR &mdash; PTSA 1.1.4 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="PTSA 1.1.dev3 documentation" href="../index.html"/>
+    <link rel="top" title="PTSA 1.1.4 documentation" href="../index.html"/>
         <link rel="up" title="Examples" href="index.html"/>
         <link rel="next" title="pyFR Demo" href="pyFR_demo.html"/>
         <link rel="prev" title="Reading EEG Data from events" href="eeg.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.1.dev3
+                1.1.4
               </div>
             
           
@@ -373,11 +373,11 @@ div.nboutput div.output_area.stderr {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">BaseEventReader</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="n">rhino_root</span><span class="o">=</span> <span class="s1">&#39;/Volumes/rhino_root&#39;</span>
+<span></span>%matplotlib inline
+from ptsa.data.readers import BaseEventReader
+import numpy as np
+from matplotlib import pyplot as plt
+rhino_root= &#39;/Volumes/rhino_root&#39;
 </pre></div>
 </div>
 </div>
@@ -389,9 +389,9 @@ div.nboutput div.output_area.stderr {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">events</span> <span class="o">=</span> <span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">rhino_root</span><span class="o">+</span><span class="s1">&#39;/data/events/pyFR/BW001_events.mat&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">words</span>  <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="o">.</span><span class="n">type</span><span class="o">==</span><span class="s1">&#39;WORD&#39;</span><span class="p">]</span>
-<span class="n">serialpositions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">words</span><span class="o">.</span><span class="n">serialpos</span><span class="p">)</span>
+<span></span>events = BaseEventReader(filename=rhino_root+&#39;/data/events/pyFR/BW001_events.mat&#39;).read()
+words  = events[events.type==&#39;WORD&#39;]
+serialpositions = np.unique(words.serialpos)
 </pre></div>
 </div>
 </div>
@@ -401,7 +401,7 @@ div.nboutput div.output_area.stderr {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">prec_by_serialpos</span> <span class="o">=</span> <span class="p">[</span><span class="n">words</span><span class="p">[</span><span class="n">words</span><span class="o">.</span><span class="n">serialpos</span><span class="o">==</span><span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">recalled</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">serialpositions</span><span class="p">]</span>
+<span></span>prec_by_serialpos = [words[words.serialpos==s].recalled.mean() for s in serialpositions]
 </pre></div>
 </div>
 </div>
@@ -411,12 +411,12 @@ div.nboutput div.output_area.stderr {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">serialpositions</span><span class="p">,</span> <span class="n">prec_by_serialpos</span><span class="p">,</span><span class="n">width</span><span class="o">=.</span><span class="mi">5</span><span class="p">,)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="n">serialpositions</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="n">serialpositions</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">+</span><span class="mf">0.5</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;P (recall | serialpos )&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;P(recall)&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Serial Position&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span></span>plt.bar(serialpositions, prec_by_serialpos,width=.5,)
+plt.xlim([serialpositions.min()-0.5,serialpositions.max()+0.5])
+plt.title(&#39;P (recall | serialpos )&#39;)
+plt.ylabel(&#39;P(recall)&#39;)
+plt.xlabel(&#39;Serial Position&#39;)
+plt.xticks(range(2,20,2))
 </pre></div>
 </div>
 </div>
@@ -468,13 +468,13 @@ where the actual event files are located</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers.IndexReader</span> <span class="kn">import</span> <span class="n">JsonIndexReader</span>
-<span class="n">jr</span> <span class="o">=</span> <span class="n">JsonIndexReader</span><span class="p">(</span><span class="n">rhino_root</span><span class="o">+</span><span class="s1">&#39;/protocols/r1.json&#39;</span><span class="p">)</span>
-<span class="n">events</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span>
-                         <span class="n">jr</span><span class="o">.</span><span class="n">aggregate_values</span><span class="p">(</span><span class="s1">&#39;task_events&#39;</span><span class="p">,</span><span class="n">subject</span><span class="o">=</span><span class="s1">&#39;R1111M&#39;</span><span class="p">,</span><span class="n">experiment</span><span class="o">=</span><span class="s1">&#39;FR1&#39;</span><span class="p">)]</span>
-                        <span class="p">)</span>
-<span class="c1"># Because np.concatenate turns record arrays into structured arrays, and attribute-like field access is nice</span>
-<span class="n">events</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">recarray</span><span class="p">)</span>
+<span></span>from ptsa.data.readers.IndexReader import JsonIndexReader
+jr = JsonIndexReader(rhino_root+&#39;/protocols/r1.json&#39;)
+events = np.concatenate([BaseEventReader(filename=f).read() for f in
+                         jr.aggregate_values(&#39;task_events&#39;,subject=&#39;R1111M&#39;,experiment=&#39;FR1&#39;)]
+                        )
+# Because np.concatenate turns record arrays into structured arrays, and attribute-like field access is nice
+events = events.view(np.recarray)
 </pre></div>
 </div>
 </div>
@@ -485,9 +485,9 @@ where the actual event files are located</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">words</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="o">.</span><span class="n">type</span><span class="o">==</span><span class="s1">&#39;WORD&#39;</span><span class="p">]</span>
-<span class="n">serialpositions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">words</span><span class="o">.</span><span class="n">serialpos</span><span class="p">)</span>
-<span class="n">prec_by_serialpos</span>  <span class="o">=</span> <span class="p">[</span><span class="n">words</span><span class="p">[</span><span class="n">words</span><span class="o">.</span><span class="n">serialpos</span><span class="o">==</span><span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">recalled</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">serialpositions</span><span class="p">]</span>
+<span></span>words = events[events.type==&#39;WORD&#39;]
+serialpositions = np.unique(words.serialpos)
+prec_by_serialpos  = [words[words.serialpos==s].recalled.mean() for s in serialpositions]
 </pre></div>
 </div>
 </div>
@@ -497,12 +497,12 @@ where the actual event files are located</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">serialpositions</span><span class="p">,</span> <span class="n">prec_by_serialpos</span><span class="p">,</span><span class="n">width</span><span class="o">=.</span><span class="mi">5</span><span class="p">,)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="n">serialpositions</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="n">serialpositions</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">+</span><span class="mf">0.5</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;P (recall | serialpos )&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;P(recall)&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Serial Position&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">serialpositions</span><span class="p">[::</span><span class="mi">2</span><span class="p">])</span>
+<span></span>plt.bar(serialpositions, prec_by_serialpos,width=.5,)
+plt.xlim([serialpositions.min()-0.5,serialpositions.max()+0.5])
+plt.title(&#39;P (recall | serialpos )&#39;)
+plt.ylabel(&#39;P(recall)&#39;)
+plt.xlabel(&#39;Serial Position&#39;)
+plt.xticks(serialpositions[::2])
 </pre></div>
 </div>
 </div>
@@ -542,9 +542,9 @@ more complex groupings the advantages accrue rapidly.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="n">events</span> <span class="o">=</span> <span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">rhino_root</span><span class="o">+</span><span class="s1">&#39;/data/eeg/scalp/ltp/ltpFR2/behavioral/events/events_all_LTP093.mat&#39;</span><span class="p">,</span><span class="n">common_root</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">events</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">([</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">events</span><span class="p">],</span><span class="n">columns</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+<span></span>import pandas as pd
+events = BaseEventReader(filename=rhino_root+&#39;/data/eeg/scalp/ltp/ltpFR2/behavioral/events/events_all_LTP093.mat&#39;,common_root=&#39;data&#39;).read()
+events = pd.DataFrame.from_records([e for e in events],columns = events.dtype.names)
 </pre></div>
 </div>
 </div>
@@ -556,8 +556,8 @@ more complex groupings the advantages accrue rapidly.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">prec_by_serialpos</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">events</span><span class="o">.</span><span class="n">type</span><span class="o">==</span><span class="s1">&#39;WORD&#39;</span><span class="p">,[</span><span class="s1">&#39;recalled&#39;</span><span class="p">,</span><span class="s1">&#39;serialpos&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;serialpos&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">prec_by_serialpos</span><span class="p">))</span>
+<span></span>prec_by_serialpos = events.loc[events.type==&#39;WORD&#39;,[&#39;recalled&#39;,&#39;serialpos&#39;]].groupby(&#39;serialpos&#39;).mean()
+print(type(prec_by_serialpos))
 </pre></div>
 </div>
 </div>
@@ -577,8 +577,8 @@ DataFrame, though the underlying array is the same in both cases:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">prec_series</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">events</span><span class="o">.</span><span class="n">type</span><span class="o">==</span><span class="s1">&#39;WORD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;serialpos&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">recalled</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">prec_series</span><span class="p">))</span>
+<span></span>prec_series = events.loc[events.type==&#39;WORD&#39;].groupby(&#39;serialpos&#39;).recalled.mean()
+print(type(prec_series))
 </pre></div>
 </div>
 </div>
@@ -598,7 +598,7 @@ of arguments to pyplot functions:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">prec_by_serialpos</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">()</span>
+<span></span>prec_by_serialpos.plot.bar()
 </pre></div>
 </div>
 </div>
@@ -676,7 +676,7 @@ of arguments to pyplot functions:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.1.dev3',
+            VERSION:'1.1.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
