@@ -290,11 +290,11 @@ class BaseEventReader(PropertiedObject, BaseReader):
                 dtypes.append((str(k), list_info[k]['dtype'], list_info[k]['len']))
 
         if dtypes:
-            arr = np.zeros(len(d), dtypes).view(np.recarray)
+            arr = np.rec.array(np.zeros(len(d), dtypes))
             cls.copy_values(d, arr, list_info)
         else:
             arr = np.array([])
-        return arr.view(np.recarray)
+        return np.rec.array(arr)
 
     @classmethod
     def copy_values(cls, dict_list, rec_arr, list_info=None):
@@ -329,7 +329,7 @@ class BaseEventReader(PropertiedObject, BaseReader):
                             for j, element in enumerate(v):
                                 arr[j] = element
 
-                    rec_arr[i][k] = arr.view(np.recarray)
+                    rec_arr[i][k] = np.rec.array(arr)
 
         for k, v in list(dict_fields.items()):
             cls.copy_values(v, rec_arr[k])
