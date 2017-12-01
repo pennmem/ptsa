@@ -27,7 +27,7 @@ install:
   - conda info -a
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy xarray pywavelets h5py swig pytables
   - source activate test-environment
-  - pip install pytest pytest-cov
+  - pip install pytest pytest-cov codecov
 
 addons:
   apt:
@@ -42,3 +42,6 @@ script:
   - python setup.py install
   - cd tests
   - python run.py
+
+after_success:
+  - codecov
