@@ -286,25 +286,4 @@ setup(
     packages=find_packages(
         exclude=['*.tests', 'tests', 'tests.*', '*.outdated_tests']
     ),
-    # [
-    #     'ptsa',
-    #     'ptsa.extensions',
-    #     'ptsa.extensions.morlet',
-    #     'ptsa.extensions.circular_stat',
-    #     'ptsa.data',
-    #     'ptsa.data.readers',
-    #     'ptsa.data.MatlabIO',
-    #     'ptsa.data.common',
-    #     'ptsa.data.filters',
-    #     'ptsa.data.readers',
-    #     'ptsa.data.writers',
-    #     'ptsa.data.experimental',
-    #     # 'ptsa.data.tests',
-    #     'ptsa.data.edf',
-    #     'ptsa.test',
-    #     'ptsa.plotting',
-    #     'ptsa.stats',
-    #     'dimarray',
-    #     'dimarray.tests'
-    # ]
 )
