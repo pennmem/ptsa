@@ -1,7 +1,11 @@
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: false
+    - os: osx
+
 language: python
-os:
-  - linux
-  - osx
 python:
   # We don't actually use the Travis Python, but this keeps it organized.
   - "2.7"
