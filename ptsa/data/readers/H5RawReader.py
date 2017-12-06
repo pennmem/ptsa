@@ -97,6 +97,7 @@ class H5RawReader(BaseRawReader):
             for i, start_offset in enumerate(start_offsets):
                 if start_offset<0:
                     print('Cannot read negative offset %s '%start_offset)
+                    read_ok_mask[:,i] = False
                 else:
                     try:
                         if 'orient' in timeseries.attrs.keys() and timeseries.attrs['orient'] == b'row':
