@@ -74,6 +74,20 @@ class TestH5Reader:
                                           read_size=1000).read()
         assert (raw_timeseries.data == h5_data*raw_timeseries.gain).all()
 
+    @pytest.mark.parametrize(
+        'offsets', [np.array([-1,0]), np.arange(0, 210000, 3000)]
+    )
+    def test_with_negative_offsets(self, offsets):
+        with h5py.File(self.monopolar_file, 'r') as hfile:
+            h5_data, h5_mask = H5RawReader.read_h5file(hfile, self.channels, offsets, 1000)
+
+        raw_timeseries, raw_mask = BaseRawReader(dataroot=self.monopolar_dataroot,
+                                          channels=self.channels,
+                                          start_offsets=offsets,
+                                          read_size=1000).read()
+        assert raw_timeseries.data[raw_mask].shape == h5_data[h5_mask].shape
+        assert (raw_timeseries.data[raw_mask] == h5_data[h5_mask]*raw_timeseries.gain).all()
+
     def test_out_of_bounds(self):
         offsets = np.arange(1000000, 4000000, 1000000)
         with h5py.File(self.monopolar_file, 'r') as hfile:
