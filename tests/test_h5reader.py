@@ -134,6 +134,15 @@ class TestH5Reader:
                         start_time=0.0, end_time=0.5).read()
         assert len(eeg.bipolar_pairs) > 0
 
+    def test_h5reader_full_session(self):
+        dataroot = self.dataroot_template.format(
+            subject='R1354E',
+            experiment='FR1',
+            session=0,
+            filename='R1354E_FR1_0_26Oct17_2006.h5'
+        )
+        EEGReader(session_dataroot=dataroot,channels=np.array([])).read()
+
     @pytest.mark.slow
     def test_timing(self):
         channels = np.array(['%.03d' % i for i in range(1, 100)])
