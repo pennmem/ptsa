@@ -12,12 +12,6 @@ PTSA
 
 For documentation and tutorials, please see https://pennmem.github.io/ptsa_new/
 
-Warning
--------
-
-This is the development branch for PTSA 2.0. It is subject to large changes and
-should not be considered stable.
-
 
 Install via conda
 -----------------
