@@ -15,7 +15,7 @@ class MorletWaveletFilterCpp(PropertiedObject, BaseFilter):
         TypeValTuple('frequency_dim_pos', int, 0),
         TypeValTuple('cpus', int, 1),
         # NOTE in this implementation the default position of frequency is -2
-        TypeValTuple('verbose', bool, True),
+        TypeValTuple('verbose', bool, False),
     ]
 
     def __init__(self, time_series, **kwds):
@@ -32,7 +32,6 @@ class MorletWaveletFilterCpp(PropertiedObject, BaseFilter):
         samplerate = float(self.time_series['samplerate'])
 
         wavelet_dims = self.time_series.shape[:-1] + (self.freqs.shape[0],)
-        print(wavelet_dims)
 
         powers_reshaped = np.array([[]], dtype=np.float)
         phases_reshaped = np.array([[]], dtype=np.float)
