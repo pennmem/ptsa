@@ -125,7 +125,7 @@ class EEGReader(PropertiedObject, BaseReader):
 
         :return: TimeSeriesX object (channels x events x time) with data for entire session the events dimension has length 1
         """
-        brr = self.READER_FILETYPE_DICT[self.session_dataroot](dataroot=self.session_dataroot, channels=self.channels)
+        brr = self.READER_FILETYPE_DICT[os.path.splitext(self.session_dataroot)[-1]](dataroot=self.session_dataroot, channels=self.channels)
         session_array,read_ok_mask = brr.read()
         self.channel_name = brr.channel_name
 
