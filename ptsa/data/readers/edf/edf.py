@@ -1,7 +1,11 @@
 import numpy as np
 
 from ptsa.data.readers.raw import BaseRawReader
-from ptsa.data.readers.edf.edffile import EDFFile
+
+try:
+    from ptsa.data.readers.edf.edffile import EDFFile
+except ImportError:
+    EDFFile = None
 
 
 class EDFRawReader(BaseRawReader):
@@ -18,6 +22,13 @@ class EDFRawReader(BaseRawReader):
 
     """
     def __init__(self, **kwargs):
+        if EDFFile is None:
+            raise RuntimeError(
+                "The compiled edffile extension module was not found.\n"
+                "This probably means you don't have pybind11 installed.\n"
+                "Please pip install pybind11 then reinstall ptsa"
+            )
+
         _, data_ext = osp.splitext(kwargs['dataroot'])
         if not len(data_ext):
             raise RuntimeError('Dataroot missing extension (must be supplied for EDF reader)')
