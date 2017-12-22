@@ -1,4 +1,5 @@
 from .base import *
+from .edf import EDFRawReader
 from .eeg import EEGReader
 from .events import *
 from .hdf5 import H5RawReader
