@@ -1,3 +1,5 @@
+import numpy as np
+
 from ptsa.data.readers.raw import BaseRawReader
 from ptsa.data.readers.edf.edffile import EDFFile
 
@@ -6,14 +8,59 @@ class EDFRawReader(BaseRawReader):
     """Reads EEG data stored in the European Data Format (EDF/BDF, EDF+/BDF+
     formats).
 
+    Keyword arguments
+    -----------------
+    dataroot : str
+        Full path to EDF/BDF/EDF+/BDF+ file (including extension).
+    channels : List[Union[str, int]]
+        List of channels to read.
+
+
     """
+    def __init__(self, **kwargs):
+        _, data_ext = osp.splitext(kwargs['dataroot'])
+        if not len(data_ext):
+            raise RuntimeError('Dataroot missing extension (must be supplied for EDF reader)')
+
+        # FIXME: we don't need this once the base class is more generic
+        self.params_dict = {'gain': 1.0}
+
+    def read_file(self, filename, channels, start_offsets=np.array([0]),
+                  read_size=-1):
+        """Read an EDF/BDF/EDF+/BDF+ file.
+
+        Parameters
+        ----------
+        filename : str
+            Path to file to read.
+        channels : list
+            Channels to read from.
+        start_offsets : np.ndarray
+            Indices to start reading at (*not* the actual offset times).
+        read_size : int
+            Number of samples to read at each offset.
+
+        Returns
+        -------
+
+
+        """
+        with EDFFile(filename) as edf:
+            if not len(channels):
+                channels = [n for n in range(edf.num_channels)]
+            else:
+                channels = [int(n) for n in channels]
+
+            # data = edf.read_samples(channels, read_size, 0)
+            data = edf.read_samples(0, read_size, 0)
+
+        return data
 
 
 if __name__ == "__main__":
     import os.path as osp
 
-    edf = EDFFile(osp.expanduser("~/mnt/rhino//data/eeg/eeg/scalp/ltp/ltpFR2/LTP375/session_0/eeg/LTP375_session_0.bdf"))
-    print("Samples:", edf.get_num_samples())
-    print("Annotations:", edf.get_num_annotations())
-    data = edf.read_samples(0, 100, 0)
-    print(data)
+    filename = osp.expanduser("~/mnt/rhino/data/eeg/eeg/scalp/ltp/ltpFR2/LTP375/session_0/eeg/LTP375_session_0.bdf")
+
+    reader = EDFRawReader(dataroot=filename)
+    print(reader.read_file(filename, [], 10))

@@ -66,7 +66,10 @@ def get_numpy_include_dir():
 
 def get_include_dirs():
     """Return extra include directories for building extensions."""
-    dirs = [get_numpy_include_dir(), osp.join(extensions_dir, 'ThreadPool')]
+    dirs = [
+        get_numpy_include_dir(),
+        osp.join(extensions_dir, 'ThreadPool'),
+    ]
 
     if sys.platform.startswith("win"):
         dirs += [third_party_install_dir]
@@ -105,11 +108,11 @@ def get_libfftw_path():
 def get_compiler_args():
     """Return extra compiler arguments for building extensions."""
     if sys.platform.startswith('darwin'):
-        return ['-std=c++11', '-stdlib=libc++', '-mmacosx-version-min=10.8']
+        return ['-std=c++14', '-stdlib=libc++', '-mmacosx-version-min=10.8']
     elif sys.platform.startswith('win'):
         return []
     else:
-        return ['-std=c++11']
+        return ['-std=c++14']
 
 
 class BuildFftw(Command):
@@ -222,6 +225,53 @@ class CustomInstall(install):
             shutil.copy(dll_path, circ_stat_path)
 
 
+def make_pybind_extension(module, **kwargs):
+    """Create a pybind11 extension module.
+
+    This requires a compiler that supports C++11 or newer.
+
+    Parameters
+    ----------
+    module : str
+        Name of the extension module to produce.
+    kwargs : dict
+        Keyword arguments to pass to the constructor of :class:`Extension`.
+
+    Returns
+    -------
+    Extension
+
+    Raises
+    ------
+    ImportError
+        If pybind11 is not found.
+
+    Notes
+    -----
+    This will automatically include the pybind11 and numpy include directories.
+
+    """
+    import pybind11
+
+    include_dirs = kwargs.pop('include_dirs', [])
+    include_dirs += [
+        pybind11.get_include(),
+        pybind11.get_include(user=True),
+        np.get_include(),
+    ]
+
+    compile_args = kwargs.pop('extra_compile_args', [])
+    compile_args += get_compiler_args()
+
+    return Extension(
+        module,
+        include_dirs=include_dirs,
+        extra_compile_args=compile_args,
+        language='c++',
+        **kwargs
+    )
+
+
 ext_modules = [
     Extension(
         'ptsa.extensions.morlet._morlet',
@@ -247,21 +297,22 @@ ext_modules = [
         extra_compile_args=get_compiler_args(),
         libraries=get_fftw_libs(),
     ),
-
-    Extension(
-        "ptsa.data.readers.edf._edffile",
-        sources=[
-            "ptsa/data/readers/edf/edffile.i",
-            "ptsa/data/readers/edf/edflib.cpp",
-        ],
-        swig_opts=["-c++"],
-        extra_compile_args=get_compiler_args(),
-        define_macros=[
-            ('_LARGEFILE64_SOURCE', None),
-            ('_LARGEFILE_SOURCE', None),
-        ],
-    ),
 ]
+
+# Try to add edffile extension
+try:
+    ext_modules += [
+        make_pybind_extension(
+            'ptsa.data.readers.edf.edffile',
+            sources=[
+                'ptsa/data/readers/edf/edflib.cpp',
+                'ptsa/data/readers/edf/edffile.cpp',
+            ],
+        )
+    ]
+except ImportError:
+    print("\n\nWARNING\n\n"
+          "pybind11 not found - you will be unable to read EDF files")
 
 check_dependencies()
 
