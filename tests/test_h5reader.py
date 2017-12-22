@@ -6,9 +6,9 @@ import pytest
 import h5py
 import numpy as np
 
-from ptsa.data.readers.H5RawReader import H5RawReader
-from ptsa.data.readers.BaseRawReader import BaseRawReader
-from ptsa.data.readers.CMLEventReader import CMLEventReader
+from ptsa.data.readers.hdf5 import H5RawReader
+from ptsa.data.readers.raw import BaseRawReader
+from ptsa.data.readers.events import CMLEventReader
 from ptsa.data.readers import EEGReader
 from ptsa.test.utils import get_rhino_root, skip_without_rhino
 

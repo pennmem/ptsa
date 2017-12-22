@@ -1,10 +1,16 @@
+import collections
+import json
+from os.path import *
+import warnings
+
+from ptsa import six
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
-from os.path import *
-import json
-import collections
-import warnings
-from ptsa import six
+
+__all__ = [
+    'ParamsReader',
+]
+
 
 class ParamsReader(PropertiedObject, BaseReader):
     """
@@ -119,23 +125,3 @@ class ParamsReader(PropertiedObject, BaseReader):
                 'The following fields were supplied:\n' + str(list(params.keys())))
 
         return params
-
-
-if __name__ == '__main__':
-    # p_path = '/Users/m/data/eeg/R1060M/eeg.noreref/params.txt'
-    # from ptsa.data.readers.ParamsReader import ParamsReader
-    #
-    # p_reader = ParamsReader(filename=p_path)
-    # params = p_reader.read()
-    # print params
-    #
-    #
-    # dataroot = '/Users/m/data/eeg/R1060M/eeg.noreref/R1060M_01Aug15_0805'
-    # p_reader = ParamsReader(dataroot=dataroot)
-    # params = p_reader.read()
-    # print params
-
-    dataroot = '/Volumes/db_root/protocols/r1/subjects/R1001P/experiments/FR1/sessions/0/ephys/current_processed/noreref/R1001P_FR1_0_12Oct14_1034'
-    p_reader = ParamsReader(dataroot=dataroot)
-    params = p_reader.read()
-    print(params)

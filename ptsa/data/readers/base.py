@@ -1,3 +1,5 @@
+"""Base classes for PTSA readers."""
+
 import sys
 import os
 from os.path import *
@@ -9,11 +11,22 @@ import numpy as np
 import pandas as pd
 
 from ptsa.data.common import TypeValTuple, PropertiedObject
-from ptsa.data.readers import BaseReader
 from ptsa.data.common.path_utils import find_dir_prefix
 from ptsa.data.common import pathlib
 from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
 from ptsa import six
+
+__all__ = [
+    'BaseReader',
+    'BaseEventReader',
+]
+
+
+class BaseReader(object):
+    """Base reader class. Children should implement the :meth:`read` method."""
+    def read(self):
+        raise NotImplementedError
+
 
 class BaseEventReader(PropertiedObject, BaseReader):
     """Reader class that reads event file and returns them as np.recarray.

@@ -1,9 +1,15 @@
-import os
-import json
 import copy
+import json
+import os
+
 import pandas as pd
+
 from ptsa.data.common import pathlib
 from ptsa.six import string_types
+
+__all__ = [
+    'JsonIndexReader',
+]
 
 
 class JsonIndexReader(object):
@@ -248,11 +254,3 @@ class JsonIndexReader(object):
         :return: list of montages
         """
         return sorted(list(self.aggregate_values('montage', **kwargs)))
-
-if __name__ == '__main__':
-    reader = JsonIndexReader('/Volumes/rhino_root/protocols/r1.json')
-    print(reader.aggregate_values('sessions', subject='R1093J', experiment='FR1'))
-    print(reader.aggregate_values('subjects',Recognition=True))
-    print(reader.aggregate_values('subjects', experiment='PAL2'))
-    print(reader.aggregate_values('experiments', subject='R1001P'))
-    print(reader.get_value('task_events', subject='R1001P', experiment='FR1', session=0))
