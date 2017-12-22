@@ -8,9 +8,9 @@ from xarray import DataArray
 
 from ptsa import six
 from ptsa.data.common import TypeValTuple, PropertiedObject
-from ptsa.data.readers import BaseReader
-from ptsa.data.readers.ParamsReader import ParamsReader
-from ptsa import six
+from ptsa.data.readers.base import BaseReader
+from ptsa.data.readers.params import ParamsReader
+
 
 class BaseRawReader(PropertiedObject, BaseReader):
     """
@@ -113,7 +113,7 @@ class BaseRawReader(PropertiedObject, BaseReader):
         eventdata.attrs = deepcopy(self.params_dict)
 
         return eventdata, read_ok_mask
-    
+
     def read_file(self,filename,channels,start_offsets=np.array([0]),read_size=-1):
         """
         Reads raw data from binary files into a numpy array of shape (len(channels),len(start_offsets), read_size).

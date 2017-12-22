@@ -6,7 +6,7 @@ from ptsa.data.readers import CMLEventReader
 
 import traceback
 
-from ptsa.data.readers.TalReader import TalReader
+from ptsa.data.readers.tal import TalReader
 from ptsa.data.readers import EEGReader
 
 from dataset_utils import *
