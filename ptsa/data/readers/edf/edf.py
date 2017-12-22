@@ -63,7 +63,7 @@ class EDFRawReader(BaseRawReader):
                 channels = [int(n) for n in channels]
 
             # data = edf.read_samples(channels, read_size, 0)
-            data = edf.read_samples(0, read_size, 0)
+            data = edf.read_samples(2, 120, 100)
 
         return data
 
@@ -74,4 +74,8 @@ if __name__ == "__main__":
     filename = osp.expanduser("~/mnt/rhino/data/eeg/eeg/scalp/ltp/ltpFR2/LTP375/session_0/eeg/LTP375_session_0.bdf")
 
     reader = EDFRawReader(dataroot=filename)
-    print(reader.read_file(filename, [], 10))
+    data = reader.read_file(filename, [])
+
+    import pandas as pd
+    ax = pd.Series(data).plot()
+    ax.get_figure().savefig('out.png')
