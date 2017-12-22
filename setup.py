@@ -261,16 +261,6 @@ ext_modules = [
             ('_LARGEFILE_SOURCE', None),
         ],
     ),
-
-    Extension(
-        "ptsa.data.edf.edf",
-        sources=["ptsa/data/edf/edf.c",
-                 "ptsa/data/edf/edfwrap.c",
-                 "ptsa/data/edf/edflib.c"],
-        include_dirs=[get_numpy_include_dir()],
-        define_macros=[('_LARGEFILE64_SOURCE', None),
-                       ('_LARGEFILE_SOURCE', None)]
-    )
 ]
 
 check_dependencies()
