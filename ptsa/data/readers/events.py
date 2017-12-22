@@ -158,17 +158,3 @@ class PTSAEventReader(BaseEventReader, BaseReader):
             except TypeError:
                 print('skipping event with eegfile=', ev.eegfile)
                 pass
-
-
-if __name__ == '__main__':
-    from .PTSAEventReader import PTSAEventReader
-
-    # e_path = join('/Volumes/rhino_root', 'data/events/RAM_FR1/R1060M_events.mat')
-    e_path = '/Users/m/data/events/RAM_FR1/R1060M_events.mat'
-
-    e_reader = PTSAEventReader(filename=e_path, eliminate_events_with_no_eeg=True)
-
-    events = e_reader.read()
-
-
-    print(events)
