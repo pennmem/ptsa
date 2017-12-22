@@ -249,6 +249,20 @@ ext_modules = [
     ),
 
     Extension(
+        "ptsa.data.readers.edf._edffile",
+        sources=[
+            "ptsa/data/readers/edf/edffile.i",
+            "ptsa/data/readers/edf/edflib.c",
+        ],
+        swig_opts=["-c++"],
+        extra_compile_args=get_compiler_args(),
+        define_macros=[
+            ('_LARGEFILE64_SOURCE', None),
+            ('_LARGEFILE_SOURCE', None),
+        ],
+    ),
+
+    Extension(
         "ptsa.data.edf.edf",
         sources=["ptsa/data/edf/edf.c",
                  "ptsa/data/edf/edfwrap.c",
