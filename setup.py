@@ -252,7 +252,7 @@ ext_modules = [
         "ptsa.data.readers.edf._edffile",
         sources=[
             "ptsa/data/readers/edf/edffile.i",
-            "ptsa/data/readers/edf/edflib.c",
+            "ptsa/data/readers/edf/edflib.cpp",
         ],
         swig_opts=["-c++"],
         extra_compile_args=get_compiler_args(),
