@@ -18,6 +18,21 @@ class EDFFile
 private:
     struct edf_hdr_struct header;
 
+    inline int handle() {
+        return this->header.handle;
+    }
+
+    inline void seek(int channel, long long offset)
+    {
+        const auto new_offset = edfseek(this->handle(), channel, offset, EDFSEEK_SET);
+        if (new_offset != offset) {
+            throw std::runtime_error(
+                "edfseek returned " + std::to_string(new_offset)
+                + " when expected " + std::to_string(offset)
+            );
+        }
+    }
+
 public:
     /**
      * Open an EDF file for reading.
@@ -56,10 +71,6 @@ public:
 
     ~EDFFile() {
         this->close();
-    }
-
-    int get_handle() {
-        return this->header.handle;
     }
 
     /**
@@ -133,12 +144,20 @@ public:
      * @param n_samples - number of samples to read
      * @param offset - sample counter offset to start from
      * @return data vector
+     * @throws std::runtime_error when an error occurs
      */
-    py::array_t<int> read_samples(int channel, int n_samples, long long offset=0)
+    py::array_t<int> read_samples(int channel, int n_samples, long long offset)
     {
-        auto output = py::array_t<int>(n_samples);
-        edfrewind(this->header.handle, channel);
-        edfread_digital_samples(this->header.handle, channel, n_samples, (int *)output.request().ptr);
+        auto output = py::array_t<int, py::array::c_style | py::array::forcecast>(n_samples);
+        auto info = output.request();
+        this->seek(channel, offset);
+        auto samples = edfread_digital_samples(
+            this->header.handle, channel, n_samples, static_cast<int *>(info.ptr)
+        );
+        if (samples < 0) {
+            throw std::runtime_error("Error reading EDF samples!");
+        }
+
         return output;
     }
 };
@@ -160,16 +179,17 @@ PYBIND11_MODULE(edffile, m)
     py::class_<EDFFile>(m, "EDFFile")
         .def(py::init<const std::string &>())
         .def("__enter__", [](EDFFile &self) {
-            return self;
+            return self;  // FIXME: this doesn't seem to work...
         })
-        .def("__exit__", [](EDFFile &self, py::object type, py::object value,
-                            py::object tb) {
+        .def("__exit__", [](EDFFile &self, py::object type, py::object value, py::object tb) {
             self.close();
         })
         .def_property_readonly("num_channels", &EDFFile::get_num_channels)
         .def_property_readonly("num_samples", [](EDFFile &self) {
             return self.get_num_samples(0);
         })
-        .def("read_samples", &EDFFile::read_samples)
+        .def("close", &EDFFile::close)
+        .def("read_samples", &EDFFile::read_samples,
+             py::arg("channel"), py::arg("samples"), py::arg("offset") = 0)
     ;
 }

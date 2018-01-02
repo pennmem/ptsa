@@ -1,3 +1,4 @@
+from contextlib import closing
 import numpy as np
 
 from ptsa.data.readers.raw import BaseRawReader
@@ -56,14 +57,16 @@ class EDFRawReader(BaseRawReader):
 
 
         """
-        with EDFFile(filename) as edf:
+        with closing(EDFFile(filename)) as edf:
+            print(edf.num_channels, edf.num_samples)
+
             if not len(channels):
                 channels = [n for n in range(edf.num_channels)]
             else:
                 channels = [int(n) for n in channels]
 
             # data = edf.read_samples(channels, read_size, 0)
-            data = edf.read_samples(2, 120, 100)
+            data = edf.read_samples(0, 1024)
 
         return data
 
