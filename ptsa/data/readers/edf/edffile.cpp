@@ -2,8 +2,8 @@
 #include <string>
 
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
 #include <pybind11/numpy.h>
+#include <pybind11/stl.h>
 
 #include "edflib.h"
 
@@ -140,22 +140,33 @@ public:
 
     /**
      * Read raw samples from a single channel.
-     * @param channel - the channel to read from
+     * @param channels - the channels to read from
      * @param n_samples - number of samples to read
      * @param offset - sample counter offset to start from
      * @return data vector
      * @throws std::runtime_error when an error occurs
      */
-    py::array_t<int> read_samples(int channel, int n_samples, long long offset)
+    py::array_t<int> read_samples(std::vector<int> channels, int n_samples, long long offset)
     {
-        auto output = py::array_t<int, py::array::c_style | py::array::forcecast>(n_samples);
+        const std::vector<ssize_t> shape = {{static_cast<long>(channels.size()), n_samples}};
+        auto output = py::array_t<int>(shape);
         auto info = output.request();
-        this->seek(channel, offset);
-        auto samples = edfread_digital_samples(
-            this->header.handle, channel, n_samples, static_cast<int *>(info.ptr)
-        );
-        if (samples < 0) {
-            throw std::runtime_error("Error reading EDF samples!");
+
+        for (const auto &channel: channels)
+        {
+            auto buffer = py::array_t<int>(shape[1]);
+            this->seek(channel, offset);
+            const auto samples = edfread_digital_samples(
+                this->header.handle, channel, n_samples, static_cast<int *>(buffer.request().ptr)
+            );
+
+            if (samples < 0) {
+                throw std::runtime_error("Error reading EDF samples!");
+            }
+
+            for (ssize_t i = 0; i < shape[1]; ++i) {
+                output.mutable_unchecked()(channel, i) = *buffer.data(i);
+            }
         }
 
         return output;

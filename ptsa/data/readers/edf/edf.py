@@ -1,4 +1,7 @@
 from contextlib import closing
+import os.path as osp
+import warnings
+
 import numpy as np
 
 from ptsa.data.readers.raw import BaseRawReader
@@ -46,7 +49,7 @@ class EDFRawReader(BaseRawReader):
         filename : str
             Path to file to read.
         channels : list
-            Channels to read from.
+            Channels to read from. If False-like, use all channels.
         start_offsets : np.ndarray
             Indices to start reading at (*not* the actual offset times).
         read_size : int
@@ -54,25 +57,37 @@ class EDFRawReader(BaseRawReader):
 
         Returns
         -------
-
+        Tuple[np.ndarray, np.ndarray]
+            A tuple containing the array of EEG data and a boolean index mask
+            indicating whether each offset was read successfully.
 
         """
         with closing(EDFFile(filename)) as edf:
-            print(edf.num_channels, edf.num_samples)
-
             if not len(channels):
                 channels = [n for n in range(edf.num_channels)]
             else:
                 channels = [int(n) for n in channels]
 
-            # data = edf.read_samples(channels, read_size, 0)
-            data = edf.read_samples(0, 1024)
+            # Read all data
+            if read_size < 0:
+                if len(start_offsets) > 1:
+                    msg = "start_offsets given when read_size implies reading all data"
+                    warnings.warn(msg, UserWarning)
+                data = edf.read_samples(channels, edf.num_samples)
+                return data[:, None, :], np.ones((len(channels), 1), dtype=bool)
 
-        return data
+            # Read epochs
+            else:
+                data = np.empty((len(channels), len(start_offsets), read_size),
+                                dtype=np.float) * np.nan
+                for i, offset in enumerate(start_offsets):
+                    data[:, i, :] = edf.read_samples(channels, read_size, 0)
+
+                # FIXME
+                return data, np.ones((len(channels), 1), dtype=bool)
 
 
 if __name__ == "__main__":
-    import os.path as osp
 
     filename = osp.expanduser("~/mnt/rhino/data/eeg/eeg/scalp/ltp/ltpFR2/LTP375/session_0/eeg/LTP375_session_0.bdf")
 
@@ -81,5 +96,5 @@ if __name__ == "__main__":
     print(data)
 
     import pandas as pd
-    ax = pd.Series(data).plot()
+    ax = pd.DataFrame(data).plot()
     ax.get_figure().savefig('/tmp/out.png')
