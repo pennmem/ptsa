@@ -1,3 +1,4 @@
+#include <exception>
 #include <string>
 
 #include <pybind11/pybind11.h>
@@ -21,12 +22,35 @@ public:
     /**
      * Open an EDF file for reading.
      * @param filename
+     * @throws std::runtime_error when the EDF file cannot be opened
      */
     EDFFile(std::string filename)
     {
         auto res = edfopen_file_readonly(filename.c_str(), &this->header, EDFLIB_DO_NOT_READ_ANNOTATIONS);
-        if (res != 0) {
-            std::cerr << "Got error code " << this->header.filetype << std::endl;
+        if (res != 0)
+        {
+            // We're not going to try to catch each specific type of error, but
+            // just the most likely to be seen. More helpful error messages can
+            // be added in the future if need be.
+            const auto code = this->header.filetype;
+            if (code == EDFLIB_NO_SUCH_FILE_OR_DIRECTORY)
+            {
+                const auto msg = "No such file or directory: " + filename;
+                throw std::runtime_error(msg);
+            }
+            else if (code == EDFLIB_FILE_CONTAINS_FORMAT_ERRORS)
+            {
+                throw std::runtime_error("EDF file contains format errors");
+            }
+            else if (code == EDFLIB_FILE_READ_ERROR)
+            {
+                throw std::runtime_error("Error reading EDF file " + filename);
+            }
+            else
+            {
+                const auto msg = "Unhandled error reading EDF file (code " + std::to_string(code) + ")";
+                throw std::runtime_error(msg);
+            }
         }
     }
 
@@ -133,16 +157,6 @@ PYBIND11_MODULE(edffile, m)
         })
     ;
 
-    // FIXME: fix or remove
-    // py::class_<EDFAnnotations>(m, "EDFAnnotations")
-    //     .def(py::init<const EDFFile &>())
-    //     .def("__iter__", [](EDFAnnotations &self) {
-    //         self.iter();
-    //         return self;
-    //     })
-    //     .def("__next__", &EDFAnnotations::next)
-    // ;
-
     py::class_<EDFFile>(m, "EDFFile")
         .def(py::init<const std::string &>())
         .def("__enter__", [](EDFFile &self) {
@@ -157,9 +171,5 @@ PYBIND11_MODULE(edffile, m)
             return self.get_num_samples(0);
         })
         .def("read_samples", &EDFFile::read_samples)
-        // .def("read_samples",
-        //      py::overload_cast<std::vector<int>, int, long long>(&EDFFile::read_samples))
-        // .def("read_samples",
-        //      py::overload_cast<int, int, long long>(&EDFFile::read_samples))
     ;
 }

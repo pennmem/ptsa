@@ -75,7 +75,8 @@ if __name__ == "__main__":
 
     reader = EDFRawReader(dataroot=filename)
     data = reader.read_file(filename, [])
+    print(data)
 
     import pandas as pd
     ax = pd.Series(data).plot()
-    ax.get_figure().savefig('out.png')
+    ax.get_figure().savefig('/tmp/out.png')
