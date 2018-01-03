@@ -303,10 +303,10 @@ ext_modules = [
 try:
     ext_modules += [
         make_pybind_extension(
-            'ptsa.data.readers.edf.edffile',
+            'ptsa.extensions.edf.edffile',
             sources=[
-                'ptsa/data/readers/edf/edflib.cpp',
-                'ptsa/data/readers/edf/edffile.cpp',
+                'ptsa/extensions/edf/edflib.cpp',
+                'ptsa/extensions/edf/edffile.cpp',
             ],
         )
     ]

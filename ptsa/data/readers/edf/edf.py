@@ -6,12 +6,7 @@ import warnings
 import numpy as np
 
 from ptsa.data.readers.raw import BaseRawReader
-
-try:
-    from ptsa.data.readers.edf.edffile import EDFFile
-except ImportError:
-    EDFFile = None
-
+from ptsa.extensions.edf import EDFFile
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
