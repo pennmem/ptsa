@@ -1,4 +1,5 @@
 from contextlib import closing
+import logging
 import os.path as osp
 import warnings
 
@@ -10,6 +11,10 @@ try:
     from ptsa.data.readers.edf.edffile import EDFFile
 except ImportError:
     EDFFile = None
+
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
 
 
 class EDFRawReader(BaseRawReader):
@@ -80,17 +85,29 @@ class EDFRawReader(BaseRawReader):
             else:
                 data = np.empty((len(channels), len(start_offsets), read_size),
                                 dtype=np.float) * np.nan
-                for i, offset in enumerate(start_offsets):
-                    data[:, i, :] = edf.read_samples(channels, read_size, 0)
+                read_ok_mask = np.ones((len(channels), len(start_offsets)),
+                                       dtype=bool)
 
-                # FIXME
-                return data, np.ones((len(channels), 1), dtype=bool)
+                for i, offset in enumerate(start_offsets):
+                    if offset < 0:
+                        logger.warning("Cannot read negative offset %d", offset)
+                        read_ok_mask[:, i] = False
+                        continue
+
+                    samples = edf.read_samples(channels, read_size, offset=offset)
+                    if samples.shape[1] == read_size:
+                        data[:, i, :] = samples
+                    else:
+                        logger.warning("Cannot read full chunk of data for offset %d... probably end of file", offset)
+                        read_ok_mask[:, i] = False
+
+                return data, read_ok_mask
 
 
 if __name__ == "__main__":
-
+    logger.addHandler(logging.StreamHandler())
     filename = osp.expanduser("~/mnt/rhino/data/eeg/eeg/scalp/ltp/ltpFR2/LTP375/session_0/eeg/LTP375_session_0.bdf")
 
     reader = EDFRawReader(dataroot=filename)
-    data, mask = reader.read_file(filename, [], read_size=1024)
+    data, mask = reader.read_file(filename, [], read_size=1024, start_offsets=[0, 1024, 2048])
     print(data)
