@@ -9,6 +9,18 @@
 
 namespace py = pybind11;
 
+using ChannelInfo = struct edf_param_struct;
+
+// Stolen from: https://stackoverflow.com/questions/25829143/trim-whitespace-from-a-string
+std::string &rtrim(std::string &str)
+{
+    auto it1 =  std::find_if(str.rbegin(), str.rend(), [](char ch) {
+        return !std::isspace<char>(ch, std::locale::classic());
+    });
+    str.erase(it1.base(), str.end());
+    return str;
+}
+
 
 /**
  * Wrapper used to read EDF files via EDFLib.
@@ -94,6 +106,21 @@ public:
     inline int get_num_channels()
     {
         return this->header.edfsignals;
+    }
+
+    /**
+     * Return channel metadata.
+     * @param channel
+     * @throws py::index_error when the channel index is out of range
+     */
+    inline ChannelInfo get_channel_info(int channel)
+    {
+        if (channel >= this->header.edfsignals)
+        {
+            const auto msg = "Channl " + std::to_string(channel) + " out of range";
+            throw py::index_error(msg);
+        }
+        return this->header.signalparam[channel];
     }
 
     /**
@@ -196,6 +223,24 @@ PYBIND11_MODULE(edffile, m)
         })
     ;
 
+    py::class_<ChannelInfo>(m, "ChannelInfo")
+        .def(py::init<>())
+        .def_readonly("label", &ChannelInfo::label)
+        .def_readonly("smp_in_file", &ChannelInfo::smp_in_file)
+        .def_readonly("phys_max", &ChannelInfo::phys_max)
+        .def_readonly("phys_min", &ChannelInfo::phys_min)
+        .def_readonly("dig_max", &ChannelInfo::dig_max)
+        .def_readonly("dig_min", &ChannelInfo::dig_min)
+        .def_readonly("smp_in_datarecord", &ChannelInfo::smp_in_datarecord)
+        .def_readonly("physdimension", &ChannelInfo::physdimension)
+        .def_readonly("prefilter", &ChannelInfo::prefilter)
+        .def_readonly("transducer", &ChannelInfo::transducer)
+        .def("__str__", [](const ChannelInfo &self) {
+            auto label = std::string(self.label);
+            return "<channel label=" + rtrim(label) + ">";
+        })
+    ;
+
     py::class_<EDFFile>(m, "EDFFile")
         .def(py::init<const std::string &>())
         .def("__enter__", [](EDFFile &self) {
@@ -208,6 +253,7 @@ PYBIND11_MODULE(edffile, m)
         .def_property_readonly("num_samples", [](EDFFile &self) {
             return self.get_num_samples(0);
         })
+        .def("get_channel_info", &EDFFile::get_channel_info)
         .def("close", &EDFFile::close)
         .def("read_samples", &EDFFile::read_samples,
              py::arg("channel"), py::arg("samples"), py::arg("offset") = 0)
