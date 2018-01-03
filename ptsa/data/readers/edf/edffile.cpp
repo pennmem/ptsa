@@ -39,7 +39,19 @@ public:
      * @param filename
      * @throws std::runtime_error when the EDF file cannot be opened
      */
-    EDFFile(std::string filename)
+    EDFFile(std::string filename) {
+        this->open(filename);
+    }
+
+    ~EDFFile() {
+        this->close();
+    }
+
+    /**
+     * Open an EDF file.
+     * @param filename
+     */
+    void open(std::string filename)
     {
         auto res = edfopen_file_readonly(filename.c_str(), &this->header, EDFLIB_DO_NOT_READ_ANNOTATIONS);
         if (res != 0)
@@ -69,21 +81,17 @@ public:
         }
     }
 
-    ~EDFFile() {
-        this->close();
-    }
-
     /**
      * Close the EDF file.
      */
     void close() {
-        edfclose_file(this->header.handle);
+        edfclose_file(this->handle());
     }
 
     /**
      * Return the number of channels.
      */
-    int get_num_channels()
+    inline int get_num_channels()
     {
         return this->header.edfsignals;
     }
@@ -94,17 +102,17 @@ public:
      * specific channel.
      * @param channel - channel number
      */
-    long long get_num_samples(int channel)
+    inline long long get_num_samples(int channel)
     {
         return this->header.signalparam[channel].smp_in_file;
     }
 
-    long long get_num_samples()
+    inline long long get_num_samples()
     {
         return this->get_num_samples(0);
     }
 
-    long long get_num_annotations() {
+    inline long long get_num_annotations() {
         return this->header.annotations_in_file;
     }
 
@@ -157,7 +165,7 @@ public:
             auto buffer = py::array_t<int>(shape[1]);
             this->seek(channel, offset);
             const auto samples = edfread_digital_samples(
-                this->header.handle, channel, n_samples, static_cast<int *>(buffer.request().ptr)
+                this->handle(), channel, n_samples, static_cast<int *>(buffer.request().ptr)
             );
 
             if (samples < 0) {
@@ -172,6 +180,7 @@ public:
         return output;
     }
 };
+
 
 PYBIND11_MODULE(edffile, m)
 {

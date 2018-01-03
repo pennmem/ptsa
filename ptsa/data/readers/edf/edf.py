@@ -92,9 +92,5 @@ if __name__ == "__main__":
     filename = osp.expanduser("~/mnt/rhino/data/eeg/eeg/scalp/ltp/ltpFR2/LTP375/session_0/eeg/LTP375_session_0.bdf")
 
     reader = EDFRawReader(dataroot=filename)
-    data = reader.read_file(filename, [])
+    data, mask = reader.read_file(filename, [], read_size=1024)
     print(data)
-
-    import pandas as pd
-    ax = pd.DataFrame(data).plot()
-    ax.get_figure().savefig('/tmp/out.png')
