@@ -11,14 +11,20 @@ class LocReader(BaseReader):
     def read(self):
         leads = self._dict["leads"].values()
         for lead in leads:
-            for c in lead["contacts"].values():
-                c.update(lead["lead_type"])
-            for p in lead["pairs"].values():
-                p.update(lead["lead_type"])
+            contacts = lead["contacts"]
+            if isinstance(contacts,dict):
+                contacts = contacts.values()
+            for c in contacts:
+                c.update({"type":lead["type"]})
+            pairs = lead["pairs"]
+            if isinstance(pairs,dict):
+                pairs = pairs.values()
+            for p in pairs:
+                p.update({"type":lead["type"]})
         flat_contact_data = list(itertools.chain(*[x["contacts"] for x in leads]))
         flat_pairs_data = list(itertools.chain(*[x["pairs"] for x in leads]))
         all_data = []
         all_data.append(pd.io.json.json_normalize(flat_contact_data))
         all_data.append(pd.io.json.json_normalize(flat_pairs_data))
-        combined_df = pd.concat(all_data)
+        combined_df = pd.concat(all_data,keys=['contacts','pairs'],ignore_index=True,)
         return combined_df
