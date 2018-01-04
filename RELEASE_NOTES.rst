@@ -8,6 +8,7 @@ Summary of changes:
 
 * Removed further debug printing from Morlet filters (#111)
 * Cleaned up ``ptsa.data.readers`` to be more in line with PEP8 naming (#112)
+* Added support for reading EDF files (#113)
 
 
 Version 1.1.4
