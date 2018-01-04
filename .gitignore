@@ -29,3 +29,7 @@ docs/examples/*.h5
 site/
 
 edffile_wrap.cpp
+
+assets/
+report.html
+Untitled.ipynb

@@ -211,21 +211,22 @@ public:
 
 PYBIND11_MODULE(edffile, m)
 {
-    py::class_<struct edf_annotation_struct>(m, "EDFAnnotation")
-        .def_property_readonly("onset", [](const edf_annotation_struct &self) {
-            return self.onset;
-        })
-        .def_property_readonly("duration", [](const edf_annotation_struct &self) {
-            return self.duration;
-        })
-        .def_property_readonly("annotation", [](const edf_annotation_struct &self) {
-            return self.annotation;
-        })
+    py::class_<struct edf_annotation_struct>(m, "EDFAnnotation", R"(An EDF annotation)")
+        .def_readonly("onset", &edf_annotation_struct::onset)
+        .def_readonly("duration", &edf_annotation_struct::duration)
+        .def_readonly("annotation", &edf_annotation_struct::annotation)
     ;
 
-    py::class_<ChannelInfo>(m, "ChannelInfo")
+    py::class_<ChannelInfo>(m, "ChannelInfo", R"(
+    Channel data including label, number of samples, etc. These objects are
+    returned by :meth:`EDFFile.get_channel_info`.
+
+    )")
         .def(py::init<>())
-        .def_readonly("label", &ChannelInfo::label)
+        .def_property_readonly("label", [](const ChannelInfo &self) {
+            auto label = std::string(self.label);
+            return rtrim(label);
+        })
         .def_readonly("smp_in_file", &ChannelInfo::smp_in_file)
         .def_readonly("phys_max", &ChannelInfo::phys_max)
         .def_readonly("phys_min", &ChannelInfo::phys_min)
@@ -241,7 +242,20 @@ PYBIND11_MODULE(edffile, m)
         })
     ;
 
-    py::class_<EDFFile>(m, "EDFFile")
+    py::class_<EDFFile>(m, "EDFFile", R"(Read the EDF-family of files.
+
+    Parameters
+    ----------
+    filename : str
+        Path to EDF file.
+
+    Notes
+    -----
+    This class utilizes EDFlib_ to read EDF/BDF/EDF+/BDF+ files.
+
+    .. _EDFlib: https://www.teuniz.net/edflib/
+
+    )")
         .def(py::init<const std::string &>())
         .def("__enter__", [](EDFFile &self) {
             return self;  // FIXME: this doesn't seem to work...
@@ -253,6 +267,7 @@ PYBIND11_MODULE(edffile, m)
         .def_property_readonly("num_samples", [](EDFFile &self) {
             return self.get_num_samples(0);
         })
+        .def_property_readonly("num_annotations", &EDFFile::get_num_annotations)
         .def("get_channel_info", &EDFFile::get_channel_info)
         .def("close", &EDFFile::close)
         .def("read_samples", &EDFFile::read_samples,
