@@ -3,6 +3,10 @@ import json, itertools
 import pandas as pd
 
 class LocReader(BaseReader):
+    """
+    Reads a localization file ("localization.json") and returns the data it contains as a flat DataFrame.
+    Nested fields in the JSON file have their full paths joined by periods.
+    """
 
     def __init__(self,filename):
         with open(filename) as f:
@@ -15,7 +19,7 @@ class LocReader(BaseReader):
             if isinstance(contacts,dict):
                 contacts = contacts.values()
             for c in contacts:
-                c.update({"type":lead["type"]})
+                c.update({"type":lead["type"],})
             pairs = lead["pairs"]
             if isinstance(pairs,dict):
                 pairs = pairs.values()
