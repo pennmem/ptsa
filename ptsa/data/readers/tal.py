@@ -16,7 +16,7 @@ __all__ = [
 
 class TalReader(PropertiedObject, BaseReader):
     """
-    Reader that reads tal structs Matlab file and converts it to numpy recarray
+    Reader that reads tal structs Matlab file or pais.json file and converts it to numpy recarray
     """
     _descriptors = [
         TypeValTuple('filename', six.string_types, ''),
@@ -30,7 +30,7 @@ class TalReader(PropertiedObject, BaseReader):
         -----------------
 
         :param filename {str} -  path to tal file or pairs.json file
-        :param struct_name {str} -  name of the matlab struct to load
+        :param struct_name {str} -  name of the struct to load
         :param struct_type {str} - either 'mono', indicating a monopolar struct, or 'bi', indicating a bipolar struct
         :return: None
 
@@ -96,7 +96,7 @@ class TalReader(PropertiedObject, BaseReader):
 
         """
 
-        :return: np.recarray representing tal struct array (originally defined in Matlab file)
+        :return: np.recarray representing tal struct array
         """
         if not self._json:
             from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
@@ -127,7 +127,7 @@ class TalReader(PropertiedObject, BaseReader):
 
 
 class TalStimOnlyReader(TalReader):
-    """Reader that reads tal structs Matlab file and converts it to numpy
+    """Reader that reads tal structs file and converts it to numpy
     recarray.
 
     Keyword arguments
@@ -135,7 +135,7 @@ class TalStimOnlyReader(TalReader):
     filename : str
         path to tal file
     struct_name : str
-        name of the matlab struct to load
+        name of the struct to load
 
     """
 
