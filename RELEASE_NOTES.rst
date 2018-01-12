@@ -9,6 +9,8 @@ Summary of changes:
 * Removed further debug printing from Morlet filters (#111)
 * Cleaned up ``ptsa.data.readers`` to be more in line with PEP8 naming (#112)
 * Added support for reading EDF files (#113)
+* Included ``h5py`` in conda requirements (#118)
+* Suppressed unhelpful messages by default (#121). These can be "re-enabled" by adding a non-null log handler.
 
 
 Version 1.1.4
