@@ -14,22 +14,22 @@ requirements:
   build:
     - python {{ python }}
     - numpy
-    - scipy
-    - xarray
     - pywavelets
-    - swig
     - pytables
     - setuptools
+    - scipy
+    - swig
+    - xarray
 
   run:
     - python {{ python }}
-    - numpy
-    - scipy
-    - xarray
     - h5py
+    - numpy
     - pywavelets
     - pytables
+    - scipy
     - vs2015_runtime  [win]
+    - xarray
 
 test:
   # Test that we can import ptsa and its extension modules
