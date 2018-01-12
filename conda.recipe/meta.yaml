@@ -26,6 +26,7 @@ requirements:
     - numpy
     - scipy
     - xarray
+    - h5py
     - pywavelets
     - pytables
     - vs2015_runtime  [win]
