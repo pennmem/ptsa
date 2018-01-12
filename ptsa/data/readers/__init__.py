@@ -7,6 +7,7 @@ from .ParamsReader import ParamsReader
 from .TalReader import TalReader
 from .TalStimOnlyReader import TalStimOnlyReader
 from .BaseRawReader import BaseRawReader
+from .BinaryRawReader import BinaryRawReader
 from .H5RawReader import H5RawReader
 from .EDFReader import EDFReader
 from .CMLEventReader import CMLEventReader
