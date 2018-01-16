@@ -3,11 +3,18 @@ from xarray import DataArray
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
 from ptsa import six
+from abc import ABCMeta,abstractmethod
 
 
+@six.add_metaclass(ABCMeta)
 class BaseRawReader(PropertiedObject, BaseReader):
     """
-    Object that knows how to read EEG files
+    Abstract base class for objects that know how to read binary EEG files.
+    Classes inheriting from BaseRawReader should do the following
+    * Override the ```read_file``` method
+    * Set self.params_dict['gain'] and self.params_dict['samplerate'] as appropriate,
+      either in self.read_file or in the constructor
+    * Make sure that self.channel_name as appropriate for the referencing scheme used
     """
     _descriptors = [
         TypeValTuple('dataroot', six.string_types, ''),
@@ -63,7 +70,8 @@ class BaseRawReader(PropertiedObject, BaseReader):
         eventdata.attrs = deepcopy(self.params_dict)
 
         return eventdata, read_ok_mask
-    
+
+    @abstractmethod
     def read_file(self,filename,channels,start_offsets=np.array([0]),read_size=-1):
         """
         Reads raw data from binary files into a numpy array of shape (len(channels),len(start_offsets), read_size).
