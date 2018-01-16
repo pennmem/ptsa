@@ -1,8 +1,7 @@
-__author__ = 'm'
-
 import xarray
 import numpy as np
 from ptsa.data.readers import BaseReader
+
 
 class NetCDF4XrayReader(BaseReader):
     def __init__(self):

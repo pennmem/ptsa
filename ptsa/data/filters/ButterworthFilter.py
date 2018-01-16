@@ -85,7 +85,7 @@ if __name__ == '__main__':
     from ptsa.data.readers import BaseEventReader
     from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
     from ptsa.data.filters.ButterworthFilter import ButterworthFilter
-    from ptsa.data.readers.TalReader import TalReader
+    from ptsa.data.readers.tal import TalReader
     from ptsa.data.readers import EEGReader
     from ptsa.data.readers import PTSAEventReader
     from ptsa.data.events import Events
@@ -99,7 +99,7 @@ if __name__ == '__main__':
 
     events = e_reader.read()
 
-    from ptsa.data.readers.TalReader import TalReader
+    from ptsa.data.readers.tal import TalReader
 
     tal_path = '/Volumes/rhino_root/data/eeg/R1108J_1/tal/R1108J_1_talLocs_database_bipol.mat'
     tal_reader = TalReader(filename=tal_path)

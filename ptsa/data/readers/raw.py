@@ -8,13 +8,21 @@ from xarray import DataArray
 
 from ptsa import six
 from ptsa.data.common import TypeValTuple, PropertiedObject
-from ptsa.data.readers import BaseReader
-from ptsa.data.readers.ParamsReader import ParamsReader
-from ptsa import six
+from ptsa.data.readers.base import BaseReader
+from ptsa.data.readers.params import ParamsReader
+
 
 class BaseRawReader(PropertiedObject, BaseReader):
-    """
-    Object that knows how to read binary eeg files
+    """(Semi) generic reader for reading raw binary EEG data.
+
+    When implementing new readers, the primary method to override is
+    :meth:`read_file`.
+
+    .. todo::
+
+        Have a proper base class with this one being an implementation for
+        "split" EEG files.
+
     """
     _descriptors = [
         TypeValTuple('dataroot', six.string_types, ''),
@@ -39,6 +47,7 @@ class BaseRawReader(PropertiedObject, BaseReader):
         :param read_size {int} - size of the read chunk. If -1 the entire file is read
         --------------------------------------
         :return:None
+
         """
 
         self.init_attrs(kwds)
@@ -58,6 +67,7 @@ class BaseRawReader(PropertiedObject, BaseReader):
         if isinstance(self.dataroot, six.binary_type):
             self.dataroot = self.dataroot.decode()
 
+        # FIXME: this stuff shouldn't be in the base class since it's EEG format-specific!
         p_reader = ParamsReader(dataroot=self.dataroot)
         self.params_dict = p_reader.read()
 
@@ -73,10 +83,21 @@ class BaseRawReader(PropertiedObject, BaseReader):
                           ' data format is int16', RuntimeWarning)
 
     def get_file_size(self):
-        """
+        """Get the size on disk of an EEG file.
 
-        :return: {int} size of the files whose core name (dataroot) matches self.dataroot. Assumes ALL files with this
-        dataroot are of the same length and uses first channel to determin the common file length
+        Returns
+        -------
+        Size of the files whose core name (dataroot) matches ``self.dataroot``.
+        Assumes ALL files with this dataroot are of the same length and uses
+        first channel to determin the common file length.
+
+        Notes
+        -----
+        This method is specific to "split" EEG files and needs not be
+        implemented by all subclasses.
+
+        .. todo:: Make a private method if the above is accurate.
+
         """
         if isinstance(self.channels[0], six.binary_type):
             ch = self.channels[0].decode()
@@ -86,11 +107,23 @@ class BaseRawReader(PropertiedObject, BaseReader):
         return os.path.getsize(eegfname)
 
     def read(self):
-        """
+        """Read EEG data.
 
-        :return: DataArray objects populated with data read from eeg files. The size of the output is
-        number of channels x number of start offsets x number of time series points
-        The corresponding DataArray axes are: 'channels', 'start_offsets', 'offsets'
+        Returns
+        -------
+        event_data : DataArray
+            Populated with data read from eeg files. The size of the output is
+            number of channels * number of start offsets * number of time series
+            points. The corresponding DataArray axes are: 'channels',
+            'start_offsets', 'offsets'
+        read_ok_mask : np.ndarray
+            Mask of chunks that were properly read.
+
+        Notes
+        -----
+        This method should *not* be overridden by subclasses. Instead, override
+        the :meth:`read_file` method to implement new file types (see for
+        example the HDF5 reader).
 
         """
 
@@ -113,23 +146,38 @@ class BaseRawReader(PropertiedObject, BaseReader):
         eventdata.attrs = deepcopy(self.params_dict)
 
         return eventdata, read_ok_mask
-    
-    def read_file(self,filename,channels,start_offsets=np.array([0]),read_size=-1):
-        """
-        Reads raw data from binary files into a numpy array of shape (len(channels),len(start_offsets), read_size).
-         For each channel and offset, indicates whether the data at that offset on that channel could be read successfully.
 
-        :param filename: The name of the file to read
-        :param channels: The channels to read from the file
-        :param start_offsets: The indices in the array to start reading at
-        :param read_size: The number of samples to read at each offset.
-        :return: event_data: The EEG data corresponding to each offset
-        :return: read_ok_mask: Boolean mask indicating whether each offset was read successfully.
+    def read_file(self, filename, channels, start_offsets=np.array([0]),
+                  read_size=-1):
+        """Reads raw data from binary files into a numpy array of shape
+        ``(len(channels), len(start_offsets), read_size)``.
+
+         For each channel and offset, indicates whether the data at that offset
+         on that channel could be read successfully.
+
+         Parameters
+         ----------
+         filename : str
+            The name of the file to read
+        channels : list
+            The channels to read from the file
+        start_offsets : np.ndarray
+            The indices in the array to start reading at
+        read_size : int
+            The number of samples to read at each offset.
+
+        Returns
+        -------
+        eventdata : np.ndarray
+            The EEG data corresponding to each offset
+        read_ok_mask : np.ndarray
+            Boolean mask indicating whether each offset was read successfully.
+
         """
 
         if read_size < 0:
             read_size = int(self.get_file_size() / self.file_format.data_size)
-            self.read_size=read_size
+            self.read_size = read_size
 
         # allocate space for data
         eventdata = np.empty((len(channels), len(start_offsets), read_size),

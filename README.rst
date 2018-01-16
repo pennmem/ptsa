@@ -12,12 +12,6 @@ PTSA
 
 For documentation and tutorials, please see https://pennmem.github.io/ptsa_new/
 
-Warning
--------
-
-This is the development branch for PTSA 2.0. It is subject to large changes and
-should not be considered stable.
-
 
 Install via conda
 -----------------
@@ -125,3 +119,16 @@ and type:
 where ``<architecture folder>`` denotes name of the arget architecture for which conda package was build. e.g. on 64-bit
 Windows the architecture folder will be called ``win-64`` (hence conda packages will be generated in
 ``<conda installation dir>/conda-bld/win-64``
+
+License
+-------
+
+PTSA is licensed under the GNU GPL version 3.
+
+This repository also includes:
+
+* FFTW_ (GPL license)
+* EDFLib_ (BSD license)
+
+.. _FFTW: http://fftw.org/
+.. _EDFLib: https://www.teuniz.net/edflib/

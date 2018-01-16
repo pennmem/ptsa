@@ -1,6 +1,6 @@
 import os.path as osp
 import pytest
-from ptsa.data.readers.IndexReader import JsonIndexReader
+from ptsa.data.readers.index import JsonIndexReader
 
 
 @pytest.fixture

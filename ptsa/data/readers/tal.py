@@ -1,14 +1,22 @@
-import os
 import json
+import os
+
 import numpy as np
 import pandas as pd
+
+from ptsa import six
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
-from ptsa import six
 
-class TalReader(PropertiedObject,BaseReader):
+__all__ = [
+    'TalReader',
+    'TalStimOnlyReader',
+]
+
+
+class TalReader(PropertiedObject, BaseReader):
     """
-    Reader that reads tal structs Matlab file and converts it to numpy recarray
+    Reader that reads tal structs Matlab file or pais.json file and converts it to numpy recarray
     """
     _descriptors = [
         TypeValTuple('filename', six.string_types, ''),
@@ -22,7 +30,7 @@ class TalReader(PropertiedObject,BaseReader):
         -----------------
 
         :param filename {str} -  path to tal file or pairs.json file
-        :param struct_name {str} -  name of the matlab struct to load
+        :param struct_name {str} -  name of the struct to load
         :param struct_type {str} - either 'mono', indicating a monopolar struct, or 'bi', indicating a bipolar struct
         :return: None
 
@@ -88,7 +96,7 @@ class TalReader(PropertiedObject,BaseReader):
 
         """
 
-        :return: np.recarray representing tal struct array (originally defined in Matlab file)
+        :return: np.recarray representing tal struct array
         """
         if not self._json:
             from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
@@ -118,14 +126,19 @@ class TalReader(PropertiedObject,BaseReader):
                              '\nTalReader(filename=e_path, struct_name=<name_of_struc_to_read>)')
 
 
-if __name__ == '__main__':
-    event_range = range(0, 30, 1)
-    e_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
+class TalStimOnlyReader(TalReader):
+    """Reader that reads tal structs file and converts it to numpy
+    recarray.
 
-    # e_path = '/Users/m/data/eeg/TJ010/tal/TJ010_talLocs_database_bipol.mat'
+    Keyword arguments
+    -----------------
+    filename : str
+        path to tal file
+    struct_name : str
+        name of the struct to load
 
-    # tal_reader = TalReader(filename=e_path, struct_name='subjTalEvents')
-    tal_reader = TalReader(filename=e_path)
-    tal_reader.read()
+    """
 
-    print(tal_reader.get_monopolar_channels())
+    def __init__(self, **kwds):
+        TalReader.__init__(self, **kwds)
+        self.struct_name = 'virtualTalStruct'

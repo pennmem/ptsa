@@ -7,7 +7,7 @@ from ptsa.data.events import Events
 from ptsa.data.readers import BaseEventReader
 from ptsa.data.readers import PTSAEventReader
 from ptsa.data.readers.EEGReader import EEGReader
-from ptsa.data.readers.TalReader import TalReader
+from ptsa.data.readers.tal import TalReader
 from ptsa.data.filters.ButterworthFilter import ButterworthFilter
 from ptsa.data.filters.ResampleFilter import ResampleFilter
 from ptsa.data.filters import DataChopper
