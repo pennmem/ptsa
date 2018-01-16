@@ -6,12 +6,11 @@ import numpy as np
 import xarray as xr
 
 from ptsa.data.common import TypeValTuple, PropertiedObject
-from ptsa.data.readers.ParamsReader import ParamsReader
-from ptsa.data.readers import BinaryRawReader,H5RawReader,EDFReader
 from ptsa.data.readers.params import ParamsReader
-from ptsa.data.readers.raw import BaseRawReader
+from ptsa.data.readers.edf import EDFRawReader
+from ptsa.data.readers.binary import BinaryRawReader
 from ptsa.data.readers.hdf5 import H5RawReader
-from ptsa.data.readers import BaseReader
+from ptsa.data.readers.base import BaseReader
 from ptsa import six
 from ptsa.data.TimeSeriesX import TimeSeriesX
 
@@ -63,8 +62,8 @@ class EEGReader(PropertiedObject, BaseReader):
 
     READER_FILETYPE_DICT = defaultdict(lambda : BinaryRawReader)
     READER_FILETYPE_DICT.update({'.h5':H5RawReader,
-                                 '.bdf':EDFReader,
-                                 '.edf':EDFReader,})
+                                 '.bdf':EDFRawReader,
+                                 '.edf':EDFRawReader,})
 
     def __init__(self, **kwds):
         self.init_attrs(kwds)

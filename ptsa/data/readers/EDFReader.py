@@ -1,4 +1,4 @@
-from .. import edf
+from . import edf
 from . import BaseRawReader
 import numpy as np
 

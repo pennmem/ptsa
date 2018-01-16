@@ -36,9 +36,8 @@ class EDFRawReader(BaseRawReader):
         _, data_ext = osp.splitext(kwargs['dataroot'])
         if not len(data_ext):
             raise RuntimeError('Dataroot missing extension (must be supplied for EDF reader)')
+        super(EDFRawReader, self).__init__(**kwargs)
 
-        # FIXME: we don't need this once the base class is more generic
-        self.params_dict = {'gain': 1.0}
 
     def read_file(self, filename, channels, start_offsets=np.array([0]),
                   read_size=-1):

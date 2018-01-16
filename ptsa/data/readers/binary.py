@@ -1,6 +1,6 @@
-from ..readers import BaseRawReader
+from .raw import BaseRawReader
 from collections import namedtuple
-from ..readers import ParamsReader
+from .params import ParamsReader
 import six
 import warnings
 import os.path as osp

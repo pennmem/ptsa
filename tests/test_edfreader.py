@@ -2,7 +2,7 @@ import sys
 
 sys.path = sys.path[1:]
 
-from ptsa.data.readers import EDFReader
+from ptsa.data.readers import EDFRawReader
 import pytest
 import os.path as osp
 from ptsa.test.utils import get_rhino_root,skip_without_rhino
@@ -21,12 +21,12 @@ class TestEDFReader:
 
 
     @pytest.mark.parametrize('subject,session',
-                             [('LTP360',3),
-                              ('LTP342',22)])
+                             [('LTP360',3),])
+                              #('LTP342',22)])
     def test_1_offset_1_chann_returns(self,subject,session):
         filename = self.bdf_file_template.format(subject=subject,session=session)
         channel = np.array(['002'])
-        EDFReader(dataroot=filename,channels=channel,start_offsets=np.array([0]),read_size=500).read()
+        EDFRawReader(dataroot=filename,channels=channel,start_offsets=np.array([0]),read_size=500).read()
 
     @pytest.mark.parametrize('subject,session',
                              [('LTP360', 3),
@@ -34,7 +34,7 @@ class TestEDFReader:
     def test_1_offset_1_chann_succeeds(self, subject, session):
         filename = self.bdf_file_template.format(subject=subject, session=session)
         channel = np.array(['002'])
-        data,mask = EDFReader(dataroot=filename, channels=channel, start_offsets=np.array([0]), read_size=500).read()
+        data,mask = EDFRawReader(dataroot=filename, channels=channel, start_offsets=np.array([0]), read_size=500).read()
         assert mask.all()
         assert not np.isnan(data).any()
 
@@ -44,7 +44,7 @@ class TestEDFReader:
     def test_channels(self,subject,session):
         channels = np.array(['002','004','008','016'])
         filename = self.bdf_file_template.format(subject=subject,session=session)
-        data,mask = EDFReader(dataroot=filename, channels=channels,
+        data,mask = EDFRawReader(dataroot=filename, channels=channels,
                                           start_offsets=np.array([0]), read_size=500).read()
         assert mask.all()
         assert not np.isnan(data).any()
@@ -56,6 +56,6 @@ class TestEDFReader:
     def test_full_session(self,subject,session):
         channels = np.array(['002','004','008','016'])
         filename = self.bdf_file_template.format(subject=subject,session=session)
-        data,mask = EDFReader(dataroot=filename, channels=channels,read_size=-1).read()
+        data,mask = EDFRawReader(dataroot=filename, channels=channels,read_size=-1).read()
         assert mask.all()
         assert not np.isnan(data).any()

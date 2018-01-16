@@ -7,7 +7,7 @@ from ptsa import six
 from abc import ABCMeta,abstractmethod
 
 
-@six.add_metaclass(ABCMeta)
+# @six.add_metaclass(ABCMeta)
 class BaseRawReader(PropertiedObject, BaseReader):
     """
     Abstract base class for objects that know how to read binary EEG files.
