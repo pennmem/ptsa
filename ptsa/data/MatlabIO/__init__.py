@@ -44,6 +44,12 @@ else:
 
 
 def read_single_matlab_matrix_as_numpy_structured_array(file_name, object_name, verbose=False):
+    """
+    Load a matlab matrix as a numpy structured array.
+        :param file_name: Location of the .mat file to load
+        :param object_name: Name of the matlab structure to load from the .mat files
+        :param verbose=False: 
+    """
     matlab_matrix_as_python_obj_dict = deserialize_objects_from_matlab_format(file_name, object_name)
 
     try:
@@ -51,11 +57,16 @@ def read_single_matlab_matrix_as_numpy_structured_array(file_name, object_name, 
     except KeyError:
         return None
 
+    # Some utility functions expect matlab_matrix_as_python_object to be
+    # an array. In cases where the underlying matlab structure has one
+    # element, a single element is returned, so explicitly turn it into an array 
+    if type(matlab_matrix_as_python_obj) != np.ndarray:
+        matlab_matrix_as_python_obj = np.array([matlab_matrix_as_python_obj])
+
     # # picking first first elment  plus 20 randomly selected elements to determine type
     # selector_array = [0] + np.random.randint(len(matlab_matrix_as_python_obj), size=20)
     # selector_array = np.hstack(([0], selector_array))
     template_element_array = matlab_matrix_as_python_obj  # [selector_array]
-
     record = matlab_matrix_as_python_obj[0]
     # format_dict = get_np_format([record])
     format_dict = get_np_format(template_element_array)
