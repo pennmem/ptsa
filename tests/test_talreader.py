@@ -1,5 +1,5 @@
 from ptsa.data.readers import TalReader
-from ptsa.data.readers.IndexReader import JsonIndexReader
+from ptsa.data.readers.index import JsonIndexReader
 import pytest
 import numpy as np
 

@@ -8,11 +8,19 @@ import xarray as xr
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers.ParamsReader import ParamsReader
 from ptsa.data.readers import BinaryRawReader,H5RawReader,EDFReader
+from ptsa.data.readers.params import ParamsReader
+from ptsa.data.readers.raw import BaseRawReader
+from ptsa.data.readers.hdf5 import H5RawReader
 from ptsa.data.readers import BaseReader
 from ptsa import six
 from ptsa.data.TimeSeriesX import TimeSeriesX
 
+__all__ = [
+    'EEGReader',
+]
 
+
+# FIXME: centralize PTSA exception classes
 class IncompatibleDataError(Exception):
     pass
 
@@ -29,19 +37,18 @@ class EEGReader(PropertiedObject, BaseReader):
     start_time : float
         read start offset in seconds w.r.t to the eegeffset specified in the events recarray
     end_time:
-        read end offset in seconds w.r.t to the eegeffset specified in the events recarray
+        read end offset in seconds w.r.t to the eegeffset specified in the
+        events recarray
     buffer_time : float
-        extra buffer in seconds (subtracted from start read and added to end read)
+        extra buffer in seconds (subtracted from start read and added to end
+        read)
     events : np.recarray
         numpy recarray representing Events
     session_dataroot : str
-        path to session dataroot. When set the reader will read the entire session
+        path to session dataroot. When set the reader will read the entire
+        session
     remove_bad_events : bool
         Remove "bad" events. Defaults to True.
-
-    Returns
-    -------
-    None
 
     """
     _descriptors = [

@@ -266,7 +266,7 @@ def test_1():
     # selecting only one session
     base_events = base_events[base_events.eegfile == base_events[0].eegfile]
 
-    from ptsa.data.readers.TalReader import TalReader
+    from ptsa.data.readers.tal import TalReader
     tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
     tal_reader = TalReader(tal_filename=tal_path)
     monopolar_channels = tal_reader.get_monopolar_channels()
@@ -336,7 +336,7 @@ def test_2():
     # selecting only one session
     base_events = base_events[base_events.eegfile == base_events[0].eegfile]
 
-    from ptsa.data.readers.TalReader import TalReader
+    from ptsa.data.readers.tal import TalReader
     tal_path = '/Users/m/data/eeg/R1060M/tal/R1060M_talLocs_database_bipol.mat'
     tal_reader = TalReader(tal_filename=tal_path)
     monopolar_channels = tal_reader.get_monopolar_channels()
