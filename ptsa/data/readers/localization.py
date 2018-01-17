@@ -1,6 +1,7 @@
-from .BaseReader import BaseReader
+from .base import BaseReader
 import json, itertools
 import pandas as pd
+
 
 class LocReader(BaseReader):
     """
