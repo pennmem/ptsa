@@ -28,7 +28,7 @@ class EDFRawReader(BaseRawReader):
     def __init__(self, **kwargs):
         if EDFFile is None:
             raise RuntimeError(
-                "The compiled edffile extension module was not found.\n"
+                "The compiled self._edffile extension module was not found.\n"
                 "This probably means you don't have pybind11 installed.\n"
                 "Please pip install pybind11 then reinstall ptsa"
             )
@@ -61,18 +61,27 @@ class EDFRawReader(BaseRawReader):
             indicating whether each offset was read successfully.
 
         """
-        with closing(EDFFile(filename)) as edf:
+        with closing(EDFFile(filename)) as self._edf:
             if not len(channels):
-                channels = [n for n in range(edf.num_channels)]
+                channels = [n for n in range(self._edf.num_channels)]
             else:
                 channels = [int(n) for n in channels]
+
+            if not len(self.channels):
+                self.channels = np.array(channels)
+
+            samplerates = [self._edf.get_samplerate(c) for c in channels]
+            if not (len(np.unique(samplerates))==1):
+                raise RuntimeError('Inconsistent samplerates across channels; cannot read channels simultaneously')
+
+            self.params_dict['samplerate'] = samplerates[0]
 
             # Read all data
             if read_size < 0:
                 if len(start_offsets) > 1:
                     msg = "start_offsets given when read_size implies reading all data"
                     warnings.warn(msg, UserWarning)
-                data = edf.read_samples(channels, edf.num_samples)
+                data = self._edf.read_samples(channels, self._edf.num_samples)
                 return data[:, None, :], np.ones((len(channels), 1), dtype=bool)
 
             # Read epochs
@@ -88,7 +97,7 @@ class EDFRawReader(BaseRawReader):
                         read_ok_mask[:, i] = False
                         continue
 
-                    samples = edf.read_samples(channels, read_size, offset=offset)
+                    samples = self._edf.read_samples(channels, read_size, offset=offset)
                     if samples.shape[1] == read_size:
                         data[:, i, :] = samples
                     else:
@@ -100,7 +109,7 @@ class EDFRawReader(BaseRawReader):
 
 if __name__ == "__main__":
     logger.addHandler(logging.StreamHandler())
-    filename = osp.expanduser("~/mnt/rhino/data/eeg/eeg/scalp/ltp/ltpFR2/LTP375/session_0/eeg/LTP375_session_0.bdf")
+    filename = osp.expanduser("/Volumes/rhino_root/data/eeg/eeg/scalp/ltp/ltpFR2/LTP375/session_0/eeg/LTP375_session_0.bdf")
 
     reader = EDFRawReader(dataroot=filename)
     data, mask = reader.read_file(filename, [], read_size=1024, start_offsets=[0, 1024, 2048])
