@@ -5,12 +5,13 @@ import warnings
 import numpy as np
 import xarray as xr
 
-from ptsa import six
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers.params import ParamsReader
-from ptsa.data.readers.raw import BaseRawReader
+from ptsa.data.readers.edf import EDFRawReader
+from ptsa.data.readers.binary import BinaryRawReader
 from ptsa.data.readers.hdf5 import H5RawReader
-from ptsa.data.readers import BaseReader
+from ptsa.data.readers.base import BaseReader
+from ptsa import six
 from ptsa.data.TimeSeriesX import TimeSeriesX
 
 __all__ = [
@@ -24,17 +25,16 @@ class IncompatibleDataError(Exception):
 
 
 class EEGReader(PropertiedObject, BaseReader):
-    """Reader that knows how to read binary eeg files. It can read chunks of the
-    eeg signal based on events input or can read entire session if
-    session_dataroot is non empty.
+    """
+    Reader that knows how to read binary eeg files. It can read chunks of the eeg signal based on events input
+    or can read entire session if session_dataroot is non empty.
 
     Keyword Arguments
     -----------------
     channels : np.ndarray
         numpy array of channel labels
     start_time : float
-        read start offset in seconds w.r.t to the eegeffset specified in the
-        events recarray
+        read start offset in seconds w.r.t to the eegeffset specified in the events recarray
     end_time:
         read end offset in seconds w.r.t to the eegeffset specified in the
         events recarray
@@ -60,8 +60,10 @@ class EEGReader(PropertiedObject, BaseReader):
         TypeValTuple('remove_bad_events', bool, True)
     ]
 
-    READER_FILETYPE_DICT = defaultdict(lambda : BaseRawReader)
-    READER_FILETYPE_DICT.update({'.h5':H5RawReader})
+    READER_FILETYPE_DICT = defaultdict(lambda : BinaryRawReader)
+    READER_FILETYPE_DICT.update({'.h5':H5RawReader,
+                                 '.bdf':EDFRawReader,
+                                 '.edf':EDFRawReader,})
 
     def __init__(self, **kwds):
         self.init_attrs(kwds)
