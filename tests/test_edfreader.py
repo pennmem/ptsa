@@ -9,33 +9,33 @@ import os.path as osp
 from ptsa.test.utils import get_rhino_root,skip_without_rhino
 import numpy as np
 
-@skip_without_rhino
 class TestEDFFile:
-    fname = osp.join(get_rhino_root(), 'data', 'eeg', 'scalp', 'ltp', 'ltpFR2',
-                          'LTP360', 'session_1', 'eeg', 'LTP360_session_1.bdf')
+
+    @classmethod
+    def setup(cls):
+        try:
+            cls.rhino_fname = osp.join(get_rhino_root(), 'data', 'eeg', 'scalp', 'ltp', 'ltpFR2',
+                                  'LTP360', 'session_1', 'eeg', 'LTP360_session_1.bdf')
+        except OSError:
+            cls.rhino_fname = ''
+        cls.local_fname = osp.join(osp.dirname(__file__),'data','eeg.edf')
 
     def test_constructor(self):
-        edffile = EDFFile(self.fname)
+        edffile = EDFFile(self.local_fname)
         edffile.close()
 
-    def test_read_samples(self):
-        edffile =  EDFFile(self.fname)
+    @skip_without_rhino
+    def test_read_rhino_samples(self):
+        edffile =  EDFFile(self.rhino_fname)
         data = edffile.read_samples([1,2],500,0)
         shape = data.shape
         assert shape == (2,500)
 
-
-    def test_read_rhino_samples(self):
-        rhino_file = osp.join(get_rhino_root(),'data','eeg','scalp','ltp','ltpFR2',
-                              'LTP360','session_1','eeg','LTP360_session_1.bdf')
-        n_samples = 500
-        edffile = EDFFile(rhino_file)
-        channels = [i for i in range(edffile.num_channels)]
-        data = edffile.read_samples(channels,offset=100,samples=n_samples)
-        # assert data.shape[0]==len(channels)
-        # assert data.shape[1]==n_samples
-        edffile.close()
-        print(data)
+    def test_read_local_samples(self):
+        edffile = EDFFile(self.local_fname)
+        data = edffile.read_samples([1, 2], 500, 0)
+        shape = data.shape
+        assert shape == (2, 500)
 
 
 @skip_without_rhino
