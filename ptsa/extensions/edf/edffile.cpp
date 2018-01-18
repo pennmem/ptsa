@@ -257,12 +257,12 @@ PYBIND11_MODULE(edffile, m)
 
     )")
         .def(py::init<const std::string &>())
-        .def("__enter__", [](EDFFile &self) {
-            return self;  // FIXME: this doesn't seem to work...
-        })
-        .def("__exit__", [](EDFFile &self, py::object type, py::object value, py::object tb) {
-            self.close();
-        })
+        // .def("__enter__", [](EDFFile &self) {
+        //     return self;  // FIXME: this doesn't seem to work...
+        // })
+        // .def("__exit__", [](EDFFile &self, py::object type, py::object value, py::object tb) {
+        //     self.close();
+        // })
         .def_property_readonly("num_channels", &EDFFile::get_num_channels)
         .def_property_readonly("num_samples", [](EDFFile &self) {
             return self.get_num_samples(0);
