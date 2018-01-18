@@ -45,20 +45,6 @@ private:
         }
     }
 
-public:
-    /**
-     * Open an EDF file for reading.
-     * @param filename
-     * @throws std::runtime_error when the EDF file cannot be opened
-     */
-    EDFFile(std::string filename) {
-        this->open(filename);
-    }
-
-    ~EDFFile() {
-        this->close();
-    }
-
     /**
      * Open an EDF file.
      * @param filename
@@ -91,6 +77,20 @@ public:
                 throw std::runtime_error(msg);
             }
         }
+    }
+
+public:
+    /**
+     * Open an EDF file for reading.
+     * @param filename
+     * @throws std::runtime_error when the EDF file cannot be opened
+     */
+    EDFFile(std::string filename) {
+        this->open(filename);
+    }
+
+    ~EDFFile() {
+        this->close();
     }
 
     /**
