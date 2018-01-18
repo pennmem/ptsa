@@ -30,6 +30,9 @@ class EDFFile
 private:
     struct edf_hdr_struct header;
 
+    /// Keeps track of whether or not the file is open
+    bool opened{ false };
+
     inline int handle() {
         return this->header.handle;
     }
@@ -77,6 +80,10 @@ private:
                 throw std::runtime_error(msg);
             }
         }
+        else
+        {
+            this->opened = true;
+        }
     }
 
 public:
@@ -89,15 +96,24 @@ public:
         this->open(filename);
     }
 
-    ~EDFFile() {
-        this->close();
+    ~EDFFile()
+    {
+        if (this->opened) {
+            this->close();
+        }
     }
 
     /**
      * Close the EDF file.
      */
-    void close() {
-        edfclose_file(this->handle());
+    void close()
+    {
+        if (edfclose_file(this->handle() < 0)) {
+            throw std::runtime_error("Error closing EDF file!");
+        }
+        else {
+            this->opened = false;
+        }
     }
 
     /**
