@@ -86,6 +86,16 @@ private:
         }
     }
 
+    /**
+     * Call to check that the file is opened. Throws an exception if not.
+     */
+    inline void ensure_open()
+    {
+        if (!this->opened) {
+            throw std::runtime_error("EDF file is not opened!");
+        }
+    }
+
 public:
     /**
      * Open an EDF file for reading.
@@ -131,6 +141,7 @@ public:
      */
     inline ChannelInfo get_channel_info(int channel)
     {
+        ensure_open();
         if (channel >= this->header.edfsignals)
         {
             const auto msg = "Channl " + std::to_string(channel) + " out of range";
@@ -147,15 +158,19 @@ public:
      */
     inline long long get_num_samples(int channel)
     {
+        ensure_open();
         return this->header.signalparam[channel].smp_in_file;
     }
 
     inline long long get_num_samples()
     {
+        ensure_open();
         return this->get_num_samples(0);
     }
 
-    inline long long get_num_annotations() {
+    inline long long get_num_annotations()
+    {
+        ensure_open();
         return this->header.annotations_in_file;
     }
 
@@ -165,6 +180,7 @@ public:
      */
     struct edf_annotation_struct get_annotation(int index)
     {
+        ensure_open();
         struct edf_annotation_struct annotation;
         edf_get_annotation(this->header.handle, index, &annotation);
         return annotation;
@@ -199,6 +215,8 @@ public:
      */
     py::array_t<int> read_samples(std::vector<int> channels, int n_samples, long long offset)
     {
+        ensure_open();
+
         const std::vector<ssize_t> shape = {{static_cast<long>(channels.size()), n_samples}};
         auto output = py::array_t<int>(shape);
         auto info = output.request();
