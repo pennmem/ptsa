@@ -30,6 +30,9 @@ class EDFFile
 private:
     struct edf_hdr_struct header;
 
+    /// Keeps track of whether or not the file is open
+    bool opened{ false };
+
     inline int handle() {
         return this->header.handle;
     }
@@ -43,20 +46,6 @@ private:
                 + " when expected " + std::to_string(offset)
             );
         }
-    }
-
-public:
-    /**
-     * Open an EDF file for reading.
-     * @param filename
-     * @throws std::runtime_error when the EDF file cannot be opened
-     */
-    EDFFile(std::string filename) {
-        this->open(filename);
-    }
-
-    ~EDFFile() {
-        this->close();
     }
 
     /**
@@ -91,13 +80,50 @@ public:
                 throw std::runtime_error(msg);
             }
         }
+        else
+        {
+            this->opened = true;
+        }
+    }
+
+    /**
+     * Call to check that the file is opened. Throws an exception if not.
+     */
+    inline void ensure_open()
+    {
+        if (!this->opened) {
+            throw std::runtime_error("EDF file is not opened!");
+        }
+    }
+
+public:
+    /**
+     * Open an EDF file for reading.
+     * @param filename
+     * @throws std::runtime_error when the EDF file cannot be opened
+     */
+    EDFFile(std::string filename) {
+        this->open(filename);
+    }
+
+    ~EDFFile()
+    {
+        if (this->opened) {
+            this->close();
+        }
     }
 
     /**
      * Close the EDF file.
      */
-    void close() {
-        edfclose_file(this->handle());
+    void close()
+    {
+        if (edfclose_file(this->handle() < 0)) {
+            throw std::runtime_error("Error closing EDF file!");
+        }
+        else {
+            this->opened = false;
+        }
     }
 
     /**
@@ -115,6 +141,7 @@ public:
      */
     inline ChannelInfo get_channel_info(int channel)
     {
+        ensure_open();
         if (channel >= this->header.edfsignals)
         {
             const auto msg = "Channl " + std::to_string(channel) + " out of range";
@@ -128,16 +155,10 @@ public:
      * will contain the same number of samples, but you can also specify a
      * specific channel.
      * @param channel - channel number
-     * @throws py::index_error when the channel index is out of range
      */
     inline long long get_num_samples(int channel)
     {
-        if (channel >= this->header.edfsignals)
-        {
-            const auto msg = "Channl " + std::to_string(channel) + " out of range";
-            throw py::index_error(msg);
-        }
-
+        ensure_open();
         return this->header.signalparam[channel].smp_in_file;
     }
 
@@ -159,10 +180,13 @@ public:
 
     inline long long get_num_samples()
     {
+        ensure_open();
         return this->get_num_samples(0);
     }
 
-    inline long long get_num_annotations() {
+    inline long long get_num_annotations()
+    {
+        ensure_open();
         return this->header.annotations_in_file;
     }
 
@@ -172,6 +196,7 @@ public:
      */
     struct edf_annotation_struct get_annotation(int index)
     {
+        ensure_open();
         struct edf_annotation_struct annotation;
         edf_get_annotation(this->header.handle, index, &annotation);
         return annotation;
@@ -206,6 +231,8 @@ public:
      */
     py::array_t<int> read_samples(std::vector<int> channels, int n_samples, long long offset)
     {
+        ensure_open();
+
         const std::vector<ssize_t> shape = {{static_cast<long>(channels.size()), n_samples}};
         auto output = py::array_t<int>(shape);
         auto info = output.request();
@@ -280,12 +307,12 @@ PYBIND11_MODULE(edffile, m)
 
     )")
         .def(py::init<const std::string &>())
-        .def("__enter__", [](EDFFile &self) {
-            return self;  // FIXME: this doesn't seem to work...
-        })
-        .def("__exit__", [](EDFFile &self, py::object type, py::object value, py::object tb) {
-            self.close();
-        })
+        // .def("__enter__", [](EDFFile &self) {
+        //     return self;  // FIXME: this doesn't seem to work...
+        // })
+        // .def("__exit__", [](EDFFile &self, py::object type, py::object value, py::object tb) {
+        //     self.close();
+        // })
         .def_property_readonly("num_channels", &EDFFile::get_num_channels)
         .def_property_readonly("num_samples", [](EDFFile &self) {
             return self.get_num_samples(0);
