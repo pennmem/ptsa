@@ -229,21 +229,21 @@ public:
      * @return data vector
      * @throws std::runtime_error when an error occurs
      */
-    py::array_t<int> read_samples(std::vector<int> channels, int n_samples, long long offset)
+    py::array_t<double> read_samples(std::vector<int> channels, int n_samples, long long offset)
     {
         ensure_open();
 
         const std::vector<ssize_t> shape = {{static_cast<long>(channels.size()), n_samples}};
-        auto output = py::array_t<int>(shape);
+        auto output = py::array_t<double>(shape);
         auto info = output.request();
 
         for (ssize_t j = 0; j<shape[0]; ++j)
         {
             auto channel = channels[j];
-            auto buffer = py::array_t<int>(shape[1]);
+            auto buffer = py::array_t<double>(shape[1]);
             this->seek(channel, offset);
-            const auto samples = edfread_digital_samples(
-                this->handle(), channel, n_samples, static_cast<int *>(buffer.request().ptr)
+            const auto samples = edfread_physical_samples(
+                this->handle(), channel, n_samples, static_cast<double *>(buffer.request().ptr)
             );
 
             if (samples < 0) {
