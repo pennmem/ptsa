@@ -78,7 +78,6 @@ class EDFRawReader(BaseRawReader):
 
             # Read all data
             if read_size < 0:
-                raise NotImplementedError
                 if len(start_offsets) > 1:
                     msg = "start_offsets given when read_size implies reading all data"
                     warnings.warn(msg, UserWarning)
