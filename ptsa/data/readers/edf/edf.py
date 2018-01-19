@@ -82,6 +82,7 @@ class EDFRawReader(BaseRawReader):
                     msg = "start_offsets given when read_size implies reading all data"
                     warnings.warn(msg, UserWarning)
                 data = self._edf.read_samples(channels, self._edf.num_samples)
+                self.read_size = int(self._edf.num_samples)
                 return data[:, None, :], np.ones((len(channels), 1), dtype=bool)
 
             # Read epochs
