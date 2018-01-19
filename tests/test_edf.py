@@ -35,5 +35,5 @@ class TestEDFFile:
         assert info.smp_in_datarecord == 20
 
     def test_read_samples(self, edffile):
-        data = edffile.read_samples([0], 2000)
+        data = edffile.read_samples([0,3,6], 2000)
         assert data.shape[1] == 2000
