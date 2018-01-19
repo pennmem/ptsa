@@ -9,35 +9,6 @@ import os.path as osp
 from ptsa.test.utils import get_rhino_root,skip_without_rhino
 import numpy as np
 
-class TestEDFFile:
-
-    @classmethod
-    def setup(cls):
-        try:
-            cls.rhino_fname = osp.join(get_rhino_root(), 'data', 'eeg', 'scalp', 'ltp', 'ltpFR2',
-                                  'LTP360', 'session_1', 'eeg', 'LTP360_session_1.bdf')
-        except OSError:
-            cls.rhino_fname = ''
-        cls.local_fname = osp.join(osp.dirname(__file__),'data','eeg.edf')
-
-    def test_constructor(self):
-        edffile = EDFFile(self.local_fname)
-        edffile.close()
-
-    @skip_without_rhino
-    def test_read_rhino_samples(self):
-        edffile =  EDFFile(self.rhino_fname)
-        data = edffile.read_samples([1,2],500,0)
-        shape = data.shape
-        assert shape == (2,500)
-
-    def test_read_local_samples(self):
-        edffile = EDFFile(self.local_fname)
-        data = edffile.read_samples([1, 2], 500, 0)
-        shape = data.shape
-        assert shape == (2, 500)
-
-
 @skip_without_rhino
 class TestEDFReader:
 
