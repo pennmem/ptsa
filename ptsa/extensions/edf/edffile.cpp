@@ -237,8 +237,9 @@ public:
         auto output = py::array_t<int>(shape);
         auto info = output.request();
 
-        for (const auto &channel: channels)
+        for (ssize_t j = 0; j<shape[0]; ++j)
         {
+            auto channel = channels[j];
             auto buffer = py::array_t<int>(shape[1]);
             this->seek(channel, offset);
             const auto samples = edfread_digital_samples(
@@ -250,7 +251,7 @@ public:
             }
 
             for (ssize_t i = 0; i < shape[1]; ++i) {
-                output.mutable_unchecked()(channel, i) = *buffer.data(i);
+                output.mutable_unchecked()(j, i) = *buffer.data(i);
             }
         }
 
