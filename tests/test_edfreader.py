@@ -90,8 +90,7 @@ class TestEDFReader:
         return
 
     @pytest.mark.parametrize('subject,session',
-                             [('LTP360', 3),
-                              ('LTP342', 22)])
+                              [('LTP342', 22)])
     def test_full_session(self,subject,session):
         channels = np.array(['002','004','008','016'])
         filename = self.bdf_file_template.format(subject=subject,session=session)
