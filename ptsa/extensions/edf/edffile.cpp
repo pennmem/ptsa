@@ -144,7 +144,7 @@ public:
         ensure_open();
         if (channel >= this->header.edfsignals)
         {
-            const auto msg = "Channl " + std::to_string(channel) + " out of range";
+            const auto msg = "Channel " + std::to_string(channel) + " out of range";
             throw py::index_error(msg);
         }
         return this->header.signalparam[channel];
@@ -172,10 +172,10 @@ public:
     {
         if (channel >= this->header.edfsignals)
         {
-            const auto msg = "Channl " + std::to_string(channel) + " out of range";
+            const auto msg = "Channel " + std::to_string(channel) + " out of range";
             throw py::index_error(msg);
         }
-        return ((double)this->header.signalparam[channel].smp_in_datarecord / (double)this->header.datarecord_duration) * EDFLIB_TIME_DIMENSION;
+        return (static_cast<double>(this->header.signalparam[channel].smp_in_datarecord) / static_cast<double>(this->header.datarecord_duration)) * EDFLIB_TIME_DIMENSION;
     }
 
     inline long long get_num_samples()
