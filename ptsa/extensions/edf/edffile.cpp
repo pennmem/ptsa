@@ -144,7 +144,7 @@ public:
         ensure_open();
         if (channel >= this->header.edfsignals)
         {
-            const auto msg = "Channl " + std::to_string(channel) + " out of range";
+            const auto msg = "Channel " + std::to_string(channel) + " out of range";
             throw py::index_error(msg);
         }
         return this->header.signalparam[channel];
@@ -160,6 +160,22 @@ public:
     {
         ensure_open();
         return this->header.signalparam[channel].smp_in_file;
+    }
+
+    /**
+     * Return the sampling rate of the recording. It is generally assumed that all channels
+     * will be recorded at the same sampling rate, but you can also specify a
+     * specific channel.
+     * @param channel - channel number
+     **/
+    inline auto get_samplerate(int channel)
+    {
+        if (channel >= this->header.edfsignals)
+        {
+            const auto msg = "Channel " + std::to_string(channel) + " out of range";
+            throw py::index_error(msg);
+        }
+        return (static_cast<double>(this->header.signalparam[channel].smp_in_datarecord) / static_cast<double>(this->header.datarecord_duration)) * EDFLIB_TIME_DIMENSION;
     }
 
     inline long long get_num_samples()
@@ -213,20 +229,21 @@ public:
      * @return data vector
      * @throws std::runtime_error when an error occurs
      */
-    py::array_t<int> read_samples(std::vector<int> channels, int n_samples, long long offset)
+    py::array_t<double> read_samples(std::vector<int> channels, int n_samples, long long offset)
     {
         ensure_open();
 
         const std::vector<ssize_t> shape = {{static_cast<long>(channels.size()), n_samples}};
-        auto output = py::array_t<int>(shape);
+        auto output = py::array_t<double>(shape);
         auto info = output.request();
 
-        for (const auto &channel: channels)
+        for (ssize_t j = 0; j<shape[0]; ++j)
         {
-            auto buffer = py::array_t<int>(shape[1]);
+            auto channel = channels[j];
+            auto buffer = py::array_t<double>(shape[1]);
             this->seek(channel, offset);
-            const auto samples = edfread_digital_samples(
-                this->handle(), channel, n_samples, static_cast<int *>(buffer.request().ptr)
+            const auto samples = edfread_physical_samples(
+                this->handle(), channel, n_samples, static_cast<double *>(buffer.request().ptr)
             );
 
             if (samples < 0) {
@@ -234,7 +251,7 @@ public:
             }
 
             for (ssize_t i = 0; i < shape[1]; ++i) {
-                output.mutable_unchecked()(channel, i) = *buffer.data(i);
+                output.mutable_unchecked()(j, i) = *buffer.data(i);
             }
         }
 
@@ -306,5 +323,6 @@ PYBIND11_MODULE(edffile, m)
         .def("close", &EDFFile::close)
         .def("read_samples", &EDFFile::read_samples,
              py::arg("channel"), py::arg("samples"), py::arg("offset") = 0)
+        .def("get_samplerate",&EDFFile::get_samplerate,py::arg("channel"))
     ;
 }

@@ -8,4 +8,5 @@ from .netcdf import NetCDF4XrayReader
 from .params import ParamsReader
 from .raw import BaseRawReader
 from .tal import *
+from .binary import BinaryRawReader
 from .localization import LocReader
