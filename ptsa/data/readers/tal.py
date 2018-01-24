@@ -81,14 +81,17 @@ class TalReader(PropertiedObject, BaseReader):
             self.bipolar_channels[i] = tuple(map(lambda x: str(x).zfill(3), channel_array))
 
     def from_dict(self,pairs):
+        keys = pairs.keys()
+        subject = [k for k in keys if k not in ['version','info','meta']][0]
+
         if self.struct_type=='bi':
-            pairs = pd.DataFrame.from_dict(list(pairs.values())[0]['pairs'], orient='index').sort_values(by=['channel_1','channel_2'])
+            pairs = pd.DataFrame.from_dict(pairs[subject]['pairs'], orient='index').sort_values(by=['channel_1','channel_2'])
             pairs.index.name = 'tagName'
             pairs['channel'] = [[ch1, ch2] for ch1, ch2 in zip(pairs.channel_1.values, pairs.channel_2.values)]
             pairs['eType'] = pairs.type_1
             return pairs.to_records()
         elif self.struct_type == 'mono':
-            contacts = pd.DataFrame.from_dict(list(pairs.values())[0]['contacts'],orient='index').sort_values(by='channel')
+            contacts = pd.DataFrame.from_dict(pairs[subject]['contacts'],orient='index').sort_values(by='channel')
             contacts.index.name = 'tagName'
             return contacts.to_records()
 
