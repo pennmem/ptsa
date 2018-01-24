@@ -1,16 +1,16 @@
 from ptsa.data.readers import TalReader
 from ptsa.data.readers.index import JsonIndexReader
-import pytest
 import numpy as np
+import os.path as osp
+from ptsa.test import utils
 
-
-@pytest.mark.skip(reason='Hard-coded paths')
+@utils.skip_without_rhino
 def test_talreader_on_database():
-    old_reader = TalReader(filename='/Volumes/rhino_root/data/eeg/R1234D/tal/R1234D_talLocs_database_bipol.mat')
-    jr = JsonIndexReader('/Volumes/rhino_root/protocols/r1.json')
+    old_reader = TalReader(filename=osp.join(utils.get_rhino_root(),'data/eeg/R1234D/tal/R1234D_talLocs_database_bipol.mat'))
+    jr = JsonIndexReader(osp.join(utils.get_rhino_root(),'protocols/r1.json'))
     new_reader = TalReader(filename=jr.get_value('pairs',subject='R1234D',experiment='FR1'))
-    assert new_reader.get_bipolar_pairs() == old_reader.get_bipolar_pairs()
-    assert new_reader.get_monopolar_channels() == old_reader.get_monopolar_channels()
+    assert (new_reader.get_bipolar_pairs() == old_reader.get_bipolar_pairs()).all()
+    assert (new_reader.get_monopolar_channels() == old_reader.get_monopolar_channels()).all()
 
 
 def test_from_dict():
@@ -855,3 +855,9 @@ def test_from_dict():
             [76, 77],[77, 78],[78, 79],[79, 80],[1, 2],[1, 9],[10, 11]])
     assert pairs_array.channel.shape==channel_array.shape
     assert (pairs_array.channel == channel_array).all()
+
+
+def test_with_version_no():
+    fname = osp.join(osp.dirname(__file__),'data','pairs.json')
+    tal_reader =TalReader(filename=fname)
+    tal_reader.read()

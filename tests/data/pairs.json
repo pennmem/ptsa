@@ -1,0 +1,6735 @@
+{
+  "R1372C": {
+    "pairs": {
+      "ACC1-ACC2": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": 6.429255843162537, 
+            "y": 42.43098449707031, 
+            "z": 2.538375735282898
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": 6.429255843162537, 
+            "y": 42.43098449707031, 
+            "z": 2.538375735282898
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "rostralanteriorcingulate", 
+            "x": 3.0571100000000064, 
+            "y": 38.46016000000001, 
+            "z": 21.961090394231945
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": 3.05711000000001, 
+            "y": 38.46016, 
+            "z": 21.96109039423195
+          }, 
+          "mni": {
+            "region": " Right ACgG anterior cingulate gyrus", 
+            "x": 4.47367, 
+            "y": 44.04855, 
+            "z": -1.96150931693822
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 259.0, 
+            "y": 172.0, 
+            "z": 87.0
+          }
+        }, 
+        "channel_1": 113, 
+        "channel_2": 114, 
+        "code": "ACC1-ACC2", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "ACC2-ACC3": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": 0.5559912323951721, 
+            "y": 41.87371635437012, 
+            "z": 1.6249217987060547
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": 0.5559912323951721, 
+            "y": 41.87371635437012, 
+            "z": 1.6249217987060547
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "rostralanteriorcingulate", 
+            "x": -1.0297699999999939, 
+            "y": 38.328860000000006, 
+            "z": 21.539436732281544
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -1.02976999999999, 
+            "y": 38.32886, 
+            "z": 21.53943673228155
+          }, 
+          "mni": {
+            "region": " Left ACgG anterior cingulate gyrus", 
+            "x": -1.6984199999999998, 
+            "y": 41.796350000000004, 
+            "z": -1.0428809596221424
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 266.0, 
+            "y": 172.0, 
+            "z": 87.0
+          }
+        }, 
+        "channel_1": 114, 
+        "channel_2": 115, 
+        "code": "ACC2-ACC3", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "ACC3-ACC4": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -5.898322880268097, 
+            "y": 42.04534912109375, 
+            "z": 4.157657265663147
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -5.898322880268097, 
+            "y": 42.04534912109375, 
+            "z": 4.157657265663147
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "rostralanteriorcingulate", 
+            "x": -5.993364999999994, 
+            "y": 38.13076, 
+            "z": 21.656709260398245
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -5.993364999999991, 
+            "y": 38.130759999999995, 
+            "z": 21.65670926039825
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -8.45275, 
+            "y": 38.9675, 
+            "z": 0.7440115342009676
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 276.0, 
+            "y": 172.0, 
+            "z": 88.0
+          }
+        }, 
+        "channel_1": 115, 
+        "channel_2": 116, 
+        "code": "ACC3-ACC4", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "ACC4-ACC5": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -10.528162002563477, 
+            "y": 42.202232360839844, 
+            "z": 9.161370038986206
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -10.528162002563477, 
+            "y": 42.202232360839844, 
+            "z": 9.161370038986206
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "rostralanteriorcingulate", 
+            "x": -10.946384999999992, 
+            "y": 38.47296000000001, 
+            "z": 21.858129245567895
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -10.946384999999996, 
+            "y": 38.47296, 
+            "z": 21.8581292455679
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -14.748650000000001, 
+            "y": 38.65385, 
+            "z": 1.37595025463771
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 285.0, 
+            "y": 172.0, 
+            "z": 88.0
+          }
+        }, 
+        "channel_1": 116, 
+        "channel_2": 117, 
+        "code": "ACC4-ACC5", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "ACC5-ACC6": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -19.208646297454834, 
+            "y": 46.021732330322266, 
+            "z": 6.957844972610474
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -19.208646297454834, 
+            "y": 46.021732330322266, 
+            "z": 6.957844972610474
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "rostralmiddlefrontal", 
+            "x": -15.904699999999995, 
+            "y": 38.54496000000001, 
+            "z": 22.01747550221104
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -15.904700000000002, 
+            "y": 38.544959999999996, 
+            "z": 22.01747550221105
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -21.52645, 
+            "y": 39.9385, 
+            "z": 0.583606005084613
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 294.0, 
+            "y": 172.0, 
+            "z": 89.0
+          }
+        }, 
+        "channel_1": 117, 
+        "channel_2": 118, 
+        "code": "ACC5-ACC6", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "ACC6-ACC7": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -33.06064414978027, 
+            "y": 45.811954498291016, 
+            "z": 7.096975088119507
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -33.06064414978027, 
+            "y": 45.811954498291016, 
+            "z": 7.096975088119507
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "rostralmiddlefrontal", 
+            "x": -20.873599999999996, 
+            "y": 38.076710000000006, 
+            "z": 22.092674301801246
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -20.873600000000003, 
+            "y": 38.07671, 
+            "z": 22.092674301801253
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -28.51885, 
+            "y": 40.611999999999995, 
+            "z": -0.27824994456524
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 303.0, 
+            "y": 173.0, 
+            "z": 89.0
+          }
+        }, 
+        "channel_1": 118, 
+        "channel_2": 119, 
+        "code": "ACC6-ACC7", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "ACC7-ACC8": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -39.154483795166016, 
+            "y": 41.918827056884766, 
+            "z": 9.98996877670288
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -39.154483795166016, 
+            "y": 41.918827056884766, 
+            "z": 9.98996877670288
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "rostralmiddlefrontal", 
+            "x": -25.771499999999996, 
+            "y": 38.24336, 
+            "z": 21.637178381692493
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -25.771500000000003, 
+            "y": 38.243359999999996, 
+            "z": 21.6371783816925
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -35.1232, 
+            "y": 40.980599999999995, 
+            "z": -0.534402289670151
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 312.0, 
+            "y": 173.0, 
+            "z": 89.0
+          }
+        }, 
+        "channel_1": 119, 
+        "channel_2": 120, 
+        "code": "ACC7-ACC8", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AINS1-AINS2": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -28.966222763061523, 
+            "y": 24.849477767944336, 
+            "z": -5.696954727172852
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -28.966222763061523, 
+            "y": 24.849477767944336, 
+            "z": -5.696954727172852
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "lateralorbitofrontal", 
+            "x": -18.665649999999992, 
+            "y": 23.560410000000005, 
+            "z": 13.723187310537643
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -18.66565, 
+            "y": 23.56041, 
+            "z": 13.72318731053765
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -26.862000000000002, 
+            "y": 27.08925, 
+            "z": -2.609142373948595
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 299.0, 
+            "y": 201.0, 
+            "z": 84.0
+          }
+        }, 
+        "channel_1": 89, 
+        "channel_2": 90, 
+        "code": "AINS1-AINS2", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AINS2-AINS3": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -29.095955848693848, 
+            "y": 25.818763732910156, 
+            "z": -3.4776607751846313
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -29.095955848693848, 
+            "y": 25.818763732910156, 
+            "z": -3.4776607751846313
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "lateralorbitofrontal", 
+            "x": -21.719199999999994, 
+            "y": 23.567610000000005, 
+            "z": 14.059670869445293
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -21.7192, 
+            "y": 23.567610000000002, 
+            "z": 14.0596708694453
+          }, 
+          "mni": {
+            "region": " Left AIns anterior insula", 
+            "x": -30.800250000000002, 
+            "y": 27.391849999999998, 
+            "z": -0.2915309552808599
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 305.0, 
+            "y": 201.0, 
+            "z": 85.0
+          }
+        }, 
+        "channel_1": 90, 
+        "channel_2": 91, 
+        "code": "AINS2-AINS3", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AINS3-AINS4": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -31.60194206237793, 
+            "y": 28.684313774108887, 
+            "z": -0.07640516757965088
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -31.60194206237793, 
+            "y": 28.684313774108887, 
+            "z": -0.07640516757965088
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "lateralorbitofrontal", 
+            "x": -25.589099999999995, 
+            "y": 23.602610000000006, 
+            "z": 14.320238441668193
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -25.5891, 
+            "y": 23.60261, 
+            "z": 14.320238441668199
+          }, 
+          "mni": {
+            "region": " Left AIns anterior insula", 
+            "x": -35.5213, 
+            "y": 27.6389, 
+            "z": 3.088288488140915
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 312.0, 
+            "y": 201.0, 
+            "z": 85.0
+          }
+        }, 
+        "channel_1": 91, 
+        "channel_2": 92, 
+        "code": "AINS3-AINS4", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AINS4-AINS5": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -34.9649715423584, 
+            "y": 29.832439422607422, 
+            "z": 1.1891231536865234
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -34.9649715423584, 
+            "y": 29.832439422607422, 
+            "z": 1.1891231536865234
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "parstriangularis", 
+            "x": -29.126499999999993, 
+            "y": 23.722960000000004, 
+            "z": 13.991269166034094
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -29.1265, 
+            "y": 23.72296, 
+            "z": 13.9912691660341
+          }, 
+          "mni": {
+            "region": " Left FO frontal operculum", 
+            "x": -40.70735, 
+            "y": 27.691249999999997, 
+            "z": 5.032067308725265
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 318.0, 
+            "y": 202.0, 
+            "z": 86.0
+          }
+        }, 
+        "channel_1": 92, 
+        "channel_2": 93, 
+        "code": "AINS4-AINS5", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AINS5-AINS6": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -38.37836265563965, 
+            "y": 31.40260887145996, 
+            "z": 5.981762409210205
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -38.37836265563965, 
+            "y": 31.40260887145996, 
+            "z": 5.981762409210205
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "parstriangularis", 
+            "x": -32.452149999999996, 
+            "y": 23.739460000000005, 
+            "z": 14.302447396046844
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -32.45215, 
+            "y": 23.73946, 
+            "z": 14.30244739604685
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -45.008449999999996, 
+            "y": 28.1135, 
+            "z": 6.680058176918335
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 325.0, 
+            "y": 202.0, 
+            "z": 86.0
+          }
+        }, 
+        "channel_1": 93, 
+        "channel_2": 94, 
+        "code": "AINS5-AINS6", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AINS6-AINS7": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -41.84579277038574, 
+            "y": 33.974082946777344, 
+            "z": 10.484717845916748
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -41.84579277038574, 
+            "y": 33.974082946777344, 
+            "z": 10.484717845916748
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "parstriangularis", 
+            "x": -36.05519999999999, 
+            "y": 23.495060000000006, 
+            "z": 14.546246568638194
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -36.0552, 
+            "y": 23.495060000000002, 
+            "z": 14.5462465686382
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -48.8699, 
+            "y": 28.32915, 
+            "z": 7.649334366670365
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 331.0, 
+            "y": 202.0, 
+            "z": 86.0
+          }
+        }, 
+        "channel_1": 94, 
+        "channel_2": 95, 
+        "code": "AINS6-AINS7", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AINS7-AINS8": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -44.14084815979004, 
+            "y": 35.22684860229492, 
+            "z": 9.20452356338501
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -44.14084815979004, 
+            "y": 35.22684860229492, 
+            "z": 9.20452356338501
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "parstriangularis", 
+            "x": -39.86999999999999, 
+            "y": 23.354510000000005, 
+            "z": 14.149898235582693
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -39.87, 
+            "y": 23.354509999999998, 
+            "z": 14.1498982355827
+          }, 
+          "mni": {
+            "region": " Left TrIFG triangular part of the inferior frontal gyrus", 
+            "x": -52.76965, 
+            "y": 27.98545, 
+            "z": 7.0182809835811995
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 337.0, 
+            "y": 202.0, 
+            "z": 87.0
+          }
+        }, 
+        "channel_1": 95, 
+        "channel_2": 96, 
+        "code": "AINS7-AINS8", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AMY1-AMY2": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -19.244351387023926, 
+            "y": -4.809053659439087, 
+            "z": -30.271679878234863
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -19.244351387023926, 
+            "y": -4.809053659439087, 
+            "z": -30.271679878234863
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -10.828569999999994, 
+            "y": 2.2516600000000047, 
+            "z": -10.386059701826607
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -10.828569999999996, 
+            "y": 2.2516600000000047, 
+            "z": -10.3860597018266
+          }, 
+          "mni": {
+            "region": " Left Ent entorhinal area", 
+            "x": -17.3047, 
+            "y": 3.378925, 
+            "z": -26.6252175253656
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 288.0, 
+            "y": 246.0, 
+            "z": 68.0
+          }
+        }, 
+        "channel_1": 1, 
+        "channel_2": 2, 
+        "code": "AMY1-AMY2", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AMY10-AMY9": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -47.60215377807617, 
+            "y": 11.80671215057373, 
+            "z": -30.61705493927002
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -47.60215377807617, 
+            "y": 11.80671215057373, 
+            "z": -30.61705493927002
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -37.97064999999999, 
+            "y": 6.689010000000007, 
+            "z": -12.369634120475556
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -37.970650000000006, 
+            "y": 6.6890100000000094, 
+            "z": -12.369634120475549
+          }, 
+          "mni": {
+            "region": null, 
+            "x": -46.9507, 
+            "y": 8.644625, 
+            "z": -25.578584040258953
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 338.0, 
+            "y": 239.0, 
+            "z": 67.0
+          }
+        }, 
+        "channel_1": 10, 
+        "channel_2": 9, 
+        "code": "AMY10-AMY9", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AMY2-AMY3": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -19.062341690063477, 
+            "y": -4.133305668830872, 
+            "z": -29.925809860229492
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -19.062341690063477, 
+            "y": -4.133305668830872, 
+            "z": -29.925809860229492
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -13.805899999999994, 
+            "y": 3.1638600000000032, 
+            "z": -10.538197134091407
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -13.8059, 
+            "y": 3.1638599999999997, 
+            "z": -10.538197134091401
+          }, 
+          "mni": {
+            "region": " Left Ent entorhinal area", 
+            "x": -20.06995, 
+            "y": 3.792545, 
+            "z": -27.4041807157345
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 294.0, 
+            "y": 245.0, 
+            "z": 68.0
+          }
+        }, 
+        "channel_1": 2, 
+        "channel_2": 3, 
+        "code": "AMY2-AMY3", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AMY3-AMY4": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -19.074970245361328, 
+            "y": -2.962595224380493, 
+            "z": -28.54083251953125
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -19.074970245361328, 
+            "y": -2.962595224380493, 
+            "z": -28.54083251953125
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -17.060649999999995, 
+            "y": 3.815210000000004, 
+            "z": -10.757713623777656
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -17.06065, 
+            "y": 3.815210000000005, 
+            "z": -10.75771362377765
+          }, 
+          "mni": {
+            "region": " Left Ent entorhinal area", 
+            "x": -22.93535, 
+            "y": 3.9275, 
+            "z": -28.09675175944995
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 300.0, 
+            "y": 244.0, 
+            "z": 68.0
+          }
+        }, 
+        "channel_1": 3, 
+        "channel_2": 4, 
+        "code": "AMY3-AMY4", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AMY4-AMY5": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -20.78683376312256, 
+            "y": -0.5319206714630127, 
+            "z": -25.7066650390625
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -20.78683376312256, 
+            "y": -0.5319206714630127, 
+            "z": -25.7066650390625
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -20.320649999999993, 
+            "y": 4.196460000000005, 
+            "z": -11.019303841990356
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -20.32065, 
+            "y": 4.196460000000009, 
+            "z": -11.01930384199035
+          }, 
+          "mni": {
+            "region": " Left Ent entorhinal area", 
+            "x": -25.6304, 
+            "y": 4.14091, 
+            "z": -28.379201976372002
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 306.0, 
+            "y": 243.0, 
+            "z": 67.0
+          }
+        }, 
+        "channel_1": 4, 
+        "channel_2": 5, 
+        "code": "AMY4-AMY5", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AMY5-AMY6": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -24.24033260345459, 
+            "y": 2.5664902925491333, 
+            "z": -24.847593307495117
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -24.24033260345459, 
+            "y": 2.5664902925491333, 
+            "z": -24.847593307495117
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -23.852749999999993, 
+            "y": 4.586910000000007, 
+            "z": -11.306199389097955
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -23.85275, 
+            "y": 4.586910000000009, 
+            "z": -11.306199389097952
+          }, 
+          "mni": {
+            "region": " Left Ent entorhinal area", 
+            "x": -28.973750000000003, 
+            "y": 4.55038, 
+            "z": -28.51452388433565
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 312.0, 
+            "y": 242.0, 
+            "z": 67.0
+          }
+        }, 
+        "channel_1": 5, 
+        "channel_2": 6, 
+        "code": "AMY5-AMY6", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AMY6-AMY7": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -27.659669876098633, 
+            "y": 0.11189699172973633, 
+            "z": -32.211241722106934
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -27.659669876098633, 
+            "y": 0.11189699172973633, 
+            "z": -32.211241722106934
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "temporalpole", 
+            "x": -27.319199999999995, 
+            "y": 5.342060000000007, 
+            "z": -12.165863384431056
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -27.319200000000002, 
+            "y": 5.342060000000009, 
+            "z": -12.165863384431049
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -33.0833, 
+            "y": 5.0708, 
+            "z": -29.2117348444444
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 319.0, 
+            "y": 242.0, 
+            "z": 67.0
+          }
+        }, 
+        "channel_1": 6, 
+        "channel_2": 7, 
+        "code": "AMY6-AMY7", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AMY7-AMY8": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -37.66782474517822, 
+            "y": 3.945143222808838, 
+            "z": -36.09981346130371
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -37.66782474517822, 
+            "y": 3.945143222808838, 
+            "z": -36.09981346130371
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -30.785599999999995, 
+            "y": 6.097260000000006, 
+            "z": -13.025527379764155
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -30.7856, 
+            "y": 6.097260000000004, 
+            "z": -13.02552737976415
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -37.93165, 
+            "y": 6.028335, 
+            "z": -29.3333733477775
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 325.0, 
+            "y": 241.0, 
+            "z": 67.0
+          }
+        }, 
+        "channel_1": 7, 
+        "channel_2": 8, 
+        "code": "AMY7-AMY8", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "AMY8-AMY9": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -46.6776008605957, 
+            "y": 11.032548904418945, 
+            "z": -32.45410633087158
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -46.6776008605957, 
+            "y": 11.032548904418945, 
+            "z": -32.45410633087158
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -34.378099999999996, 
+            "y": 6.393160000000005, 
+            "z": -12.697580750119855
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -34.3781, 
+            "y": 6.393160000000004, 
+            "z": -12.69758075011985
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -42.629999999999995, 
+            "y": 7.415234999999999, 
+            "z": -27.378289835705502
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 332.0, 
+            "y": 240.0, 
+            "z": 67.0
+          }
+        }, 
+        "channel_1": 8, 
+        "channel_2": 9, 
+        "code": "AMY8-AMY9", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "BT1-BT2": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -18.098661422729492, 
+            "y": -39.18446922302246, 
+            "z": -13.80837869644165
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -18.098661422729492, 
+            "y": -39.18446922302246, 
+            "z": -13.80837869644165
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "parahippocampal", 
+            "x": -13.755749999999994, 
+            "y": -34.895365, 
+            "z": -4.31693809608781
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -13.755749999999999, 
+            "y": -34.895365, 
+            "z": -4.3169380960878145
+          }, 
+          "mni": {
+            "region": " Left LiG lingual gyrus", 
+            "x": -16.014400000000002, 
+            "y": -36.012950000000004, 
+            "z": -8.753876510679405
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 290.0, 
+            "y": 312.0, 
+            "z": 77.0
+          }
+        }, 
+        "channel_1": 19, 
+        "channel_2": 20, 
+        "code": "BT1-BT2", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "BT10-BT11": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -49.30867004394531, 
+            "y": -27.319988250732422, 
+            "z": -18.996551036834717
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -49.30867004394531, 
+            "y": -27.319988250732422, 
+            "z": -18.996551036834717
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "inferiortemporal", 
+            "x": -45.140049999999995, 
+            "y": -35.54624, 
+            "z": -6.864651113411756
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -45.14005, 
+            "y": -35.54624, 
+            "z": -6.86465111341176
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -46.0861, 
+            "y": -40.691050000000004, 
+            "z": -14.49821774533575
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 347.0, 
+            "y": 315.0, 
+            "z": 77.0
+          }
+        }, 
+        "channel_1": 28, 
+        "channel_2": 29, 
+        "code": "BT10-BT11", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "BT10-BT9": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -46.639312744140625, 
+            "y": -32.28805923461914, 
+            "z": -26.51743793487549
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -46.639312744140625, 
+            "y": -32.28805923461914, 
+            "z": -26.51743793487549
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "inferiortemporal", 
+            "x": -41.53699999999999, 
+            "y": -35.30185999999999, 
+            "z": -7.108450286003106
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -41.537, 
+            "y": -35.301860000000005, 
+            "z": -7.1084502860031105
+          }, 
+          "mni": {
+            "region": null, 
+            "x": -42.677499999999995, 
+            "y": -41.23805, 
+            "z": -14.83252549181375
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 341.0, 
+            "y": 315.0, 
+            "z": 77.0
+          }
+        }, 
+        "channel_1": 28, 
+        "channel_2": 27, 
+        "code": "BT10-BT9", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "BT11-BT12": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -52.478153228759766, 
+            "y": -22.55575942993164, 
+            "z": -11.6195387840271
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -52.478153228759766, 
+            "y": -22.55575942993164, 
+            "z": -11.6195387840271
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "middletemporal", 
+            "x": -48.67744999999999, 
+            "y": -35.42590499999999, 
+            "z": -7.193620389045856
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -48.67744999999999, 
+            "y": -35.425905, 
+            "z": -7.19362038904586
+          }, 
+          "mni": {
+            "region": " Left ITG inferior temporal gyrus", 
+            "x": -50.2402, 
+            "y": -39.0004, 
+            "z": -13.95650408700585
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 354.0, 
+            "y": 315.0, 
+            "z": 78.0
+          }
+        }, 
+        "channel_1": 29, 
+        "channel_2": 30, 
+        "code": "BT11-BT12", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "BT12-BT13": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -54.118276596069336, 
+            "y": -23.48703956604004, 
+            "z": -11.590070724487305
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -54.118276596069336, 
+            "y": -23.48703956604004, 
+            "z": -11.590070724487305
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "middletemporal", 
+            "x": -52.20954999999999, 
+            "y": -35.035444999999996, 
+            "z": -7.480515936153506
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -52.20954999999999, 
+            "y": -35.035444999999996, 
+            "z": -7.480515936153511
+          }, 
+          "mni": {
+            "region": " Left MTG middle temporal gyrus", 
+            "x": -55.3408, 
+            "y": -37.5234, 
+            "z": -12.6437214542629
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 360.0, 
+            "y": 315.0, 
+            "z": 78.0
+          }
+        }, 
+        "channel_1": 30, 
+        "channel_2": 31, 
+        "code": "BT12-BT13", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "BT13-BT14": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -58.02248573303223, 
+            "y": -24.481757164001465, 
+            "z": -10.911191463470459
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -58.02248573303223, 
+            "y": -24.481757164001465, 
+            "z": -10.911191463470459
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "middletemporal", 
+            "x": -55.7469, 
+            "y": -34.915115, 
+            "z": -7.809485211787607
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -55.7469, 
+            "y": -34.915115, 
+            "z": -7.80948521178761
+          }, 
+          "mni": {
+            "region": " Left MTG middle temporal gyrus", 
+            "x": -61.898450000000004, 
+            "y": -36.2652, 
+            "z": -9.42871169096152
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 367.0, 
+            "y": 315.0, 
+            "z": 78.0
+          }
+        }, 
+        "channel_1": 31, 
+        "channel_2": 32, 
+        "code": "BT13-BT14", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "BT2-BT3": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -22.542037963867188, 
+            "y": -40.0189094543457, 
+            "z": -14.929322719573975
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -22.542037963867188, 
+            "y": -40.0189094543457, 
+            "z": -14.929322719573975
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "parahippocampal", 
+            "x": -16.971199999999996, 
+            "y": -35.22996499999999, 
+            "z": -5.3195916766318305
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -16.9712, 
+            "y": -35.229965, 
+            "z": -5.319591676631835
+          }, 
+          "mni": {
+            "region": " Left LiG lingual gyrus", 
+            "x": -19.085549999999998, 
+            "y": -37.3809, 
+            "z": -9.463442667057675
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 296.0, 
+            "y": 313.0, 
+            "z": 77.0
+          }
+        }, 
+        "channel_1": 20, 
+        "channel_2": 21, 
+        "code": "BT2-BT3", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "BT3-BT4": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -24.619123458862305, 
+            "y": -42.0093879699707, 
+            "z": -12.704315662384033
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -24.619123458862305, 
+            "y": -42.0093879699707, 
+            "z": -12.704315662384033
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "parahippocampal", 
+            "x": -20.519149999999996, 
+            "y": -35.64988999999999, 
+            "z": -5.732708409318876
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -20.519150000000003, 
+            "y": -35.64989, 
+            "z": -5.73270840931888
+          }, 
+          "mni": {
+            "region": " Left LiG lingual gyrus", 
+            "x": -22.229599999999998, 
+            "y": -38.2496, 
+            "z": -9.35343533237959
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 302.0, 
+            "y": 314.0, 
+            "z": 76.0
+          }
+        }, 
+        "channel_1": 21, 
+        "channel_2": 22, 
+        "code": "BT3-BT4", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "BT4-BT5": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -28.204140663146973, 
+            "y": -42.3410701751709, 
+            "z": -11.26630973815918
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -28.204140663146973, 
+            "y": -42.3410701751709, 
+            "z": -11.26630973815918
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "parahippocampal", 
+            "x": -24.061799999999995, 
+            "y": -35.799685, 
+            "z": -6.103751413479461
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -24.0618, 
+            "y": -35.799685, 
+            "z": -6.103751413479465
+          }, 
+          "mni": {
+            "region": " Left LiG lingual gyrus", 
+            "x": -25.61525, 
+            "y": -38.8107, 
+            "z": -9.47589932530639
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 309.0, 
+            "y": 314.0, 
+            "z": 76.0
+          }
+        }, 
+        "channel_1": 22, 
+        "channel_2": 23, 
+        "code": "BT4-BT5", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "BT5-BT6": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -31.921839714050293, 
+            "y": -40.32973289489746, 
+            "z": -14.138452529907227
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -31.921839714050293, 
+            "y": -40.32973289489746, 
+            "z": -14.138452529907227
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "parahippocampal", 
+            "x": -27.599199999999996, 
+            "y": -35.679354999999994, 
+            "z": -6.432720689113566
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -27.599200000000003, 
+            "y": -35.679355, 
+            "z": -6.43272068911357
+          }, 
+          "mni": {
+            "region": " Left LiG lingual gyrus", 
+            "x": -29.2243, 
+            "y": -39.39125, 
+            "z": -10.35493417618232
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 315.0, 
+            "y": 315.0, 
+            "z": 76.0
+          }
+        }, 
+        "channel_1": 23, 
+        "channel_2": 24, 
+        "code": "BT5-BT6", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "BT6-BT7": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -33.65909004211426, 
+            "y": -39.72598838806152, 
+            "z": -15.144176959991455
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -33.65909004211426, 
+            "y": -39.72598838806152, 
+            "z": -15.144176959991455
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "fusiform", 
+            "x": -31.136549999999993, 
+            "y": -35.55902499999999, 
+            "z": -6.761689964747676
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -31.13655, 
+            "y": -35.559025000000005, 
+            "z": -6.76168996474768
+          }, 
+          "mni": {
+            "region": " Left FuG fusiform gyrus", 
+            "x": -32.97475, 
+            "y": -39.819649999999996, 
+            "z": -11.5128593738033
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 322.0, 
+            "y": 315.0, 
+            "z": 76.0
+          }
+        }, 
+        "channel_1": 24, 
+        "channel_2": 25, 
+        "code": "BT6-BT7", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "BT7-BT8": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -34.770599365234375, 
+            "y": -39.06036186218262, 
+            "z": -14.713002681732178
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -34.770599365234375, 
+            "y": -39.06036186218262, 
+            "z": -14.713002681732178
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "fusiform", 
+            "x": -34.67389999999999, 
+            "y": -35.438689999999994, 
+            "z": -7.090659240381806
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -34.6739, 
+            "y": -35.43869, 
+            "z": -7.09065924038181
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -36.59635, 
+            "y": -40.164100000000005, 
+            "z": -12.6814315258043
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 328.0, 
+            "y": 315.0, 
+            "z": 77.0
+          }
+        }, 
+        "channel_1": 25, 
+        "channel_2": 26, 
+        "code": "BT7-BT8", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "BT8-BT9": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -40.64396667480469, 
+            "y": -35.2642822265625, 
+            "z": -20.933612823486328
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -40.64396667480469, 
+            "y": -35.2642822265625, 
+            "z": -20.933612823486328
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "inferiortemporal", 
+            "x": -37.93919999999999, 
+            "y": -35.32760999999999, 
+            "z": -7.394323187120956
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -37.9392, 
+            "y": -35.32761, 
+            "z": -7.3943231871209605
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -39.62535, 
+            "y": -40.75245, 
+            "z": -14.064512398568251
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 335.0, 
+            "y": 315.0, 
+            "z": 77.0
+          }
+        }, 
+        "channel_1": 26, 
+        "channel_2": 27, 
+        "code": "BT8-BT9", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "HCH1-HCH2": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -18.69675350189209, 
+            "y": -9.28927230834961, 
+            "z": -24.694523811340332
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -18.69675350189209, 
+            "y": -9.28927230834961, 
+            "z": -24.694523811340332
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -16.179149999999993, 
+            "y": -8.765239999999995, 
+            "z": -10.065136055986606
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -16.17915, 
+            "y": -8.765239999999995, 
+            "z": -10.065136055986606
+          }, 
+          "mni": {
+            "region": " Left Hippocampus", 
+            "x": -21.000500000000002, 
+            "y": -8.392805, 
+            "z": -21.414918957780053
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 297.0, 
+            "y": 266.0, 
+            "z": 69.0
+          }
+        }, 
+        "channel_1": 11, 
+        "channel_2": 12, 
+        "code": "HCH1-HCH2", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "HCH2-HCH3": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -22.09076976776123, 
+            "y": -9.728235244750977, 
+            "z": -24.97325611114502
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -22.09076976776123, 
+            "y": -9.728235244750977, 
+            "z": -24.97325611114502
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -20.265999999999995, 
+            "y": -8.896539999999995, 
+            "z": -10.486789717937055
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -20.266, 
+            "y": -8.896539999999991, 
+            "z": -10.48678971793705
+          }, 
+          "mni": {
+            "region": " Left Hippocampus", 
+            "x": -25.22265, 
+            "y": -8.41509, 
+            "z": -22.3560239617976
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 304.0, 
+            "y": 267.0, 
+            "z": 70.0
+          }
+        }, 
+        "channel_1": 12, 
+        "channel_2": 13, 
+        "code": "HCH2-HCH3", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "HCH3-HCH4": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -28.565592765808105, 
+            "y": -11.105021953582764, 
+            "z": -24.754712104797363
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -28.565592765808105, 
+            "y": -11.105021953582764, 
+            "z": -24.754712104797363
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -25.501699999999992, 
+            "y": -9.085339999999995, 
+            "z": -10.394822518715255
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -25.5017, 
+            "y": -9.085339999999995, 
+            "z": -10.39482251871525
+          }, 
+          "mni": {
+            "region": " Left Hippocampus", 
+            "x": -30.756, 
+            "y": -8.57597, 
+            "z": -23.05903236074165
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 313.0, 
+            "y": 267.0, 
+            "z": 70.0
+          }
+        }, 
+        "channel_1": 13, 
+        "channel_2": 14, 
+        "code": "HCH3-HCH4", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "HCH4-HCH5": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -33.620484352111816, 
+            "y": -11.924868106842041, 
+            "z": -23.937931060791016
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -33.620484352111816, 
+            "y": -11.924868106842041, 
+            "z": -23.937931060791016
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -30.465299999999992, 
+            "y": -9.283439999999995, 
+            "z": -10.277549990598555
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -30.4653, 
+            "y": -9.283439999999995, 
+            "z": -10.277549990598551
+          }, 
+          "mni": {
+            "region": " Left Hippocampus", 
+            "x": -36.71185, 
+            "y": -8.657350000000001, 
+            "z": -23.08960063805345
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 322.0, 
+            "y": 268.0, 
+            "z": 71.0
+          }
+        }, 
+        "channel_1": 14, 
+        "channel_2": 15, 
+        "code": "HCH4-HCH5", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "HCH5-HCH6": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -36.940773010253906, 
+            "y": -13.718491077423096, 
+            "z": -25.44206142425537
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -36.940773010253906, 
+            "y": -13.718491077423096, 
+            "z": -25.44206142425537
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -35.4289, 
+            "y": -9.481539999999994, 
+            "z": -10.160277462481906
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -35.4289, 
+            "y": -9.48153999999999, 
+            "z": -10.160277462481906
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -42.1218, 
+            "y": -8.999894999999999, 
+            "z": -22.207868328114102
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 331.0, 
+            "y": 268.0, 
+            "z": 71.0
+          }
+        }, 
+        "channel_1": 15, 
+        "channel_2": 16, 
+        "code": "HCH5-HCH6", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "HCH6-HCH7": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -42.87685966491699, 
+            "y": -10.733363628387451, 
+            "z": -18.689473628997803
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -42.87685966491699, 
+            "y": -10.733363628387451, 
+            "z": -18.689473628997803
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -40.38719999999999, 
+            "y": -9.409489999999993, 
+            "z": -10.000931205838757
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -40.3872, 
+            "y": -9.409489999999991, 
+            "z": -10.000931205838755
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -47.14635, 
+            "y": -9.37968, 
+            "z": -21.40639457676075
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 341.0, 
+            "y": 269.0, 
+            "z": 71.0
+          }
+        }, 
+        "channel_1": 16, 
+        "channel_2": 17, 
+        "code": "HCH6-HCH7", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "HCH7-HCH8": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -48.37299156188965, 
+            "y": -1.2982133626937866, 
+            "z": -9.017883777618408
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -48.37299156188965, 
+            "y": -1.2982133626937866, 
+            "z": -9.017883777618408
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -45.29039999999999, 
+            "y": -9.513039999999993, 
+            "z": -10.498500854473956
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -45.290400000000005, 
+            "y": -9.51303999999999, 
+            "z": -10.49850085447395
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -53.067049999999995, 
+            "y": -9.2258, 
+            "z": -20.7579917840336
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 350.0, 
+            "y": 269.0, 
+            "z": 72.0
+          }
+        }, 
+        "channel_1": 17, 
+        "channel_2": 18, 
+        "code": "HCH7-HCH8", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MINS1-MINS2": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -40.20770072937012, 
+            "y": 11.163586139678955, 
+            "z": -31.160701751708984
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -40.20770072937012, 
+            "y": 11.163586139678955, 
+            "z": -31.160701751708984
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -33.54834999999999, 
+            "y": 10.052610000000008, 
+            "z": -11.417790387312506
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -33.54835, 
+            "y": 10.052610000000005, 
+            "z": -11.4177903873125
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -41.600049999999996, 
+            "y": 11.363700000000001, 
+            "z": -27.748830790280998
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 330.0, 
+            "y": 233.0, 
+            "z": 68.0
+          }
+        }, 
+        "channel_1": 97, 
+        "channel_2": 98, 
+        "code": "MINS1-MINS2", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MINS10-MINS11": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -36.75369453430176, 
+            "y": 14.920624732971191, 
+            "z": 25.48778533935547
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -36.75369453430176, 
+            "y": 14.920624732971191, 
+            "z": 25.48778533935547
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "parsopercularis", 
+            "x": -31.412749999999996, 
+            "y": 9.491160000000008, 
+            "z": 27.460468871877346
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -31.41275, 
+            "y": 9.49116000000001, 
+            "z": 27.460468871877346
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -32.950900000000004, 
+            "y": 18.14025, 
+            "z": 23.1343905173602
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 320.0, 
+            "y": 223.0, 
+            "z": 98.0
+          }
+        }, 
+        "channel_1": 106, 
+        "channel_2": 107, 
+        "code": "MINS10-MINS11", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MINS10-MINS9": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -35.4065055847168, 
+            "y": 16.98911190032959, 
+            "z": 17.56385564804077
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -35.4065055847168, 
+            "y": 16.98911190032959, 
+            "z": 17.56385564804077
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "parsopercularis", 
+            "x": -31.816849999999995, 
+            "y": 9.640760000000007, 
+            "z": 22.996510190876243
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -31.816850000000002, 
+            "y": 9.64076000000001, 
+            "z": 22.99651019087625
+          }, 
+          "mni": {
+            "region": null, 
+            "x": -36.20675, 
+            "y": 16.08135, 
+            "z": 16.21854328533125
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 321.0, 
+            "y": 224.0, 
+            "z": 95.0
+          }
+        }, 
+        "channel_1": 106, 
+        "channel_2": 105, 
+        "code": "MINS10-MINS9", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MINS11-MINS12": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -32.34932327270508, 
+            "y": 24.149710655212402, 
+            "z": 32.7044153213501
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -32.34932327270508, 
+            "y": 24.149710655212402, 
+            "z": 32.7044153213501
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "caudalmiddlefrontal", 
+            "x": -31.06374999999999, 
+            "y": 9.517110000000006, 
+            "z": 32.581343458156894
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -31.06375, 
+            "y": 9.517110000000006, 
+            "z": 32.5813434581569
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -31.8123, 
+            "y": 20.5709, 
+            "z": 30.5512227978762
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 318.0, 
+            "y": 222.0, 
+            "z": 101.0
+          }
+        }, 
+        "channel_1": 107, 
+        "channel_2": 108, 
+        "code": "MINS11-MINS12", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MINS12-MINS13": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -27.521520614624023, 
+            "y": 28.172274589538574, 
+            "z": 38.70162773132324
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -27.521520614624023, 
+            "y": 28.172274589538574, 
+            "z": 38.70162773132324
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "caudalmiddlefrontal", 
+            "x": -30.659649999999992, 
+            "y": 9.367510000000003, 
+            "z": 37.045302139158096
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -30.65965, 
+            "y": 9.36751, 
+            "z": 37.0453021391581
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -34.07755, 
+            "y": 21.182850000000002, 
+            "z": 34.956301615183804
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 317.0, 
+            "y": 221.0, 
+            "z": 105.0
+          }
+        }, 
+        "channel_1": 108, 
+        "channel_2": 109, 
+        "code": "MINS12-MINS13", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MINS13-MINS14": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -26.802474975585938, 
+            "y": 24.666739463806152, 
+            "z": 37.8458194732666
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -26.802474975585938, 
+            "y": 24.666739463806152, 
+            "z": 37.8458194732666
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "rostralmiddlefrontal", 
+            "x": -30.255549999999992, 
+            "y": 9.217910000000003, 
+            "z": 41.5092608201592
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -30.25555, 
+            "y": 9.21791, 
+            "z": 41.5092608201592
+          }, 
+          "mni": {
+            "region": " Left MFG middle frontal gyrus", 
+            "x": -36.71815, 
+            "y": 20.401049999999998, 
+            "z": 38.6145370792767
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 315.0, 
+            "y": 219.0, 
+            "z": 109.0
+          }
+        }, 
+        "channel_1": 109, 
+        "channel_2": 110, 
+        "code": "MINS13-MINS14", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MINS14-MINS15": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -27.398252487182617, 
+            "y": 26.326595306396484, 
+            "z": 38.31131553649902
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -27.398252487182617, 
+            "y": 26.326595306396484, 
+            "z": 38.31131553649902
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "rostralmiddlefrontal", 
+            "x": -30.002799999999993, 
+            "y": 9.266760000000005, 
+            "z": 44.71822981876154
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -30.0028, 
+            "y": 9.266760000000005, 
+            "z": 44.71822981876154
+          }, 
+          "mni": {
+            "region": " Left MFG middle frontal gyrus", 
+            "x": -38.24835, 
+            "y": 19.06225, 
+            "z": 41.23900008061725
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 314.0, 
+            "y": 218.0, 
+            "z": 112.0
+          }
+        }, 
+        "channel_1": 110, 
+        "channel_2": 111, 
+        "code": "MINS14-MINS15", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MINS15-MINS16": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -27.51893711090088, 
+            "y": 19.30538272857666, 
+            "z": 43.24641418457031
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -27.51893711090088, 
+            "y": 19.30538272857666, 
+            "z": 43.24641418457031
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiorfrontal", 
+            "x": -29.593449999999994, 
+            "y": 9.387310000000006, 
+            "z": 49.22426222828919
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -29.59345, 
+            "y": 9.38731000000001, 
+            "z": 49.224262228289206
+          }, 
+          "mni": {
+            "region": " Left MFG middle frontal gyrus", 
+            "x": -37.4604, 
+            "y": 18.5109, 
+            "z": 44.700921624630354
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 313.0, 
+            "y": 217.0, 
+            "z": 115.0
+          }
+        }, 
+        "channel_1": 111, 
+        "channel_2": 112, 
+        "code": "MINS15-MINS16", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MINS2-MINS3": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -33.99090576171875, 
+            "y": 9.869183540344238, 
+            "z": -28.62248992919922
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -33.99090576171875, 
+            "y": 9.869183540344238, 
+            "z": -28.62248992919922
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "temporalpole", 
+            "x": -33.416349999999994, 
+            "y": 9.912260000000007, 
+            "z": -6.979137035206271
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -33.41635, 
+            "y": 9.912260000000005, 
+            "z": -6.97913703520627
+          }, 
+          "mni": {
+            "region": " Left TMP temporal pole", 
+            "x": -41.0847, 
+            "y": 11.7542, 
+            "z": -22.4734510254599
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 329.0, 
+            "y": 232.0, 
+            "z": 71.0
+          }
+        }, 
+        "channel_1": 98, 
+        "channel_2": 99, 
+        "code": "MINS2-MINS3", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MINS3-MINS4": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -36.651275634765625, 
+            "y": 10.491846084594727, 
+            "z": -20.600805282592773
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -36.651275634765625, 
+            "y": 10.491846084594727, 
+            "z": -20.600805282592773
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -33.33945, 
+            "y": 9.947460000000007, 
+            "z": -1.883567777821681
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -33.33945, 
+            "y": 9.947460000000007, 
+            "z": -1.8835677778216828
+          }, 
+          "mni": {
+            "region": "", 
+            "x": -41.16695, 
+            "y": 12.21215, 
+            "z": -16.611599271945302
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 328.0, 
+            "y": 231.0, 
+            "z": 74.0
+          }
+        }, 
+        "channel_1": 99, 
+        "channel_2": 100, 
+        "code": "MINS3-MINS4", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MINS4-MINS5": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -40.53194999694824, 
+            "y": 11.334865093231201, 
+            "z": -11.377821922302246
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -40.53194999694824, 
+            "y": 11.334865093231201, 
+            "z": -11.377821922302246
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -33.08669999999999, 
+            "y": 9.996310000000008, 
+            "z": 1.325401220780706
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -33.0867, 
+            "y": 9.996310000000005, 
+            "z": 1.3254012207807069
+          }, 
+          "mni": {
+            "region": " Left AIns anterior insula", 
+            "x": -41.07325, 
+            "y": 12.59165, 
+            "z": -12.77959015555475
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 327.0, 
+            "y": 230.0, 
+            "z": 77.0
+          }
+        }, 
+        "channel_1": 100, 
+        "channel_2": 101, 
+        "code": "MINS4-MINS5", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MINS5-MINS6": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -39.6796989440918, 
+            "y": 11.949297428131104, 
+            "z": -5.475962340831757
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -39.6796989440918, 
+            "y": 11.949297428131104, 
+            "z": -5.475962340831757
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -32.95474999999999, 
+            "y": 9.855960000000007, 
+            "z": 5.764054572886922
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -32.95475, 
+            "y": 9.855960000000005, 
+            "z": 5.764054572886925
+          }, 
+          "mni": {
+            "region": " Left AIns anterior insula", 
+            "x": -40.7472, 
+            "y": 13.5857, 
+            "z": -7.43790250312028
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 326.0, 
+            "y": 229.0, 
+            "z": 81.0
+          }
+        }, 
+        "channel_1": 101, 
+        "channel_2": 102, 
+        "code": "MINS5-MINS6", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MINS6-MINS7": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -36.374168395996094, 
+            "y": 12.157549858093262, 
+            "z": 1.3097105622291565
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -36.374168395996094, 
+            "y": 12.157549858093262, 
+            "z": 1.3097105622291565
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -32.67139999999999, 
+            "y": 9.517160000000004, 
+            "z": 11.4576976073919
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -32.6714, 
+            "y": 9.517160000000004, 
+            "z": 11.457697607391905
+          }, 
+          "mni": {
+            "region": " Left AIns anterior insula", 
+            "x": -39.85165, 
+            "y": 14.47205, 
+            "z": -0.6311607212741401
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 324.0, 
+            "y": 227.0, 
+            "z": 85.0
+          }
+        }, 
+        "channel_1": 102, 
+        "channel_2": 103, 
+        "code": "MINS6-MINS7", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MINS7-MINS8": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -34.604129791259766, 
+            "y": 12.71558427810669, 
+            "z": 6.456304311752319
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -34.604129791259766, 
+            "y": 12.71558427810669, 
+            "z": 6.456304311752319
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "parsopercularis", 
+            "x": -32.26199999999999, 
+            "y": 9.637660000000004, 
+            "z": 15.963730016919493
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -32.262, 
+            "y": 9.63766, 
+            "z": 15.963730016919502
+          }, 
+          "mni": {
+            "region": " Left FO frontal operculum", 
+            "x": -39.199600000000004, 
+            "y": 14.74955, 
+            "z": 5.58187728336035
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 323.0, 
+            "y": 226.0, 
+            "z": 89.0
+          }
+        }, 
+        "channel_1": 103, 
+        "channel_2": 104, 
+        "code": "MINS7-MINS8", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MINS8-MINS9": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -33.925045013427734, 
+            "y": 16.825050830841064, 
+            "z": 9.598023891448975
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -33.925045013427734, 
+            "y": 16.825050830841064, 
+            "z": 9.598023891448975
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "parsopercularis", 
+            "x": -32.06434999999999, 
+            "y": 9.862060000000007, 
+            "z": 19.829614920800292
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -32.064350000000005, 
+            "y": 9.862060000000007, 
+            "z": 19.829614920800303
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -38.3768, 
+            "y": 15.330200000000001, 
+            "z": 11.56086013487861
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 322.0, 
+            "y": 225.0, 
+            "z": 92.0
+          }
+        }, 
+        "channel_1": 104, 
+        "channel_2": 105, 
+        "code": "MINS8-MINS9", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MSTG1-MSTG2": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -37.46562576293945, 
+            "y": -23.65240478515625, 
+            "z": -7.802871465682983
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -37.46562576293945, 
+            "y": -23.65240478515625, 
+            "z": -7.802871465682983
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -33.915099999999995, 
+            "y": -22.374789999999994, 
+            "z": 1.3468177260936738
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -33.915099999999995, 
+            "y": -22.374789999999997, 
+            "z": 1.34681772609367
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -37.2932, 
+            "y": -21.850299999999997, 
+            "z": -4.25277223404244
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 326.0, 
+            "y": 289.0, 
+            "z": 82.0
+          }
+        }, 
+        "channel_1": 81, 
+        "channel_2": 82, 
+        "code": "MSTG1-MSTG2", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MSTG2-MSTG3": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -39.31797981262207, 
+            "y": -22.343605041503906, 
+            "z": -3.113365411758423
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -39.31797981262207, 
+            "y": -22.343605041503906, 
+            "z": -3.113365411758423
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -36.61505, 
+            "y": -21.201689999999992, 
+            "z": 1.262059351250259
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -36.61505, 
+            "y": -21.20169, 
+            "z": 1.262059351250255
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -40.8435, 
+            "y": -19.8973, 
+            "z": -3.3945995617994047
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 332.0, 
+            "y": 287.0, 
+            "z": 81.0
+          }
+        }, 
+        "channel_1": 82, 
+        "channel_2": 83, 
+        "code": "MSTG2-MSTG3", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MSTG3-MSTG4": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -40.55181121826172, 
+            "y": -22.191390991210938, 
+            "z": -3.792860746383667
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -40.55181121826172, 
+            "y": -22.191390991210938, 
+            "z": -3.792860746383667
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -40.070949999999996, 
+            "y": -19.906289999999995, 
+            "z": 0.486542812970129
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -40.070949999999996, 
+            "y": -19.90629, 
+            "z": 0.486542812970127
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -45.2035, 
+            "y": -17.94085, 
+            "z": -3.863283636230025
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 338.0, 
+            "y": 284.0, 
+            "z": 81.0
+          }
+        }, 
+        "channel_1": 83, 
+        "channel_2": 84, 
+        "code": "MSTG3-MSTG4", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MSTG4-MSTG5": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -43.359060287475586, 
+            "y": -19.541351318359375, 
+            "z": -3.8392934799194336
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -43.359060287475586, 
+            "y": -19.541351318359375, 
+            "z": -3.8392934799194336
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -43.526849999999996, 
+            "y": -18.610889999999994, 
+            "z": -0.2889737253100011
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -43.526849999999996, 
+            "y": -18.610889999999998, 
+            "z": -0.288973725310001
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -49.38945, 
+            "y": -16.3368, 
+            "z": -5.735529976742785
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 344.0, 
+            "y": 282.0, 
+            "z": 81.0
+          }
+        }, 
+        "channel_1": 84, 
+        "channel_2": 85, 
+        "code": "MSTG4-MSTG5", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MSTG5-MSTG6": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -47.46735382080078, 
+            "y": -13.79596757888794, 
+            "z": -1.619955226778984
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -47.46735382080078, 
+            "y": -13.79596757888794, 
+            "z": -1.619955226778984
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -46.76575, 
+            "y": -17.149139999999996, 
+            "z": -0.38226902941681606
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -46.76575, 
+            "y": -17.149140000000003, 
+            "z": -0.382269029416816
+          }, 
+          "mni": {
+            "region": " Left STG superior temporal gyrus", 
+            "x": -53.5367, 
+            "y": -15.02525, 
+            "z": -8.07782622213334
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 350.0, 
+            "y": 280.0, 
+            "z": 81.0
+          }
+        }, 
+        "channel_1": 85, 
+        "channel_2": 86, 
+        "code": "MSTG5-MSTG6", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MSTG6-MSTG7": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -52.75198554992676, 
+            "y": -7.888344049453735, 
+            "z": 0.7443252950906754
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -52.75198554992676, 
+            "y": -7.888344049453735, 
+            "z": 0.7443252950906754
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -49.99934999999999, 
+            "y": -15.417289999999994, 
+            "z": -0.4334906049971461
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -49.99935, 
+            "y": -15.417290000000001, 
+            "z": -0.433490604997146
+          }, 
+          "mni": {
+            "region": " Left STG superior temporal gyrus", 
+            "x": -57.994150000000005, 
+            "y": -13.36875, 
+            "z": -10.038244456524474
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 356.0, 
+            "y": 277.0, 
+            "z": 81.0
+          }
+        }, 
+        "channel_1": 86, 
+        "channel_2": 87, 
+        "code": "MSTG6-MSTG7", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "MSTG7-MSTG8": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -58.50213623046875, 
+            "y": -5.433705568313599, 
+            "z": 1.2604843378067017
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -58.50213623046875, 
+            "y": -5.433705568313599, 
+            "z": 1.2604843378067017
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -53.238249999999994, 
+            "y": -13.955589999999994, 
+            "z": -0.5267859091039511
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -53.238249999999994, 
+            "y": -13.95559, 
+            "z": -0.5267859091039511
+          }, 
+          "mni": {
+            "region": " Left MTG middle temporal gyrus", 
+            "x": -62.16035, 
+            "y": -11.3205, 
+            "z": -10.099199589586185
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 362.0, 
+            "y": 275.0, 
+            "z": 81.0
+          }
+        }, 
+        "channel_1": 87, 
+        "channel_2": 88, 
+        "code": "MSTG7-MSTG8", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "OFC1-OFC2": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -9.182005882263184, 
+            "y": 40.131385803222656, 
+            "z": -26.71238422393799
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -9.182005882263184, 
+            "y": 40.131385803222656, 
+            "z": -26.71238422393799
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "lateralorbitofrontal", 
+            "x": -5.752574999999993, 
+            "y": 43.126760000000004, 
+            "z": 0.21253814297545903
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -5.7525749999999904, 
+            "y": 43.12676, 
+            "z": 0.21253814297545692
+          }, 
+          "mni": {
+            "region": " Left MOrG medial orbital gyrus", 
+            "x": -10.6771, 
+            "y": 41.9024, 
+            "z": -25.8780355632016
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 280.0, 
+            "y": 170.0, 
+            "z": 70.0
+          }
+        }, 
+        "channel_1": 121, 
+        "channel_2": 122, 
+        "code": "OFC1-OFC2", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "OFC2-OFC3": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -12.472766876220703, 
+            "y": 38.194732666015625, 
+            "z": -25.033620834350586
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -12.472766876220703, 
+            "y": 38.194732666015625, 
+            "z": -25.033620834350586
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "lateralorbitofrontal", 
+            "x": -7.415089999999994, 
+            "y": 42.70011000000001, 
+            "z": 3.1602223822603888
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -7.41508999999999, 
+            "y": 42.700109999999995, 
+            "z": 3.1602223822603843
+          }, 
+          "mni": {
+            "region": " Left MOrG medial orbital gyrus", 
+            "x": -11.9488, 
+            "y": 41.7892, 
+            "z": -22.59027725420765
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 282.0, 
+            "y": 170.0, 
+            "z": 72.0
+          }
+        }, 
+        "channel_1": 122, 
+        "channel_2": 123, 
+        "code": "OFC2-OFC3", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "OFC3-OFC4": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -11.637089729309082, 
+            "y": 39.37537384033203, 
+            "z": -24.071178436279297
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -11.637089729309082, 
+            "y": 39.37537384033203, 
+            "z": -24.071178436279297
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "lateralorbitofrontal", 
+            "x": -9.077604999999995, 
+            "y": 42.27346000000001, 
+            "z": 6.107906621545329
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -9.077604999999991, 
+            "y": 42.27346, 
+            "z": 6.107906621545324
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -13.795, 
+            "y": 41.8039, 
+            "z": -19.5284555455678
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 284.0, 
+            "y": 170.0, 
+            "z": 75.0
+          }
+        }, 
+        "channel_1": 123, 
+        "channel_2": 124, 
+        "code": "OFC3-OFC4", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "OFC4-OFC5": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -15.64949083328247, 
+            "y": 40.503095626831055, 
+            "z": -21.46387481689453
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -15.64949083328247, 
+            "y": 40.503095626831055, 
+            "z": -21.46387481689453
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "lateralorbitofrontal", 
+            "x": -10.679729999999994, 
+            "y": 41.941410000000005, 
+            "z": 8.440748684078343
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -10.679729999999996, 
+            "y": 41.94141, 
+            "z": 8.44074868407834
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -15.9137, 
+            "y": 41.815650000000005, 
+            "z": -17.2906259339916
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 287.0, 
+            "y": 169.0, 
+            "z": 78.0
+          }
+        }, 
+        "channel_1": 124, 
+        "channel_2": 125, 
+        "code": "OFC4-OFC5", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "OFC5-OFC6": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -15.038987636566162, 
+            "y": 42.08829116821289, 
+            "z": -12.557336807250977
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -15.038987636566162, 
+            "y": 42.08829116821289, 
+            "z": -12.557336807250977
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "medialorbitofrontal", 
+            "x": -12.009749999999993, 
+            "y": 41.60011000000001, 
+            "z": 10.798896075506278
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -12.00975, 
+            "y": 41.60011, 
+            "z": 10.79889607550629
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -17.254150000000003, 
+            "y": 41.7425, 
+            "z": -14.5994197426792
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 289.0, 
+            "y": 169.0, 
+            "z": 80.0
+          }
+        }, 
+        "channel_1": 125, 
+        "channel_2": 126, 
+        "code": "OFC5-OFC6", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "OFC6-OFC7": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -17.297260761260986, 
+            "y": 43.70197105407715, 
+            "z": -9.53838062286377
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -17.297260761260986, 
+            "y": 43.70197105407715, 
+            "z": -9.53838062286377
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "medialorbitofrontal", 
+            "x": -13.400149999999993, 
+            "y": 41.16421000000001, 
+            "z": 13.771885643686133
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -13.40015, 
+            "y": 41.16421, 
+            "z": 13.771885643686149
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -18.34565, 
+            "y": 41.523399999999995, 
+            "z": -10.458693293283421
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 291.0, 
+            "y": 170.0, 
+            "z": 82.0
+          }
+        }, 
+        "channel_1": 126, 
+        "channel_2": 127, 
+        "code": "OFC6-OFC7", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "OFC7-OFC8": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -24.284180641174316, 
+            "y": 45.04370307922363, 
+            "z": -12.63341760635376
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -24.284180641174316, 
+            "y": 45.04370307922363, 
+            "z": -12.63341760635376
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "lateralorbitofrontal", 
+            "x": -15.395149999999994, 
+            "y": 40.652260000000005, 
+            "z": 17.30910673082804
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -15.395150000000001, 
+            "y": 40.65226, 
+            "z": 17.30910673082805
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -20.707050000000002, 
+            "y": 41.429950000000005, 
+            "z": -6.169725048999689
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 294.0, 
+            "y": 170.0, 
+            "z": 85.0
+          }
+        }, 
+        "channel_1": 127, 
+        "channel_2": 128, 
+        "code": "OFC7-OFC8", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PCC1-PCC2": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -0.8237372040748596, 
+            "y": -50.82139778137207, 
+            "z": 21.655723571777344
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -0.8237372040748596, 
+            "y": -50.82139778137207, 
+            "z": 21.655723571777344
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "isthmuscingulate", 
+            "x": -2.6084034999999934, 
+            "y": -48.19616499999999, 
+            "z": 24.592235729467994
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -2.6084034999999925, 
+            "y": -48.196165, 
+            "z": 24.592235729468
+          }, 
+          "mni": {
+            "region": " Left PCgG posterior cingulate gyrus", 
+            "x": -1.688858, 
+            "y": -46.7779, 
+            "z": 27.66655429340635
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 264.0, 
+            "y": 328.0, 
+            "z": 101.0
+          }
+        }, 
+        "channel_1": 47, 
+        "channel_2": 48, 
+        "code": "PCC1-PCC2", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PCC10-PCC11": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -55.01460266113281, 
+            "y": -53.7524299621582, 
+            "z": 24.819844245910645
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -55.01460266113281, 
+            "y": -53.7524299621582, 
+            "z": 24.819844245910645
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "supramarginal", 
+            "x": -38.02154999999999, 
+            "y": -46.00689, 
+            "z": 22.085680063984796
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -38.02155, 
+            "y": -46.00689, 
+            "z": 22.085680063984796
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -41.200649999999996, 
+            "y": -37.708749999999995, 
+            "z": 27.609046388845847
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 329.0, 
+            "y": 325.0, 
+            "z": 101.0
+          }
+        }, 
+        "channel_1": 56, 
+        "channel_2": 57, 
+        "code": "PCC10-PCC11", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PCC10-PCC9": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -44.929141998291016, 
+            "y": -50.626861572265625, 
+            "z": 30.035813331604004
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -44.929141998291016, 
+            "y": -50.626861572265625, 
+            "z": 30.035813331604004
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "supramarginal", 
+            "x": -34.15169999999999, 
+            "y": -46.041895, 
+            "z": 21.825112491761892
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -34.1517, 
+            "y": -46.041895, 
+            "z": 21.8251124917619
+          }, 
+          "mni": {
+            "region": null, 
+            "x": -36.6363, 
+            "y": -39.4774, 
+            "z": 26.68560252973365
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 322.0, 
+            "y": 325.0, 
+            "z": 101.0
+          }
+        }, 
+        "channel_1": 56, 
+        "channel_2": 55, 
+        "code": "PCC10-PCC9", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PCC11-PCC12": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -51.49278259277344, 
+            "y": -47.64287567138672, 
+            "z": 24.7899169921875
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -51.49278259277344, 
+            "y": -47.64287567138672, 
+            "z": 24.7899169921875
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "supramarginal", 
+            "x": -42.163549999999994, 
+            "y": -45.96262999999999, 
+            "z": 22.320942307312745
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -42.16355, 
+            "y": -45.96263, 
+            "z": 22.320942307312748
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -45.3972, 
+            "y": -35.7418, 
+            "z": 28.79543717307685
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 336.0, 
+            "y": 325.0, 
+            "z": 101.0
+          }
+        }, 
+        "channel_1": 57, 
+        "channel_2": 58, 
+        "code": "PCC11-PCC12", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PCC12-PCC13": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -48.905221939086914, 
+            "y": -41.88050842285156, 
+            "z": 25.239967346191406
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -48.905221939086914, 
+            "y": -41.88050842285156, 
+            "z": 25.239967346191406
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "supramarginal", 
+            "x": -46.245149999999995, 
+            "y": -45.823784999999994, 
+            "z": 21.941362373888794
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -46.245149999999995, 
+            "y": -45.823785, 
+            "z": 21.9413623738888
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -49.20515, 
+            "y": -34.7794, 
+            "z": 29.527385605122348
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 344.0, 
+            "y": 325.0, 
+            "z": 101.0
+          }
+        }, 
+        "channel_1": 58, 
+        "channel_2": 59, 
+        "code": "PCC12-PCC13", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PCC13-PCC14": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -50.75964164733887, 
+            "y": -41.76508903503418, 
+            "z": 26.974926948547363
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -50.75964164733887, 
+            "y": -41.76508903503418, 
+            "z": 26.974926948547363
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "supramarginal", 
+            "x": -50.05459999999999, 
+            "y": -45.69419499999999, 
+            "z": 21.587087769359744
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -50.0546, 
+            "y": -45.694195, 
+            "z": 21.58708776935975
+          }, 
+          "mni": {
+            "region": " Left PO parietal operculum", 
+            "x": -53.11335, 
+            "y": -35.21215, 
+            "z": 30.1236285554001
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 351.0, 
+            "y": 325.0, 
+            "z": 101.0
+          }
+        }, 
+        "channel_1": 59, 
+        "channel_2": 60, 
+        "code": "PCC13-PCC14", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PCC14-PCC15": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -53.37520408630371, 
+            "y": -41.32042121887207, 
+            "z": 29.30412769317627
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -53.37520408630371, 
+            "y": -41.32042121887207, 
+            "z": 29.30412769317627
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "supramarginal", 
+            "x": -53.86409999999999, 
+            "y": -45.564605, 
+            "z": 21.232813164830695
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -53.8641, 
+            "y": -45.564605, 
+            "z": 21.232813164830702
+          }, 
+          "mni": {
+            "region": " Left SMG supramarginal gyrus", 
+            "x": -57.6037, 
+            "y": -35.9929, 
+            "z": 30.46666882085155
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 358.0, 
+            "y": 325.0, 
+            "z": 102.0
+          }
+        }, 
+        "channel_1": 60, 
+        "channel_2": 61, 
+        "code": "PCC14-PCC15", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PCC15-PCC16": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -57.74063301086426, 
+            "y": -41.1423282623291, 
+            "z": 34.03376388549805
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -57.74063301086426, 
+            "y": -41.1423282623291, 
+            "z": 34.03376388549805
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "supramarginal", 
+            "x": -58.2178, 
+            "y": -45.4165, 
+            "z": 20.827927902511846
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -58.2178, 
+            "y": -45.4165, 
+            "z": 20.827927902511853
+          }, 
+          "mni": {
+            "region": " Left SMG supramarginal gyrus", 
+            "x": -63.1375, 
+            "y": -36.3366, 
+            "z": 30.3443201214099
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 366.0, 
+            "y": 325.0, 
+            "z": 102.0
+          }
+        }, 
+        "channel_1": 61, 
+        "channel_2": 62, 
+        "code": "PCC15-PCC16", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PCC2-PCC3": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -3.3609981536865234, 
+            "y": -49.79180908203125, 
+            "z": 20.074480056762695
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -3.3609981536865234, 
+            "y": -49.79180908203125, 
+            "z": 20.074480056762695
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "isthmuscingulate", 
+            "x": -6.690004999999994, 
+            "y": -48.05731499999999, 
+            "z": 24.212655796044043
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -6.69000499999999, 
+            "y": -48.057315, 
+            "z": 24.21265579604405
+          }, 
+          "mni": {
+            "region": " Left PCgG posterior cingulate gyrus", 
+            "x": -6.52383, 
+            "y": -46.96935, 
+            "z": 27.3774609063908
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 271.0, 
+            "y": 327.0, 
+            "z": 101.0
+          }
+        }, 
+        "channel_1": 48, 
+        "channel_2": 49, 
+        "code": "PCC2-PCC3", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PCC3-PCC4": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -3.999514102935791, 
+            "y": -46.535072326660156, 
+            "z": 18.349769592285156
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -3.999514102935791, 
+            "y": -46.535072326660156, 
+            "z": 18.349769592285156
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "isthmuscingulate", 
+            "x": -10.494204999999994, 
+            "y": -47.65759499999999, 
+            "z": 23.900454920041494
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -10.494204999999994, 
+            "y": -47.657595, 
+            "z": 23.900454920041497
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -10.900535000000001, 
+            "y": -45.668499999999995, 
+            "z": 27.1802779515765
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 278.0, 
+            "y": 327.0, 
+            "z": 101.0
+          }
+        }, 
+        "channel_1": 49, 
+        "channel_2": 50, 
+        "code": "PCC3-PCC4", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PCC4-PCC5": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -3.999514102935791, 
+            "y": -46.535072326660156, 
+            "z": 18.349769592285156
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -3.999514102935791, 
+            "y": -46.535072326660156, 
+            "z": 18.349769592285156
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "isthmuscingulate", 
+            "x": -14.298399999999994, 
+            "y": -47.257875, 
+            "z": 23.588254044038944
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -14.298399999999999, 
+            "y": -47.257875, 
+            "z": 23.588254044038948
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -15.0103, 
+            "y": -44.575900000000004, 
+            "z": 26.8826279965733
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 285.0, 
+            "y": 326.0, 
+            "z": 101.0
+          }
+        }, 
+        "channel_1": 50, 
+        "channel_2": 51, 
+        "code": "PCC4-PCC5", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PCC5-PCC6": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -10.759602785110474, 
+            "y": -53.837913513183594, 
+            "z": 18.49789333343506
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -10.759602785110474, 
+            "y": -53.837913513183594, 
+            "z": 18.49789333343506
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "precuneus", 
+            "x": -18.37474999999999, 
+            "y": -46.8489, 
+            "z": 23.250747839141447
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -18.37475, 
+            "y": -46.8489, 
+            "z": 23.25074783914145
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -19.12375, 
+            "y": -43.9091, 
+            "z": 26.7220991142539
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 293.0, 
+            "y": 326.0, 
+            "z": 101.0
+          }
+        }, 
+        "channel_1": 51, 
+        "channel_2": 52, 
+        "code": "PCC5-PCC6", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PCC6-PCC7": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -23.89187717437744, 
+            "y": -59.79715347290039, 
+            "z": 29.67711353302002
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -23.89187717437744, 
+            "y": -59.79715347290039, 
+            "z": 29.67711353302002
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "precuneus", 
+            "x": -22.178999999999995, 
+            "y": -46.449185, 
+            "z": 22.938546963138844
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -22.179, 
+            "y": -46.449185, 
+            "z": 22.938546963138847
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -22.8779, 
+            "y": -43.0011, 
+            "z": 26.70272351571375
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 300.0, 
+            "y": 326.0, 
+            "z": 101.0
+          }
+        }, 
+        "channel_1": 52, 
+        "channel_2": 53, 
+        "code": "PCC6-PCC7", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PCC7-PCC8": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -30.68474006652832, 
+            "y": -58.569610595703125, 
+            "z": 40.31052780151367
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -30.68474006652832, 
+            "y": -58.569610595703125, 
+            "z": 40.31052780151367
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiorparietal", 
+            "x": -26.260599999999997, 
+            "y": -46.310334999999995, 
+            "z": 22.558967029714843
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -26.260599999999997, 
+            "y": -46.310335, 
+            "z": 22.55896702971485
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -27.2003, 
+            "y": -41.9217, 
+            "z": 26.6065853959477
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 307.0, 
+            "y": 326.0, 
+            "z": 101.0
+          }
+        }, 
+        "channel_1": 53, 
+        "channel_2": 54, 
+        "code": "PCC7-PCC8", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PCC8-PCC9": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -32.89537334442139, 
+            "y": -53.079071044921875, 
+            "z": 37.70652770996094
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -32.89537334442139, 
+            "y": -53.079071044921875, 
+            "z": 37.70652770996094
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "inferiorparietal", 
+            "x": -30.34219999999999, 
+            "y": -46.17148499999999, 
+            "z": 22.179387096290895
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -30.3422, 
+            "y": -46.171485000000004, 
+            "z": 22.179387096290895
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -31.90285, 
+            "y": -40.72, 
+            "z": 26.58019267417695
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 314.0, 
+            "y": 325.0, 
+            "z": 101.0
+          }
+        }, 
+        "channel_1": 54, 
+        "channel_2": 55, 
+        "code": "PCC8-PCC9", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PINS1-PINS2": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -33.78788375854492, 
+            "y": -25.45669651031494, 
+            "z": 15.628149509429932
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -33.78788375854492, 
+            "y": -25.45669651031494, 
+            "z": 15.628149509429932
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -26.484799999999993, 
+            "y": -24.058939999999993, 
+            "z": 18.336085089282143
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -26.4848, 
+            "y": -24.05894, 
+            "z": 18.33608508928215
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -27.892699999999998, 
+            "y": -18.966549999999998, 
+            "z": 15.564934520858351
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 309.0, 
+            "y": 287.0, 
+            "z": 94.0
+          }
+        }, 
+        "channel_1": 63, 
+        "channel_2": 64, 
+        "code": "PINS1-PINS2", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PINS10-PINS9": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -56.37945556640625, 
+            "y": -14.079424381256104, 
+            "z": 25.10384464263916
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -56.37945556640625, 
+            "y": -14.079424381256104, 
+            "z": 25.10384464263916
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "postcentral", 
+            "x": -54.04729999999999, 
+            "y": -23.160539999999994, 
+            "z": 19.578752717353446
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -54.0473, 
+            "y": -23.16054, 
+            "z": 19.57875271735345
+          }, 
+          "mni": {
+            "region": null, 
+            "x": -60.05795, 
+            "y": -10.717649999999999, 
+            "z": 22.539470469719852
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 360.0, 
+            "y": 285.0, 
+            "z": 98.0
+          }
+        }, 
+        "channel_1": 72, 
+        "channel_2": 71, 
+        "code": "PINS10-PINS9", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PINS2-PINS3": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -34.29368019104004, 
+            "y": -24.56328582763672, 
+            "z": 15.754347324371338
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -34.29368019104004, 
+            "y": -24.56328582763672, 
+            "z": 15.754347324371338
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -29.477949999999993, 
+            "y": -23.957139999999992, 
+            "z": 18.057726471437892
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -29.47795, 
+            "y": -23.95714, 
+            "z": 18.057726471437903
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -31.31505, 
+            "y": -18.433950000000003, 
+            "z": 16.21996733474795
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 315.0, 
+            "y": 286.0, 
+            "z": 95.0
+          }
+        }, 
+        "channel_1": 64, 
+        "channel_2": 65, 
+        "code": "PINS2-PINS3", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PINS3-PINS4": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -36.081233978271484, 
+            "y": -23.086270332336426, 
+            "z": 16.047497272491455
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -36.081233978271484, 
+            "y": -23.086270332336426, 
+            "z": 16.047497272491455
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -32.803599999999996, 
+            "y": -23.940639999999995, 
+            "z": 18.368904701450592
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -32.8036, 
+            "y": -23.94064, 
+            "z": 18.368904701450603
+          }, 
+          "mni": {
+            "region": " Left CO central operculum", 
+            "x": -35.6927, 
+            "y": -18.1141, 
+            "z": 17.5127895162483
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 322.0, 
+            "y": 286.0, 
+            "z": 95.0
+          }
+        }, 
+        "channel_1": 65, 
+        "channel_2": 66, 
+        "code": "PINS3-PINS4", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PINS4-PINS5": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -41.524152755737305, 
+            "y": -22.718759536743164, 
+            "z": 17.160473823547363
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -41.524152755737305, 
+            "y": -22.718759536743164, 
+            "z": 17.160473823547363
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -36.39614999999999, 
+            "y": -23.64473999999999, 
+            "z": 18.696851331094894
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -36.396150000000006, 
+            "y": -23.64474, 
+            "z": 18.696851331094898
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -40.99415, 
+            "y": -18.011, 
+            "z": 18.36032658549525
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 328.0, 
+            "y": 286.0, 
+            "z": 96.0
+          }
+        }, 
+        "channel_1": 66, 
+        "channel_2": 67, 
+        "code": "PINS4-PINS5", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PINS5-PINS6": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -46.447078704833984, 
+            "y": -23.167207717895508, 
+            "z": 18.518362045288086
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -46.447078704833984, 
+            "y": -23.167207717895508, 
+            "z": 18.518362045288086
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "supramarginal", 
+            "x": -39.98864999999999, 
+            "y": -23.348839999999992, 
+            "z": 19.024797960739193
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -39.98865, 
+            "y": -23.34884, 
+            "z": 19.0247979607392
+          }, 
+          "mni": {
+            "region": " Left CO central operculum", 
+            "x": -45.814449999999994, 
+            "y": -16.9014, 
+            "z": 18.60876490741035
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 334.0, 
+            "y": 286.0, 
+            "z": 96.0
+          }
+        }, 
+        "channel_1": 67, 
+        "channel_2": 68, 
+        "code": "PINS5-PINS6", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PINS6-PINS7": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -49.34346008300781, 
+            "y": -23.27228355407715, 
+            "z": 19.229857444763184
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -49.34346008300781, 
+            "y": -23.27228355407715, 
+            "z": 19.229857444763184
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "supramarginal", 
+            "x": -43.31429999999999, 
+            "y": -23.332339999999995, 
+            "z": 19.335976190751893
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -43.3143, 
+            "y": -23.33234, 
+            "z": 19.3359761907519
+          }, 
+          "mni": {
+            "region": " Left CO central operculum", 
+            "x": -49.54575, 
+            "y": -14.625699999999998, 
+            "z": 19.00321684941325
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 341.0, 
+            "y": 286.0, 
+            "z": 96.0
+          }
+        }, 
+        "channel_1": 68, 
+        "channel_2": 69, 
+        "code": "PINS6-PINS7", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PINS7-PINS8": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -52.61610412597656, 
+            "y": -22.62354278564453, 
+            "z": 19.322688102722168
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -52.61610412597656, 
+            "y": -22.62354278564453, 
+            "z": 19.322688102722168
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "supramarginal", 
+            "x": -46.851699999999994, 
+            "y": -23.212039999999995, 
+            "z": 19.007006915117792
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -46.8517, 
+            "y": -23.21204, 
+            "z": 19.0070069151178
+          }, 
+          "mni": {
+            "region": " Left CO central operculum", 
+            "x": -53.279399999999995, 
+            "y": -12.3703, 
+            "z": 20.0543982704401
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 347.0, 
+            "y": 286.0, 
+            "z": 97.0
+          }
+        }, 
+        "channel_1": 69, 
+        "channel_2": 70, 
+        "code": "PINS7-PINS8", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PINS8-PINS9": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -51.28655242919922, 
+            "y": -16.428956508636475, 
+            "z": 23.028246879577637
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -51.28655242919922, 
+            "y": -16.428956508636475, 
+            "z": 23.028246879577637
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "supramarginal", 
+            "x": -50.44949999999999, 
+            "y": -23.186289999999993, 
+            "z": 19.292879816235644
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -50.4495, 
+            "y": -23.18629, 
+            "z": 19.29287981623565
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -56.575599999999994, 
+            "y": -10.70295, 
+            "z": 22.108903242727898
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 354.0, 
+            "y": 285.0, 
+            "z": 97.0
+          }
+        }, 
+        "channel_1": 70, 
+        "channel_2": 71, 
+        "code": "PINS8-PINS9", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PT1-PT2": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -40.12161064147949, 
+            "y": -31.885811805725098, 
+            "z": -1.600316047668457
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -40.12161064147949, 
+            "y": -31.885811805725098, 
+            "z": -1.600316047668457
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "insula", 
+            "x": -36.2303, 
+            "y": -31.332499999999992, 
+            "z": 2.2826898179897057
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -36.2303, 
+            "y": -31.3325, 
+            "z": 2.282689817989705
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -37.5119, 
+            "y": -31.27915, 
+            "z": 0.8937254867464071
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 330.0, 
+            "y": 304.0, 
+            "z": 83.0
+          }
+        }, 
+        "channel_1": 73, 
+        "channel_2": 74, 
+        "code": "PT1-PT2", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PT2-PT3": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -45.51922798156738, 
+            "y": -30.293853759765625, 
+            "z": 4.91077995300293
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -45.51922798156738, 
+            "y": -30.293853759765625, 
+            "z": 4.91077995300293
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -39.49029999999999, 
+            "y": -30.951294999999995, 
+            "z": 2.021099599777004
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -39.490300000000005, 
+            "y": -30.951295000000002, 
+            "z": 2.021099599777
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -40.98994999999999, 
+            "y": -29.5778, 
+            "z": 2.873922796799385
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 336.0, 
+            "y": 303.0, 
+            "z": 83.0
+          }
+        }, 
+        "channel_1": 74, 
+        "channel_2": 75, 
+        "code": "PT2-PT3", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PT3-PT4": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -48.143802642822266, 
+            "y": -28.274368286132812, 
+            "z": 3.7900832891464233
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -48.143802642822266, 
+            "y": -28.274368286132812, 
+            "z": 3.7900832891464233
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -43.289199999999994, 
+            "y": -30.28144499999999, 
+            "z": 1.750972452300914
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -43.2892, 
+            "y": -30.281444999999998, 
+            "z": 1.75097245230091
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -45.487849999999995, 
+            "y": -27.8126, 
+            "z": 4.29573560377899
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 343.0, 
+            "y": 302.0, 
+            "z": 83.0
+          }
+        }, 
+        "channel_1": 75, 
+        "channel_2": 76, 
+        "code": "PT3-PT4", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PT4-PT5": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -52.14078140258789, 
+            "y": -23.798283576965332, 
+            "z": -1.4904640913009644
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -52.14078140258789, 
+            "y": -23.798283576965332, 
+            "z": -1.4904640913009644
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -46.81604999999999, 
+            "y": -29.620849999999994, 
+            "z": 1.5061506337197539
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -46.816050000000004, 
+            "y": -29.620849999999997, 
+            "z": 1.5061506337197499
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -50.328900000000004, 
+            "y": -26.441200000000002, 
+            "z": 4.6200607736211
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 349.0, 
+            "y": 302.0, 
+            "z": 84.0
+          }
+        }, 
+        "channel_1": 76, 
+        "channel_2": 77, 
+        "code": "PT4-PT5", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PT5-PT6": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -56.297119140625, 
+            "y": -21.13471221923828, 
+            "z": -5.826939344406128
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -56.297119140625, 
+            "y": -21.13471221923828, 
+            "z": -5.826939344406128
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -50.34289999999999, 
+            "y": -28.960259999999995, 
+            "z": 1.261328815138599
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -50.3429, 
+            "y": -28.960259999999998, 
+            "z": 1.261328815138595
+          }, 
+          "mni": {
+            "region": " Left MTG middle temporal gyrus", 
+            "x": -55.337, 
+            "y": -25.155749999999998, 
+            "z": 4.33271379112949
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 356.0, 
+            "y": 301.0, 
+            "z": 84.0
+          }
+        }, 
+        "channel_1": 77, 
+        "channel_2": 78, 
+        "code": "PT5-PT6", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PT6-PT7": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -59.26752281188965, 
+            "y": -22.405555725097656, 
+            "z": -5.031240463256836
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -59.26752281188965, 
+            "y": -22.405555725097656, 
+            "z": -5.031240463256836
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -53.869699999999995, 
+            "y": -28.299664999999994, 
+            "z": 1.016506996557454
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -53.8697, 
+            "y": -28.299665, 
+            "z": 1.0165069965574522
+          }, 
+          "mni": {
+            "region": " Left MTG middle temporal gyrus", 
+            "x": -60.03615, 
+            "y": -24.372349999999997, 
+            "z": 3.395969277132255
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 362.0, 
+            "y": 299.0, 
+            "z": 84.0
+          }
+        }, 
+        "channel_1": 78, 
+        "channel_2": 79, 
+        "code": "PT6-PT7", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "PT7-PT8": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -62.66371726989746, 
+            "y": -23.128746032714844, 
+            "z": -4.403791904449463
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -62.66371726989746, 
+            "y": -23.128746032714844, 
+            "z": -4.403791904449463
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "superiortemporal", 
+            "x": -57.124449999999996, 
+            "y": -27.648339999999994, 
+            "z": 0.796990506871224
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -57.124449999999996, 
+            "y": -27.64834, 
+            "z": 0.7969905068712242
+          }, 
+          "mni": {
+            "region": " Left MTG middle temporal gyrus", 
+            "x": -64.2555, 
+            "y": -24.102800000000002, 
+            "z": 2.2053257274409903
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 368.0, 
+            "y": 298.0, 
+            "z": 84.0
+          }
+        }, 
+        "channel_1": 79, 
+        "channel_2": 80, 
+        "code": "PT7-PT8", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "TOJ1-TOJ2": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -15.076377391815186, 
+            "y": -52.12718200683594, 
+            "z": -10.083433628082275
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -15.076377391815186, 
+            "y": -52.12718200683594, 
+            "z": -10.083433628082275
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "lingual", 
+            "x": -13.765649999999994, 
+            "y": -46.344649999999994, 
+            "z": -5.443887188552836
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -13.76565, 
+            "y": -46.34465, 
+            "z": -5.443887188552841
+          }, 
+          "mni": {
+            "region": " Left LiG lingual gyrus", 
+            "x": -15.9237, 
+            "y": -48.036500000000004, 
+            "z": -4.579340703488144
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 289.0, 
+            "y": 333.0, 
+            "z": 78.0
+          }
+        }, 
+        "channel_1": 33, 
+        "channel_2": 34, 
+        "code": "TOJ1-TOJ2", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "TOJ10-TOJ11": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -63.177433013916016, 
+            "y": -46.263267517089844, 
+            "z": -8.766371965408325
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -63.177433013916016, 
+            "y": -46.263267517089844, 
+            "z": -8.766371965408325
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "middletemporal", 
+            "x": -45.39264999999999, 
+            "y": -49.382239999999996, 
+            "z": -3.2999998341253614
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -45.39265, 
+            "y": -49.38224, 
+            "z": -3.299999834125365
+          }, 
+          "mni": {
+            "region": " Left MTG middle temporal gyrus", 
+            "x": -48.595, 
+            "y": -53.228300000000004, 
+            "z": -4.84345118831679
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 346.0, 
+            "y": 338.0, 
+            "z": 82.0
+          }
+        }, 
+        "channel_1": 42, 
+        "channel_2": 43, 
+        "code": "TOJ10-TOJ11", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "TOJ10-TOJ9": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -53.540592193603516, 
+            "y": -46.38007164001465, 
+            "z": -11.783724546432495
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -53.540592193603516, 
+            "y": -46.38007164001465, 
+            "z": -11.783724546432495
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "inferiortemporal", 
+            "x": -41.78434999999999, 
+            "y": -48.86774, 
+            "z": -3.501725278190236
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -41.78435, 
+            "y": -48.86774, 
+            "z": -3.50172527819024
+          }, 
+          "mni": {
+            "region": null, 
+            "x": -44.314350000000005, 
+            "y": -53.7915, 
+            "z": -6.49938863423958
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 340.0, 
+            "y": 338.0, 
+            "z": 81.0
+          }
+        }, 
+        "channel_1": 42, 
+        "channel_2": 41, 
+        "code": "TOJ10-TOJ9", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "TOJ11-TOJ12": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -59.542877197265625, 
+            "y": -45.86097526550293, 
+            "z": -4.566889137029648
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -59.542877197265625, 
+            "y": -45.86097526550293, 
+            "z": -4.566889137029648
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "bankssts", 
+            "x": -48.78399999999999, 
+            "y": -49.730439999999994, 
+            "z": -2.416053155887171
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -48.784, 
+            "y": -49.73044, 
+            "z": -2.416053155887175
+          }, 
+          "mni": {
+            "region": " Left MTG middle temporal gyrus", 
+            "x": -53.218450000000004, 
+            "y": -51.5975, 
+            "z": -2.2142573488089035
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 352.0, 
+            "y": 339.0, 
+            "z": 83.0
+          }
+        }, 
+        "channel_1": 43, 
+        "channel_2": 44, 
+        "code": "TOJ11-TOJ12", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "TOJ12-TOJ13": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -54.69706153869629, 
+            "y": -45.15162467956543, 
+            "z": 1.2922501862049103
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -54.69706153869629, 
+            "y": -45.15162467956543, 
+            "z": 1.2922501862049103
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "bankssts", 
+            "x": -52.38709999999999, 
+            "y": -49.97483999999999, 
+            "z": -2.172253983295831
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -52.387100000000004, 
+            "y": -49.97484, 
+            "z": -2.172253983295835
+          }, 
+          "mni": {
+            "region": " Left MTG middle temporal gyrus", 
+            "x": -58.17465, 
+            "y": -49.9411, 
+            "z": 0.08668105774156148
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 359.0, 
+            "y": 340.0, 
+            "z": 83.0
+          }
+        }, 
+        "channel_1": 44, 
+        "channel_2": 45, 
+        "code": "TOJ12-TOJ13", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "TOJ13-TOJ14": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -52.049325942993164, 
+            "y": -44.648237228393555, 
+            "z": 2.43638014793396
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -52.049325942993164, 
+            "y": -44.648237228393555, 
+            "z": 2.43638014793396
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "bankssts", 
+            "x": -55.99544999999999, 
+            "y": -50.48934, 
+            "z": -1.9705285392309513
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -55.995450000000005, 
+            "y": -50.48934, 
+            "z": -1.9705285392309548
+          }, 
+          "mni": {
+            "region": " Left MTG middle temporal gyrus", 
+            "x": -62.8938, 
+            "y": -49.58195, 
+            "z": 1.62750365432931
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 365.0, 
+            "y": 341.0, 
+            "z": 84.0
+          }
+        }, 
+        "channel_1": 45, 
+        "channel_2": 46, 
+        "code": "TOJ13-TOJ14", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "TOJ2-TOJ3": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -18.42627716064453, 
+            "y": -52.777557373046875, 
+            "z": -9.777698040008545
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -18.42627716064453, 
+            "y": -52.777557373046875, 
+            "z": -9.777698040008545
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "lingual", 
+            "x": -17.096599999999995, 
+            "y": -46.59828499999999, 
+            "z": -5.174782687066556
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -17.096600000000002, 
+            "y": -46.598285000000004, 
+            "z": -5.1747826870665605
+          }, 
+          "mni": {
+            "region": " Left LiG lingual gyrus", 
+            "x": -18.3494, 
+            "y": -48.168899999999994, 
+            "z": -4.48406104040473
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 295.0, 
+            "y": 333.0, 
+            "z": 78.0
+          }
+        }, 
+        "channel_1": 34, 
+        "channel_2": 35, 
+        "code": "TOJ2-TOJ3", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "TOJ3-TOJ4": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -22.119579315185547, 
+            "y": -54.40522575378418, 
+            "z": -8.462927341461182
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -22.119579315185547, 
+            "y": -54.40522575378418, 
+            "z": -8.462927341461182
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "lingual", 
+            "x": -20.699649999999995, 
+            "y": -46.842665, 
+            "z": -4.9309835144752014
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -20.69965, 
+            "y": -46.842665, 
+            "z": -4.930983514475205
+          }, 
+          "mni": {
+            "region": " Left LiG lingual gyrus", 
+            "x": -20.85935, 
+            "y": -48.4578, 
+            "z": -4.57934759944314
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 302.0, 
+            "y": 334.0, 
+            "z": 78.0
+          }
+        }, 
+        "channel_1": 35, 
+        "channel_2": 36, 
+        "code": "TOJ3-TOJ4", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "TOJ4-TOJ5": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -22.924699783325195, 
+            "y": -55.4223518371582, 
+            "z": -7.72698974609375
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -22.924699783325195, 
+            "y": -55.4223518371582, 
+            "z": -7.72698974609375
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "lingual", 
+            "x": -24.247599999999995, 
+            "y": -47.26258999999999, 
+            "z": -5.344100247162246
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -24.2476, 
+            "y": -47.26259, 
+            "z": -5.344100247162251
+          }, 
+          "mni": {
+            "region": " Left LiG lingual gyrus", 
+            "x": -23.6006, 
+            "y": -49.2509, 
+            "z": -5.176707594450685
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 308.0, 
+            "y": 335.0, 
+            "z": 79.0
+          }
+        }, 
+        "channel_1": 36, 
+        "channel_2": 37, 
+        "code": "TOJ4-TOJ5", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "TOJ5-TOJ6": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -26.043192863464355, 
+            "y": -55.33724403381348, 
+            "z": -8.393675327301025
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -26.043192863464355, 
+            "y": -55.33724403381348, 
+            "z": -8.393675327301025
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "fusiform", 
+            "x": -27.578549999999993, 
+            "y": -47.51622999999999, 
+            "z": -5.074995745675966
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -27.57855, 
+            "y": -47.51622999999999, 
+            "z": -5.07499574567597
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -26.9248, 
+            "y": -50.0787, 
+            "z": -5.696606033273985
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 314.0, 
+            "y": 336.0, 
+            "z": 79.0
+          }
+        }, 
+        "channel_1": 37, 
+        "channel_2": 38, 
+        "code": "TOJ5-TOJ6", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "TOJ6-TOJ7": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -29.142064094543457, 
+            "y": -55.741363525390625, 
+            "z": -9.269373893737793
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -29.142064094543457, 
+            "y": -55.741363525390625, 
+            "z": -9.269373893737793
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "fusiform", 
+            "x": -31.181599999999996, 
+            "y": -47.76061, 
+            "z": -4.831196573084611
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -31.181600000000003, 
+            "y": -47.76061, 
+            "z": -4.831196573084615
+          }, 
+          "mni": {
+            "region": " Left FuG fusiform gyrus", 
+            "x": -31.16115, 
+            "y": -51.10825, 
+            "z": -6.785474895234225
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 321.0, 
+            "y": 336.0, 
+            "z": 79.0
+          }
+        }, 
+        "channel_1": 38, 
+        "channel_2": 39, 
+        "code": "TOJ6-TOJ7", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "TOJ7-TOJ8": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -35.974669456481934, 
+            "y": -51.29255485534668, 
+            "z": -13.227474689483643
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -35.974669456481934, 
+            "y": -51.29255485534668, 
+            "z": -13.227474689483643
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "fusiform", 
+            "x": -34.78994999999999, 
+            "y": -48.275115, 
+            "z": -4.6294711290197466
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -34.789950000000005, 
+            "y": -48.275115, 
+            "z": -4.62947112901975
+          }, 
+          "mni": {
+            "region": " Left Cerebral White Matter", 
+            "x": -36.012950000000004, 
+            "y": -52.66035, 
+            "z": -7.81234554319176
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 327.0, 
+            "y": 337.0, 
+            "z": 80.0
+          }
+        }, 
+        "channel_1": 39, 
+        "channel_2": 40, 
+        "code": "TOJ7-TOJ8", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }, 
+      "TOJ8-TOJ9": {
+        "atlases": {
+          "avg": {
+            "region": null, 
+            "x": -43.01766586303711, 
+            "y": -46.413177490234375, 
+            "z": -16.54988670349121
+          }, 
+          "avg.corrected": {
+            "region": null, 
+            "x": -43.01766586303711, 
+            "y": -46.413177490234375, 
+            "z": -16.54988670349121
+          }, 
+          "hcp": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "ind": {
+            "region": "fusiform", 
+            "x": -38.18129999999999, 
+            "y": -48.62334, 
+            "z": -3.745524450781571
+          }, 
+          "ind.corrected": {
+            "region": null, 
+            "x": -38.1813, 
+            "y": -48.62334, 
+            "z": -3.7455244507815753
+          }, 
+          "mni": {
+            "region": " Left FuG fusiform gyrus", 
+            "x": -40.36395, 
+            "y": -53.7611, 
+            "z": -7.578592275597579
+          }, 
+          "stein": {
+            "region": null, 
+            "x": NaN, 
+            "y": NaN, 
+            "z": NaN
+          }, 
+          "vox": {
+            "region": null, 
+            "x": 334.0, 
+            "y": 337.0, 
+            "z": 81.0
+          }
+        }, 
+        "channel_1": 40, 
+        "channel_2": 41, 
+        "code": "TOJ8-TOJ9", 
+        "is_stim_only": false, 
+        "type_1": "D", 
+        "type_2": "D"
+      }
+    }
+  }, 
+  "version": "2.0"
+}
