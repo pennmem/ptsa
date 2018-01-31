@@ -66,3 +66,11 @@ Low-level functions for quickly computing Morlet wavelet decompositions.
 
 
 .. automodule:: ptsa.extensions.morlet
+
+
+ptsa.extensions.edf
+-------------------
+File-like wrapper around parts of edflib to provide an interface for reading the EDF+ family of EEG formats.
+:py:mod:`ptsa.data.readers.EDFRawReader` provides a slightly higher-level interface for doing the same thing.
+
+.. automodule:: ptsa.extensions.edf
