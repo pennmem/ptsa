@@ -21,7 +21,6 @@ requirements:
     - scipy
     - swig
     - xarray
-    - pybind11
 
   run:
     - python {{ python }}
