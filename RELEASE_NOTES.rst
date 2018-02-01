@@ -1,8 +1,10 @@
 Release Notes
 =============
 
-Unreleased
-----------
+Version 1.1.5
+-------------
+
+**2018-2-1**
 
 Summary of changes:
 
@@ -11,6 +13,8 @@ Summary of changes:
 * Added support for reading EDF files (#113)
 * Included ``h5py`` in conda requirements (#118)
 * Suppressed unhelpful messages by default (#121). These can be "re-enabled" by adding a non-null log handler.
+* Fixed incompatibility between ``TalReader`` and ``pairs.json`` (#116)
+* Added a ``LocReader`` class that produces a flat view on ``localization.json`` files
 
 
 Version 1.1.4
