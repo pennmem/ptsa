@@ -1,6 +1,3 @@
-import sys
-sys.path = sys.path[1:]
-
 from ptsa.data.readers import EDFRawReader
 from ptsa.extensions.edf import EDFFile
 import pytest
