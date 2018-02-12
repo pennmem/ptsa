@@ -7,7 +7,7 @@ import h5py
 import numpy as np
 
 from ptsa.data.readers.hdf5 import H5RawReader
-from ptsa.data.readers.raw import BaseRawReader
+from ptsa.data.readers.binary import BinaryRawReader
 from ptsa.data.readers.events import CMLEventReader
 from ptsa.data.readers import EEGReader
 from ptsa.test.utils import get_rhino_root, skip_without_rhino
@@ -68,7 +68,7 @@ class TestH5Reader:
         with h5py.File(self.monopolar_file, 'r') as hfile:
             h5_data, _ = H5RawReader.read_h5file(hfile, self.channels, offsets, 1000)
 
-        raw_timeseries, _ = BaseRawReader(dataroot=self.monopolar_dataroot,
+        raw_timeseries, _ = BinaryRawReader(dataroot=self.monopolar_dataroot,
                                           channels=self.channels,
                                           start_offsets=offsets,
                                           read_size=1000).read()
@@ -81,7 +81,7 @@ class TestH5Reader:
         with h5py.File(self.monopolar_file, 'r') as hfile:
             h5_data, h5_mask = H5RawReader.read_h5file(hfile, self.channels, offsets, 1000)
 
-        raw_timeseries, raw_mask = BaseRawReader(dataroot=self.monopolar_dataroot,
+        raw_timeseries, raw_mask = BinaryRawReader(dataroot=self.monopolar_dataroot,
                                           channels=self.channels,
                                           start_offsets=offsets,
                                           read_size=1000).read()
@@ -93,7 +93,7 @@ class TestH5Reader:
         with h5py.File(self.monopolar_file, 'r') as hfile:
             h5_data, h5_mask = H5RawReader.read_h5file(hfile, self.channels, offsets, 1000)
 
-        raw_data,raw_mask = BaseRawReader(dataroot=self.monopolar_dataroot,
+        raw_data,raw_mask = BinaryRawReader(dataroot=self.monopolar_dataroot,
                                           channels=self.channels,
                                           start_offsets=offsets,
                                           read_size=1000).read()
@@ -153,7 +153,7 @@ class TestH5Reader:
         del h5_data
         h5dur = toc-tic
         tic = time.time()
-        raw_data, _ = BaseRawReader(dataroot=self.monopolar_dataroot,
+        raw_data, _ = BinaryRawReader(dataroot=self.monopolar_dataroot,
                                     channels=channels).read()
         toc = time.time()
         del raw_data

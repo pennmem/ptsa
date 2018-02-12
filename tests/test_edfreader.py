@@ -1,7 +1,3 @@
-import sys
-
-sys.path = sys.path[1:]
-
 from ptsa.data.readers import EDFRawReader
 from ptsa.extensions.edf import EDFFile
 import pytest
@@ -15,13 +11,13 @@ class TestEDFReader:
     @classmethod
     def setup(cls):
         root = get_rhino_root()
-        cls.bdf_file_template = osp.join(root,'data','eeg','scalp',
-                                         'ltp','ltpFR2','{subject:s}','session_{session:d}',
-                                         'eeg','{subject:s}_session_{session:d}.bdf')
+        cls.bdf_file_template = osp.join(root,'protocols','ltp','subjects','{subject:s}',
+                                         'experiments','ltpFR2','sessions','{session:d}',
+                                         'ephys','current_processed','{subject:s}_session_{session:d}.bdf')
 
 
     @pytest.mark.parametrize('subject,session',
-                             [('LTP360',3),])
+                             [('LTP360',2),])
                               #('LTP342',22)])
     def test_1_offset_1_chann_returns(self,subject,session):
         filename = self.bdf_file_template.format(subject=subject,session=session)
@@ -29,7 +25,7 @@ class TestEDFReader:
         EDFRawReader(dataroot=filename,channels=channel,start_offsets=np.array([0]),read_size=500).read()
 
     @pytest.mark.parametrize('subject,session',
-                             [('LTP360', 3),
+                             [('LTP360', 2),
                               ('LTP342', 22)])
     def test_1_offset_1_chann_succeeds(self, subject, session):
         filename = self.bdf_file_template.format(subject=subject, session=session)
@@ -40,7 +36,7 @@ class TestEDFReader:
         assert not np.isnan(data).any()
 
     @pytest.mark.parametrize('subject,session',
-                             [('LTP360', 3),
+                             [('LTP360', 2),
                               ('LTP342', 22)])
     def test_channels(self,subject,session):
         channels = np.array(['002','004','008','016'])
@@ -52,7 +48,7 @@ class TestEDFReader:
 
 
     @pytest.mark.parametrize('subject,session',
-                             [('LTP360', 3),
+                             [('LTP360', 2),
                               ('LTP342', 22)])
     def test_all_channels(self, subject, session):
         filename = self.bdf_file_template.format(subject=subject, session=session)
@@ -72,8 +68,6 @@ class TestEDFReader:
 
 
 if __name__ == '__main__':
-    test1 = TestEDFFile()
-    test1.test_read_rhino_samples()
     TestEDFReader.setup()
     test2 = TestEDFReader()
     test2.test_channels('LTP360',3)

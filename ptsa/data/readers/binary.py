@@ -26,9 +26,6 @@ class BinaryRawReader(BaseRawReader):
         if isinstance(self.dataroot, six.binary_type):
             self.dataroot = self.dataroot.decode()
 
-        p_reader = ParamsReader(dataroot=self.dataroot)
-        self.params_dict = p_reader.read()
-
         try:
             format_name = self.params_dict['format']
             try:

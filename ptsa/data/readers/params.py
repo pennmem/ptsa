@@ -65,14 +65,17 @@ class ParamsReader(PropertiedObject, BaseReader):
             if isfile(param_file):
                 return param_file
 
-        param_file = join(dirname(dataroot), '..', 'sources.json')
-        if isfile(param_file):
-            return param_file
+        for param_file in [join(dirname(dataroot),x) for x in ['sources.json',
+                                                              join('..', 'sources.json')]
+            ]:
+            print('looking for %s'%param_file)
+            if isfile(param_file):
+                return param_file
 
         raise IOError('No params file found in ' + str(dataroot) +
                       '. Params files must be in the same directory ' +
-                      'as the EEG data and must be named .params ' +
-                      'or params.txt, or in the directory above and '
+                      'as the EEG data and must be named .params, ' +
+                      'params.txt, or sources.json, or be in the directory above and '+
                       'named sources.json')
 
     def read(self):

@@ -4,7 +4,7 @@ from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers.base import BaseReader
 from ptsa.data.readers.params import ParamsReader
 from ptsa import six
-from abc import ABCMeta,abstractmethod
+from abc import abstractmethod
 
 
 # @six.add_metaclass(ABCMeta)
@@ -43,7 +43,8 @@ class BaseRawReader(PropertiedObject, BaseReader):
         """
 
         self.init_attrs(kwds)
-        self.params_dict = {'gain':1.0,}
+        p_reader = ParamsReader(dataroot=self.dataroot)
+        self.params_dict = p_reader.read()
 
     def read(self):
         """Read EEG data.
