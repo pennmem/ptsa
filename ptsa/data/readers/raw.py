@@ -34,7 +34,7 @@ class BaseRawReader(PropertiedObject, BaseReader):
         :param dataroot {str} -  core name of the eegfile file (i.e. full path except extension e.g. '.002').
         Normally this is eegfile field from events record
 
-        :param channels {list} - list of channels (list of strings) that should be read
+        :param channels {ndarray} - array of channels (array of strings) that should be read
         :param start_offsets {ndarray} -  array of ints with read offsets
         :param read_size {int} - size of the read chunk. If -1 the entire file is read
         --------------------------------------
