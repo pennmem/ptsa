@@ -45,8 +45,7 @@ class BaseRawReader(PropertiedObject, BaseReader):
         self.init_attrs(kwds)
         if isinstance(self.dataroot, six.binary_type):
             self.dataroot = self.dataroot.decode()
-
-        self.params_dict = {}
+        self.params_dict = {'gain':1.0}
 
 
     def read(self):
