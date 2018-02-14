@@ -68,7 +68,6 @@ class ParamsReader(PropertiedObject, BaseReader):
         for param_file in [join(dirname(dataroot),x) for x in ['sources.json',
                                                               join('..', 'sources.json')]
             ]:
-            print('looking for %s'%param_file)
             if isfile(param_file):
                 return param_file
 
