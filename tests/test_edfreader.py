@@ -1,11 +1,10 @@
-from ptsa.data.readers import EDFRawReader
-from ptsa.extensions.edf import EDFFile
+from ptsa.data.readers import EDFRawReader,JsonIndexReader,CMLEventReader,EEGReader
 import pytest
 import os.path as osp
 from ptsa.test.utils import get_rhino_root,skip_without_rhino
 import numpy as np
 
-@skip_without_rhino
+
 class TestEDFReader:
 
     @classmethod
@@ -14,8 +13,14 @@ class TestEDFReader:
         cls.bdf_file_template = osp.join(root,'protocols','ltp','subjects','{subject:s}',
                                          'experiments','ltpFR2','sessions','{session:d}',
                                          'ephys','current_processed','{subject:s}_session_{session:d}.bdf')
+        here = osp.realpath(osp.dirname(__file__))
+        cls.fname = osp.join(here, 'data', 'eeg.edf')
 
+    def test_read_local(self):
+        reader = EDFRawReader(dataroot=self.fname,channels = np.array([0,3,6]))
+        reader.read()
 
+    @skip_without_rhino
     @pytest.mark.parametrize('subject,session',
                              [('LTP360',2),])
                               #('LTP342',22)])
@@ -24,6 +29,7 @@ class TestEDFReader:
         channel = np.array(['002'])
         EDFRawReader(dataroot=filename,channels=channel,start_offsets=np.array([0]),read_size=500).read()
 
+    @skip_without_rhino
     @pytest.mark.parametrize('subject,session',
                              [('LTP360', 2),
                               ('LTP342', 22)])
@@ -35,6 +41,7 @@ class TestEDFReader:
         assert mask.all()
         assert not np.isnan(data).any()
 
+    @skip_without_rhino
     @pytest.mark.parametrize('subject,session',
                              [('LTP360', 2),
                               ('LTP342', 22)])
@@ -46,7 +53,7 @@ class TestEDFReader:
         assert mask.all()
         assert not np.isnan(data).any()
 
-
+    @skip_without_rhino
     @pytest.mark.parametrize('subject,session',
                              [('LTP360', 2),
                               ('LTP342', 22)])
@@ -56,6 +63,7 @@ class TestEDFReader:
                                   start_offsets=np.array([0]), read_size=500).read()
         return
 
+    @skip_without_rhino
     @pytest.mark.parametrize('subject,session',
                               [('LTP342', 22)])
     def test_full_session(self,subject,session):
@@ -64,6 +72,15 @@ class TestEDFReader:
         data,mask = EDFRawReader(dataroot=filename, channels=channels,read_size=-1).read()
         assert mask.all()
         assert not np.isnan(data).any()
+
+    @skip_without_rhino
+    @pytest.mark.parametrize('subject,session',
+                             [('LTP342', 22)])
+    def test_eeg_reader(self,subject,session):
+        jr = JsonIndexReader(osp.join(get_rhino_root(),'protocols','ltp.json'))
+        events = CMLEventReader(filename=jr.get_value('task_events',subject=subject,session=session)).read()
+        EEGReader(events=events[:10],start_time=0.0,end_time=0.1).read()
+
 
 
 

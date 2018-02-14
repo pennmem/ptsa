@@ -37,3 +37,9 @@ class TestEDFFile:
     def test_read_samples(self, edffile):
         data = edffile.read_samples([0,3,6], 2000)
         assert data.shape[1] == 2000
+
+
+class TestEDFRawReader:
+    """
+    Tests of EDFRawReader on sample data
+    """
