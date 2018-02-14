@@ -38,7 +38,6 @@ class EDFRawReader(BaseRawReader):
             raise RuntimeError('Dataroot missing extension (must be supplied for EDF reader)')
         super(EDFRawReader, self).__init__(**kwargs)
 
-
     def read_file(self, filename, channels, start_offsets=np.array([0]),
                   read_size=-1):
         """Read an EDF/BDF/EDF+/BDF+ file.
@@ -73,7 +72,6 @@ class EDFRawReader(BaseRawReader):
             samplerates = [self._edf.get_samplerate(c) for c in channels]
             if not (len(np.unique(samplerates))==1):
                 raise RuntimeError('Inconsistent samplerates across channels; cannot read channels simultaneously')
-
             self.params_dict['samplerate'] = samplerates[0]
 
             # Read all data

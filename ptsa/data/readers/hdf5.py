@@ -4,6 +4,7 @@ import h5py
 import numpy as np
 
 from ptsa.data.readers.raw import BaseRawReader
+from ptsa.data.readers.params import ParamsReader
 
 __all__ = [
     'H5RawReader',
@@ -29,6 +30,8 @@ class H5RawReader(BaseRawReader):
         _, data_ext = osp.splitext(kwargs['dataroot'])
         assert len(data_ext), 'Dataroot missing extension'
         super(H5RawReader, self).__init__(**kwargs)
+        p_reader = ParamsReader(dataroot=self.dataroot)
+        self.params_dict = p_reader.read()
 
     def read_file(self, filename, channels, start_offsets=np.array([0]), read_size=-1):
         """

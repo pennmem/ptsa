@@ -43,8 +43,11 @@ class BaseRawReader(PropertiedObject, BaseReader):
         """
 
         self.init_attrs(kwds)
-        p_reader = ParamsReader(dataroot=self.dataroot)
-        self.params_dict = p_reader.read()
+        if isinstance(self.dataroot, six.binary_type):
+            self.dataroot = self.dataroot.decode()
+
+        self.params_dict = {}
+
 
     def read(self):
         """Read EEG data.
