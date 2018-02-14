@@ -16,7 +16,7 @@ except ImportError:
     from ConfigParser import SafeConfigParser
 
 from .basewrapper import BaseWrapper
-from ..six import text_type
+from six import text_type
 
 class BVWrapper(BaseWrapper):
     """

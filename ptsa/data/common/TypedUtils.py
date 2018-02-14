@@ -1,5 +1,5 @@
 from collections import namedtuple
-from ptsa.six import with_metaclass
+from six import with_metaclass
 
 TypeValTuple = namedtuple('TypeValTuple', ['name', 'type', 'default'], verbose=False)
 

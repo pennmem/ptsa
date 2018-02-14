@@ -14,7 +14,7 @@ import os
 from glob import glob
 
 from .basewrapper import BaseWrapper
-from ..six import string_types
+from six import string_types
 
 class RawBinWrapper(BaseWrapper):
     """

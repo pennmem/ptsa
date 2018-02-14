@@ -18,7 +18,7 @@ import os
 from glob import glob
 
 from .BaseWrapperXray import BaseWrapperXray
-from ..six import string_types
+from six import string_types
 
 
 class RawBinWrapperXray(BaseWrapperXray):
