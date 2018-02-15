@@ -1,12 +1,14 @@
 import os.path as osp
 import unittest
 from numpy.testing import assert_array_equal
+import numpy as np
 import pytest
 
 from ptsa.data.filters.ButterworthFilter import ButterworthFilter
 from ptsa.data.filters.ResampleFilter import ResampleFilter
 from ptsa.data.events import Events
 from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
+from ptsa.data.readers import EEGReader
 from ptsa.test.utils import EventReadersTestBase, skip_without_rhino, get_rhino_root
 
 
@@ -70,6 +72,14 @@ class TestEEGRead(unittest.TestCase, EventReadersTestBase):
 
         # testing
         assert_array_equal(eegs, base_eegs.data)
+
+    def test_EEGReader_old(self):
+        base_events = self.read_base_events()
+        time_series_reader = EEGReader(events=base_events, start_time=0.0,channels=np.array(['002', '003']),
+                                                 end_time=1.6, buffer_time=1.0)
+        time_series_reader.read()
+
+
 
     @pytest.mark.xfail
     def test_eeg_read_keep_buffer_butterworth_filtered(self):

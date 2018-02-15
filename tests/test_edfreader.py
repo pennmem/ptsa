@@ -1,4 +1,4 @@
-from ptsa.data.readers import EDFRawReader,JsonIndexReader,CMLEventReader,EEGReader
+from ptsa.data.readers import EDFRawReader,JsonIndexReader,BaseEventReader,EEGReader
 import pytest
 import os.path as osp
 from ptsa.test.utils import get_rhino_root,skip_without_rhino
@@ -36,7 +36,8 @@ class TestEDFReader:
     def test_1_offset_1_chann_succeeds(self, subject, session):
         filename = self.bdf_file_template.format(subject=subject, session=session)
         channel = np.array(['002'])
-        reader  = EDFRawReader(dataroot=filename, channels=channel, start_offsets=np.array([0]), read_size=500)
+        reader  = EDFRawReader(dataroot=filename)
+        reader.init_attrs(dict(channels=channel, start_offsets=np.array([0]), read_size=500))
         data,mask = reader.read_file(reader.dataroot,channel,read_size=500)
         assert mask.all()
         assert not np.isnan(data).any()
@@ -73,12 +74,15 @@ class TestEDFReader:
         assert mask.all()
         assert not np.isnan(data).any()
 
+
+
     @skip_without_rhino
     @pytest.mark.parametrize('subject,session',
                              [('LTP342', 22)])
     def test_eeg_reader(self,subject,session):
         jr = JsonIndexReader(osp.join(get_rhino_root(),'protocols','ltp.json'))
-        events = CMLEventReader(filename=jr.get_value('task_events',subject=subject,session=session)).read()
+        events = BaseEventReader(filename=jr.get_value('task_events',subject=subject,session=session)).read()
+        events['eegfile'] = get_rhino_root()+events[0]['eegfile'] # hack to make the scalp events work with Rhino mounted
         EEGReader(events=events[:10],start_time=0.0,end_time=0.1).read()
 
 
