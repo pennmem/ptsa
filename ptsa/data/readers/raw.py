@@ -3,7 +3,7 @@ from xarray import DataArray
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers.base import BaseReader
 from ptsa.data.readers.params import ParamsReader
-from ptsa import six
+import six
 from abc import abstractmethod
 
 
