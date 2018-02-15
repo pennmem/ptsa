@@ -37,6 +37,10 @@ class BinaryRawReader(BaseRawReader):
             warnings.warn('Could not find data format definition in the params file. Will read the file assuming' \
                           ' data format is int16', RuntimeWarning)
 
+
+    def samplerate(self):
+        return super(BinaryRawReader, self).samplerate()
+
     def get_file_size(self):
         """
         :return: {int} size of the files whose core name (dataroot) matches self.dataroot. Assumes ALL files with this
@@ -56,7 +60,8 @@ class BinaryRawReader(BaseRawReader):
 
         # allocate space for data
         eventdata = np.empty((len(channels), len(start_offsets), read_size),
-                             dtype=np.float) * np.nan
+                             dtype=np.float)
+        eventdata.fill(np.nan)
         read_ok_mask = np.ones(shape=(len(channels), len(start_offsets)), dtype=np.bool)
         # loop over channels
         for c, channel in enumerate(channels):

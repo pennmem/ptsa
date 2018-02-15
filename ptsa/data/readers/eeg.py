@@ -78,7 +78,7 @@ class EEGReader(PropertiedObject, BaseReader):
             self.read_fcn = self.read_session_data
         self.channel_name = 'channels'
 
-    def compute_read_offsets(self, dataroot):
+    def compute_read_offsets(self,reader):
         """
         Reads Parameter file and exracts sampling rate that is used to convert from start_time, end_time, buffer_time
         (expressed in seconds)
@@ -87,13 +87,12 @@ class EEGReader(PropertiedObject, BaseReader):
         :param dataroot: core name of the eeg datafile
         :return: tuple of 3 {int} - start_offset, end_offset, buffer_offset
         """
-        p_reader = ParamsReader(dataroot=dataroot)
-        params = p_reader.read()
-        samplerate = params['samplerate']
+
+        samplerate = reader.params_dict['samplerate']
 
         start_offset = int(np.round(self.start_time * samplerate))
         end_offset = int(np.round(self.end_time * samplerate))
-        buffer_offset = int(np.round(self.buffer_time * samplerate))
+        buffer_offset = int(np.round(self .buffer_time * samplerate))
 
         return start_offset, end_offset, buffer_offset
 
@@ -101,7 +100,7 @@ class EEGReader(PropertiedObject, BaseReader):
         """
         Creates BaseRawreader for each (unique) dataroot present in events recarray
         :return: list of BaseRawReaders and list of dataroots
-        :raises: [IncompatibleDataError] if the readers are not all the same class
+        :raises: :py:class:IncompatibleDataError if the readers are not all the same class
         """
         evs = self.events
         dataroots = np.unique(evs.eegfile)
@@ -109,17 +108,19 @@ class EEGReader(PropertiedObject, BaseReader):
         original_dataroots = []
 
         for dataroot in dataroots:
+            brr = self.READER_FILETYPE_DICT[os.path.splitext(dataroot)[-1]](dataroot =dataroot)
+
             events_with_matched_dataroot = evs[evs.eegfile == dataroot]
 
-            start_offset, end_offset, buffer_offset = self.compute_read_offsets(dataroot=dataroot)
+            start_offset, end_offset, buffer_offset = self.compute_read_offsets(brr)
 
             read_size = end_offset - start_offset + 2 * buffer_offset
 
             # start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
             start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
 
-            brr = self.READER_FILETYPE_DICT[os.path.splitext(dataroot)[-1]](dataroot=dataroot, channels=self.channels, start_offsets=start_offsets,
-                                read_size=read_size)
+            brr.init_attrs(dict(channels=self.channels, start_offsets=start_offsets,
+                                read_size=read_size))
             raw_readers.append(brr)
 
             original_dataroots.append(dataroot)
