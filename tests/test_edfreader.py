@@ -54,6 +54,14 @@ class TestEDFReader:
         assert mask.all()
         assert not np.isnan(data).any()
 
+
+    def test_channel_names(self):
+        channels = np.array(['EEG FP1','EEG FP2'])
+        data,mask = EDFRawReader(dataroot='data/eeg.edf',channels=channels,
+                                 start_offsets=np.array([0]), read_size=500).read()
+        assert mask.all()
+        assert not np.isnan(data).any()
+
     @skip_without_rhino
     @pytest.mark.parametrize('subject,session',
                              [('LTP360', 2),
@@ -83,7 +91,10 @@ class TestEDFReader:
         jr = JsonIndexReader(osp.join(get_rhino_root(),'protocols','ltp.json'))
         events = BaseEventReader(filename=jr.get_value('task_events',subject=subject,session=session)).read()
         events['eegfile'] = get_rhino_root()+events[0]['eegfile'] # hack to make the scalp events work with Rhino mounted
-        EEGReader(events=events[:10],start_time=0.0,end_time=0.1).read()
+        channels = np.array([0,1])
+        eeg = EEGReader(events=events[:10],channels = channels,start_time=0.0,end_time=0.1).read()
+        assert (eeg['channels'].values['index']== channels).all()
+        assert (eeg['channels'].values['label']==np.array(['A1','A2'],dtype=bytes)).all()
 
 
 
