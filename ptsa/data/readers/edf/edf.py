@@ -85,8 +85,14 @@ class EDFRawReader(BaseRawReader):
             else:
                 try:
                     channels = [int(c) for c in channels]
+                    indexes = channels
+                    labels = [self._edf.get_channel_info(c).label for c in channels]
                 except ValueError:
                     channels = [c for c in channels]
+                    indexes = self._edf.get_channel_numbers(channels)
+                    labels = channels
+
+                self.channels = np.rec.array(list(zip(indexes,labels)),dtype=[('index',int),('label','S17')])
 
             # Read all data
             if read_size < 0:
