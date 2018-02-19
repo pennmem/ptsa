@@ -63,8 +63,8 @@ class EDFRawReader(BaseRawReader):
         ----------
         filename : str
             Path to file to read.
-        channels : list
-            Channels to read from. If False-like, use all channels.
+        channels : Union(List[int],List[str])
+            Channel names or numbers to read from. If names, leading If False-like, use all channels.
         start_offsets : np.ndarray
             Indices to start reading at (*not* the actual offset times).
         read_size : int
@@ -79,13 +79,14 @@ class EDFRawReader(BaseRawReader):
         """
         with closing(EDFFile(self.dataroot)) as self._edf:
 
+
             if not len(channels):
                 channels = [n for n in range(self._edf.num_channels)]
             else:
-                channels = [int(n) for n in channels]
-
-            if not len(self.channels):
-                self.channels = np.array(channels)
+                try:
+                    channels = [int(c) for c in channels]
+                except ValueError:
+                    channels = [c for c in channels]
 
             # Read all data
             if read_size < 0:
@@ -124,5 +125,5 @@ if __name__ == "__main__":
     fname = osp.expanduser("/Volumes/rhino_root/data/eeg/eeg/scalp/ltp/ltpFR2/LTP375/session_0/eeg/LTP375_session_0.bdf")
 
     reader = EDFRawReader(dataroot=fname)
-    data, mask = reader.read_file(fname, [], read_size=1024, start_offsets=[0, 1024, 2048])
+    data, mask = reader.read_file(fname, [], read_size=1024, start_offsets=np.array([0, 1024, 2048]))
     print(data)
