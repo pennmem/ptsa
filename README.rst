@@ -68,24 +68,12 @@ Install PTSA:
 Building conda packages
 -----------------------
 
-Before we begin building conda PTSA packages we need to set the PYTHON_BUILD_NUMBER system variable. For example,
-if we are building PTSA conda package for Python 2.7 we set PYTHON_BUILD_NUMBER to be 2.7. On linux you do it via
+If you don't already have it installed, you'll need to install the conda build
+tool:
 
 .. code-block:: shell-session
 
-    export PYTHON_BUILD_VERSION=2.7
-
-on Windows:
-
-.. code-block:: shell-session
-
-    set PYTHON_BUILD_VERSION=2.7
-
-Next, in the root conda environment, install ``conda-build``:
-
-.. code-block:: shell-session
-
-   conda install conda-build
+    conda install conda-build
 
 Update the version number in ``conda.recipe/meta.yaml``.
 
@@ -119,6 +107,14 @@ and type:
 where ``<architecture folder>`` denotes name of the arget architecture for which conda package was build. e.g. on 64-bit
 Windows the architecture folder will be called ``win-64`` (hence conda packages will be generated in
 ``<conda installation dir>/conda-bld/win-64``
+
+Hints for Windows
+^^^^^^^^^^^^^^^^^
+
+You'll want to install Microsoft Visual Studio 2015 (or newer) community edition
+in order to compile extensions. For environment variables to be setup correctly,
+use the "Developer Command Prompt for VS20xy" which can be found for example
+in ``Start->All Programs->Visual Studio 2015->Visual Studio Tools``.
 
 License
 -------

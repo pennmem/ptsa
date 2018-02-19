@@ -1,4 +1,5 @@
 #include <exception>
+#include <locale>
 #include <string>
 
 #include <pybind11/pybind11.h>
