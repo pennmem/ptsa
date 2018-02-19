@@ -45,10 +45,10 @@ class EDFRawReader(BaseRawReader):
             if not len(channels):
                 channels = [n for n in range(self._edf.num_channels)]
             else:
-                channels = [int(n) for n in channels]
-
-            if not len(self.channels):
-                self.channels = np.array(channels)
+                try:
+                    channels = [int(n) for n in channels]
+                except ValueError:
+                    channels = self._edf.get_channel_numbers(channels)
 
             samplerates = [self._edf.get_samplerate(c) for c in channels]
             if not (len(np.unique(samplerates))==1):
@@ -79,9 +79,9 @@ class EDFRawReader(BaseRawReader):
         """
         with closing(EDFFile(self.dataroot)) as self._edf:
 
-
             if not len(channels):
-                channels = [n for n in range(self._edf.num_channels)]
+                indexes = channels = [n for n in range(self._edf.num_channels)]
+                labels = self._edf.get_channel_numbers(channels)
             else:
                 try:
                     channels = [int(c) for c in channels]
@@ -92,7 +92,6 @@ class EDFRawReader(BaseRawReader):
                     indexes = self._edf.get_channel_numbers(channels)
                     labels = channels
 
-                self.channels = np.rec.array(list(zip(indexes,labels)),dtype=[('index',int),('label','S17')])
 
             # Read all data
             if read_size < 0:
@@ -101,7 +100,8 @@ class EDFRawReader(BaseRawReader):
                     warnings.warn(msg, UserWarning)
                 data = self._edf.read_samples(channels, self._edf.num_samples)
                 self.read_size = int(self._edf.num_samples)
-                return data[:, None, :], np.ones((len(channels), 1), dtype=bool)
+                data = data[:,None,:]
+                read_ok_mask = np.ones((len(channels), 1), dtype=bool)
 
             # Read epochs
             else:
@@ -123,7 +123,9 @@ class EDFRawReader(BaseRawReader):
                     else:
                         logger.warning("Cannot read full chunk of data for offset %d... probably end of file", offset)
                         read_ok_mask[:, i] = False
-                return data, read_ok_mask
+
+            self.channels = np.rec.array(list(zip(indexes,labels)),dtype=[('index',int),('label','S17')])
+            return data, read_ok_mask
 
 
 if __name__ == "__main__":
