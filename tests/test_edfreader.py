@@ -4,7 +4,24 @@ import os.path as osp
 from ptsa.test.utils import get_rhino_root,skip_without_rhino
 import numpy as np
 
+@pytest.fixture
+def local_eegfile():
+    return osp.join(osp.dirname(__file__),'data','eeg.edf')
 
+def test_read_local(local_eegfile):
+    reader = EDFRawReader(dataroot=local_eegfile,channels = np.array([0,3,6]))
+    reader.read()
+
+
+def test_channel_names(local_eegfile):
+    channels = np.array(['EEG FP1','EEG FP2'])
+    data,mask = EDFRawReader(dataroot=local_eegfile,channels=channels,
+                             start_offsets=np.array([0]), read_size=500).read()
+    assert mask.all()
+    assert not np.isnan(data).any()
+
+
+@skip_without_rhino
 class TestEDFReader:
 
     @classmethod
@@ -16,11 +33,6 @@ class TestEDFReader:
         here = osp.realpath(osp.dirname(__file__))
         cls.fname = osp.join(here, 'data', 'eeg.edf')
 
-    def test_read_local(self):
-        reader = EDFRawReader(dataroot=self.fname,channels = np.array([0,3,6]))
-        reader.read()
-
-    @skip_without_rhino
     @pytest.mark.parametrize('subject,session',
                              [('LTP360',2),])
                               #('LTP342',22)])
@@ -29,7 +41,6 @@ class TestEDFReader:
         channel = np.array(['002'])
         EDFRawReader(dataroot=filename,channels=channel,start_offsets=np.array([0]),read_size=500).read()
 
-    @skip_without_rhino
     @pytest.mark.parametrize('subject,session',
                              [('LTP360', 2),
                               ('LTP342', 22)])
@@ -42,7 +53,6 @@ class TestEDFReader:
         assert mask.all()
         assert not np.isnan(data).any()
 
-    @skip_without_rhino
     @pytest.mark.parametrize('subject,session',
                              [('LTP360', 2),
                               ('LTP342', 22)])
@@ -55,14 +65,7 @@ class TestEDFReader:
         assert not np.isnan(data).any()
 
 
-    def test_channel_names(self):
-        channels = np.array(['EEG FP1','EEG FP2'])
-        data,mask = EDFRawReader(dataroot='data/eeg.edf',channels=channels,
-                                 start_offsets=np.array([0]), read_size=500).read()
-        assert mask.all()
-        assert not np.isnan(data).any()
 
-    @skip_without_rhino
     @pytest.mark.parametrize('subject,session',
                              [('LTP360', 2),
                               ('LTP342', 22)])
@@ -72,7 +75,6 @@ class TestEDFReader:
                                   start_offsets=np.array([0]), read_size=500).read()
         return
 
-    @skip_without_rhino
     @pytest.mark.parametrize('subject,session',
                               [('LTP342', 22)])
     def test_full_session(self,subject,session):
@@ -84,7 +86,6 @@ class TestEDFReader:
 
 
 
-    @skip_without_rhino
     @pytest.mark.parametrize('subject,session',
                              [('LTP342', 22)])
     def test_eeg_reader(self,subject,session):
