@@ -81,7 +81,7 @@ class EDFRawReader(BaseRawReader):
 
             if not len(channels):
                 indexes = channels = [n for n in range(self._edf.num_channels)]
-                labels = self._edf.get_channel_numbers(channels)
+                labels = [self._edf.get_channel_info(c).label for c in channels]
             else:
                 try:
                     channels = [int(c) for c in channels]
