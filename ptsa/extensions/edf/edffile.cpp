@@ -178,10 +178,6 @@ public:
         return (static_cast<double>(this->header.signalparam[channel].smp_in_datarecord) / static_cast<double>(this->header.datarecord_duration)) * EDFLIB_TIME_DIMENSION;
     }
 
-    inline auto get_gain(int channel){
-
-    }
-
     inline long long get_num_samples()
     {
         ensure_open();
