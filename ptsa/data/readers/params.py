@@ -3,7 +3,7 @@ import json
 from os.path import *
 import warnings
 
-from ptsa import six
+import six
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
 

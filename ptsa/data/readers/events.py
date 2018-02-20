@@ -1,6 +1,6 @@
 import numpy as np
 
-from ptsa import six
+import six
 from ptsa.data.common import TypeValTuple
 from ptsa.data.events import Events
 from ptsa.data.rawbinwrapper import RawBinWrapper

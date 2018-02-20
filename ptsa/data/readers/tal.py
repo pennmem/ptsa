@@ -4,7 +4,7 @@ import os
 import numpy as np
 import pandas as pd
 
-from ptsa import six
+import six
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
 

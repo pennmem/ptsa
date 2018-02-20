@@ -14,7 +14,7 @@ from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.common.path_utils import find_dir_prefix
 from ptsa.data.common import pathlib
 from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
-from ptsa import six
+import six
 
 __all__ = [
     'BaseReader',

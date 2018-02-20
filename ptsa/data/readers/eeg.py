@@ -11,7 +11,7 @@ from ptsa.data.readers.edf import EDFRawReader
 from ptsa.data.readers.binary import BinaryRawReader
 from ptsa.data.readers.hdf5 import H5RawReader
 from ptsa.data.readers.base import BaseReader
-from ptsa import six
+import six
 from ptsa.data.TimeSeriesX import TimeSeriesX
 
 __all__ = [
