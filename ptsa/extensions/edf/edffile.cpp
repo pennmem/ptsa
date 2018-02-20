@@ -263,16 +263,17 @@ public:
         std::vector<int> channel_numbers = std::vector<int>();
         for (std::string name : channel_names)
         {
+            bool found = false;
             for(int c=0;c< this->get_num_channels();c++)
             {
                 auto info = this->get_channel_info(c);
                 std::string label  = std::string(info.label);
                 if(label.compare(0,name.size(),name)==0)
                 {
+                    found=true;
                     channel_numbers.push_back(c);
                     break;
                 }
-                py::print("Could not locate channel ",name);
             }
         }
         if(channel_numbers.size()==channel_names.size()) return channel_numbers;
