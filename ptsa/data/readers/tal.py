@@ -5,8 +5,8 @@ import numpy as np
 import pandas as pd
 
 from ptsa import six
-from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
+import traits.api
 
 __all__ = [
     'TalReader',
@@ -14,17 +14,16 @@ __all__ = [
 ]
 
 
-class TalReader(PropertiedObject, BaseReader):
+class TalReader(BaseReader,traits.api.HasTraits):
     """
-    Reader that reads tal structs Matlab file or pais.json file and converts it to numpy recarray
+    Reader that reads tal structs Matlab file or pairs.json file and converts it to numpy recarray
     """
-    _descriptors = [
-        TypeValTuple('filename', six.string_types, ''),
-        TypeValTuple('struct_name', six.string_types, 'bpTalStruct'),
-        TypeValTuple('struct_type',six.string_types,'bi')
-    ]
 
-    def __init__(self, **kwds):
+    filename = traits.api.Str
+    struct_name = traits.api.Str
+    struct_type = traits.api.Enum('bi','mono')
+
+    def __init__(self, filename,struct_name='bpTalStruct',struct_type='bi'):
         """
         Keyword arguments
         -----------------
@@ -35,8 +34,11 @@ class TalReader(PropertiedObject, BaseReader):
         :return: None
 
         """
+        super(TalReader, self).__init__()
+        self.filename = filename
+        self.struct_name = struct_name
+        self.struct_type  = struct_type
 
-        self.init_attrs(kwds)
         self.bipolar_channels=None
 
         self.tal_struct_array = None
