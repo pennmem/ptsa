@@ -5,12 +5,11 @@ import xarray as xr
 from scipy.fftpack import fft, ifft
 
 from ptsa.data.TimeSeriesX import TimeSeriesX
-from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.filters import BaseFilter
 from ptsa.wavelet import morlet_multi, next_pow2
+import traits.api
 
-
-class MorletWaveletFilter(PropertiedObject, BaseFilter):
+class MorletWaveletFilter(BaseFilter):
     """
     Applies a Morlet wavelet transform to a time series, returning the power and phase spectra over time.
 
@@ -32,20 +31,21 @@ class MorletWaveletFilter(PropertiedObject, BaseFilter):
     verbose: bool
         Print out the wavelet parameters
     """
-    _descriptors = [
-        TypeValTuple('freqs', np.ndarray, np.array([], dtype=np.float)),
-        TypeValTuple('width', int, 5),
-        TypeValTuple('output', str, ''),
-        TypeValTuple('frequency_dim_pos', int, 0),
-        # NOTE in this implementation the default position of frequency is -2
-        TypeValTuple('verbose', bool, True),
-    ]
+    freqs = traits.api.CArray
+    width = traits.api.Int
+    output = traits.api.Str
+    frequency_dim_pos = traits.api.Int
+    verbose = traits.api.Bool
 
-    def __init__(self, time_series, **kwds):
+    def __init__(self, time_series, freqs,width=5,output='',frequency_dim_pos=-2,verbose=True):
 
+        super(MorletWaveletFilter, self).__init__(time_series)
+        self.freqs = freqs
+        self.width = width
+        self.output = output
+        self.frequency_dim_pos = frequency_dim_pos
+        self.verbose = True
         self.window = None
-        self.time_series = time_series
-        self.init_attrs(kwds)
 
         self.compute_power_and_phase_fcn = None
 

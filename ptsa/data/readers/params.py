@@ -3,35 +3,34 @@ import json
 from os.path import *
 import warnings
 
-import six
-from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
+import traits.api
 
 __all__ = [
     'ParamsReader',
 ]
 
 
-class ParamsReader(PropertiedObject, BaseReader):
+class ParamsReader( BaseReader,traits.api.HasTraits):
     """
     Reader for parameter file (e.g. params.txt)
     """
-    _descriptors = [
-        TypeValTuple('filename', six.string_types, ''),
-        TypeValTuple('dataroot', six.string_types, ''),
-    ]
+    filename= traits.api.Str
+    dataroot = traits.api.Str
 
-    def __init__(self, **kwds):
+    def __init__(self, filename='',dataroot=''):
         """
         Constructor
         :param kwds:allowed values are:
         -------------------------------------
-        :param filename {str} -  path t params file
+        :param filename {str} -  path to params file
         :param dataroot {str} -  core name of the eegfiles
 
         :return: None
         """
-        self.init_attrs(kwds)
+        super(ParamsReader, self).__init__()
+        self.filename = filename
+        self.dataroot = dataroot
 
         if self.filename:
             if not isfile(self.filename):
@@ -52,7 +51,8 @@ class ParamsReader(PropertiedObject, BaseReader):
                 'dataformat': Converter(convert=lambda s: s.replace("'", "").replace('"', ''), name='format')
             }
 
-    def locate_params_file(self, dataroot):
+    @staticmethod
+    def locate_params_file(dataroot):
         """
         Identifies exact path to param file.
         :param dataroot: {str} eeg core file name

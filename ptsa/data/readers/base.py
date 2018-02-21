@@ -9,8 +9,9 @@ import unicodedata
 from collections import defaultdict
 import numpy as np
 import pandas as pd
+from abc import abstractmethod
+import traits.api
 
-from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.common.path_utils import find_dir_prefix
 from ptsa.data.common import pathlib
 from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
@@ -24,11 +25,12 @@ __all__ = [
 
 class BaseReader(object):
     """Base reader class. Children should implement the :meth:`read` method."""
+    @abstractmethod
     def read(self):
         raise NotImplementedError
 
 
-class BaseEventReader(PropertiedObject, BaseReader):
+class BaseEventReader(BaseReader,traits.api.HasTraits):
     """Reader class that reads event file and returns them as np.recarray.
 
     Keyword arguments
@@ -54,17 +56,22 @@ class BaseEventReader(PropertiedObject, BaseReader):
         '/' in the common_root
 
     """
-    _descriptors = [
-        TypeValTuple('filename', six.string_types, ''),
-        TypeValTuple('eliminate_events_with_no_eeg', bool, True),
-        TypeValTuple('eliminate_nans', bool, True),
-        TypeValTuple('use_reref_eeg', bool, False),
-        TypeValTuple('normalize_eeg_path', bool, True),
-        TypeValTuple('common_root', six.string_types, 'data/events')
-    ]
+    filename = traits.api.Str
+    eliminate_events_with_no_eeg = traits.api.Bool
+    eliminate_nans= traits.api.Bool
+    _alter_eeg_path_flag = traits.api.Bool
+    normalize_eeg_path = traits.api.Bool
+    common_root = traits.api.Str
 
-    def __init__(self, **kwds):
-        self.init_attrs(kwds)
+    def __init__(self, filename,common_root='data/events',
+                 eliminate_events_with_no_eeg=True,eliminate_nans=True,use_reref_eeg=False,
+                 normalize_eeg_path=True):
+        self.filename = filename
+        self.common_root = common_root
+        self.eliminate_events_with_no_eeg = eliminate_events_with_no_eeg
+        self.eliminate_nans = eliminate_nans
+        self.use_reref_eeg = use_reref_eeg
+        self.normalize_eeg_path = normalize_eeg_path
         self._alter_eeg_path_flag = not self.use_reref_eeg
 
     @property
