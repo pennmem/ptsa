@@ -3,9 +3,6 @@ import os
 
 import numpy as np
 import pandas as pd
-
-import six
-from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
 import traits.api
 
