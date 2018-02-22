@@ -861,6 +861,11 @@ def test_from_dict():
     assert (pairs_array.channel == channel_array).all()
 
 
+def test_talreader():
+    pairinfo = TalReader(filename=osp.join(osp.dirname(__file__),'data','pairs.json')).read()
+    _ = pairinfo.atlases.avg[['x','y','z']]
+    _ = pairinfo.atlases.mni.region
+
 def test_with_version_no():
     fname = osp.join(osp.dirname(__file__),'data','pairs.json')
     tal_reader =TalReader(filename=fname)
