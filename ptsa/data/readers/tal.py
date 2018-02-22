@@ -55,7 +55,6 @@ class TalReader(PropertiedObject, BaseReader):
             if self.tal_struct_array is None:
                 self.read()
             self.initialize_bipolar_pairs()
-
         return self.bipolar_channels
 
     def get_monopolar_channels(self):
@@ -76,24 +75,65 @@ class TalReader(PropertiedObject, BaseReader):
         # initialize bipolar pairs
         self.bipolar_channels = np.recarray(shape=(len(self.tal_struct_array)), dtype=[('ch0','|S3'),('ch1','|S3')])
 
-        channel_record_array = self.tal_struct_array['channel']
+        if self._json and self.struct_type=='bi':
+            channel_record_array = self.tal_struct_array[['channel_1','channel_2']]
+        else:
+            channel_record_array = self.tal_struct_array['channel']
         for i, channel_array in enumerate(channel_record_array):
             self.bipolar_channels[i] = tuple(map(lambda x: str(x).zfill(3), channel_array))
 
-    def from_dict(self,pairs):
-        keys = pairs.keys()
-        subject = [k for k in keys if k not in ['version','info','meta']][0]
 
-        if self.struct_type=='bi':
-            pairs = pd.DataFrame.from_dict(pairs[subject]['pairs'], orient='index').sort_values(by=['channel_1','channel_2'])
-            pairs.index.name = 'tagName'
-            pairs['channel'] = [[ch1, ch2] for ch1, ch2 in zip(pairs.channel_1.values, pairs.channel_2.values)]
-            pairs['eType'] = pairs.type_1
-            return pairs.to_records()
-        elif self.struct_type == 'mono':
-            contacts = pd.DataFrame.from_dict(pairs[subject]['contacts'],orient='index').sort_values(by='channel')
-            contacts.index.name = 'tagName'
-            return contacts.to_records()
+    @classmethod
+    def from_records(cls,contact_dict,name=None):
+        contact_df = pd.DataFrame.from_records([x if not pd.isnull(x) else {} for x in contact_dict])
+        contact_df.name=name
+        dict_cols = [col for col in contact_df.columns if any(isinstance(val,dict) for val in contact_df[col])]
+        flat_cols = [col for col in contact_df.columns if not col in dict_cols]
+        flat_df = contact_df[flat_cols]
+        dtype = cls.mkdtype(flat_df)
+
+        nested_arrs = [cls.from_records(contact_df[col],name=col) for col in dict_cols]
+        nested_dtypes = [np.dtype([(bytes(col),x.dtype)]) for col,x in zip(dict_cols,nested_arrs)]
+        new_dtype = cls.merge_dtypes(dtype,*nested_dtypes)
+        new_arr = np.empty(len(contact_df),dtype=new_dtype)
+        for col in flat_cols:
+            new_arr[col] = flat_df[col].values
+        for (i,col) in enumerate(dict_cols):
+            new_arr[col] = nested_arrs[i]
+        return new_arr
+
+    def from_dict(self,json_dict):
+        keys = json_dict.keys()
+        subject = [k for k in keys if k not in ['version', 'info', 'meta']][0]
+        ts = np.rec.array(self.from_records(
+            json_dict[subject]['contacts' if self.struct_type == 'mono' else 'pairs'].values())
+        )
+        if 'channel' in ts.dtype.names:
+            ts.sort(order ='channel')
+        else:
+            ts.sort(order=['channel_1','channel_2'])
+        return ts
+
+
+    @classmethod
+    def mkdtype(cls,flat_df):
+        """
+        Invariant: there are no subfields of flat_df whose elements are dictionaries
+        :param flat_df: {pandas.DataFrame}
+        :return: {np.dtype}
+        """
+        dt_list =  [(bytes(c),flat_df[c].values.dtype if flat_df[c].values.dtype != np.dtype('O') else 'U256') for c in flat_df.columns]
+        return np.dtype(dt_list)
+
+    @classmethod
+    def merge_dtypes(cls,*dtypes):
+        if len(dtypes) == 1:
+            return dtypes[0]
+        elts = [(n,dt[n]) for dt in dtypes for n in dt.names]
+        return np.dtype(elts)
+
+
+
 
     def read(self):
 
