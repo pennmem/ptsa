@@ -9,8 +9,12 @@ def test_talreader_on_database():
     old_reader = TalReader(filename=osp.join(utils.get_rhino_root(),'data/eeg/R1234D/tal/R1234D_talLocs_database_bipol.mat'))
     jr = JsonIndexReader(osp.join(utils.get_rhino_root(),'protocols/r1.json'))
     new_reader = TalReader(filename=jr.get_value('pairs',subject='R1234D',experiment='FR1'))
-    assert (new_reader.get_bipolar_pairs() == old_reader.get_bipolar_pairs()).all()
-    assert (new_reader.get_monopolar_channels() == old_reader.get_monopolar_channels()).all()
+    new_pairs = new_reader.get_bipolar_pairs()
+    old_pairs = old_reader.get_bipolar_pairs()
+    assert (new_pairs == old_pairs).all()
+    new_channels = new_reader.get_monopolar_channels()
+    old_channels = old_reader.get_monopolar_channels()
+    assert (new_channels == old_channels).all()
 
 
 def test_from_dict():
