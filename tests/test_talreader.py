@@ -853,18 +853,19 @@ def test_from_dict():
     u'type_1': u'G',
     u'type_2': u'G'},}}}
     pairs_array = TalReader().from_dict(pairs_dict)
-    channel_array = np.empty(19,dtype=object)
-    channel_array[:] = sorted([   [89, 90],[90, 91],[91, 92],[65, 66],[66, 67],[67, 68],
-            [69, 70],[70, 71],[71, 72],[73, 74],[74,75],[75, 76],
-            [76, 77],[77, 78],[78, 79],[79, 80],[1, 2],[1, 9],[10, 11]])
-    assert pairs_array.channel.shape==channel_array.shape
-    assert (pairs_array.channel == channel_array).all()
+    channel_array = np.rec.array(sorted([(89, 90),(90, 91),(91, 92),(65, 66),(66, 67),(67, 68),
+            (69, 70),(70, 71),(71, 72),(73, 74),(74,75),(75, 76),
+            (76, 77),(77, 78),(78, 79),(79, 80),(1, 2),(1, 9),(10, 11)]),
+                             dtype=([('channel_1',int),('channel_2',int)]))
+    assert pairs_array[['channel_1','channel_2']].shape==channel_array.shape
+    assert (pairs_array[['channel_1','channel_2']] == channel_array).all()
 
 
 def test_talreader():
     pairinfo = TalReader(filename=osp.join(osp.dirname(__file__),'data','pairs.json')).read()
     _ = pairinfo.atlases.avg[['x','y','z']]
     _ = pairinfo.atlases.mni.region
+    assert pairinfo[pairinfo['code']=='ACC1-ACC2'].atlases.avg.region == 'None'
 
 def test_with_version_no():
     fname = osp.join(osp.dirname(__file__),'data','pairs.json')
