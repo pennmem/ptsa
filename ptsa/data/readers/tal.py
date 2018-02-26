@@ -111,14 +111,14 @@ class TalReader(PropertiedObject, BaseReader):
         dtype = cls.mkdtype(flat_df)
 
         nested_arrs = [cls.from_records(contact_df[col]) for col in dict_cols]
-        nested_dtypes = [np.dtype([(bytes(col),x.dtype)]) for col,x in zip(dict_cols,nested_arrs)]
+        nested_dtypes = [np.dtype([(str(col),x.dtype)]) for col,x in zip(dict_cols,nested_arrs)]
         new_dtype = cls.merge_dtypes(dtype,*nested_dtypes)
         new_arr = np.empty(len(contact_df),dtype=new_dtype)
         for col in flat_cols:
             new_arr[col] = flat_df[col].values
         for (i,col) in enumerate(dict_cols):
             new_arr[col] = nested_arrs[i]
-        return new_arr
+        return np.rec.array(new_arr)
 
     def from_dict(self,json_dict):
         """
@@ -145,7 +145,7 @@ class TalReader(PropertiedObject, BaseReader):
         :param flat_df: {pandas.DataFrame}
         :return: {np.dtype}
         """
-        dt_list =  [(bytes(c),flat_df[c].values.dtype if flat_df[c].values.dtype != np.dtype('O') else 'U256') for c in flat_df.columns]
+        dt_list =  [(str(c),flat_df[c].values.dtype if flat_df[c].values.dtype != np.dtype('O') else 'U256') for c in flat_df.columns]
         return np.dtype(dt_list)
 
     @classmethod
