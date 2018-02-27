@@ -6,16 +6,30 @@ from ptsa.test import utils
 
 
 @utils.skip_without_rhino
-def test_talreader_on_database():
-    old_reader = TalReader(filename=osp.join(utils.get_rhino_root(),'data/eeg/R1234D/tal/R1234D_talLocs_database_bipol.mat'))
-    jr = JsonIndexReader(osp.join(utils.get_rhino_root(),'protocols/r1.json'))
-    new_reader = TalReader(filename=jr.get_value('pairs',subject='R1234D',experiment='FR1'))
-    new_pairs = new_reader.get_bipolar_pairs()
-    old_pairs = old_reader.get_bipolar_pairs()
-    assert (new_pairs == old_pairs).all()
-    new_channels = new_reader.get_monopolar_channels()
-    old_channels = old_reader.get_monopolar_channels()
-    assert (new_channels == old_channels).all()
+class TestTalReaderOnDatabase:
+
+    @classmethod
+    def setup(cls):
+        cls.old_reader = TalReader(filename=osp.join(utils.get_rhino_root(),'data/eeg/R1234D/tal/R1234D_talLocs_database_bipol.mat'))
+        jr = JsonIndexReader(osp.join(utils.get_rhino_root(),'protocols/r1.json'))
+        cls.new_reader = TalReader(filename=jr.get_value('pairs',subject='R1234D',experiment='FR1'))
+
+    def test_get_bipolar_pairs(self):
+        new_pairs = self.new_reader.get_bipolar_pairs()
+        old_pairs = self.old_reader.get_bipolar_pairs()
+        assert (new_pairs == old_pairs).all()
+
+    def test_get_monopolar_channels(self):
+        new_channels = self.new_reader.get_monopolar_channels()
+        old_channels = self.old_reader.get_monopolar_channels()
+        assert (new_channels == old_channels).all()
+
+    def test_compat_fields(self):
+        new_struct = self.new_reader.read()
+        old_struct = self.old_reader.read()
+        assert (old_struct['tagName'] == new_struct['tagName']).all()
+        assert (old_struct['eType'] == new_struct['eType']).all()
+        assert (old_struct['channel'] == new_struct['channel']).all()
 
 
 def test_from_dict():
