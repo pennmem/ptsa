@@ -128,14 +128,24 @@ class TalReader(PropertiedObject, BaseReader):
         """
         keys = json_dict.keys()
         subject = [k for k in keys if k not in ['version', 'info', 'meta']][0]
-        ts = np.rec.array(self.from_records(
+        ts = self.from_records(
             json_dict[subject]['contacts' if self.struct_type == 'mono' else 'pairs'].values())
-        )
-        if 'channel' in ts.dtype.names:
-            ts.sort(order ='channel')
+        if self.struct_type=='bi':
+            extended_dt = self.merge_dtypes(ts.dtype,np.dtype([('channel',int,2),
+                                                               ('eType','U256'),('tagName','U256')]))
         else:
-            ts.sort(order=['channel_1','channel_2'])
-        return ts
+            extended_dt = self.merge_dtypes(ts.dtype,np.dtype([('eType','U2'),('tagName','U256')]))
+        # Add some additional fields for compatibility
+        new_ts = np.empty(ts.shape,dtype=extended_dt)
+        for col in ts.dtype.names:
+            new_ts[col] = ts[col]
+        if self.struct_type == 'bi':
+            new_ts['channel'][:,0] = ts['channel_1']
+            new_ts['channel'][:,1] = ts['channel_2']
+        new_ts['eType'] = ts['type_1']
+        new_ts['tagName'] = ts['code']
+        new_ts.sort(order='channel')
+        return np.rec.array(new_ts)
 
 
     @classmethod
@@ -203,3 +213,6 @@ class TalStimOnlyReader(TalReader):
     def __init__(self, **kwds):
         TalReader.__init__(self, **kwds)
         self.struct_name = 'virtualTalStruct'
+
+if __name__ == '__main__':
+    TalReader(filename='/Volumes/rhino_root/protocols/r1/subjects/R1111M/localizations/0/montages/0/neuroradiology/current_processed/pairs.json').read()
