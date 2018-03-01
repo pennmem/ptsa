@@ -138,7 +138,7 @@ class TalReader(PropertiedObject, BaseReader):
         subject = [k for k in keys if k not in ['version', 'info', 'meta']][0]
         records =json_dict[subject]['contacts' if self.struct_type == 'mono' else 'pairs'].values()
         if not unpack:
-            return pd.DataFrame.from_records(records).to_records(index=False)
+            return pd.DataFrame.from_records(list(records)).to_records(index=False)
         else:
             ts = self.from_records(records)
             if self.struct_type=='bi':
