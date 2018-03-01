@@ -3,6 +3,7 @@ from ptsa.data.readers.index import JsonIndexReader
 import numpy as np
 import os.path as osp
 from ptsa.test import utils
+import pytest
 
 
 @utils.skip_without_rhino
@@ -878,6 +879,11 @@ def test_from_dict():
 def test_old_behavior():
     pairinfo = TalReader(filename=osp.join(osp.dirname(__file__), 'data', 'pairs.json'),unpack=False).read()
     assert pairinfo.dtype['atlases'] is np.dtype(object)
+
+def test_old_behavior_warning():
+    with pytest.deprecated_call():
+        TalReader(filename=osp.join(osp.dirname(__file__), 'data', 'pairs.json'), unpack=False).read()
+
 
 def test_talreader():
     pairinfo = TalReader(filename=osp.join(osp.dirname(__file__),'data','pairs.json')).read()
