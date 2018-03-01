@@ -21,7 +21,8 @@ class TalReader(PropertiedObject, BaseReader):
     _descriptors = [
         TypeValTuple('filename', six.string_types, ''),
         TypeValTuple('struct_name', six.string_types, 'bpTalStruct'),
-        TypeValTuple('struct_type',six.string_types,'bi')
+        TypeValTuple('struct_type',six.string_types,'bi'),
+        TypeValTuple('unpack',bool,True)
     ]
 
     def __init__(self, **kwds):
@@ -30,8 +31,12 @@ class TalReader(PropertiedObject, BaseReader):
         -----------------
 
         :param filename {str} -  path to tal file or pairs.json file
-        :param struct_name {str} -  name of the struct to load
-        :param struct_type {str} - either 'mono', indicating a monopolar struct, or 'bi', indicating a bipolar struct
+        :param struct_name {str} -  name of the struct to load. Default is 'bpTalStruct'. Only relevant when reading
+        MATLAB tal struct files.
+        :param struct_type {str} - either 'mono', indicating a monopolar struct, or 'bi', indicating a bipolar struct.
+        Default is 'bi'.
+        :param unpack {bool} - If :py:val:False, returns the "atlases" column as an array of python dicts, rather
+        than unpacking them into nested structured arrays. Default is :py:True.
         :return: None
 
         """
@@ -120,7 +125,7 @@ class TalReader(PropertiedObject, BaseReader):
             new_arr[col] = nested_arrs[i]
         return np.rec.array(new_arr)
 
-    def from_dict(self,json_dict):
+    def from_dict(self,json_dict,unpack=True):
         """
         Reads a JSON localization file into a record array.
         :param json_dict: A dictionary of localization information, with one entry for each contact or pair.
@@ -128,24 +133,27 @@ class TalReader(PropertiedObject, BaseReader):
         """
         keys = json_dict.keys()
         subject = [k for k in keys if k not in ['version', 'info', 'meta']][0]
-        ts = self.from_records(
-            json_dict[subject]['contacts' if self.struct_type == 'mono' else 'pairs'].values())
-        if self.struct_type=='bi':
-            extended_dt = self.merge_dtypes(ts.dtype,np.dtype([('channel',int,2),
-                                                               ('eType','U256'),('tagName','U256')]))
+        records =json_dict[subject]['contacts' if self.struct_type == 'mono' else 'pairs'].values()
+        if not unpack:
+            return pd.DataFrame.from_records(records).to_records(index=False)
         else:
-            extended_dt = self.merge_dtypes(ts.dtype,np.dtype([('eType','U2'),('tagName','U256')]))
-        # Add some additional fields for compatibility
-        new_ts = np.empty(ts.shape,dtype=extended_dt)
-        for col in ts.dtype.names:
-            new_ts[col] = ts[col]
-        if self.struct_type == 'bi':
-            new_ts['channel'][:,0] = ts['channel_1']
-            new_ts['channel'][:,1] = ts['channel_2']
-        new_ts['eType'] = ts['type_1']
-        new_ts['tagName'] = ts['code']
-        new_ts.sort(order='channel')
-        return np.rec.array(new_ts)
+            ts = self.from_records(records)
+            if self.struct_type=='bi':
+                extended_dt = self.merge_dtypes(ts.dtype,np.dtype([('channel',int,2),
+                                                                   ('eType','U256'),('tagName','U256')]))
+            else:
+                extended_dt = self.merge_dtypes(ts.dtype,np.dtype([('eType','U2'),('tagName','U256')]))
+            # Add some additional fields for compatibility
+            new_ts = np.empty(ts.shape,dtype=extended_dt)
+            for col in ts.dtype.names:
+                new_ts[col] = ts[col]
+            if self.struct_type == 'bi':
+                new_ts['channel'][:,0] = ts['channel_1']
+                new_ts['channel'][:,1] = ts['channel_2']
+            new_ts['eType'] = ts['type_1']
+            new_ts['tagName'] = ts['code']
+            new_ts.sort(order='channel')
+            return np.rec.array(new_ts)
 
 
     @classmethod
@@ -190,7 +198,7 @@ class TalReader(PropertiedObject, BaseReader):
         else:
             with open(self.filename) as fp:
                 pairs= json.load(fp)
-            self.tal_struct_array = self.from_dict(pairs)
+            self.tal_struct_array = self.from_dict(pairs,unpack=self.unpack)
             return self.tal_struct_array
 
         raise AttributeError('Could not read tal struct data. Try specifying struct_name argument :'

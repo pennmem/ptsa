@@ -875,6 +875,10 @@ def test_from_dict():
     assert (pairs_array.channel == channel_array).all()
 
 
+def test_old_behavior():
+    pairinfo = TalReader(filename=osp.join(osp.dirname(__file__), 'data', 'pairs.json'),unpack=False).read()
+    assert pairinfo.dtype['atlases'] is np.dtype(object)
+
 def test_talreader():
     pairinfo = TalReader(filename=osp.join(osp.dirname(__file__),'data','pairs.json')).read()
     _ = pairinfo.atlases.avg[['x','y','z']]
