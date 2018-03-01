@@ -7,6 +7,7 @@ import pandas as pd
 from ptsa import six
 from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
+import warnings
 
 __all__ = [
     'TalReader',
@@ -43,6 +44,8 @@ class TalReader(PropertiedObject, BaseReader):
 
         self.init_attrs(kwds)
         self._bipolar_channels=None
+        if not self.unpack:
+            warnings.warn("This output format will be removed in a future release",DeprecationWarning)
 
         self.tal_struct_array = None
         self._json = os.path.splitext(self.filename)[-1]=='.json'
