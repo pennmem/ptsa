@@ -7,16 +7,10 @@
 #
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
 
-import sys
 import numpy as np
-# from scipy import unwrap
-# import scipy.stats as stats
 from scipy.fftpack import fft,ifft
-# import scipy.signal
-# import scipy.ndimage
-# from ptsa.filt import decimate
 from ptsa.helper import reshape_to_2d,reshape_from_2d,centered,next_pow2
-from ptsa.fixed_scipy import morlet as morlet_wavelet
+from scipy.signal import morlet as morlet_wavelet
 
 import pywt
 import math
