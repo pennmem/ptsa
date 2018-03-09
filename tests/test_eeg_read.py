@@ -7,11 +7,11 @@ from ptsa.data.filters.ButterworthFilter import ButterworthFilter
 from ptsa.data.filters.ResampleFilter import ResampleFilter
 from ptsa.data.events import Events
 from ptsa.data.experimental.TimeSeriesEEGReader import TimeSeriesEEGReader
-from ptsa.test.utils import EventReadersTestBase, skip_without_rhino, get_rhino_root
+from ptsa.test.utils import get_rhino_root
 
 
-@skip_without_rhino
-class TestEEGRead(unittest.TestCase, EventReadersTestBase):
+@pytest.mark.skip
+class TestEEGRead(unittest.TestCase):
     def setUp(self):
         root = get_rhino_root()
         self.event_range = range(0, 30, 1)

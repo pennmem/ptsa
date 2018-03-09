@@ -9,7 +9,7 @@ import numpy.testing as npt
 
 from ptsa.test.utils import skip_without_rhino, get_rhino_root
 from ptsa.data.readers import (
-    BaseEventReader, PTSAEventReader, TalStimOnlyReader, EEGReader,
+    BaseEventReader, TalStimOnlyReader, EEGReader,
     BaseRawReader, JsonIndexReader
 )
 from ptsa.data.events import Events
@@ -24,7 +24,7 @@ class TestJsonIndexReader:
         assert isinstance(df, pd.DataFrame)
 
 
-@pytest.mark.skip(reason="Hardcoded paths")
+@pytest.mark.skip
 class TestReaders(unittest.TestCase):
     def setUp(self):
         self.event_range = range(0, 30, 1)

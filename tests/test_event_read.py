@@ -6,13 +6,14 @@ import pandas as pd
 
 from ptsa.data.events import Events
 from ptsa.data.readers import BaseEventReader
-from ptsa.test.utils import EventReadersTestBase, skip_without_rhino, get_rhino_root
+from ptsa.test.utils import skip_without_rhino, get_rhino_root
+import pytest
 
 here = osp.abspath(osp.dirname(__file__))
 
 
-@skip_without_rhino
-class TestEventRead(unittest.TestCase, EventReadersTestBase):
+@pytest.mark.skip
+class TestEventRead(unittest.TestCase):
     def setUp(self):
         self.event_range = range(0, 30, 1)
         root = get_rhino_root()

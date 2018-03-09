@@ -28,8 +28,8 @@ class ResampleFilter(BaseFilter):
     time_axis_index = traits.api.Int
     round_to_original_timepoints = traits.api.Bool
 
-    def __init__(self,timeseries,resamplerate,time_axis_index=-1,round_to_original_timepoints=False):
-        super(ResampleFilter, self).__init__(time_series=timeseries)
+    def __init__(self,time_series,resamplerate,time_axis_index=-1,round_to_original_timepoints=False):
+        super(ResampleFilter, self).__init__(time_series=time_series)
         self.resamplerate = resamplerate
         self.time_axis_index = time_axis_index
         self.round_to_original_timepoints = round_to_original_timepoints
@@ -67,7 +67,7 @@ class ResampleFilter(BaseFilter):
         if self.round_to_original_timepoints:
             filtered_array, new_time_idx_array = resample(self.time_series.data,
                                              new_length, t=time_idx_array,
-                                             axis=self.time_axis_index, window=self.window)
+                                             axis=self.time_axis_index, window=None)
 
             # print new_time_axis
 
@@ -78,7 +78,7 @@ class ResampleFilter(BaseFilter):
         else:
             filtered_array, new_time_axis = resample(self.time_series.data,
                                              new_length, t=time_axis_data,
-                                             axis=self.time_axis_index, window=self.window)
+                                             axis=self.time_axis_index, window=None)
 
         coords = {}
         for i, dim_name in enumerate(self.time_series.dims):

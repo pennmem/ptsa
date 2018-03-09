@@ -235,12 +235,12 @@ class BaseEventReader(BaseReader,traits.api.HasTraits):
         :return: data directory prefix
         """
 
-        prefix = find_dir_prefix(path_with_prefix=self._filename, common_root=self.common_root)
+        prefix = find_dir_prefix(path_with_prefix=self.filename, common_root=self.common_root)
         if not prefix:
             raise RuntimeError(
-                'Could not determine prefix from: %s using common_root: %s' % (self._filename, self.common_root))
+                'Could not determine prefix from: %s using common_root: %s' % (self.filename, self.common_root))
 
-        return find_dir_prefix(self._filename, self.common_root)
+        return prefix
 
     ### TODO: CLEAN UP, COMMENT
 

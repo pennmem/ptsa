@@ -848,7 +848,7 @@ def test_from_dict():
     u'is_stim_only': False,
     u'type_1': u'G',
     u'type_2': u'G'},}}}
-    pairs_array = TalReader().from_dict(pairs_dict)
+    pairs_array = TalReader('').from_dict(pairs_dict)
     channel_array = np.empty(19,dtype=object)
     channel_array[:] = sorted([   [89, 90],[90, 91],[91, 92],[65, 66],[66, 67],[67, 68],
             [69, 70],[70, 71],[71, 72],[73, 74],[74,75],[75, 76],
