@@ -20,6 +20,7 @@ class BaseRawReader(PropertiedObject, BaseReader):
     _descriptors = [
         TypeValTuple('dataroot', six.string_types, ''),
         TypeValTuple('channels', np.ndarray, np.array([], dtype='|S3')),
+        TypeValTuple('channel_labels', np.ndarray, np.array([], dtype='|S3')),
         TypeValTuple('start_offsets', np.ndarray, np.array([0], dtype=np.int)),
         TypeValTuple('read_size', int, -1),
     ]
@@ -45,6 +46,11 @@ class BaseRawReader(PropertiedObject, BaseReader):
         self.init_attrs(kwds)
         p_reader = ParamsReader(dataroot=self.dataroot)
         self.params_dict = p_reader.read()
+        assert self.channels is kwds['channels']
+        if self.channels.dtype.names is None:
+            self.channel_labels = self.channels
+        else:
+            self.channel_labels = self.channels['channel']
 
     def read(self):
         """Read EEG data.
@@ -67,7 +73,7 @@ class BaseRawReader(PropertiedObject, BaseReader):
 
         """
 
-        eventdata, read_ok_mask = self.read_file(self.dataroot,self.channels,self.start_offsets,self.read_size)
+        eventdata, read_ok_mask = self.read_file(self.dataroot,self.channel_labels,self.start_offsets,self.read_size)
         # multiply by the gain
         eventdata *= self.params_dict['gain']
 
@@ -78,7 +84,6 @@ class BaseRawReader(PropertiedObject, BaseReader):
                                   'start_offsets': self.start_offsets.copy(),
                                   'offsets': np.arange(self.read_size),
                                   'samplerate': self.params_dict['samplerate']
-
                               }
                               )
 

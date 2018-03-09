@@ -36,16 +36,18 @@ class BinaryRawReader(BaseRawReader):
         except KeyError:
             warnings.warn('Could not find data format definition in the params file. Will read the file assuming' \
                           ' data format is int16', RuntimeWarning)
+        if np.issubdtype(self.channel_labels.dtype,np.integer):
+            self.channel_labels = np.array(['{:03}'.format(c) for c in self.channel_labels])
 
     def get_file_size(self):
         """
         :return: {int} size of the files whose core name (dataroot) matches self.dataroot. Assumes ALL files with this
         dataroot are of the same length and uses first channel to determin the common file length
         """
-        if isinstance(self.channels[0], six.binary_type):
-            ch = self.channels[0].decode()
+        if isinstance(self.channel_labels[0], six.binary_type):
+            ch = self.channel_labels[0].decode()
         else:
-            ch = self.channels[0]
+            ch = self.channel_labels[0]
         eegfname = self.dataroot + '.' + ch
         return osp.getsize(eegfname)
 

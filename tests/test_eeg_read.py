@@ -134,3 +134,18 @@ class TestEEGRead(unittest.TestCase, EventReadersTestBase):
 
         # testing
         assert_array_equal(eegs_resampled, base_eegs_resampled.data)
+
+@skip_without_rhino
+def test_eeg_with_tal_data():
+    from ptsa.data.readers import JsonIndexReader,TalReader,EEGReader,BaseEventReader
+    import os
+    subject = 'R1111M'
+    experiment='FR1'
+    session=0
+    jr = JsonIndexReader(os.path.join(get_rhino_root(),'protocols','r1.json'))
+    events = BaseEventReader(filename=jr.get_value('task_events',subject=subject,experiment=experiment,session=session)).read()
+    tal_struct = TalReader(filename=jr.get_value('contacts',subject=subject),struct_type='mono').read()
+    eeg = EEGReader(events=events[:10],channels=tal_struct[:10],start_time=0.0,end_time=0.1).read()
+    for col in tal_struct.dtype.names:
+        if col != 'atlases': # Because I don't want to deal with NaNs at the moment
+            assert (eeg.channels.data[col]==tal_struct[:10][col]).all()

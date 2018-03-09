@@ -153,8 +153,8 @@ class TalReader(PropertiedObject, BaseReader):
             if self.struct_type == 'bi':
                 new_ts['channel'][:,0] = ts['channel_1']
                 new_ts['channel'][:,1] = ts['channel_2']
-            new_ts['eType'] = ts['type_1']
-            new_ts['tagName'] = ts['code']
+                new_ts['eType'] = ts['type_1']
+                new_ts['tagName'] = ts['code']
             new_ts.sort(order='channel')
             return np.rec.array(new_ts)
 
