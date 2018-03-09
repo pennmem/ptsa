@@ -36,8 +36,6 @@ class BinaryRawReader(BaseRawReader):
         except KeyError:
             warnings.warn('Could not find data format definition in the params file. Will read the file assuming' \
                           ' data format is int16', RuntimeWarning)
-        if np.issubdtype(self.channel_labels.dtype,np.integer):
-            self.channel_labels = np.array(['{:03}'.format(c) for c in self.channel_labels])
 
     def get_file_size(self):
         """

@@ -52,6 +52,10 @@ class BaseRawReader(PropertiedObject, BaseReader):
         else:
             self.channel_labels = self.channels['channel']
 
+        if np.issubdtype(self.channel_labels.dtype,np.integer):
+            self.channel_labels = np.array(['{:03}'.format(c).encode() for c in self.channel_labels])
+
+
     def read(self):
         """Read EEG data.
 

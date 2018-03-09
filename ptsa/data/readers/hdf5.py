@@ -2,6 +2,7 @@ import os.path as osp
 
 import h5py
 import numpy as np
+import six
 
 from ptsa.data.readers.raw import BaseRawReader
 
@@ -42,6 +43,7 @@ class H5RawReader(BaseRawReader):
         :return: event_data: The EEG data corresponding to each offset
         :return: read_ok_mask: Boolean mask indicating whether each offset was read successfully.
         """
+        print(channels)
         with h5py.File(self.dataroot, 'r') as eegfile:
             if len(channels) == 0:
                 channels = self.channels = np.array(['{:03d}'.format(x).encode() for x in eegfile['/ports'][:]])
@@ -53,6 +55,7 @@ class H5RawReader(BaseRawReader):
                     if not (np.in1d(channels, eegfile['/bipolar_info/ch0_label']).all()):
                         raise IndexError('Channel[s] %s not in recording' % (
                             channels[~np.in1d(channels, eegfile['/bipolar_info/ch0_label'])]))
+                    print(eegfile['/bipolar_info/ch0_label'][:])
                     channel_mask = np.in1d(eegfile['/bipolar_info/ch0_label'], channels)
                     self.channels = np.rec.array(
                         list(
