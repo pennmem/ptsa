@@ -67,7 +67,7 @@ class ResampleFilter(BaseFilter):
         if self.round_to_original_timepoints:
             filtered_array, new_time_idx_array = resample(self.time_series.data,
                                              new_length, t=time_idx_array,
-                                             axis=self.time_axis_index, window=None)
+                                             axis=self.time_axis_index)
 
             # print new_time_axis
 
@@ -78,7 +78,7 @@ class ResampleFilter(BaseFilter):
         else:
             filtered_array, new_time_axis = resample(self.time_series.data,
                                              new_length, t=time_axis_data,
-                                             axis=self.time_axis_index, window=None)
+                                             axis=self.time_axis_index)
 
         coords = {}
         for i, dim_name in enumerate(self.time_series.dims):
