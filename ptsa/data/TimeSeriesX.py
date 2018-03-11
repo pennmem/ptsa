@@ -79,7 +79,9 @@ class TimeSeriesX(xr.DataArray):
             coords['samplerate'] = float(samplerate)
         return cls(data, coords=coords, dims=dims, name=name, attrs=attrs)
 
-    def to_hdf(self, filename, mode='w'):
+    def to_hdf(self, filename, mode='w', compression=None,
+               compression_opts=None, encode_string_arrays=True,
+               encoding='utf8'):
         """Save to disk using HDF5.
 
         Parameters
@@ -89,6 +91,19 @@ class TimeSeriesX(xr.DataArray):
         mode : str
             File mode to use. See the :mod:`h5py` documentation for details.
             Default: ``'w'``
+        compression : str or None
+            Compression to use with arrays (see :mod:`h5py` documentation for
+            valid choices).
+        compression_opts : int or None
+            Compression options, generally a number specifying compression level
+            (see :mod:`h5py` documentation for details).
+        encode_string_arrays : bool
+            When True, force encoding of arrays of unicode strings using the
+            ``encoding`` keyword argument. Not setting this will result in
+            errors if using arrays of unicode strings. Default: True.
+        encoding : str
+            Encoding to use when forcing encoding of unicode string arrays.
+            Default: ``'utf8'``.
 
         Notes
         -----
@@ -111,30 +126,64 @@ class TimeSeriesX(xr.DataArray):
 
             hfile.create_dataset("data", data=self.data, chunks=True)
 
-            dims = [dim.encode() for dim in self.dims]
+            dims = [dim.encode(encoding) for dim in self.dims]
             hfile.create_dataset("dims", data=dims)
 
             coords_group = hfile.create_group("coords")
             coords = []
             for name, data in self.coords.items():
                 coords.append(name)
-                buffer = BytesIO()
-                np.save(buffer, data)
-                buffer.seek(0)
-                output = b64encode(buffer.read())
+                data_has_fields = len(data.values.dtype) > 0
+                # Encode each element of an array containing unicode
+                # elements
+                if ~data_has_fields and data.dtype.char == 'U':
+                    data = [s.encode(encoding) for s in np.atleast_1d(data)]
+                elif data_has_fields:
+                    # Determine what the final dtypes will be
+                    final_dtypes = []
+                    unicode_fields = []
+                    for i, field in enumerate(data.values.dtype.names):
+                        if data.values[field].dtype.kind != 'U':
+                            final_dtypes.append((field,
+                                                 data.values[field].dtype.str))
+                        else:
+                            final_dtypes.append((field, '<S256'))
+                            unicode_fields.append(field)
+                            
+                    # Update dtypes of the data. This will coerce the
+                    # unicode fields to bytes automatically
+                    data = data.astype(final_dtypes)
+                chunks = True if hasattr(data, '__len__') else False
+                compression_kwargs = {}
+                if chunks:
+                    if compression is not None:
+                        compression_kwargs['compression'] = compression
+                        if compression_opts is not None:
+                            compression_kwargs[
+                                'compression_opts'] = compression_opts
                 try:
-                    coords_group.create_dataset(name, data=output)
-                except:
-                    print(output)
-                    raise
-            names = json.dumps(coords).encode()
+                    dset = coords_group.create_dataset(name, data=data,
+                                                       chunks=chunks,
+                                                       **compression_kwargs)
+                except TypeError as e:
+                    if chunks is not False:
+                        dset = coords_group.create_dataset(
+                            name, data=data, chunks=False,
+                            **compression_kwargs)
+                    else:
+                        raise e
+                # Store the data type as an attribute to make it easier to
+                # reconstruct with correct data types
+                dset.attrs['type'] = str(type(data))
+            names = json.dumps(coords).encode(encoding)
             coords_group.attrs.update(names=names)
-
+            hfile.attrs['classname'] = self.__class__.__name__
+            hfile.attrs['python_module'] = self.__class__.__module__
             root = hfile['/']
             if self.name is not None:
-                root.attrs['name'] = self.name.encode()
+                root.attrs['name'] = self.name.encode(encoding)
             if self.attrs is not None:
-                root.attrs['attrs'] = json.dumps(self.attrs).encode()
+                root.attrs['attrs'] = json.dumps(self.attrs).encode(encoding)
 
     @classmethod
     def from_hdf(cls, filename):
