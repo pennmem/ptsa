@@ -142,7 +142,7 @@ class TimeSeriesX(xr.DataArray):
                             final_dtypes.append((field,
                                                  data.values[field].dtype.str))
                         else:
-                            final_dtypes.append((field, '<S256'))
+                            final_dtypes.append((field, 'S256'))
                             unicode_fields.append(field)
                             
                     # Update dtypes of the data. This will coerce the
@@ -220,12 +220,12 @@ class TimeSeriesX(xr.DataArray):
                             final_dtypes.append((field,
                                                  data[field].dtype.str))
                         else:
-                            final_dtypes.append((field, '<U256'))
+                            final_dtypes.append((field, 'U256'))
                             bytes_fields.append(field)
                             
                     # Update dtypes of the data. This will coerce the
                     # bytes fields to unicode automatically
-                    data = data.astype(final_dtypes)
+                    data = np.array(data).astype(final_dtypes).view(np.recarray)
                 coords[name] = data
             name = root.attrs.get('name', None)
             if name is not None:
