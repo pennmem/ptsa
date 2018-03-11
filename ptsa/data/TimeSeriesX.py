@@ -107,14 +107,9 @@ class TimeSeriesX(xr.DataArray):
 
         Notes
         -----
-        Because recarrays can complicate things when unicode is involved, saving
-        coordinates is a multi-step process:
-
-        1. Save to a buffer using :func:`np.save`. This uses Numpy's own binary
-           format and should Just Work.
-        2. Base64-encode the buffer to eliminate NULL bytes which HDF5 can't
-           handle.
-        3. Write the bytes contained in the buffer to the HDF5 file.
+        The root node also has attributes:
+        * ``classname`` - the class name of the instance being serialized
+        * ``python_module`` - the Python module in which the class is defined
 
         """
         if h5py is None:  # pragma: nocover
