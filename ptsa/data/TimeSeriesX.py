@@ -181,10 +181,74 @@ class TimeSeriesX(xr.DataArray):
                 root.attrs['attrs'] = json.dumps(self.attrs).encode(encoding)
 
     @classmethod
-    def from_hdf(cls, filename):
-        """Load from an HDF5 file.
+    def from_hdf(cls, filename, decode_string_arrays=True, encoding='utf-8'):
+        """
+        Deserialize from HDF5 using :mod:`h5py`.
+        Parameters
+        ----------
+        filename : str
+        decode_string_arrays: bool
+            Arrays of bytes should be decoded into strings
+        encoding: str
+            Encoding scheme to use for decoding
+        Returns
+        -------
+        Deserialized instance
+        """
+        if h5py is None:  # pragma: nocover
+            raise RuntimeError("You must install h5py to load from HDF5")
 
-        FIXME: load name and attrs
+        with h5py.File(filename, 'r') as hfile:
+            dims = hfile['dims'][:]
+
+            root = hfile['/']
+
+            coords_group = hfile['coords']
+            names = json.loads(coords_group.attrs['names'].decode(encoding))
+            coords = dict()
+            for name in names:
+                data = coords_group[name]
+                data_has_fields = len(data.dtype) > 0
+                if ~data_has_fields and data.dtype.char == 'S':
+                    data = [s.decode(encoding) for s in np.atleast_1d(data)]
+                elif data_has_fields:
+                    # Determine what the final dtypes will be
+                    final_dtypes = []
+                    bytes_fields = []
+                    for i, field in enumerate(data.dtype.names):
+                        if data[field].dtype.kind != 'S':
+                            final_dtypes.append((field,
+                                                 data[field].dtype.str))
+                        else:
+                            final_dtypes.append((field, '<U256'))
+                            bytes_fields.append(field)
+                            
+                    # Update dtypes of the data. This will coerce the
+                    # bytes fields to unicode automatically
+                    data = data.astype(final_dtypes)
+                coords[name] = data
+            name = root.attrs.get('name', None)
+            if name is not None:
+                name = name.decode(encoding)
+            attrs = root.attrs.get('attrs', None)
+            if attrs is not None:
+                attrs = json.loads(attrs.decode(encoding))
+
+            array = cls.create(hfile['data'].value, None, coords=coords,
+                               dims=[dim.decode() for dim in dims],
+                               name=name, attrs=attrs)
+            return array
+
+    @classmethod
+    def from_hdf_legacy(cls, filename):
+        """
+        Legacy function to support loading in old files created with
+        the to_hdf5 method in previous versions of PTSA.
+
+        This method is DEPRECATED: old hdf5 files should be converted
+        by reading them in with this function and saving the resulting
+        TimeSeriesX object with the current to_hdf5 method to maintain
+        accessibility.
 
         Parameters
         ----------
@@ -192,6 +256,12 @@ class TimeSeriesX(xr.DataArray):
             Path to HDF5 file.
 
         """
+        import warnings
+        warnings.warn(
+            'This method is DEPRECATED: old hdf5 files should be converted by' +
+            'reading them in with this function and saving the resulting' +
+            'TimeSeriesX object with the current to_hdf5 method to maintain' +
+            'accessibility.')
         if h5py is None:  # pragma: nocover
             raise RuntimeError("You must install h5py to load from HDF5")
 
@@ -219,6 +289,7 @@ class TimeSeriesX(xr.DataArray):
                                dims=[dim.decode() for dim in dims],
                                name=name, attrs=attrs)
             return array
+
 
     def append(self, other, dim=None):
         """Append another :class:`TimeSeriesX` to this one.
@@ -257,7 +328,8 @@ class TimeSeriesX(xr.DataArray):
             else:
                 if key != dim:
                     if (self[key] != other[key]).all():
-                        raise ConcatenationError("Dimension {:s} doesn't match".format(key))
+                        raise ConcatenationError(
+                            "Dimension {:s} doesn't match".format(key))
                     coords[key] = self[key]
                 else:
                     coords[key] = np.concatenate([self[key], other[key]])
@@ -266,7 +338,8 @@ class TimeSeriesX(xr.DataArray):
             data = np.concatenate([self.data, other.data])
         else:
             if dim not in dims:
-                raise ConcatenationError("Dimension {!s} not found".format(dim))
+                raise ConcatenationError(
+                    "Dimension {!s} not found".format(dim))
             axis = np.where(np.array(dims) == dim)[0][0]
             data = np.concatenate([self.data, other.data], axis=axis)
 
@@ -277,7 +350,7 @@ class TimeSeriesX(xr.DataArray):
         new = TimeSeriesX.create(data, self.samplerate, coords=coords,
                                  dims=dims, attrs=attrs, name=name)
         return new
-
+    
     def __duration_to_samples(self, duration):
         """Convenience function to convert a duration in seconds to number of
         samples.
@@ -308,7 +381,9 @@ class TimeSeriesX(xr.DataArray):
         warnings.warn("The filtered method is not very flexible. "
                       "Consider using filters in ptsa.data.filters instead.")
         time_axis_index = get_axis_index(self, axis_name='time')
-        filtered_array = buttfilt(self.values, freq_range, float(self['samplerate']), filt_type,
+        filtered_array = buttfilt(self.values, freq_range,
+                                  float(self['samplerate']),
+                                  filt_type,
                                   order, axis=time_axis_index)
         new_ts = self.copy()
         new_ts.data = filtered_array
@@ -345,11 +420,12 @@ class TimeSeriesX(xr.DataArray):
         time_axis_index = self.get_axis_num('time')
 
         time_axis_length = np.squeeze(time_axis.shape)
-        new_length = int(np.round(time_axis_length * resampled_rate / float(samplerate)))
+        new_length = int(np.round(time_axis_length * resampled_rate /
+                                  float(samplerate)))
 
-        resampled_array, new_time_axis = resample(self.values,
-                                                  new_length, t=time_axis.values,
-                                                  axis=time_axis_index, window=window)
+        resampled_array, new_time_axis = resample(
+            self.values, new_length, t=time_axis.values,
+            axis=time_axis_index, window=window)
 
         # constructing axes
         coords = {}
@@ -367,7 +443,8 @@ class TimeSeriesX(xr.DataArray):
                 coords[coord_name] = new_time_axis
 
         resampled_time_series = TimeSeriesX.create(
-            resampled_array, resampled_rate, coords=coords, dims=[dim for dim in self.dims],
+            resampled_array, resampled_rate, coords=coords,
+            dims=[dim for dim in self.dims],
             name=self.name, attrs=self.attrs)
 
         return resampled_time_series
@@ -427,13 +504,14 @@ class TimeSeriesX(xr.DataArray):
         data = self.data
 
         mirrored_data = np.concatenate(
-            (data[..., 1:samples + 1][..., ::-1], data, data[..., -samples - 1:-1][..., ::-1]),
-            axis=-1)
+            (data[..., 1:samples + 1][..., ::-1],
+             data, data[..., -samples - 1:-1][..., ::-1]), axis=-1)
 
         start_time = self['time'].data[0] - duration
-        t_axis = (np.arange(mirrored_data.shape[-1]) * (1.0 / samplerate)) + start_time
-        # coords = [self.coords[dim_name] for dim_name in self.dims[:-1]] +[t_axis]
-        coords = {dim_name:self.coords[dim_name] for dim_name in self.dims[:-1]}
+        t_axis = ((np.arange(mirrored_data.shape[-1]) * (1.0 / samplerate)) +
+                  start_time)
+        coords = {dim_name:self.coords[dim_name]
+                  for dim_name in self.dims[:-1]}
         coords['time'] = t_axis
         coords['samplerate'] = float(self['samplerate'])
 
@@ -457,4 +535,5 @@ class TimeSeriesX(xr.DataArray):
             A TimeSeries instance with the baseline corrected data.
 
         """
-        return self - self.isel(time=(self['time'] >= base_range[0]) & (self['time'] <= base_range[1])).mean(dim='time')
+        return self - self.isel(time=(self['time'] >= base_range[0]) & (
+            self['time'] <= base_range[1])).mean(dim='time')
