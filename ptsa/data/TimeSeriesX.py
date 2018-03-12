@@ -209,7 +209,7 @@ class TimeSeriesX(xr.DataArray):
             root = hfile['/']
             version = root.attrs.get('ptsa_version', None)
             if version is not None:
-                # if ptsa_version <= 1.1.5:
+                # if ptsa_version <= 1.1.5, run legacy code:
                 version_thresh = [5, 1, 1]
                 version_nums = [np.int(v) for v in version.split('.')][::-1]
                 new_version = False
