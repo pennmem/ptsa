@@ -182,19 +182,24 @@ class TimeSeriesX(xr.DataArray):
 
     @classmethod
     def from_hdf(cls, filename, decode_string_arrays=True, encoding='utf-8'):
-        """
-        Deserialize from HDF5 using :mod:`h5py`.
+        """Deserialize from HDF5 using :mod:`h5py`.
         Parameters
         ----------
         filename : str
         decode_string_arrays: bool
             Arrays of bytes should be decoded into strings
         encoding: str
-            Encoding scheme to use for decoding
+            Encoding scheme to use for decoding. To read files saved
+            with earlier PTSA versions use 'legacy' (but note that
+            support for reading legacy files is deprecated, so do save
+            them out with to_hdf5 to update their format).
         Returns
         -------
         Deserialized instance
+
         """
+        if encoding.upper() == 'LEGACY':
+            return cls._from_hdf_legacy(filename)
         if h5py is None:  # pragma: nocover
             raise RuntimeError("You must install h5py to load from HDF5")
 
@@ -240,7 +245,7 @@ class TimeSeriesX(xr.DataArray):
             return array
 
     @classmethod
-    def from_hdf_legacy(cls, filename):
+    def _from_hdf_legacy(cls, filename):
         """
         Legacy function to support loading in old files created with
         the to_hdf5 method in previous versions of PTSA.
