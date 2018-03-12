@@ -207,7 +207,12 @@ class TimeSeriesX(xr.DataArray):
             dims = hfile['dims'][:]
 
             root = hfile['/']
-
+            version = root.attrs.get('ptsa_version', None)
+            if version is not None:
+                version_nums = [np.int(v) for v in version.split('.')]
+                # if ptsa_version <= 1.1.5:
+                if (version_nums[0] <= 1) and (version_nums[1] <= 5):
+                    return cls._from_hdf_legacy(filename)
             coords_group = hfile['coords']
             names = json.loads(coords_group.attrs['names'].decode(encoding))
             coords = dict()
