@@ -46,12 +46,12 @@ class BaseRawReader(PropertiedObject, BaseReader):
         self.init_attrs(kwds)
         p_reader = ParamsReader(dataroot=self.dataroot)
         self.params_dict = p_reader.read()
-        assert self.channels is kwds['channels']
         if self.channels.dtype.names is None:
             self.channel_labels = self.channels
         else:
             self.channel_labels = self.channels['channel']
 
+    def channel_labels_to_string(self):
         if np.issubdtype(self.channel_labels.dtype,np.integer):
             self.channel_labels = np.array(['{:03}'.format(c).encode() for c in self.channel_labels])
 

@@ -10,6 +10,11 @@ import struct
 class BinaryRawReader(BaseRawReader):
 
     def __init__(self,**kwargs):
+        if 'channels' in kwargs:
+            channels = kwargs['channels']
+            if channels.dtype.names is not None and 'channel_1' in channels.dtype.names:
+                raise IndexError
+
         super(BinaryRawReader, self).__init__(**kwargs)
         FileFormat = namedtuple('FileFormat', ['data_size', 'format_string'])
         self.file_format_dict = {
@@ -36,6 +41,7 @@ class BinaryRawReader(BaseRawReader):
         except KeyError:
             warnings.warn('Could not find data format definition in the params file. Will read the file assuming' \
                           ' data format is int16', RuntimeWarning)
+        self.channel_labels_to_string()
 
     def get_file_size(self):
         """
