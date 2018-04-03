@@ -53,9 +53,9 @@ class EEGReader(traits.api.HasTraits):
     An EEGReader must be constructed using either :py:arg:events or :py:arg:session_dataroot.
     """
     channels = traits.api.CArray
-    start_time = traits.api.Float
-    end_time = traits.api.Float
-    buffer_time = traits.api.Float
+    start_time = traits.api.CFloat
+    end_time = traits.api.CFloat
+    buffer_time = traits.api.CFloat
     session_dataroot = traits.api.Str
     remove_bad_events = traits.api.Bool
 

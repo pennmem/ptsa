@@ -24,7 +24,7 @@ class ResampleFilter(BaseFilter):
 
 """
 
-    resamplerate = traits.api.Float
+    resamplerate = traits.api.CFloat
     time_axis_index = traits.api.Int
     round_to_original_timepoints = traits.api.Bool
 

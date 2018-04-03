@@ -13,9 +13,9 @@ class DataChopper(traits.api.HasTraits):
     In other words you may read entire eeg session first and then using EventDataChopper
     divide it into chunks corresponding to events of your choice
     """
-    start_time = traits.api.Float
-    end_time = traits.api.Float
-    buffer_time = traits.api.Float
+    start_time = traits.api.CFloat
+    end_time = traits.api.CFloat
+    buffer_time = traits.api.CFloat
     events = traits.api.Array
     start_offsets = traits.api.CArray
     session_data=traits.api.Instance(TimeSeriesX)
