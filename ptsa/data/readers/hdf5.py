@@ -4,6 +4,7 @@ import h5py
 import numpy as np
 
 from ptsa.data.readers.raw import BaseRawReader
+from ptsa.data.readers.params import ParamsReader
 
 __all__ = [
     'H5RawReader',
@@ -29,6 +30,13 @@ class H5RawReader(BaseRawReader):
         _, data_ext = osp.splitext(kwargs['dataroot'])
         assert len(data_ext), 'Dataroot missing extension'
         super(H5RawReader, self).__init__(**kwargs)
+        self.params_dict['samplerate'] = self.samplerate()
+
+    def samplerate(self):
+        with h5py.File(self.dataroot,'r') as eegfile:
+            if 'samplerate' in eegfile:
+                return eegfile['samplerate'][0]
+        return super(H5RawReader, self).samplerate()
 
     def read_file(self, filename, channels, start_offsets=np.array([0]), read_size=-1):
         """
@@ -98,7 +106,8 @@ class H5RawReader(BaseRawReader):
 
         else:
             eventdata = np.empty((len(channels), len(start_offsets), read_size),
-                                 dtype=np.float) * np.nan
+                                 dtype=np.float)
+            eventdata.fill(np.nan)
             read_ok_mask = np.ones((len(channels), len(start_offsets))).astype(bool)
             for i, start_offset in enumerate(start_offsets):
                 if start_offset<0:

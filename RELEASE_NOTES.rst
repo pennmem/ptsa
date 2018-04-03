@@ -1,6 +1,17 @@
 Release Notes
 =============
 
+Upcoming
+--------
+
+Summary of changes:
+* Reformatted output of ``TalReader(filename='.../pairs.json').read()
+  - The 'atlases' field is a nested structured array, rather than an array of dictionaries
+  - Most (?) idioms for getting coordinates and atlas labels for an electrode should continue to work in the new format
+  - The 'channels' field has been changed from an object array of lists to an array of two integers
+
+
+
 Version 1.1.5
 -------------
 
