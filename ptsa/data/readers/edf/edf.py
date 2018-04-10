@@ -38,6 +38,11 @@ class EDFRawReader(BaseRawReader):
             raise RuntimeError('Dataroot missing extension (must be supplied for EDF reader)')
         super(EDFRawReader, self).__init__(**kwargs)
 
+    def init_params(self):
+        return {'gain':1,
+                'samplerate':self.samplerate()
+                }
+
 
     def samplerate(self):
         with closing(EDFFile(self.dataroot)) as self._edf:

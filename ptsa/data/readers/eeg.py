@@ -115,7 +115,8 @@ class EEGReader(traits.api.HasTraits):
         original_dataroots = []
 
         for dataroot in dataroots:
-            brr = self.READER_FILETYPE_DICT[os.path.splitext(dataroot)[-1]](dataroot =dataroot)
+            RawReader = self.READER_FILETYPE_DICT[os.path.splitext(dataroot)[-1]]
+            brr = RawReader(dataroot =dataroot)
 
             events_with_matched_dataroot = evs[evs.eegfile == dataroot]
 
@@ -126,8 +127,10 @@ class EEGReader(traits.api.HasTraits):
             # start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
             start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
 
-            brr.init_attrs(dict(channels=self.channels, start_offsets=start_offsets,
-                                read_size=read_size))
+            brr = RawReader(dataroot=dataroot,
+                            channels=self.channels,
+                            start_offsets=start_offsets,
+                            read_size=read_size)
             raw_readers.append(brr)
 
             original_dataroots.append(dataroot)

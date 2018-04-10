@@ -38,8 +38,11 @@ class BaseRawReader(BaseReader, traits.api.HasTraits):
         self.channels = channels
         self.start_offsets = start_offsets
         self.read_size = read_size
+        self.params_dict = self.init_params()
+
+    def init_params(self):
         p_reader = ParamsReader(dataroot=self.dataroot)
-        self.params_dict = p_reader.read()
+        return p_reader.read()
 
     def read(self):
         """Read EEG data.
