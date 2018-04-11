@@ -1,4 +1,5 @@
 #include <exception>
+#include <locale>
 #include <string>
 
 #include <pybind11/pybind11.h>
@@ -257,6 +258,36 @@ public:
 
         return output;
     }
+
+    std::vector<int> get_channel_numbers(std::vector<std::string> channel_names)
+    {
+        std::vector<int> channel_numbers = std::vector<int>();
+        for (std::string name : channel_names)
+        {
+            bool found = false;
+            for(int c=0;c< this->get_num_channels();c++)
+            {
+                auto info = this->get_channel_info(c);
+                std::string label  = std::string(info.label);
+                if(label.compare(0,name.size(),name)==0)
+                {
+                    found=true;
+                    channel_numbers.push_back(c);
+                    break;
+                }
+            }
+        }
+        if(channel_numbers.size()==channel_names.size()) return channel_numbers;
+        else throw std::runtime_error("Bad channel name");
+    }
+
+
+    py::array_t<double> read_samples(std::vector<std::string> channel_names,int n_samples,long long offset)
+    {
+        ensure_open();
+        auto numbers = get_channel_numbers(channel_names);
+        return read_samples(numbers,n_samples,offset);
+    }
 };
 
 
@@ -321,7 +352,10 @@ PYBIND11_MODULE(edffile, m)
         .def_property_readonly("num_annotations", &EDFFile::get_num_annotations)
         .def("get_channel_info", &EDFFile::get_channel_info)
         .def("close", &EDFFile::close)
-        .def("read_samples", &EDFFile::read_samples,
+        .def("get_channel_numbers",&EDFFile::get_channel_numbers)
+        .def("read_samples",(py::array_t<double> (EDFFile::*)(std::vector<std::string>,int,long long)) &EDFFile::read_samples,
+             py::arg("channel"), py::arg("samples"), py::arg("offset") = 0)
+        .def("read_samples",(py::array_t<double> (EDFFile::*)(std::vector<int>,int,long long)) &EDFFile::read_samples,
              py::arg("channel"), py::arg("samples"), py::arg("offset") = 0)
         .def("get_samplerate",&EDFFile::get_samplerate,py::arg("channel"))
     ;

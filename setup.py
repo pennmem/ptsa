@@ -1,16 +1,16 @@
+from contextlib import contextmanager
+import distutils
 import os
 import os.path as osp
-import shutil
-import sys
-from subprocess import check_call
-from contextlib import contextmanager
-from zipfile import ZipFile
-import site
-
 from setuptools import setup, Extension, Command, find_packages
 from setuptools.command.build_py import build_py
 from setuptools.command.install import install
-import distutils
+import shutil
+import site
+from subprocess import check_call
+import sys
+from zipfile import ZipFile
+
 import numpy as np
 
 root_dir = osp.dirname(osp.abspath(__file__))
@@ -110,7 +110,7 @@ def get_compiler_args():
     if sys.platform.startswith('darwin'):
         return ['-std=c++14', '-stdlib=libc++', '-mmacosx-version-min=10.8']
     elif sys.platform.startswith('win'):
-        return []
+        return ['/EHsc']  # exception handling
     else:
         return ['-std=c++14']
 

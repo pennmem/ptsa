@@ -7,7 +7,6 @@ from ptsa import six
 from abc import abstractmethod
 
 
-# @six.add_metaclass(ABCMeta)
 class BaseRawReader(PropertiedObject, BaseReader):
     """
     Abstract base class for objects that know how to read binary EEG files.
@@ -50,11 +49,13 @@ class BaseRawReader(PropertiedObject, BaseReader):
             self.channel_labels = self.channels
         else:
             self.channel_labels = self.channels['channel']
+        if isinstance(self.dataroot, six.binary_type):
+            self.dataroot = self.dataroot.decode()
+        self.params_dict = {'gain':1,'samplerate':self.samplerate()}
 
     def channel_labels_to_string(self):
         if np.issubdtype(self.channel_labels.dtype,np.integer):
             self.channel_labels = np.array(['{:03}'.format(c).encode() for c in self.channel_labels])
-
 
     def read(self):
         """Read EEG data.
@@ -95,6 +96,18 @@ class BaseRawReader(PropertiedObject, BaseReader):
         eventdata.attrs = deepcopy(self.params_dict)
 
         return eventdata, read_ok_mask
+
+
+    @abstractmethod
+    def samplerate(self):
+        """
+        Get the samplerate for the EEG recording ```filename```.
+        The default behavior is to read a separate params file that holds the samplerate.
+        :param filename: The EEG recording whose sample rate we want
+        :return: {float} The sampling rate of the recording, in Hz
+        """
+        params = ParamsReader(dataroot=self.dataroot).read()
+        return params['samplerate']
 
     @abstractmethod
     def read_file(self,filename,channels,start_offsets=np.array([0]),read_size=-1):
