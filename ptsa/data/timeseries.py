@@ -414,3 +414,14 @@ class TimeSeries(xr.DataArray):
 
         """
         return self - self.isel(time=(self['time'] >= base_range[0]) & (self['time'] <= base_range[1])).mean(dim='time')
+
+
+class TimeSeriesX(TimeSeries):
+    def __init__(self, data, coords, dims=None, name=None,
+                 attrs=None, encoding=None, fastpath=False):
+        with warnings.catch_warnings():
+            warnings.simplefilter('always')
+            warnings.warn("TimeSeriesX has been renamed TimeSeries",
+                          DeprecationWarning)
+            super(TimeSeriesX, self).__init__(data, coords, dims, name, attrs,
+                                              encoding, fastpath)
