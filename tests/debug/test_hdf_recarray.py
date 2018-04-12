@@ -1,6 +1,6 @@
 import os.path as osp
 import numpy as np
-from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.timeseries import TimeSeriesX
 from ptsa.data.readers import BaseEventReader
 from ptsa.data.readers import EEGReader
 

@@ -1,6 +1,6 @@
 import time
 import numpy as np
-from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.timeseries import TimeSeriesX
 import traits.api
 from . import MorletWaveletFilter
 from ptsa.extensions.morlet import MorletWaveletTransformMP

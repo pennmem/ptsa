@@ -4,7 +4,7 @@ import numpy as np
 import xarray as xr
 from scipy.fftpack import fft, ifft
 
-from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.timeseries import TimeSeriesX
 from ptsa.data.filters import BaseFilter
 from ptsa.wavelet import morlet_multi, next_pow2
 import traits.api

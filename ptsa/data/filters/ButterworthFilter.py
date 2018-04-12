@@ -1,5 +1,5 @@
 from xarray import DataArray
-from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.timeseries import TimeSeriesX
 from ptsa.data.common import get_axis_index
 from ptsa.filt import buttfilt
 from ptsa.data.filters import BaseFilter

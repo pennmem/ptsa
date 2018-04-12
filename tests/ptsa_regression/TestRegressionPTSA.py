@@ -12,7 +12,7 @@ from ptsa.data.filters.ButterworthFilter import ButterworthFilter
 from ptsa.data.filters.ResampleFilter import ResampleFilter
 from ptsa.data.filters import DataChopper
 from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
-from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.timeseries import TimeSeriesX
 
 
 class TestRegressionPTSA(unittest.TestCase):
@@ -314,7 +314,7 @@ class TestRegressionPTSA(unittest.TestCase):
         argsort_base_eegs = np.argsort(base_eegs,axis=base_eegs.get_axis_num('time'))
         assert_array_equal(argsort_eegs, argsort_base_eegs)
 
-        # could not get compress to work using timeseries.compress method 
+        # could not get compress to work using timeseries.compress method
         # compress_eegs = eegs.compress(condition=[0,2], axis='time')
         # compress_base_eegs = np.compress(condition=[0,1], a=base_eegs.data, axis=base_eegs.get_axis_num('channels'))
         # assert_array_equal(compress_eegs, compress_base_eegs)

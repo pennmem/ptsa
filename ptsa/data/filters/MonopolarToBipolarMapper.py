@@ -1,7 +1,7 @@
 __author__ = 'm'
 
 import numpy as np
-from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.timeseries import TimeSeriesX
 # from memory_profiler import profile
 import time
 

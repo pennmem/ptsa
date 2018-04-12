@@ -3,7 +3,7 @@ __author__ = 'm'
 import numpy as np
 from scipy.signal import resample
 
-from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.timeseries import TimeSeriesX
 from ptsa.data.filters import BaseFilter
 import traits.api
 

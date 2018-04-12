@@ -8,7 +8,7 @@ import xarray as xr
 import h5py
 import tempfile
 
-from ptsa.data.TimeSeriesX import TimeSeriesX, ConcatenationError
+from ptsa.data.timeseries import TimeSeriesX, ConcatenationError
 
 
 @pytest.fixture

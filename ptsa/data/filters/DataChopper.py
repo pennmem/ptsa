@@ -4,7 +4,7 @@ import numpy as np
 
 import xarray as xr
 import traits.api
-from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.timeseries import TimeSeriesX
 
 
 class DataChopper(traits.api.HasTraits):

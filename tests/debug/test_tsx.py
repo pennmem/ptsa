@@ -1,6 +1,6 @@
 import numpy as np
 import unittest
-from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.timeseries import TimeSeriesX
 
 class TestEEGReaders(unittest.TestCase):
     def setUp(self):

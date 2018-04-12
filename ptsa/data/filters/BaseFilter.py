@@ -1,6 +1,6 @@
 __author__ = 'm'
 import traits.api
-from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.timeseries import TimeSeriesX
 from abc import abstractmethod
 
 __all__ = ['BaseFilter']
