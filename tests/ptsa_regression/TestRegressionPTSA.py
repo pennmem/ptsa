@@ -12,7 +12,7 @@ from ptsa.data.filters.ButterworthFilter import ButterworthFilter
 from ptsa.data.filters.ResampleFilter import ResampleFilter
 from ptsa.data.filters import DataChopper
 from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
-from ptsa.data.timeseries import TimeSeriesX
+from ptsa.data.timeseries import TimeSeries
 
 
 class TestRegressionPTSA(unittest.TestCase):
@@ -195,7 +195,7 @@ class TestRegressionPTSA(unittest.TestCase):
         eegs = self.eegs[:, :, :-1]
         eegs_filtered = eegs.filtered([58, 62], filt_type='stop', order=4)
 
-        # -------------------TimeSeriesX
+        # -------------------TimeSeries
         base_eegs = self.base_eegs
         base_eegs_filtered_direct = self.base_eegs.filtered([58, 62], filt_type='stop', order=4)
 
@@ -227,7 +227,7 @@ class TestRegressionPTSA(unittest.TestCase):
         # filtering
         eegs_resampled = eegs.resampled(100.0)
 
-        # -------------------TimeSeriesX
+        # -------------------TimeSeries
         base_eegs = self.base_eegs
 
         resample_filter = ResampleFilter(time_series=base_eegs, resamplerate=100.0)
@@ -579,7 +579,7 @@ class TestRegressionPTSA(unittest.TestCase):
         y = np.sin(x*(2*np.pi*frequency/n_points))
         y_mod = np.sin(x*(2*np.pi*frequency/n_points))* np.sin(x*(2*np.pi*modulation_frequency/n_points))
 
-        ts = TimeSeriesX(y, dims=['time'], coords=[x])
+        ts = TimeSeries(y, dims=['time'], coords=[x])
         ts['samplerate']=samplerate
         ts.attrs['samplerate'] = samplerate
 

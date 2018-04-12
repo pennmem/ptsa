@@ -11,7 +11,7 @@ from ptsa.data.readers.edf import EDFRawReader
 from ptsa.data.readers.binary import BinaryRawReader
 from ptsa.data.readers.hdf5 import H5RawReader
 from ptsa.data.readers.base import BaseReader
-from ptsa.data.timeseries import TimeSeriesX
+from ptsa.data.timeseries import TimeSeries
 
 __all__ = [
     'EEGReader',
@@ -141,7 +141,7 @@ class EEGReader(traits.api.HasTraits):
         """
         Reads entire session worth of data
 
-        :return: TimeSeriesX object (channels x events x time) with data for entire session the events dimension has length 1
+        :return: TimeSeries object (channels x events x time) with data for entire session the events dimension has length 1
         """
         brr = self.READER_FILETYPE_DICT[os.path.splitext(self.session_dataroot)[-1]](dataroot=self.session_dataroot, channels=self.channels)
         session_array,read_ok_mask = brr.read()
@@ -154,16 +154,16 @@ class EEGReader(traits.api.HasTraits):
 
         # session_array = session_array.rename({'start_offsets': 'events'})
 
-        session_time_series = TimeSeriesX(session_array.values,
-                                          dims=[self.channel_name, 'start_offsets', 'time'],
-                                          coords={
+        session_time_series = TimeSeries(session_array.values,
+                                         dims=[self.channel_name, 'start_offsets', 'time'],
+                                         coords={
                                               self.channel_name: session_array[self.channel_name],
                                               'start_offsets': session_array['start_offsets'],
                                               'time': physical_time_array,
                                               'offsets': ('time', session_array['offsets']),
                                               'samplerate': session_array['samplerate']
                                           }
-                                          )
+                                         )
         session_time_series.attrs = session_array.attrs.copy()
         session_time_series.attrs['dataroot'] = self.session_dataroot
 
@@ -179,7 +179,7 @@ class EEGReader(traits.api.HasTraits):
         """
         Reads eeg data for individual event
 
-        :return: TimeSeriesX  object (channels x events x time) with data for individual events
+        :return: TimeSeries  object (channels x events x time) with data for individual events
         """
         self.event_ok_mask_sorted = None  # reset self.event_ok_mask_sorted
 
@@ -223,14 +223,14 @@ class EEGReader(traits.api.HasTraits):
         edim = np.rec.array(np.concatenate(events))
 
         attrs = eventdata.attrs.copy()
-        eventdata = TimeSeriesX(eventdata.data,
-                                dims=[self.channel_name, 'events', 'time'],
-                                coords={self.channel_name: cdim,
+        eventdata = TimeSeries(eventdata.data,
+                               dims=[self.channel_name, 'events', 'time'],
+                               coords={self.channel_name: cdim,
                                         'events': edim,
                                         'time': tdim,
                                         'samplerate': samplerate
                                         }
-                                )
+                               )
 
         eventdata.attrs = attrs
 
@@ -255,6 +255,6 @@ class EEGReader(traits.api.HasTraits):
         """
         Calls read_events_data or read_session_data depending on user selection
 
-        :return: TimeSeriesX object
+        :return: TimeSeries object
         """
         return self.read_fcn()

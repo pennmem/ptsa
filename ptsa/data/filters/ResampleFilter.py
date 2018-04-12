@@ -3,7 +3,7 @@ __author__ = 'm'
 import numpy as np
 from scipy.signal import resample
 
-from ptsa.data.timeseries import TimeSeriesX
+from ptsa.data.timeseries import TimeSeries
 from ptsa.data.filters import BaseFilter
 import traits.api
 
@@ -13,7 +13,7 @@ class ResampleFilter(BaseFilter):
     Keyword Arguments
     -----------------
     time_series
-        TimeSeriesX object
+        TimeSeries object
     resamplerate: float
         new sampling frequency
     time_axis_index: int
@@ -39,7 +39,7 @@ class ResampleFilter(BaseFilter):
 
         Returns
         -------
-        resampled: TimeSeriesX
+        resampled: TimeSeries
             resampled time series with sampling frequency set to resamplerate
 
         """
@@ -88,5 +88,5 @@ class ResampleFilter(BaseFilter):
                 coords[dim_name]=new_time_axis
         coords['samplerate']=self.resamplerate
 
-        filtered_time_series = TimeSeriesX(filtered_array, coords=coords,dims=self.time_series.dims)
+        filtered_time_series = TimeSeries(filtered_array, coords=coords, dims=self.time_series.dims)
         return filtered_time_series

@@ -19,12 +19,12 @@ from ptsa.filt import buttfilt
 
 class ConcatenationError(Exception):
     """Raised when an error occurs while trying to concatenate incompatible
-    :class:`TimeSeriesX` objects.
+    :class:`TimeSeries` objects.
 
     """
 
 
-class TimeSeriesX(xr.DataArray):
+class TimeSeries(xr.DataArray):
     """A thin wrapper around :class:`xr.DataArray` for dealing with time series
     data.
 
@@ -62,9 +62,9 @@ class TimeSeriesX(xr.DataArray):
     def __init__(self, data, coords, dims=None, name=None,
                  attrs=None, encoding=None, fastpath=False):
         assert 'samplerate' in coords
-        super(TimeSeriesX, self).__init__(data=data, coords=coords, dims=dims,
-                                          name=name, attrs=attrs, encoding=encoding,
-                                          fastpath=fastpath)
+        super(TimeSeries, self).__init__(data=data, coords=coords, dims=dims,
+                                         name=name, attrs=attrs, encoding=encoding,
+                                         fastpath=fastpath)
 
     @classmethod
     def create(cls, data, samplerate, coords=None, dims=None, name=None,
@@ -177,18 +177,18 @@ class TimeSeriesX(xr.DataArray):
             return array
 
     def append(self, other, dim=None):
-        """Append another :class:`TimeSeriesX` to this one.
+        """Append another :class:`TimeSeries` to this one.
 
         Parameters
         ----------
-        other : TimeSeriesX
+        other : TimeSeries
         dim : str or None
             Dimension to concatenate on. If None, attempt to concatenate all
             data (likely to fail with truly multidimensional data).
 
         Returns
         -------
-        Appended TimeSeriesX
+        Appended TimeSeries
 
         """
         if not self.dims == other.dims:
@@ -230,8 +230,8 @@ class TimeSeriesX(xr.DataArray):
         attrs.update(other.attrs)
         name = "{!s} appended with {!s}".format(self.name, other.name)
 
-        new = TimeSeriesX.create(data, self.samplerate, coords=coords,
-                                 dims=dims, attrs=attrs, name=name)
+        new = TimeSeries.create(data, self.samplerate, coords=coords,
+                                dims=dims, attrs=attrs, name=name)
         return new
 
     def __duration_to_samples(self, duration):
@@ -257,8 +257,8 @@ class TimeSeriesX(xr.DataArray):
 
         Returns
         -------
-        ts : TimeSeriesX
-            A TimeSeriesX instance with the filtered data.
+        ts : TimeSeries
+            A TimeSeries instance with the filtered data.
 
         """
         warnings.warn("The filtered method is not very flexible. "
@@ -322,7 +322,7 @@ class TimeSeriesX(xr.DataArray):
             if coord_name == time_axis_name:
                 coords[coord_name] = new_time_axis
 
-        resampled_time_series = TimeSeriesX.create(
+        resampled_time_series = TimeSeries.create(
             resampled_array, resampled_rate, coords=coords, dims=[dim for dim in self.dims],
             name=self.name, attrs=self.attrs)
 
@@ -345,7 +345,7 @@ class TimeSeriesX(xr.DataArray):
 
         Returns
         -------
-        ts : TimeSeriesX
+        ts : TimeSeries
             A TimeSeries instance with the requested durations removed from the
             beginning and/or end.
         """
@@ -393,7 +393,7 @@ class TimeSeriesX(xr.DataArray):
         coords['time'] = t_axis
         coords['samplerate'] = float(self['samplerate'])
 
-        return TimeSeriesX(mirrored_data, dims=self.dims, coords=coords)
+        return TimeSeries(mirrored_data, dims=self.dims, coords=coords)
 
     def baseline_corrected(self, base_range):
         """

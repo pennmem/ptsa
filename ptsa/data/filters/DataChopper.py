@@ -4,7 +4,7 @@ import numpy as np
 
 import xarray as xr
 import traits.api
-from ptsa.data.timeseries import TimeSeriesX
+from ptsa.data.timeseries import TimeSeries
 
 
 class DataChopper(traits.api.HasTraits):
@@ -18,7 +18,7 @@ class DataChopper(traits.api.HasTraits):
     buffer_time = traits.api.CFloat
     events = traits.api.Array
     start_offsets = traits.api.CArray
-    session_data=traits.api.Instance(TimeSeriesX)
+    session_data=traits.api.Instance(TimeSeries)
 
 
 
@@ -29,7 +29,7 @@ class DataChopper(traits.api.HasTraits):
 
         :param kwds:allowed values are:
         -------------------------------------
-        :param session_data {TimeSeriesX}-  TimeSeriesX object with eeg session data
+        :param session_data {TimeSeries}-  TimeSeries object with eeg session data
         :param start_time {float} -  read start offset in seconds w.r.t to the eegeffset specified in the events recarray
         :param end_time {float} -  read end offset in seconds w.r.t to the eegeffset specified in the events recarray
         :param end_time {float} -  extra buffer in seconds (subtracted from start read and added to end read)
@@ -132,4 +132,4 @@ class DataChopper(traits.api.HasTraits):
             "buffer_time": self.buffer_time
         }
         ev_concat_data['samplerate'] = samplerate
-        return TimeSeriesX.create(ev_concat_data, samplerate, attrs=attrs)
+        return TimeSeries.create(ev_concat_data, samplerate, attrs=attrs)
