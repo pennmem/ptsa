@@ -29,8 +29,8 @@ size_t nextpow2(size_t v) {
 
 size_t MorletWaveFFT::init(size_t width, double freq, size_t win_size, double sample_freq) {
     double dt = 1.0 / sample_freq;
-    double sf = freq / width;
-    double st = 1.0 / (2.0 * M_PI * sf);
+    double sf = freq / width; //sigma_f;  width of Gaussian in the frequency domain
+    double st = 1.0 / (2.0 * M_PI * sf); //sigma_t; width of Gaussian in the time domain.
     double a = 1 / sqrt(st * sqrt(M_PI));
     double omega = 2.0 * M_PI * freq;
 

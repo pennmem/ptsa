@@ -30,13 +30,9 @@ class H5RawReader(BaseRawReader):
         _, data_ext = osp.splitext(kwargs['dataroot'])
         assert len(data_ext), 'Dataroot missing extension'
         super(H5RawReader, self).__init__(**kwargs)
-        self.params_dict['samplerate'] = self.samplerate()
-
-    def samplerate(self):
         with h5py.File(self.dataroot,'r') as eegfile:
             if 'samplerate' in eegfile:
-                return eegfile['samplerate'][0]
-        return super(H5RawReader, self).samplerate()
+                self.params_dict['samplerate']= eegfile['samplerate'][0]
 
     def read_file(self, filename, channels, start_offsets=np.array([0]), read_size=-1):
         """

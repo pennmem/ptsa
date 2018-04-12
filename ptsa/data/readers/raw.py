@@ -1,13 +1,11 @@
 import numpy as np
 from xarray import DataArray
-from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers.base import BaseReader
 from ptsa.data.readers.params import ParamsReader
-from ptsa import six
 from abc import abstractmethod
+import traits.api
 
-
-class BaseRawReader(PropertiedObject, BaseReader):
+class BaseRawReader(BaseReader, traits.api.HasTraits):
     """
     Abstract base class for objects that know how to read binary EEG files.
     Classes inheriting from BaseRawReader should do the following
@@ -16,35 +14,35 @@ class BaseRawReader(PropertiedObject, BaseReader):
       either in self.read_file or in the constructor
     * Make sure that self.channel_name as appropriate for the referencing scheme used
     """
-    _descriptors = [
-        TypeValTuple('dataroot', six.string_types, ''),
-        TypeValTuple('channels', np.ndarray, np.array([], dtype='|S3')),
-        TypeValTuple('start_offsets', np.ndarray, np.array([0], dtype=np.int)),
-        TypeValTuple('read_size', int, -1),
-    ]
+
+    dataroot = traits.api.Str
+    channels = traits.api.CArray
+    start_offsets = traits.api.CArray
+    read_size = traits.api.Int
 
     channel_name = 'channels'
 
-    def __init__(self, **kwds):
+    def __init__(self, dataroot,channels=tuple(),start_offsets=tuple([0]),read_size=-1):
         """
         Constructor
-        :param kwds:allowed values are:
-        -------------------------------------
         :param dataroot {str} -  core name of the eegfile file (i.e. full path except extension e.g. '.002').
         Normally this is eegfile field from events record
 
-        :param channels {ndarray} - array of channels (array of strings) that should be read
-        :param start_offsets {ndarray} -  array of ints with read offsets
+        :param channels {array-like} - array of channels (array of strings) that should be read
+        :param start_offsets {array-like} -  array of ints with read offsets
         :param read_size {int} - size of the read chunk. If -1 the entire file is read
-        --------------------------------------
         :return:None
 
         """
+        self.dataroot = dataroot
+        self.channels = channels
+        self.start_offsets = start_offsets
+        self.read_size = read_size
+        self.params_dict = self.init_params()
 
-        self.init_attrs(kwds)
-        if isinstance(self.dataroot, six.binary_type):
-            self.dataroot = self.dataroot.decode()
-        self.params_dict = {'gain':1,'samplerate':self.samplerate()}
+    def init_params(self):
+        p_reader = ParamsReader(dataroot=self.dataroot)
+        return p_reader.read()
 
     def read(self):
         """Read EEG data.
@@ -86,18 +84,6 @@ class BaseRawReader(PropertiedObject, BaseReader):
         eventdata.attrs = deepcopy(self.params_dict)
 
         return eventdata, read_ok_mask
-
-
-    @abstractmethod
-    def samplerate(self):
-        """
-        Get the samplerate for the EEG recording ```filename```.
-        The default behavior is to read a separate params file that holds the samplerate.
-        :param filename: The EEG recording whose sample rate we want
-        :return: {float} The sampling rate of the recording, in Hz
-        """
-        params = ParamsReader(dataroot=self.dataroot).read()
-        return params['samplerate']
 
     @abstractmethod
     def read_file(self,filename,channels,start_offsets=np.array([0]),read_size=-1):

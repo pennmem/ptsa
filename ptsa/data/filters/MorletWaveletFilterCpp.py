@@ -1,28 +1,21 @@
 import time
 import numpy as np
 from ptsa.data.TimeSeriesX import TimeSeriesX
-from ptsa.data.common import TypeValTuple, PropertiedObject
-from ptsa.data.filters import BaseFilter
+import traits.api
+from . import MorletWaveletFilter
 from ptsa.extensions.morlet import MorletWaveletTransformMP
 from ptsa.extensions import morlet
 
 
-class MorletWaveletFilterCpp(PropertiedObject, BaseFilter):
-    _descriptors = [
-        TypeValTuple('freqs', np.ndarray, np.array([], dtype=np.float)),
-        TypeValTuple('width', int, 5),
-        TypeValTuple('output', str, 'power'),
-        TypeValTuple('frequency_dim_pos', int, 0),
-        TypeValTuple('cpus', int, 1),
-        # NOTE in this implementation the default position of frequency is -2
-        TypeValTuple('verbose', bool, False),
-    ]
+class MorletWaveletFilterCpp(MorletWaveletFilter):
 
-    def __init__(self, time_series, **kwds):
+    cpus = traits.api.Int
 
-        self.window = None
-        self.time_series = time_series
-        self.init_attrs(kwds)
+    def __init__(self, time_series, freqs,width=5,output='',frequency_dim_pos=-2,verbose=False,cpus = 1):
+
+        super(MorletWaveletFilterCpp, self).__init__(time_series,freqs=freqs,width=width,output=output,
+                                                     frequency_dim_pos=frequency_dim_pos,verbose=verbose)
+        self.cpus = cpus
 
     def filter(self):
 

@@ -5,7 +5,7 @@ import os
 import pandas as pd
 
 from ptsa.data.common import pathlib
-from ptsa.six import string_types
+from six import string_types
 
 __all__ = [
     'JsonIndexReader',

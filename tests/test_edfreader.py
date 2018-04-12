@@ -47,8 +47,9 @@ class TestEDFReader:
     def test_1_offset_1_chann_succeeds(self, subject, session):
         filename = self.bdf_file_template.format(subject=subject, session=session)
         channel = np.array(['002'])
-        reader  = EDFRawReader(dataroot=filename)
-        reader.init_attrs(dict(channels=channel, start_offsets=np.array([0]), read_size=500))
+        reader  = EDFRawReader(dataroot=filename,
+                               channels=channel, start_offsets=np.array([0]),
+                               read_size=500)
         data,mask = reader.read_file(reader.dataroot,channel,read_size=500)
         assert mask.all()
         assert not np.isnan(data).any()

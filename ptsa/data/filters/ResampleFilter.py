@@ -1,15 +1,13 @@
 __author__ = 'm'
 
 import numpy as np
-import xarray as xr
 from scipy.signal import resample
 
 from ptsa.data.TimeSeriesX import TimeSeriesX
-from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.filters import BaseFilter
+import traits.api
 
-
-class ResampleFilter(PropertiedObject, BaseFilter):
+class ResampleFilter(BaseFilter):
     """Upsample or downsample a time series to a new sample rate.
 
     Keyword Arguments
@@ -26,24 +24,15 @@ class ResampleFilter(PropertiedObject, BaseFilter):
 
 """
 
-    _descriptors = [
-        TypeValTuple('time_series', TimeSeriesX, TimeSeriesX([0.0], dict(samplerate=1), dims=['time'])),
-        TypeValTuple('resamplerate', float, -1.0),
-        TypeValTuple('time_axis_index', int, -1),
-        TypeValTuple('round_to_original_timepoints', bool, False),
+    resamplerate = traits.api.CFloat
+    time_axis_index = traits.api.Int
+    round_to_original_timepoints = traits.api.Bool
 
-    ]
-
-    def ___syntax_helper(self):
-        self.time_series = None
-        self.resamplerate = None
-        self.time_axis_index = None
-        self.round_to_original_timepoints = None
-
-    def __init__(self,**kwds):
-        self.window = None
-        # self.time_series = None
-        self.init_attrs(kwds)
+    def __init__(self,time_series,resamplerate,time_axis_index=-1,round_to_original_timepoints=False):
+        super(ResampleFilter, self).__init__(time_series=time_series)
+        self.resamplerate = resamplerate
+        self.time_axis_index = time_axis_index
+        self.round_to_original_timepoints = round_to_original_timepoints
 
     def filter(self):
         """resamples time series
@@ -78,7 +67,7 @@ class ResampleFilter(PropertiedObject, BaseFilter):
         if self.round_to_original_timepoints:
             filtered_array, new_time_idx_array = resample(self.time_series.data,
                                              new_length, t=time_idx_array,
-                                             axis=self.time_axis_index, window=self.window)
+                                             axis=self.time_axis_index)
 
             # print new_time_axis
 
@@ -89,7 +78,7 @@ class ResampleFilter(PropertiedObject, BaseFilter):
         else:
             filtered_array, new_time_axis = resample(self.time_series.data,
                                              new_length, t=time_axis_data,
-                                             axis=self.time_axis_index, window=self.window)
+                                             axis=self.time_axis_index)
 
         coords = {}
         for i, dim_name in enumerate(self.time_series.dims):

@@ -1,12 +1,11 @@
 from xarray import DataArray
-from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.TimeSeriesX import TimeSeriesX
 from ptsa.data.common import get_axis_index
 from ptsa.filt import buttfilt
 from ptsa.data.filters import BaseFilter
+import traits.api
 
-
-class ButterworthFilter(PropertiedObject, BaseFilter):
+class ButterworthFilter(BaseFilter):
     """Applies Butterworth filter to a time series.
 
     Keyword Arguments
@@ -20,16 +19,17 @@ class ButterworthFilter(PropertiedObject, BaseFilter):
        Array [min_freq, max_freq] describing the filter range
 
     """
+    order=traits.api.Int
+    freq_range = traits.api.List(maxlen=2)
+    filt_type=traits.api.Str
 
-    _descriptors = [
-        TypeValTuple('time_series', TimeSeriesX, TimeSeriesX([0.0], dict(samplerate=1.), dims=['time'])),
-        TypeValTuple('order', int, 4),
-        TypeValTuple('freq_range', list, [58, 62]),
-        TypeValTuple('filt_type', str, 'stop'),
-    ]
 
-    def __init__(self, **kwds):
-        self.init_attrs(kwds)
+    def __init__(self, time_series,freq_range,order=4,filt_type='stop'):
+        super(ButterworthFilter, self).__init__(time_series)
+
+        self.freq_range = freq_range
+        self.order = order
+        self.filt_type = filt_type
 
     def filter(self):
         """
