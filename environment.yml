@@ -21,6 +21,7 @@ dependencies:
 - six
 - sqlite
 - swig
+- traits
 - tk
 - wheel
 - xarray

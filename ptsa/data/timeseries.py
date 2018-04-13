@@ -1,353 +1,402 @@
-#emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
-#ex: set sts=4 ts=4 sw=4 et:
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
-#
-#   See the COPYING file distributed along with the PTSA package for the
-#   copyright and license terms.
-#
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
-
-from dimarray import Dim,DimArray,AttrArray
-from ptsa import filt
-from ptsa.helper import next_pow2, pad_to_next_pow2
-
-from scipy.signal import resample
+import json
+import time
+import warnings
+from io import BytesIO
+from base64 import b64encode, b64decode
+import xarray as xr
 import numpy as np
-import sys
+from scipy.signal import resample
 
 try:
-    import multiprocessing as mp
-    has_mp = True
-except ImportError:
-    has_mp = False
+    import h5py
+except ImportError:  # pragma: nocover
+    h5py = None
 
-from .TimeSeriesX import TimeSeriesX  # for more pythonic imports
+from ptsa.version import version as ptsa_version
+from ptsa.data.common import get_axis_index
+from ptsa.filt import buttfilt
 
-__docformat__ = 'restructuredtext'
 
+class ConcatenationError(Exception):
+    """Raised when an error occurs while trying to concatenate incompatible
+    :class:`TimeSeries` objects.
 
-class TimeSeries(DimArray):
     """
-    TimeSeries(data, tdim, samplerate, *args, **kwargs)
 
-    A subclass of DimArray to hold timeseries data (i.e. data with a
-    time dimension and associated sample rate).  It also provides
-    methods for manipulating the time dimension, such as resampling
-    and filtering the data.
+
+class TimeSeries(xr.DataArray):
+    """A thin wrapper around :class:`xr.DataArray` for dealing with time series
+    data.
+
+    Note that xarray internals prevent us from overriding the constructor which
+    leads to some awkwardness: you must pass coords as a dict with a
+    ``samplerate`` entry.
 
     Parameters
     ----------
-    data : {array_like}
-        The time series data.
-    tdim : {str}
-        The name of the time dimension.
-    samplerate : {float}
-        The sample rate of the time dimension. Constrained to be of
-        type float (any passed in value is converted to a float).
-    *args : {*args},optional
-        Additinal custom attributes
-    **kwargs : {**kwargs},optional
-        Additional custom keyword attributes.
+    data : array-like
+        Time series data
+    coords : dict-like
+        Coordinate arrays. This must contain at least a ``samplerate``
+        coordinate.
+    dims : array-like
+        Dimension labels
+    name : str
+        Name of the time series
+    attrs : dict
+        Dictionary of arbitrary metadata
+    encoding : dict
+    fastpath : bool
+        Not used, but required when subclassing :class:`xr.DataArray`.
 
-    Note
-    ----
-    Useful additional (keyword) attributes include dims, dtype, and
-    copy (see DimArray docstring for details).
+    Raises
+    ------
+    AssertionError
+        When ``samplerate`` is not present in ``coords``.
 
     See also
     --------
-    DimArray
+    xr.DataArray : Base class
 
-    Examples
-    --------
-    >>> import numpy as np
-    >>> import dimarray as da
-    >>> import ptsa.data.timeseries as ts
-    >>> observations = da.Dim(['a','b','c'],'obs')
-    >>> time = da.Dim(np.arange(4),'time')
-    >>> data = ts.TimeSeries(np.random.rand(3,4),'time',samplerate=1,
-                             dims=[observations,time])
-    >>> data
-    TimeSeries([[ 0.51244513,  0.39930142,  0.63501339,  0.67071605],
-       [ 0.46962664,  0.51071395,  0.46748319,  0.78265951],
-       [ 0.85515317,  0.10996395,  0.41642481,  0.50561768]])
-
-    >>> data.samplerate
-    1.0
-    >>> data.tdim
-    'time'
     """
+    def __init__(self, data, coords, dims=None, name=None,
+                 attrs=None, encoding=None, fastpath=False):
+        assert 'samplerate' in coords
+        super(TimeSeries, self).__init__(data=data, coords=coords, dims=dims,
+                                         name=name, attrs=attrs, encoding=encoding,
+                                         fastpath=fastpath)
 
-    _required_attrs = {'dims':np.ndarray,
-                       'tdim':str,
-                       'samplerate':float}
-    taxis = property(lambda self:
-                     self.get_axis(self.tdim),
-                     doc="Numeric time axis (read only).")
+    @classmethod
+    def create(cls, data, samplerate, coords=None, dims=None, name=None,
+               attrs=None):
+        """Factory function for creating a new timeseries object with passing
+        the sample rate as a parameter. See :meth:`__init__` for parameters.
 
-    # def __new__(cls, data, dims, tdim, samplerate,
-    def __new__(cls, data, tdim, samplerate, *args, **kwargs):
-        # make new DimArray with timeseries attributes
-        ts = DimArray(data, *args, **kwargs)
-        # ensure that tdim is a valid dimension name:
-        if not(tdim in ts.dim_names):
-            raise ValueError(
-                'Provided time dimension name (tdim) is invalid!\n'+
-                'Provided value: '+ str(tdim)+'\nAvailable dimensions: '+
-                str(ts.dim_names))
-        ts.tdim = tdim
-        # ensure that sample rate is a float:
-        samplerate = float(samplerate)
-        # ensure that sample rate is postive:
-        if samplerate <= 0:
-            raise ValueError(
-                'Samplerate must be positive! Provided value: '+
-                str(samplerate))
-        ts.samplerate = samplerate
-
-        # convert to TimeSeries and return:
-        return ts.view(cls)
-
-    def __setattr__(self, name, value):
-        # ensure that tdim is a valid dimension name:
-        if name == 'tdim':
-            if not(value in self.dim_names):
-                raise ValueError(
-                    'Provided time dimension name (tdim) is invalid!\n'+
-                    'Provided value: '+ str(value)+'\nAvailable dimensions: '+
-                    str(self.dim_names))
-        # ensure that sample rate is a postive float:
-        elif name == 'samplerate':
-            value = float(value)
-            if value <= 0:
-                raise ValueError(
-                    'Samplerate must be positive! Provided value: '+
-                    str(value))
-        DimArray.__setattr__(self,name,value)
-
-    def _ret_func(self, ret, axis):
         """
-        Return function output for functions that take an axis
-        argument after adjusting dims properly.
-        """
-        if axis is None:
-            # just return what we got
-            return ret.view(AttrArray)
-        else:
-            # see if is time axis
-            return_as_dimarray = False
-            if self.get_axis(axis) == self.taxis:
-                return_as_dimarray = True
-            # pop the dim
-            ret.dims = ret.dims[np.arange(len(ret.dims))!=axis]
-        if return_as_dimarray:
-            # The function removed the time dimension, so we return a
-            # DimArray instead of a TimeSeries
-            return ret.view(DimArray)
-        else:
-            return ret.view(self.__class__)
+        if coords is None:
+            coords = {}
+        if samplerate is not None:
+            coords['samplerate'] = float(samplerate)
+        return cls(data, coords=coords, dims=dims, name=name, attrs=attrs)
 
-
-    def remove_buffer(self, duration):
-        """Remove the desired buffer duration (in seconds) and reset the time range.
+    def to_hdf(self, filename, mode='w'):
+        """Save to disk using HDF5.
 
         Parameters
         ----------
-        duration : {int,float,({int,float},{int,float})}
-            The duration to be removed. The units depend on the samplerate:
-            E.g., if samplerate is specified in Hz (i.e., samples per second),
-            the duration needs to be specified in seconds and if samplerate is
-            specified in kHz (i.e., samples per millisecond), the duration needs
-            to be specified in milliseconds.
-            A single number causes the specified duration to be removed from the
-            beginning and end. A 2-tuple can be passed in to specify different
-            durations to be removed from the beginning and the end respectively.
+        filename : str
+            Full path to the HDF5 file
+        mode : str
+            File mode to use. See the :mod:`h5py` documentation for details.
+            Default: ``'w'``
+
+        Notes
+        -----
+        Because recarrays can complicate things when unicode is involved, saving
+        coordinates is a multi-step process:
+
+        1. Save to a buffer using :func:`np.save`. This uses Numpy's own binary
+           format and should Just Work.
+        2. Base64-encode the buffer to eliminate NULL bytes which HDF5 can't
+           handle.
+        3. Write the bytes contained in the buffer to the HDF5 file.
+
+        """
+        if h5py is None:  # pragma: nocover
+            raise RuntimeError("You must install h5py to save as HDF5")
+
+        with h5py.File(filename, mode) as hfile:
+            hfile.attrs['ptsa_version'] = ptsa_version
+            hfile.attrs['created'] = time.time()
+
+            hfile.create_dataset("data", data=self.data, chunks=True)
+
+            dims = [dim.encode() for dim in self.dims]
+            hfile.create_dataset("dims", data=dims)
+
+            coords_group = hfile.create_group("coords")
+            coords = []
+            for name, data in self.coords.items():
+                coords.append(name)
+                buffer = BytesIO()
+                np.save(buffer, data)
+                buffer.seek(0)
+                output = b64encode(buffer.read())
+                try:
+                    coords_group.create_dataset(name, data=output)
+                except:
+                    print(output)
+                    raise
+            names = json.dumps(coords).encode()
+            coords_group.attrs.update(names=names)
+
+            root = hfile['/']
+            if self.name is not None:
+                root.attrs['name'] = self.name.encode()
+            if self.attrs is not None:
+                root.attrs['attrs'] = json.dumps(self.attrs).encode()
+
+    @classmethod
+    def from_hdf(cls, filename):
+        """Load from an HDF5 file.
+
+        FIXME: load name and attrs
+
+        Parameters
+        ----------
+        filename : str
+            Path to HDF5 file.
+
+        """
+        if h5py is None:  # pragma: nocover
+            raise RuntimeError("You must install h5py to load from HDF5")
+
+        with h5py.File(filename, 'r') as hfile:
+            dims = hfile['dims'][:]
+
+            root = hfile['/']
+
+            coords_group = hfile['coords']
+            names = json.loads(coords_group.attrs['names'].decode())
+            coords = dict()
+            for name in names:
+                buffer = BytesIO(b64decode(coords_group[name].value))
+                coord = np.load(buffer)
+                coords[name] = coord
+
+            name = root.attrs.get('name', None)
+            if name is not None:
+                name = name.decode()
+            attrs = root.attrs.get('attrs', None)
+            if attrs is not None:
+                attrs = json.loads(attrs.decode())
+
+            array = cls.create(hfile['data'].value, None, coords=coords,
+                               dims=[dim.decode() for dim in dims],
+                               name=name, attrs=attrs)
+            return array
+
+    def append(self, other, dim=None):
+        """Append another :class:`TimeSeries` to this one.
+
+        Parameters
+        ----------
+        other : TimeSeries
+        dim : str or None
+            Dimension to concatenate on. If None, attempt to concatenate all
+            data (likely to fail with truly multidimensional data).
 
         Returns
         -------
-        ts : {TimeSeries}
-            A TimeSeries instance with the requested durations removed from the
-            beginning and/or end.
-        """
-        # see if we need to remove anything
-        duration = np.atleast_1d(duration)
-        if len(duration) != 2:
-            duration = duration.repeat(2)
-        num_samp = np.round(self.samplerate * duration)
-        # ensure that the number of samples are >= 0:
-        if np.any(num_samp<0):
-            raise ValueError('Duration must not be negative!'+
-                             'Provided values: '+str(duration))
-            # remove the buffer from the data
-            return self.take(range(int(num_samp[0]),
-                                   self.shape[self.taxis]-int(num_samp[1])),
-                             self.taxis)
+        Appended TimeSeries
 
-    def filtered(self,freq_range,filt_type='stop',order=4):
+        """
+        if not self.dims == other.dims:
+            raise ConcatenationError("Dimensions are not identical")
+
+        dims = self.dims
+        coords = dict()
+
+        for key in self.coords:
+            if len(self[key].shape) == 0:
+                if self[key].data != other[key].data:
+                    raise ConcatenationError(
+                        "coordinate {:s} differs\n".format(key) +
+                        "self -> {!s}, other -> {!s}".format(self[key],
+                                                             other[key])
+                    )
+                else:
+                    coords[key] = self[key]
+            elif dim is None:
+                coords[key] = np.concatenate(
+                    [self.coords[key], other.coords[key]])
+            else:
+                if key != dim:
+                    if (self[key] != other[key]).all():
+                        raise ConcatenationError("Dimension {:s} doesn't match".format(key))
+                    coords[key] = self[key]
+                else:
+                    coords[key] = np.concatenate([self[key], other[key]])
+
+        if dim is None:
+            data = np.concatenate([self.data, other.data])
+        else:
+            if dim not in dims:
+                raise ConcatenationError("Dimension {!s} not found".format(dim))
+            axis = np.where(np.array(dims) == dim)[0][0]
+            data = np.concatenate([self.data, other.data], axis=axis)
+
+        attrs = self.attrs.copy()
+        attrs.update(other.attrs)
+        name = "{!s} appended with {!s}".format(self.name, other.name)
+
+        new = TimeSeries.create(data, self.samplerate, coords=coords,
+                                dims=dims, attrs=attrs, name=name)
+        return new
+
+    def __duration_to_samples(self, duration):
+        """Convenience function to convert a duration in seconds to number of
+        samples.
+
+        """
+        return int(np.ceil(float(self['samplerate']) * duration))
+
+    def filtered(self, freq_range, filt_type='stop', order=4):
         """
         Filter the data using a Butterworth filter and return a new
         TimeSeries instance.
 
         Parameters
         ----------
-        freq_range : {array_like}
+        freq_range : array-like
             The range of frequencies to filter.
-        filt_type = {scipy.signal.band_dict.keys()},optional
-            Filter type.
-        order = {int}
-            The order of the filter.
+        filt_type : str
+            Filter type (default: ``'stop'``).
+        order : int
+            The order of the filter (default: 4).
 
         Returns
         -------
-        ts : {TimeSeries}
+        ts : TimeSeries
             A TimeSeries instance with the filtered data.
-        """
 
-        filtered_array = filt.buttfilt(np.asarray(self),
-                                       freq_range,self.samplerate,filt_type,
-                                       order,axis=self.taxis)
-        attrs = self._attrs.copy()
-        for k in list(self._required_attrs.keys()):
-            attrs.pop(k,None)
-        return TimeSeries(filtered_array,self.tdim, self.samplerate,
-                          dims=self.dims.copy(), **attrs)
+        """
+        warnings.warn("The filtered method is not very flexible. "
+                      "Consider using filters in ptsa.data.filters instead.")
+        time_axis_index = get_axis_index(self, axis_name='time')
+        filtered_array = buttfilt(self.values, freq_range, float(self['samplerate']), filt_type,
+                                  order, axis=time_axis_index)
+        new_ts = self.copy()
+        new_ts.data = filtered_array
+        return new_ts
 
     def resampled(self, resampled_rate, window=None,
                   loop_axis=None, num_mp_procs=0, pad_to_pow2=False):
-        """
-        Resample the data and reset all the time ranges.
-
-        Uses the resample function from scipy.  This method seems to
-        be more accurate than the decimate method.
+        """Resamples the time series.
 
         Parameters
         ----------
-        resampled_rate : {float}
-            New sample rate to resample to.
-        window : {None,str,float,tuple}, optional
-            See scipy.signal.resample for details
-        loop_axis: {None,str,int}, optional
-            Sometimes it might be faster to loop over an axis.
-        num_mp_procs: int, optional
-            Whether to try and use multiprocessing to loop over axis.
-            0 means no multiprocessing
-            >0 specifies num procs to use
-            None means yes, and use all possible procs
-        pad_to_pow2: bool, optional
-            Pad along the time dimension to the next power of 2 so
-            that the resampling is much faster (experimental).
+        resampled_rate : float
+           New sample rate
+        window
+            ignored for now - added for legacy reasons
+        loop_axis
+            ignored for now - added for legacy reasons
+        num_mp_procs
+            ignored for now - added for legacy reasons
+        pad_to_pow2
+            ignored for now - added for legacy reasons
 
         Returns
         -------
-        ts : {TimeSeries}
-            A TimeSeries instance with the resampled data.
+        Resampled time series
 
-        See Also
-        --------
-        scipy.signal.resample
         """
-        # resample the data, getting new time range
-        time_range = self[self.tdim]
-        new_length = int(np.round(len(time_range)*resampled_rate/self.samplerate))
+        # use ResampleFilter instead
+        # samplerate = self.attrs['samplerate']
+        samplerate = float(self['samplerate'])
 
-        if pad_to_pow2:
-            padded_length = 2**next_pow2(len(time_range))
-            padded_new_length = int(np.round(padded_length*resampled_rate/self.samplerate))
-            time_range = np.hstack([time_range,
-                                    (np.arange(1,padded_length-len(time_range)+1)*np.diff(time_range[-2:]))+time_range[-1]])
+        time_axis = self['time']
+        # time_axis_index = get_axis_index(self,axis_name='time')
+        time_axis_index = self.get_axis_num('time')
 
-        if loop_axis is None:
-            # just do standard method on all data at once
-            if pad_to_pow2:
-                newdat,new_time_range = resample(pad_to_next_pow2(np.asarray(self),axis=self.taxis),
-                                                 padded_new_length, t=time_range,
-                                                 axis=self.taxis, window=window)
+        time_axis_length = np.squeeze(time_axis.shape)
+        new_length = int(np.round(time_axis_length * resampled_rate / float(samplerate)))
+
+        resampled_array, new_time_axis = resample(self.values,
+                                                  new_length, t=time_axis.values,
+                                                  axis=time_axis_index, window=window)
+
+        # constructing axes
+        coords = {}
+        time_axis_name = self.dims[time_axis_index]
+        for coord_name, coord in list(self.coords.items()):
+            if len(coord.shape):
+                coords[coord_name] = coord
             else:
-                newdat,new_time_range = resample(np.asarray(self),
-                                                 new_length, t=time_range,
-                                                 axis=self.taxis, window=window)
+                continue
 
-        else:
-            # loop over specified axis
-            # get the loop axis name and length
-            loop_dim = self.get_dim_name(loop_axis)
-            loop_dim_len = len(self[loop_dim])
-            # specify empty boolean index
-            ind = np.zeros(loop_dim_len,dtype=np.bool)
-            newdat = []
-            if has_mp and num_mp_procs != 0:
-                po = mp.Pool(num_mp_procs)
+            if coord_name == "samplerate":
+                continue
 
-            for i in range(loop_dim_len):
-                ind[i] = True
-                dat = self.select(**{loop_dim:ind})
-                taxis = dat.taxis
-                if has_mp and num_mp_procs != 0:
-                    # start async proc
-                    if pad_to_pow2:
-                        dat = pad_to_next_pow2(np.asarray(dat), axis=dat.taxis)
-                        newdat.append(po.apply_async(resample,
-                                                     (np.asarray(dat), padded_new_length, time_range,
-                                                      taxis, window)))
-                    else:
-                        newdat.append(po.apply_async(resample,
-                                                     (np.asarray(dat), new_length, time_range,
-                                                      taxis, window)))
-                else:
-                    # just call on that dataset
-                    sys.stdout.write('%d '%i)
-                    sys.stdout.flush()
-                    if pad_to_pow2:
-                        dat = pad_to_next_pow2(np.asarray(dat), axis=dat.taxis)
-                        ndat,new_time_range = resample(np.asarray(dat), padded_new_length, t=time_range,
-                                                       axis=taxis, window=window)
-                    else:
-                        ndat,new_time_range = resample(np.asarray(dat), new_length, t=time_range,
-                                                       axis=taxis, window=window)
-                    newdat.append(ndat)
-                ind[i] = False
-            if has_mp and num_mp_procs != 0:
-                # aggregate mp results
-                po.close()
-                #po.join()
-                out = []
-                for i in range(len(newdat)):
-                    sys.stdout.write('%d '%i)
-                    sys.stdout.flush()
-                    out.append(newdat[i].get())
-                #out = [newdat[i].get() for i in range(len(newdat))]
-                newdat = [out[i][0] for i in range(len(out))]
-                new_time_range = out[i][1]
+            if coord_name == time_axis_name:
+                coords[coord_name] = new_time_axis
 
-            # concatenate the new data
-            newdat = np.concatenate(newdat,axis=self.get_axis(loop_axis))
+        resampled_time_series = TimeSeries.create(
+            resampled_array, resampled_rate, coords=coords, dims=[dim for dim in self.dims],
+            name=self.name, attrs=self.attrs)
 
-            sys.stdout.write('\n')
-            sys.stdout.flush()
+        return resampled_time_series
 
-        # remove pad if we padded it
-        if pad_to_pow2:
-            newdat = newdat.take(range(new_length),axis=self.taxis)
-            new_time_range = new_time_range[:new_length]
+    def remove_buffer(self, duration):
+        """
+        Remove the desired buffer duration (in seconds) and reset the
+        time range.
 
-        # set the time dimension
-        newdims = self.dims.copy()
-        attrs = self.dims[self.taxis]._attrs.copy()
-        for k in list(self.dims[self.taxis]._required_attrs.keys()):
-            attrs.pop(k,None)
-        newdims[self.taxis] = Dim(new_time_range,
-                                  self.dims[self.taxis].name,
-                                  **attrs)
+        Parameters
+        ----------
+        duration : float
+            The duration to be removed. The units depend on the samplerate:
+            E.g., if samplerate is specified in Hz (i.e., samples per second),
+            the duration needs to be specified in seconds and if samplerate is
+            specified in kHz (i.e., samples per millisecond), the duration needs
+            to be specified in milliseconds. The specified duration is removed
+            from the beginning and end.
 
-        attrs = self._attrs.copy()
-        for k in list(self._required_attrs.keys()):
-            attrs.pop(k,None)
-        return TimeSeries(newdat, self.tdim, resampled_rate,
-                          dims=newdims, **attrs)
+        Returns
+        -------
+        ts : TimeSeries
+            A TimeSeries instance with the requested durations removed from the
+            beginning and/or end.
+        """
+        samples = self.__duration_to_samples(duration)
+
+        if samples > len(self['time']):
+            raise ValueError("Requested removal time is longer than the data")
+
+        if samples > 0:
+            return self[..., samples:-samples]
+
+    def add_mirror_buffer(self, duration):
+        """
+        Adds mirrors data at both ends of the time series (up to specified
+        length/duration) and appends such buffers at both ends of the series.
+        The new series total time duration is:
+
+            ``original duration + 2 * duration * samplerate``
+
+        Parameters
+        ----------
+        duration : float
+            Buffer duration in seconds.
+
+        Returns
+        -------
+        New time series with added mirrored buffer.
+
+        """
+        samplerate = float(self['samplerate'])
+        samples = self.__duration_to_samples(duration)
+        if samples > len(self['time']):
+            raise ValueError("Requested buffer time is longer than the data")
+
+        data = self.data
+
+        mirrored_data = np.concatenate(
+            (data[..., 1:samples + 1][..., ::-1], data, data[..., -samples - 1:-1][..., ::-1]),
+            axis=-1)
+
+        start_time = self['time'].data[0] - duration
+        t_axis = (np.arange(mirrored_data.shape[-1]) * (1.0 / samplerate)) + start_time
+        # coords = [self.coords[dim_name] for dim_name in self.dims[:-1]] +[t_axis]
+        coords = {dim_name:self.coords[dim_name] for dim_name in self.dims[:-1]}
+        coords['time'] = t_axis
+        coords['samplerate'] = float(self['samplerate'])
+
+        return TimeSeries(mirrored_data, dims=self.dims, coords=coords)
 
     def baseline_corrected(self, base_range):
         """
-
         Return a baseline corrected timeseries by subtracting the
         average value in the baseline range from all other time points
         for each dimension.
@@ -364,19 +413,15 @@ class TimeSeries(DimArray):
             A TimeSeries instance with the baseline corrected data.
 
         """
-        # get the average of baseline range
-        baseline = self['time >= %f'%base_range[0],'time <= %f'%base_range[1]].mean('time')
+        return self - self.isel(time=(self['time'] >= base_range[0]) & (self['time'] <= base_range[1])).mean(dim='time')
 
-        # replicate over the time dimension
-        baseline = baseline.add_dim(self['time']).transpose(self.dim_names)
 
-        # subtract the baseline
-        new_dat = self - baseline
-
-        # return a new timeseries
-        attrs = self._attrs.copy()
-        for k in list(self._required_attrs.keys()):
-            attrs.pop(k,None)
-        return TimeSeries(new_dat,self.tdim, self.samplerate,
-                          dims=self.dims.copy(), **attrs)
-
+class TimeSeriesX(TimeSeries):
+    def __init__(self, data, coords, dims=None, name=None,
+                 attrs=None, encoding=None, fastpath=False):
+        with warnings.catch_warnings():
+            warnings.simplefilter('always')
+            warnings.warn("TimeSeriesX has been renamed TimeSeries",
+                          DeprecationWarning)
+            super(TimeSeriesX, self).__init__(data, coords, dims, name, attrs,
+                                              encoding, fastpath)

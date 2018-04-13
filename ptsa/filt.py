@@ -15,9 +15,8 @@ from scipy.special import sinc
 
 from .helper import reshape_to_2d, reshape_from_2d, repeat_to_match_dims
 
-from .filtfilt import filtfilt as filtfilt_future
+from scipy.signal import filtfilt as filtfilt_future
 
-import pdb
 
 def buttfilt(dat,freq_range,sample_rate,filt_type,order,axis=-1):
     """Wrapper for a Butterworth filter.
@@ -35,7 +34,7 @@ def buttfilt(dat,freq_range,sample_rate,filt_type,order,axis=-1):
     freq_range = asarray(freq_range)
 
     # Nyquist frequency
-    nyq=sample_rate/2.;
+    nyq=sample_rate/2.
 
     # generate the butterworth filter coefficients
     [b,a]=butter(order,freq_range/nyq,filt_type)

@@ -3,45 +3,50 @@ __author__ = 'm'
 import numpy as np
 
 import xarray as xr
-
-from ptsa.data.common import TypeValTuple, PropertiedObject
-from ptsa.data.TimeSeriesX import TimeSeriesX
-from ptsa.data.filters import BaseFilter
+import traits.api
+from ptsa.data.timeseries import TimeSeries
 
 
-class DataChopper(PropertiedObject,BaseFilter):
+class DataChopper(traits.api.HasTraits):
     """
     EventDataChopper converts continuous time series of entire session into chunks based on the events specification
     In other words you may read entire eeg session first and then using EventDataChopper
     divide it into chunks corresponding to events of your choice
     """
-    _descriptors = [
+    start_time = traits.api.CFloat
+    end_time = traits.api.CFloat
+    buffer_time = traits.api.CFloat
+    events = traits.api.Array
+    start_offsets = traits.api.CArray
+    session_data=traits.api.Instance(TimeSeries)
 
-        TypeValTuple('start_time', float, 0.0),
-        TypeValTuple('end_time', float, 0.0),
-        TypeValTuple('buffer_time', float, 0.0),
-        TypeValTuple('events', np.recarray, np.recarray((1,), dtype=[('x', int)])),
-        TypeValTuple('start_offsets', np.ndarray, np.array([], dtype=int)),
-        TypeValTuple('session_data', TimeSeriesX, TimeSeriesX([0.0], dict(samplerate=1.), dims=['time'])),
-    ]
 
-    def __init__(self, **kwds):
+
+    def __init__(self, session_data,start_time=0.0,end_time=0.0,buffer_time=0.0,events=np.recarray((1,), dtype=[('x', int)]),
+                 start_offsets = np.array([], dtype=int)):
         """
         Constructor:
 
         :param kwds:allowed values are:
         -------------------------------------
+        :param session_data {TimeSeries}-  TimeSeries object with eeg session data
         :param start_time {float} -  read start offset in seconds w.r.t to the eegeffset specified in the events recarray
         :param end_time {float} -  read end offset in seconds w.r.t to the eegeffset specified in the events recarray
         :param end_time {float} -  extra buffer in seconds (subtracted from start read and added to end read)
         :param events {np.recarray} - numpy recarray representing events
         :param startoffsets {np.ndarray} - numpy array with offsets at which chopping should take place
-        :param session_datar {str} -  TimeSeriesX object with eeg session data
+
 
         :return: None
         """
+        super(DataChopper, self).__init__()
 
-        self.init_attrs(kwds)
+        self.session_data=session_data
+        self.start_time = start_time
+        self.end_time = end_time
+        self.buffer_time = buffer_time
+        self.events = events
+        self.start_offsets = start_offsets
 
     def get_event_chunk_size_and_start_point_shift(self, eegoffset, samplerate, offset_time_array):
         """
@@ -127,4 +132,4 @@ class DataChopper(PropertiedObject,BaseFilter):
             "buffer_time": self.buffer_time
         }
         ev_concat_data['samplerate'] = samplerate
-        return TimeSeriesX.create(ev_concat_data, samplerate, attrs=attrs)
+        return TimeSeries.create(ev_concat_data, samplerate, attrs=attrs)

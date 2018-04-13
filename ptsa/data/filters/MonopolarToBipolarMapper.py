@@ -1,44 +1,37 @@
 __author__ = 'm'
 
-
 import numpy as np
-import xarray as xr
-
-from ptsa.data.TimeSeriesX import TimeSeriesX
-from ptsa.data.common import TypeValTuple, PropertiedObject
-
-
-import sys
+from ptsa.data.timeseries import TimeSeries
 # from memory_profiler import profile
 import time
 
 from ptsa.data.filters import BaseFilter
+import traits.api
 
-class MonopolarToBipolarMapper(PropertiedObject,BaseFilter):
+
+class MonopolarToBipolarMapper(BaseFilter):
     """
     Object that takes as an input time series for monopolar electrodes and an array of bipolar pairs and outputs
     Time series where 'channels' axis is replaced by 'bipolar_pairs' axis and the time series data is a difference
     between time series corresponding to different electrodes as specified by bipolar pairs
     """
-    _descriptors = [
-        TypeValTuple('time_series', TimeSeriesX, TimeSeriesX([0.0], dict(samplerate=1), dims=['time'])),
-        TypeValTuple('bipolar_pairs', np.recarray, np.recarray((0,), dtype=[('ch0', '|S3'), ('ch1', '|S3')])),
 
-    ]
+    bipolar_pairs = traits.api.Array(dtype=[('ch0', '|S3'), ('ch1', '|S3')])
 
-    def __init__(self, **kwds):
+    def __init__(self, time_series,bipolar_pairs):
         """
         Constructor:
 
         :param kwds:allowed values are:
         -------------------------------------
-        :param time_series  -  TimeSeriesX object with eeg session data and 'channels as one of the axes'
+        :param time_series  -  TimeSeries object with eeg session data and 'channels as one of the axes'
         :param bipolar_pairs {np.recarray} - an array of bipolar electrode pairs
 
         :return: None
         """
+        super(MonopolarToBipolarMapper, self).__init__(time_series)
+        self.bipolar_pairs = bipolar_pairs
 
-        self.init_attrs(kwds)
 
     def filter(self):
         """
@@ -46,7 +39,7 @@ class MonopolarToBipolarMapper(PropertiedObject,BaseFilter):
         'bipolar_pairs' axis and the time series data is a difference
         between time series corresponding to different electrodes as specified by bipolar pairs
 
-        :return: TimeSeriesX object
+        :return: TimeSeries object
         """
 
         # a = np.arange(20)*2
@@ -86,7 +79,7 @@ class MonopolarToBipolarMapper(PropertiedObject,BaseFilter):
         coords_bp['bipolar_pairs'] = self.bipolar_pairs
 
 
-        ts = TimeSeriesX(data=ts0.values - ts1.values, dims=dims_bp,coords=coords_bp)
+        ts = TimeSeries(data=ts0.values - ts1.values, dims=dims_bp, coords=coords_bp)
         ts['samplerate'] = self.time_series['samplerate']
 
         ts.attrs = self.time_series.attrs.copy()
@@ -100,7 +93,7 @@ class MonopolarToBipolarMapper(PropertiedObject,BaseFilter):
         #
         # ts.attrs = self.time_series.attrs.copy()
         #
-        # return TimeSeriesX(data=ts)
+        # return TimeSeries(data=ts)
 
 # @profile
 def main_fcn():
