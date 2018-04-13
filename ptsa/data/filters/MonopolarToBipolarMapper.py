@@ -1,7 +1,7 @@
 __author__ = 'm'
 
 import numpy as np
-from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.timeseries import TimeSeries
 # from memory_profiler import profile
 import time
 
@@ -24,7 +24,7 @@ class MonopolarToBipolarMapper(BaseFilter):
 
         :param kwds:allowed values are:
         -------------------------------------
-        :param time_series  -  TimeSeriesX object with eeg session data and 'channels as one of the axes'
+        :param time_series  -  TimeSeries object with eeg session data and 'channels as one of the axes'
         :param bipolar_pairs {np.recarray} - an array of bipolar electrode pairs
 
         :return: None
@@ -39,7 +39,7 @@ class MonopolarToBipolarMapper(BaseFilter):
         'bipolar_pairs' axis and the time series data is a difference
         between time series corresponding to different electrodes as specified by bipolar pairs
 
-        :return: TimeSeriesX object
+        :return: TimeSeries object
         """
 
         # a = np.arange(20)*2
@@ -79,7 +79,7 @@ class MonopolarToBipolarMapper(BaseFilter):
         coords_bp['bipolar_pairs'] = self.bipolar_pairs
 
 
-        ts = TimeSeriesX(data=ts0.values - ts1.values, dims=dims_bp,coords=coords_bp)
+        ts = TimeSeries(data=ts0.values - ts1.values, dims=dims_bp, coords=coords_bp)
         ts['samplerate'] = self.time_series['samplerate']
 
         ts.attrs = self.time_series.attrs.copy()
@@ -93,7 +93,7 @@ class MonopolarToBipolarMapper(BaseFilter):
         #
         # ts.attrs = self.time_series.attrs.copy()
         #
-        # return TimeSeriesX(data=ts)
+        # return TimeSeries(data=ts)
 
 # @profile
 def main_fcn():

@@ -4,7 +4,7 @@ import numpy as np
 import xarray as xr
 from scipy.fftpack import fft, ifft
 
-from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.timeseries import TimeSeries
 from ptsa.data.filters import BaseFilter
 from ptsa.wavelet import morlet_multi, next_pow2
 import traits.api
@@ -15,7 +15,7 @@ class MorletWaveletFilter(BaseFilter):
 
     Arguments
     ---------
-    time_series: TimeSeriesX
+    time_series: TimeSeries
         The time series to filter
 
     Keyword Arguments
@@ -144,14 +144,14 @@ class MorletWaveletFilter(BaseFilter):
                 coords['offsets'] = ('time',  self.time_series['offsets'])
 
             if wavelet_pow_array is not None:
-                wavelet_pow_array_xray = TimeSeriesX(wavelet_pow_array, coords=coords,dims=dims)
+                wavelet_pow_array_xray = TimeSeries(wavelet_pow_array, coords=coords, dims=dims)
                 if len(transposed_dims):
                     wavelet_pow_array_xray = wavelet_pow_array_xray.transpose(*transposed_dims)
 
                 wavelet_pow_array_xray.attrs = self.time_series.attrs.copy()
 
             if wavelet_phase_array is not None:
-                wavelet_phase_array_xray = TimeSeriesX(wavelet_phase_array,coords=coords,dims=dims)
+                wavelet_phase_array_xray = TimeSeries(wavelet_phase_array, coords=coords, dims=dims)
                 if len(transposed_dims):
                     wavelet_phase_array_xray = wavelet_phase_array_xray.transpose(*transposed_dims)
 
@@ -207,7 +207,7 @@ class MorletWaveletFilter(BaseFilter):
 
         Returns
         -------
-        (power,phase): tuple(TimeSeriesX or None, TimeSeriesX or None)
+        (power,phase): tuple(TimeSeries or None, TimeSeries or None)
             Returns a tuple containing the computed power and phase values.
         """
 

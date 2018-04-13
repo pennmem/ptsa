@@ -1,6 +1,6 @@
 import os.path as osp
 import numpy as np
-from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.timeseries import TimeSeries
 from ptsa.data.readers import BaseEventReader
 from ptsa.data.readers import EEGReader
 
@@ -16,7 +16,7 @@ monopolar_channels = np.array([elec.split(' ')[0].zfill(3) for elec in txtIN.spl
 eeg = EEGReader(events=events[:10], channels=monopolar_channels, start_time=0.0, end_time=1.0, buffer_time=1.0).read()
 eeg.to_hdf('/tmp/EEG_test_FR423.h5')
 
-loaded = TimeSeriesX.from_hdf('/tmp/EEG_test_FR423.h5')
+loaded = TimeSeries.from_hdf('/tmp/EEG_test_FR423.h5')
 
 print(eeg)
 print(loaded)

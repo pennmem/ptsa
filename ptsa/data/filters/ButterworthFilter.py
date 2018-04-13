@@ -1,5 +1,5 @@
 from xarray import DataArray
-from ptsa.data.TimeSeriesX import TimeSeriesX
+from ptsa.data.timeseries import TimeSeries
 from ptsa.data.common import get_axis_index
 from ptsa.filt import buttfilt
 from ptsa.data.filters import BaseFilter
@@ -12,7 +12,7 @@ class ButterworthFilter(BaseFilter):
     -----------------
 
     time_series
-         TimeSeriesX object
+         TimeSeries object
     order
          Butterworth filter order
     freq_range: list-like
@@ -37,7 +37,7 @@ class ButterworthFilter(BaseFilter):
 
         Returns
         -------
-        filtered: TimeSeriesX
+        filtered: TimeSeries
             The filtered time series
 
         """
@@ -49,13 +49,13 @@ class ButterworthFilter(BaseFilter):
         coords_dict = {coord_name: DataArray(coord.copy()) for coord_name, coord in list(self.time_series.coords.items())}
         coords_dict['samplerate'] = self.time_series['samplerate']
         dims = [dim_name for dim_name in self.time_series.dims]
-        filtered_time_series = TimeSeriesX(
+        filtered_time_series = TimeSeries(
             filtered_array,
             dims=dims,
             coords=coords_dict
         )
 
-        # filtered_time_series = TimeSeriesX(filtered_time_series)
+        # filtered_time_series = TimeSeries(filtered_time_series)
         filtered_time_series.attrs = self.time_series.attrs.copy()
         return filtered_time_series
 
