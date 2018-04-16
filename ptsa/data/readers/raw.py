@@ -48,7 +48,6 @@ class BaseRawReader(BaseReader, traits.api.HasTraits):
 
     def init_params(self):
         p_reader = ParamsReader(dataroot=self.dataroot)
-        self.params_dict = p_reader.read()
         return p_reader.read()
 
     def channel_labels_to_string(self):

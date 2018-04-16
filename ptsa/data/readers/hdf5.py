@@ -28,7 +28,8 @@ class H5RawReader(BaseRawReader):
         """
         _, data_ext = osp.splitext(kwargs['dataroot'])
         assert len(data_ext), 'Dataroot missing extension'
-        channels = kwargs['channels']
+        super(H5RawReader, self).__init__(**kwargs)
+        channels = self.channels
         if channels.dtype.names is not None:
             if 'channel_1' not in channels.dtype.names:
                 raise IndexError('Cannot load bipolar data from monopolar channel list')

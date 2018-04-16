@@ -46,11 +46,17 @@ class TalReader(BaseReader,traits.api.HasTraits):
         self.bipolar_channels=None
 
         self.tal_struct_array = None
+        self.unpack = unpack
+        if not self.unpack:
+            warnings.warn('Unpack option will be removed in a future release,'
+                          'at which point behavior will be as with unpack=True',
+                          PendingDeprecationWarning)
         self._json = os.path.splitext(self.filename)[-1]=='.json'
         if self.struct_type not in ['bi','mono']:
             raise AttributeError('Value %s not a valid struct_type. Please choose either "mono" or "bi"'%self.struct_type)
         if self.struct_type=='mono':
             self.struct_name='talStruct'
+
 
     def get_bipolar_pairs(self):
         """
@@ -85,21 +91,6 @@ class TalReader(BaseReader,traits.api.HasTraits):
         channel_record_array = self.tal_struct_array['channel']
         for i, channel_array in enumerate(channel_record_array):
             self.bipolar_channels[i] = tuple(map(lambda x: str(x).zfill(3), channel_array))
-
-    def from_dict(self,pairs):
-        keys = pairs.keys()
-        subject = [k for k in keys if k not in ['version','info','meta']][0]
-
-        if self.struct_type=='bi':
-            pairs = pd.DataFrame.from_dict(pairs[subject]['pairs'], orient='index').sort_values(by=['channel_1','channel_2'])
-            pairs.index.name = 'tagName'
-            pairs['channel'] = [[ch1, ch2] for ch1, ch2 in zip(pairs.channel_1.values, pairs.channel_2.values)]
-            pairs['eType'] = pairs.type_1
-            return pairs.to_records()
-        elif self.struct_type == 'mono':
-            contacts = pd.DataFrame.from_dict(pairs[subject]['contacts'],orient='index').sort_values(by='channel')
-            contacts.index.name = 'tagName'
-            return contacts.to_records()
 
     @classmethod
     def from_records(cls,contact_dict):
