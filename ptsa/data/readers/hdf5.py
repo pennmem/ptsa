@@ -2,7 +2,6 @@ import os.path as osp
 
 import h5py
 import numpy as np
-import six
 
 from ptsa.data.readers.raw import BaseRawReader
 
@@ -54,17 +53,18 @@ class H5RawReader(BaseRawReader):
         """
         with h5py.File(self.dataroot, 'r') as eegfile:
             if len(channels) == 0:
-                channels = self.channel_labels = np.array(['{:03d}'.format(x).encode() for x in eegfile['/ports'][:]])
-
+                channels_ = self.channel_labels = np.array(['{:03d}'.format(x).encode() for x in eegfile['/ports'][:]])
+            else:
+                channels_ = channels
             try:
                 monopolar_possible = bool(eegfile['/monopolar_possible'][0])
 
                 if 'bipolar_info' in eegfile and not monopolar_possible:
 
-                    if not (np.in1d(channels, eegfile['/bipolar_info/ch0_label']).all()):
+                    if not (np.in1d(channels_, eegfile['/bipolar_info/ch0_label']).all()):
                         raise IndexError('Channel[s] %s not in recording' % (
-                            channels[~np.in1d(channels, eegfile['/bipolar_info/ch0_label'])]))
-                    channel_mask = np.in1d(eegfile['/bipolar_info/ch0_label'], channels)
+                            channels_[~np.in1d(channels_, eegfile['/bipolar_info/ch0_label'])]))
+                    channel_mask = np.in1d(eegfile['/bipolar_info/ch0_label'], channels_)
                     self.channel_labels = np.rec.array(
                         list(
                             zip(eegfile['/bipolar_info/ch0_label'][channel_mask],
@@ -76,11 +76,13 @@ class H5RawReader(BaseRawReader):
             except KeyError:
                 pass
 
-            channels_ = channels if self.channel_name == 'channels' else self.channel_labels.ch0
+            channels_ = channels_ if self.channel_name == 'channels' else self.channel_labels.ch0
             event_data, read_ok_mask = self.read_h5file(eegfile, channels_,
                                                         start_offsets, read_size)
             if self.read_size == -1:
                 self.read_size = max(event_data.shape)
+            if len(channels) == 0:
+                self.channels = self.channel_labels
             return event_data, read_ok_mask
 
     @staticmethod
