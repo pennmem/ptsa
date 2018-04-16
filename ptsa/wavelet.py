@@ -7,17 +7,10 @@
 #
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
 
-import sys
 import numpy as np
-# from scipy import unwrap
-# import scipy.stats as stats
 from scipy.fftpack import fft,ifft
-# import scipy.signal
-# import scipy.ndimage
-# from ptsa.filt import decimate
 from ptsa.helper import reshape_to_2d,reshape_from_2d,centered,next_pow2
-from ptsa.data import TimeSeries,Dim
-from ptsa.fixed_scipy import morlet as morlet_wavelet
+from scipy.signal import morlet as morlet_wavelet
 
 import pywt
 import math
@@ -741,133 +734,5 @@ def phasePow2d(freq,dat,samplerate,width):
     phase = np.angle(wCoef)
 
     return phase,power
-
-def tsPhasePow(freqs,tseries,width=5,resample=None,keepBuffer=False,
-               verbose=False,to_return='both',freqDimName='freq'):
-    """
-    Calculate phase and/or power on an TimeSeries, returning new
-    TimeSeries instances.
-    """
-    if (to_return != 'both') and (to_return != 'pow') and (to_return != 'phase'):
-        raise ValueError("to_return must be \'pow\', \'phase\', or \'both\' to\
-        specify whether power, phase, or both should be  returned. Invalid\
-        value for to_return: %s " % to_return)
-
-    # first get the phase and power as desired
-    res = calcPhasePow(freqs,tseries.data,tseries.samplerate,axis=tseries.tdim,
-                       width=width,verbose=verbose,to_return=to_return)
-
-    # handle the dims
-    tsdims = tseries.dims.copy()
-
-    # add in frequency dimension
-    freqDim = Dim(freqDimName,freqs,'Hz')
-    tsdims.insert(0,freqDim)
-
-    # turn them into timeseries
-    if to_return == 'pow' or to_return == 'both':
-        # turn into a timeseries
-        powerAll = TimeSeries(res,tsdims,
-                              tseries.samplerate,unit='XXX get pow unit',
-                              tdim=-1,buf_samp=tseries.buf_samp)
-        powerAll.data[powerAll.data<=0] = np.finfo(powerAll.data.dtype).eps
-        # see if resample
-        if resample:
-            # must take log before the resample
-            powerAll.data = np.log10(powerAll.data)
-            powerAll.resample(resample)
-            powerAll.data = np.power(10,powerAll.data)
-        # see if remove buffer
-        if not keepBuffer:
-            powerAll.removeBuf()
-
-    if to_return == 'phase' or to_return == 'both':
-        # get the phase matrix
-        phaseAll = TimeSeries(res,tsdims,
-                              tseries.samplerate,unit='radians',
-                              tdim=-1,buf_samp=tseries.buf_samp)
-        if resample:
-            # must unwrap before resampling
-            phaseAll.data = np.unwrap(phaseAll.data)
-            phaseAll.resample(resample)
-            phaseAll.data = np.mod(phaseAll.data+np.pi,2*np.pi)-np.pi;            
-        # see if remove buffer
-        if not keepBuffer:
-            phaseAll.removeBuf()
-
-    # see what to return
-    if to_return == 'pow':
-        return powerAll
-    elif to_return == 'phase':
-        return phaseAll
-    elif to_return == 'both':
-        return phaseAll,powerAll
-
-
-
-def calcPhasePow(freqs,dat,samplerate,axis=-1,width=5,verbose=False,to_return='both'):
-    """Calculate phase and power over time with a Morlet wavelet.
-
-    You can optionally pass in downsample, which is the samplerate to
-    decimate to following the power/phase calculation. 
-
-    As always, it is best to pass in extra signal (a buffer) on either
-    side of the signal of interest because power calculations and
-    decimation have edge effects."""
-
-    if to_return != 'both' and to_return != 'pow' and to_return != 'phase':
-        raise ValueError("to_return must be \'pow\', \'phase\', or \'both\' to specify whether power, phase, or both are returned. Invalid value: %s " % to_return)
-
-    # reshape the data to 2D with time on the 2nd dimension
-    origshape = dat.shape
-    eegdat = reshape_to_2d(dat,axis)
-
-    # allocate
-    phaseAll = []
-    powerAll = []
-
-    # loop over freqs
-    freqs = np.asarray(freqs)
-    if len(freqs.shape)==0:
-        freqs = np.array([freqs])
-    if verbose:
-        sys.stdout.write('Calculating wavelet phase/power...\n')
-        sys.stdout.write('Freqs (%g to %g): ' % (np.min(freqs),np.max(freqs)))
-    for f,freq in enumerate(freqs):
-        if verbose:
-            sys.stdout.write('%g ' % (freq))
-            sys.stdout.flush()
-        # get the phase and power for that freq
-        phase,power = phasePow2d(freq,eegdat,samplerate,width)
-
-        # reshape back do original data shape
-        if to_return == 'phase' or to_return == 'both':
-            phase = reshape_from_2d(phase,axis,origshape)
-        if to_return == 'pow' or to_return == 'both':
-            power = reshape_from_2d(power,axis,origshape)
-
-        # see if allocate
-        if len(phaseAll) == 0 and len(powerAll) == 0:
-            if to_return == 'phase' or to_return == 'both':
-                phaseAll = np.empty(np.concatenate(([len(freqs)],phase.shape)),
-                                   dtype=phase.dtype)
-            if to_return == 'pow' or to_return == 'both':
-                powerAll = np.empty(np.concatenate(([len(freqs)],power.shape)),
-                                   dtype=power.dtype)
-        # insert into all
-        if to_return == 'phase' or to_return == 'both':
-            phaseAll[f] = phase
-        if to_return == 'pow' or to_return == 'both':
-            powerAll[f] = power
-
-    if verbose:
-        sys.stdout.write('\n')
-
-    if to_return == 'pow':
-        return powerAll
-    elif to_return == 'phase':
-        return phaseAll
-    elif to_return == 'both':
-        return phaseAll,powerAll
 
 

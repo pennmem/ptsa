@@ -5,32 +5,13 @@ import os.path as osp
 from ptsa.test import utils
 import pytest
 
-
 @utils.skip_without_rhino
-class TestTalReaderOnDatabase:
-
-    @classmethod
-    def setup(cls):
-        cls.old_reader = TalReader(filename=osp.join(utils.get_rhino_root(),'data/eeg/R1234D/tal/R1234D_talLocs_database_bipol.mat'))
-        jr = JsonIndexReader(osp.join(utils.get_rhino_root(),'protocols/r1.json'))
-        cls.new_reader = TalReader(filename=jr.get_value('pairs',subject='R1234D',experiment='FR1'))
-
-    def test_get_bipolar_pairs(self):
-        new_pairs = self.new_reader.get_bipolar_pairs()
-        old_pairs = self.old_reader.get_bipolar_pairs()
-        assert (new_pairs == old_pairs).all()
-
-    def test_get_monopolar_channels(self):
-        new_channels = self.new_reader.get_monopolar_channels()
-        old_channels = self.old_reader.get_monopolar_channels()
-        assert (new_channels == old_channels).all()
-
-    def test_compat_fields(self):
-        new_struct = self.new_reader.read()
-        old_struct = self.old_reader.read()
-        assert (old_struct['tagName'] == new_struct['tagName']).all()
-        assert (old_struct['eType'] == new_struct['eType']).all()
-        assert (old_struct['channel'] == new_struct['channel']).all()
+def test_talreader_on_database():
+    old_reader = TalReader(filename=osp.join(utils.get_rhino_root(),'data/eeg/R1234D/tal/R1234D_talLocs_database_bipol.mat'))
+    jr = JsonIndexReader(osp.join(utils.get_rhino_root(),'protocols/r1.json'))
+    new_reader = TalReader(filename=jr.get_value('pairs',subject='R1234D',experiment='FR1'))
+    assert (new_reader.get_bipolar_pairs() == old_reader.get_bipolar_pairs()).all()
+    assert (new_reader.get_monopolar_channels() == old_reader.get_monopolar_channels()).all()
 
 
 def test_from_dict():
@@ -868,11 +849,12 @@ def test_from_dict():
     u'is_stim_only': False,
     u'type_1': u'G',
     u'type_2': u'G'},}}}
-    pairs_array = TalReader().from_dict(pairs_dict)
-    channel_array = np.array(sorted([[89, 90],[90, 91],[91, 92],[65, 66],[66, 67],[67, 68],
+    pairs_array = TalReader('').from_dict(pairs_dict)
+    channel_array = np.empty(19,dtype=object)
+    channel_array[:] = sorted([   [89, 90],[90, 91],[91, 92],[65, 66],[66, 67],[67, 68],
             [69, 70],[70, 71],[71, 72],[73, 74],[74,75],[75, 76],
-            [76, 77],[77, 78],[78, 79],[79, 80],[1, 2],[1, 9],[10, 11]]))
-    assert pairs_array.channel.shape == channel_array.shape
+            [76, 77],[77, 78],[78, 79],[79, 80],[1, 2],[1, 9],[10, 11]])
+    assert pairs_array.channel.shape==channel_array.shape
     assert (pairs_array.channel == channel_array).all()
 
 

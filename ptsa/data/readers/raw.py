@@ -1,14 +1,11 @@
 import numpy as np
 from xarray import DataArray
-from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers.base import BaseReader
 from ptsa.data.readers.params import ParamsReader
-from ptsa import six
 from abc import abstractmethod
+import traits.api
 
-
-# @six.add_metaclass(ABCMeta)
-class BaseRawReader(PropertiedObject, BaseReader):
+class BaseRawReader(BaseReader, traits.api.HasTraits):
     """
     Abstract base class for objects that know how to read binary EEG files.
     Classes inheriting from BaseRawReader should do the following
@@ -17,39 +14,42 @@ class BaseRawReader(PropertiedObject, BaseReader):
       either in self.read_file or in the constructor
     * Make sure that self.channel_name as appropriate for the referencing scheme used
     """
-    _descriptors = [
-        TypeValTuple('dataroot', six.string_types, ''),
-        TypeValTuple('channels', np.ndarray, np.array([], dtype='|S3')),
-        TypeValTuple('channel_labels', np.ndarray, np.array([], dtype='|S3')),
-        TypeValTuple('start_offsets', np.ndarray, np.array([0], dtype=np.int)),
-        TypeValTuple('read_size', int, -1),
-    ]
+
+    dataroot = traits.api.Str
+    channels = traits.api.CArray
+    channel_labels = traits.api.CArray
+    start_offsets = traits.api.CArray
+    read_size = traits.api.Int
 
     channel_name = 'channels'
 
-    def __init__(self, **kwds):
+    def __init__(self, dataroot,channels=tuple(),start_offsets=tuple([0]),read_size=-1):
         """
         Constructor
-        :param kwds:allowed values are:
-        -------------------------------------
         :param dataroot {str} -  core name of the eegfile file (i.e. full path except extension e.g. '.002').
         Normally this is eegfile field from events record
 
-        :param channels {ndarray} - array of channels (array of strings) that should be read
-        :param start_offsets {ndarray} -  array of ints with read offsets
+        :param channels {array-like} - array of channels (array of strings) that should be read
+        :param start_offsets {array-like} -  array of ints with read offsets
         :param read_size {int} - size of the read chunk. If -1 the entire file is read
-        --------------------------------------
         :return:None
 
         """
-
-        self.init_attrs(kwds)
-        p_reader = ParamsReader(dataroot=self.dataroot)
-        self.params_dict = p_reader.read()
+        self.dataroot = dataroot
+        self.channels = channels
+        self.start_offsets = start_offsets
+        self.read_size = read_size
+        self.params_dict = self.init_params()
         if self.channels.dtype.names is None:
             self.channel_labels = self.channels
         else:
             self.channel_labels = self.channels['channel']
+
+
+    def init_params(self):
+        p_reader = ParamsReader(dataroot=self.dataroot)
+        self.params_dict = p_reader.read()
+        return p_reader.read()
 
     def channel_labels_to_string(self):
         if np.issubdtype(self.channel_labels.dtype,np.integer):
@@ -77,7 +77,10 @@ class BaseRawReader(PropertiedObject, BaseReader):
 
         """
 
-        eventdata, read_ok_mask = self.read_file(self.dataroot,self.channel_labels,self.start_offsets,self.read_size)
+        eventdata, read_ok_mask = self.read_file(self.dataroot,
+                                                 self.channel_labels,
+                                                 self.start_offsets,
+                                                 self.read_size)
         # multiply by the gain
         eventdata *= self.params_dict['gain']
 

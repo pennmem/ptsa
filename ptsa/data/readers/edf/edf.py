@@ -38,6 +38,27 @@ class EDFRawReader(BaseRawReader):
             raise RuntimeError('Dataroot missing extension (must be supplied for EDF reader)')
         super(EDFRawReader, self).__init__(**kwargs)
 
+    def init_params(self):
+        return {'gain':1,
+                'samplerate':self.samplerate()
+                }
+
+
+    def samplerate(self):
+        with closing(EDFFile(self.dataroot)) as self._edf:
+            channels = self.channels
+            if not len(channels):
+                channels = [n for n in range(self._edf.num_channels)]
+            else:
+                try:
+                    channels = [int(n) for n in channels]
+                except ValueError:
+                    channels = self._edf.get_channel_numbers(channels)
+
+            samplerates = [self._edf.get_samplerate(c) for c in channels]
+            if not (len(np.unique(samplerates))==1):
+                raise RuntimeError('Inconsistent samplerates across channels; cannot read channels simultaneously')
+            return samplerates[0]
 
     def read_file(self, filename, channels, start_offsets=np.array([0]),
                   read_size=-1):
@@ -47,8 +68,8 @@ class EDFRawReader(BaseRawReader):
         ----------
         filename : str
             Path to file to read.
-        channels : list
-            Channels to read from. If False-like, use all channels.
+        channels : Union(List[int],List[str])
+            Channel names or numbers to read from. If names, leading If False-like, use all channels.
         start_offsets : np.ndarray
             Indices to start reading at (*not* the actual offset times).
         read_size : int
@@ -61,20 +82,21 @@ class EDFRawReader(BaseRawReader):
             indicating whether each offset was read successfully.
 
         """
-        with closing(EDFFile(filename)) as self._edf:
+        with closing(EDFFile(self.dataroot)) as self._edf:
+
             if not len(channels):
-                channels = [n for n in range(self._edf.num_channels)]
+                indexes = channels = [n for n in range(self._edf.num_channels)]
+                labels = [self._edf.get_channel_info(c).label for c in channels]
             else:
-                channels = [int(n) for n in channels]
+                try:
+                    channels = [int(c) for c in channels]
+                    indexes = channels
+                    labels = [self._edf.get_channel_info(c).label for c in channels]
+                except ValueError:
+                    channels = [c for c in channels]
+                    indexes = self._edf.get_channel_numbers(channels)
+                    labels = channels
 
-            if not len(self.channels):
-                self.channels = np.array(channels)
-
-            samplerates = [self._edf.get_samplerate(c) for c in channels]
-            if not (len(np.unique(samplerates))==1):
-                raise RuntimeError('Inconsistent samplerates across channels; cannot read channels simultaneously')
-
-            self.params_dict['samplerate'] = samplerates[0]
 
             # Read all data
             if read_size < 0:
@@ -83,12 +105,14 @@ class EDFRawReader(BaseRawReader):
                     warnings.warn(msg, UserWarning)
                 data = self._edf.read_samples(channels, self._edf.num_samples)
                 self.read_size = int(self._edf.num_samples)
-                return data[:, None, :], np.ones((len(channels), 1), dtype=bool)
+                data = data[:,None,:]
+                read_ok_mask = np.ones((len(channels), 1), dtype=bool)
 
             # Read epochs
             else:
                 data = np.empty((len(channels), len(start_offsets), read_size),
-                                dtype=np.float) * np.nan
+                                dtype=np.float)
+                data.fill(np.nan)
                 read_ok_mask = np.ones((len(channels), len(start_offsets)),
                                        dtype=bool)
 
@@ -105,13 +129,14 @@ class EDFRawReader(BaseRawReader):
                         logger.warning("Cannot read full chunk of data for offset %d... probably end of file", offset)
                         read_ok_mask[:, i] = False
 
-                return data, read_ok_mask
+            self.channels = np.rec.array(list(zip(indexes,labels)),dtype=[('index',int),('label','S17')])
+            return data, read_ok_mask
 
 
 if __name__ == "__main__":
     logger.addHandler(logging.StreamHandler())
-    filename = osp.expanduser("/Volumes/rhino_root/data/eeg/eeg/scalp/ltp/ltpFR2/LTP375/session_0/eeg/LTP375_session_0.bdf")
+    fname = osp.expanduser("/Volumes/rhino_root/data/eeg/eeg/scalp/ltp/ltpFR2/LTP375/session_0/eeg/LTP375_session_0.bdf")
 
-    reader = EDFRawReader(dataroot=filename)
-    data, mask = reader.read_file(filename, [], read_size=1024, start_offsets=[0, 1024, 2048])
+    reader = EDFRawReader(dataroot=fname)
+    data, mask = reader.read_file(fname, [], read_size=1024, start_offsets=np.array([0, 1024, 2048]))
     print(data)

@@ -5,7 +5,7 @@ import pytest
 
 import numpy as np
 from numpy.testing import assert_array_equal, assert_array_almost_equal
-from ptsa.data import TimeSeriesX
+from ptsa.data import timeseries
 from ptsa.data.readers import BaseEventReader
 from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
 from ptsa.data.readers.tal import TalReader
@@ -70,7 +70,6 @@ class TestFilters(unittest.TestCase):
         chopped_session = sedc.filter()
         assert_array_equal(chopped_session, self.base_eegs)
 
-    @pytest.mark.skip
     def test_monopolar_to_bipolar_filter(self):
         m2b = MonopolarToBipolarMapper(time_series=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
         bp_base_eegs = m2b.filter()
@@ -82,7 +81,6 @@ class TestFilters(unittest.TestCase):
             # res = e0.__sub__(e1)
             assert_array_equal(e0 - e1, bp_base_eegs[i])
 
-    @pytest.mark.skip
     def test_monopolar_to_bipolar_filter_and_data_chopper(self):
         dataroot = self.base_events[0].eegfile
 
@@ -102,10 +100,9 @@ class TestFilters(unittest.TestCase):
 
         assert_array_equal(bp_session_eegs_chopped, bp_base_eegs)
 
-    @pytest.mark.skip
     def test_wavelets_with_event_data_chopper(self):
         wf_session = MorletWaveletFilter(
-            time_series=self.session_eegs[:, :, :self.session_eegs.shape[2] / 4],
+            time_series=self.session_eegs[:, :, :int(self.session_eegs.shape[2] / 4)],
             freqs=np.logspace(np.log10(3), np.log10(180), 8),
             output='power',
             frequency_dim_pos=0,
@@ -159,7 +156,7 @@ class TestFiltersExecute(unittest.TestCase):
     def setUp(self):
         times = np.linspace(0,1,1000)
         ts = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
-        self.time_series = TimeSeriesX.TimeSeriesX(data=ts,dims=('time'),coords = {'time':times,'samplerate':1000})
+        self.time_series = timeseries.TimeSeries(data=ts, dims=('time'), coords = {'time':times, 'samplerate':1000})
 
 
     def test_ButterworthFilter(self):

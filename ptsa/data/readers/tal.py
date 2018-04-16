@@ -3,11 +3,9 @@ import os
 
 import numpy as np
 import pandas as pd
-
-from ptsa import six
-from ptsa.data.common import TypeValTuple, PropertiedObject
 from ptsa.data.readers import BaseReader
 import warnings
+import traits.api
 
 __all__ = [
     'TalReader',
@@ -15,18 +13,17 @@ __all__ = [
 ]
 
 
-class TalReader(PropertiedObject, BaseReader):
+class TalReader(BaseReader,traits.api.HasTraits):
     """
-    Reader that reads tal structs Matlab file or pairs.json file and converts it to a numpy recarray
+    Reader that reads tal structs Matlab file or pairs.json file and converts it to numpy recarray
     """
-    _descriptors = [
-        TypeValTuple('filename', six.string_types, ''),
-        TypeValTuple('struct_name', six.string_types, 'bpTalStruct'),
-        TypeValTuple('struct_type',six.string_types,'bi'),
-        TypeValTuple('unpack',bool,True)
-    ]
 
-    def __init__(self, **kwds):
+    filename = traits.api.Str
+    struct_name = traits.api.Str
+    struct_type = traits.api.Enum('bi','mono')
+    unpack = traits.api.Bool
+
+    def __init__(self, filename,struct_name='bpTalStruct',struct_type='bi',unpack=True):
         """
         Keyword arguments
         -----------------
@@ -41,11 +38,12 @@ class TalReader(PropertiedObject, BaseReader):
         :return: None
 
         """
+        super(TalReader, self).__init__()
+        self.filename = filename
+        self.struct_name = struct_name
+        self.struct_type  = struct_type
 
-        self.init_attrs(kwds)
-        self._bipolar_channels=None
-        if not self.unpack:
-            warnings.warn("This output format will be removed in a future release",DeprecationWarning)
+        self.bipolar_channels=None
 
         self.tal_struct_array = None
         self._json = os.path.splitext(self.filename)[-1]=='.json'
@@ -56,22 +54,15 @@ class TalReader(PropertiedObject, BaseReader):
 
     def get_bipolar_pairs(self):
         """
-        See :py:func:self.bipolar_channels()
-        :return:
-        """
-        return self.bipolar_channels
 
-    @property
-    def bipolar_channels(self):
+        :return: numpy recarray where each record has two fields 'ch0' and 'ch1' storing  channel labels.
         """
-        :return: numpy recarray where each record has two fields 'ch0' and 'ch1' storing  channel numbers.
-        """
-
-        if  self._bipolar_channels is None:
-            if  self.tal_struct_array is None:
+        if self.bipolar_channels is None:
+            if self.tal_struct_array is None:
                 self.read()
             self.initialize_bipolar_pairs()
-        return self._bipolar_channels
+
+        return self.bipolar_channels
 
     def get_monopolar_channels(self):
         """
@@ -89,15 +80,26 @@ class TalReader(PropertiedObject, BaseReader):
 
     def initialize_bipolar_pairs(self):
         # initialize bipolar pairs
-        self._bipolar_channels = np.recarray(shape=(len(self.tal_struct_array)), dtype=[('ch0','|S3'),('ch1','|S3')])
+        self.bipolar_channels = np.recarray(shape=(len(self.tal_struct_array)), dtype=[('ch0','|S3'),('ch1','|S3')])
 
-        if self._json and self.struct_type=='bi':
-            channel_record_array = self.tal_struct_array[['channel_1','channel_2']]
-        else:
-            channel_record_array = self.tal_struct_array['channel']
+        channel_record_array = self.tal_struct_array['channel']
         for i, channel_array in enumerate(channel_record_array):
-            self._bipolar_channels[i] = tuple(map(lambda x: str(x).zfill(3), channel_array))
+            self.bipolar_channels[i] = tuple(map(lambda x: str(x).zfill(3), channel_array))
 
+    def from_dict(self,pairs):
+        keys = pairs.keys()
+        subject = [k for k in keys if k not in ['version','info','meta']][0]
+
+        if self.struct_type=='bi':
+            pairs = pd.DataFrame.from_dict(pairs[subject]['pairs'], orient='index').sort_values(by=['channel_1','channel_2'])
+            pairs.index.name = 'tagName'
+            pairs['channel'] = [[ch1, ch2] for ch1, ch2 in zip(pairs.channel_1.values, pairs.channel_2.values)]
+            pairs['eType'] = pairs.type_1
+            return pairs.to_records()
+        elif self.struct_type == 'mono':
+            contacts = pd.DataFrame.from_dict(pairs[subject]['contacts'],orient='index').sort_values(by='channel')
+            contacts.index.name = 'tagName'
+            return contacts.to_records()
 
     @classmethod
     def from_records(cls,contact_dict):
@@ -224,6 +226,3 @@ class TalStimOnlyReader(TalReader):
     def __init__(self, **kwds):
         TalReader.__init__(self, **kwds)
         self.struct_name = 'virtualTalStruct'
-
-if __name__ == '__main__':
-    TalReader(filename='/Volumes/rhino_root/protocols/r1/subjects/R1111M/localizations/0/montages/0/neuroradiology/current_processed/pairs.json').read()

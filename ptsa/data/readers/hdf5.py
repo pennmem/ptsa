@@ -34,6 +34,9 @@ class H5RawReader(BaseRawReader):
                 raise IndexError('Cannot load bipolar data from monopolar channel list')
             kwargs['channels'] = channels['channel_1']
         super(H5RawReader, self).__init__(**kwargs)
+        with h5py.File(self.dataroot,'r') as eegfile:
+            if 'samplerate' in eegfile:
+                self.params_dict['samplerate']= eegfile['samplerate'][0]
         self.channels = channels
         self.channel_labels_to_string()
 
@@ -111,7 +114,8 @@ class H5RawReader(BaseRawReader):
 
         else:
             eventdata = np.empty((len(channels), len(start_offsets), read_size),
-                                 dtype=np.float) * np.nan
+                                 dtype=np.float)
+            eventdata.fill(np.nan)
             read_ok_mask = np.ones((len(channels), len(start_offsets))).astype(bool)
             for i, start_offset in enumerate(start_offsets):
                 if start_offset<0:
