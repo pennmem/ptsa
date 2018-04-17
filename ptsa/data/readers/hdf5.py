@@ -4,7 +4,6 @@ import h5py
 import numpy as np
 
 from ptsa.data.readers.raw import BaseRawReader
-from ptsa.data.readers.params import ParamsReader
 
 __all__ = [
     'H5RawReader',
@@ -30,9 +29,19 @@ class H5RawReader(BaseRawReader):
         _, data_ext = osp.splitext(kwargs['dataroot'])
         assert len(data_ext), 'Dataroot missing extension'
         super(H5RawReader, self).__init__(**kwargs)
+        channels = self.channels
+        if channels.dtype.names is not None:
+            if 'channel_1' not in channels.dtype.names:
+                raise IndexError('Cannot load bipolar data from monopolar channel list')
+            kwargs['channels'] = channels['channel_1']
+        super(H5RawReader, self).__init__(**kwargs)
         with h5py.File(self.dataroot,'r') as eegfile:
             if 'samplerate' in eegfile:
                 self.params_dict['samplerate']= eegfile['samplerate'][0]
+        self.channels = channels
+        self.channel_labels_to_string()
+
+
 
     def read_file(self, filename, channels, start_offsets=np.array([0]), read_size=-1):
         """
@@ -48,17 +57,19 @@ class H5RawReader(BaseRawReader):
         """
         with h5py.File(self.dataroot, 'r') as eegfile:
             if len(channels) == 0:
-                channels = self.channels = np.array(['{:03d}'.format(x).encode() for x in eegfile['/ports'][:]])
-
+                channels_ = self.channel_labels = np.array(['{:03d}'.format(x).encode() for x in eegfile['/ports'][:]])
+            else:
+                channels_ = channels
             try:
                 monopolar_possible = bool(eegfile['/monopolar_possible'][0])
 
                 if 'bipolar_info' in eegfile and not monopolar_possible:
-                    if not (np.in1d(channels, eegfile['/bipolar_info/ch0_label']).all()):
+
+                    if not (np.in1d(channels_, eegfile['/bipolar_info/ch0_label']).all()):
                         raise IndexError('Channel[s] %s not in recording' % (
-                            channels[~np.in1d(channels, eegfile['/bipolar_info/ch0_label'])]))
-                    channel_mask = np.in1d(eegfile['/bipolar_info/ch0_label'], channels)
-                    self.channels = np.rec.array(
+                            channels_[~np.in1d(channels_, eegfile['/bipolar_info/ch0_label'])]))
+                    channel_mask = np.in1d(eegfile['/bipolar_info/ch0_label'], channels_)
+                    self.channel_labels = np.rec.array(
                         list(
                             zip(eegfile['/bipolar_info/ch0_label'][channel_mask],
                                 eegfile['/bipolar_info/ch1_label'][channel_mask]),
@@ -69,11 +80,13 @@ class H5RawReader(BaseRawReader):
             except KeyError:
                 pass
 
-            channels_ = channels if self.channel_name == 'channels' else self.channels.ch0
+            channels_ = channels_ if self.channel_name == 'channels' else self.channel_labels.ch0
             event_data, read_ok_mask = self.read_h5file(eegfile, channels_,
                                                         start_offsets, read_size)
             if self.read_size == -1:
                 self.read_size = max(event_data.shape)
+            if len(channels) == 0:
+                self.channels = self.channel_labels
             return event_data, read_ok_mask
 
     @staticmethod

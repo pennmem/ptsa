@@ -17,6 +17,7 @@ class BaseRawReader(BaseReader, traits.api.HasTraits):
 
     dataroot = traits.api.Str
     channels = traits.api.CArray
+    channel_labels = traits.api.CArray
     start_offsets = traits.api.CArray
     read_size = traits.api.Int
 
@@ -39,10 +40,20 @@ class BaseRawReader(BaseReader, traits.api.HasTraits):
         self.start_offsets = start_offsets
         self.read_size = read_size
         self.params_dict = self.init_params()
+        if self.channels.dtype.names is None:
+            self.channel_labels = self.channels
+        else:
+            self.channel_labels = self.channels['channel']
+
 
     def init_params(self):
         p_reader = ParamsReader(dataroot=self.dataroot)
         return p_reader.read()
+
+    def channel_labels_to_string(self):
+        if np.issubdtype(self.channel_labels.dtype,np.integer):
+            self.channel_labels = np.array(['{:03}'.format(c).encode() for c in self.channel_labels])
+
 
     def read(self):
         """Read EEG data.
@@ -65,7 +76,10 @@ class BaseRawReader(BaseReader, traits.api.HasTraits):
 
         """
 
-        eventdata, read_ok_mask = self.read_file(self.dataroot,self.channels,self.start_offsets,self.read_size)
+        eventdata, read_ok_mask = self.read_file(self.dataroot,
+                                                 self.channel_labels,
+                                                 self.start_offsets,
+                                                 self.read_size)
         # multiply by the gain
         eventdata *= self.params_dict['gain']
 
@@ -76,7 +90,6 @@ class BaseRawReader(BaseReader, traits.api.HasTraits):
                                   'start_offsets': self.start_offsets.copy(),
                                   'offsets': np.arange(self.read_size),
                                   'samplerate': self.params_dict['samplerate']
-
                               }
                               )
 

@@ -31,7 +31,7 @@ class EEGReader(traits.api.HasTraits):
     Keyword Arguments
     -----------------
     channels : np.ndarray
-        Array-like of channel labels
+        numpy array of channel labels, or a structured array with a 'channels' field
     start_time : float
         read start offset in seconds w.r.t to the eegeffset specified in the events recarray
     end_time:

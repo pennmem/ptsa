@@ -62,6 +62,21 @@ ptsa.extensions.morlet
 ----------------------
 
 Low-level functions for quickly computing Morlet wavelet decompositions.
+
+It uses the following wavelet for frequency decomposition at frequency :math:`f` and with width :math:`w`
+.. math::
+   \Phi(t) =  (\sigma)^{-1/2} \pi^{-1/4} e^{-t^2/{2 \sigma^2}} e^{iwt/\sigma}
+where
+.. math::
+    \sigma = w/{2\pi f}
+The Gaussian envelope is only computed to a width of :math:`3.5\sigma` on each side of the peak. Any points beyond
+that are rounded to 0.
+
+The convolution of a signal :math:`\Sigma` with a wavelet :math:`\Phi` is done using the following algorithm:
+.. math::
+    \Sigma * \Phi = \hat{\hat Sigma \cdot \hat \Phi }/len(\Sigma)
+in order to take advantage of the speed provided by the FFTW library.
+
 :py:mod:`~ptsa.data.filters.MorletWaveletFilterCpp` provides a higher-level interface for these same functions.
 
 

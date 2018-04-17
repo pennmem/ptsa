@@ -164,3 +164,7 @@ class TestH5Reader:
 
 
 
+if __name__ == '__main__':
+    test = TestH5Reader()
+    test.setup_class()
+    test.test_h5reader_empty_channels()

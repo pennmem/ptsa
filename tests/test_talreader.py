@@ -3,6 +3,7 @@ from ptsa.data.readers.index import JsonIndexReader
 import numpy as np
 import os.path as osp
 from ptsa.test import utils
+import pytest
 
 @utils.skip_without_rhino
 def test_talreader_on_database():
@@ -849,12 +850,26 @@ def test_from_dict():
     u'type_1': u'G',
     u'type_2': u'G'},}}}
     pairs_array = TalReader('').from_dict(pairs_dict)
-    channel_array = np.empty(19,dtype=object)
-    channel_array[:] = sorted([   [89, 90],[90, 91],[91, 92],[65, 66],[66, 67],[67, 68],
+    channel_array = np.array(sorted([   [89, 90],[90, 91],[91, 92],[65, 66],[66, 67],[67, 68],
             [69, 70],[70, 71],[71, 72],[73, 74],[74,75],[75, 76],
-            [76, 77],[77, 78],[78, 79],[79, 80],[1, 2],[1, 9],[10, 11]])
+            [76, 77],[77, 78],[78, 79],[79, 80],[1, 2],[1, 9],[10, 11]]))
     assert pairs_array.channel.shape==channel_array.shape
     assert (pairs_array.channel == channel_array).all()
+
+
+def test_old_behavior():
+    pairinfo = TalReader(filename=osp.join(osp.dirname(__file__), 'data', 'pairs.json'),unpack=False).read()
+    assert pairinfo.dtype['atlases'] is np.dtype(object)
+
+def test_old_behavior_warning():
+    with pytest.deprecated_call():
+        TalReader(filename=osp.join(osp.dirname(__file__), 'data', 'pairs.json'), unpack=False).read()
+
+
+def test_talreader():
+    pairinfo = TalReader(filename=osp.join(osp.dirname(__file__),'data','pairs.json')).read()
+    _ = pairinfo.atlases.avg[['x','y','z']]
+    _ = pairinfo.atlases.mni.region
 
 
 def test_with_version_no():
