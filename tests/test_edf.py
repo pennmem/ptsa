@@ -34,11 +34,11 @@ class TestEDFFile:
         assert info.smp_in_file == 2000
         assert info.smp_in_datarecord == 20
 
-    def test_read_samples_by_number(self, edffile):
-        data = edffile.read_samples([0, 3, 6], 2000)
-        assert data.shape[1] == 2000
-
-    def test_read_samples_by_name(self, edffile):
-        data_by_name = edffile.read_samples(['EEG FP1', 'EEG F4', 'EEG P3'], 2000)
-        data_by_num = edffile.read_samples([0, 3, 6], 2000)
-        assert (data_by_name == data_by_num).all()
+    def test_read_samples(self, edffile):
+        numbers = [0, 3, 6]
+        labels = ['EEG FP1', 'EEG F4', 'EEG P3']
+        requested = 2000
+        data_n = edffile.read_samples(numbers, requested)
+        data_l = edffile.read_samples(labels, requested)
+        assert data_n.shape[1] == requested
+        assert (data_n == data_l).all()
