@@ -53,6 +53,12 @@ private:
         }
     }
 
+    /**
+     * @brief Get channel numbers from a list of names.
+     * @param channel_names
+     */
+    std::vector<int> get_channel_numbers(std::vector<std::string> channel_names);
+
 public:
     /**
      * Open an EDF file for reading.
@@ -141,12 +147,6 @@ public:
 
     //     return annotations;
     // }
-
-    /**
-     * @brief Get channel numbers from a list of names.
-     * @param channel_names
-     */
-    std::vector<int> get_channel_numbers(std::vector<std::string> channel_names);
 
     /**
      * Read raw samples from a list of channels.
