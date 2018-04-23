@@ -76,6 +76,7 @@ PYBIND11_MODULE(edffile, m)
         .def_property_readonly("num_annotations", &EDFFile::get_num_annotations)
         .def("get_channel_info", &EDFFile::get_channel_info)
         .def("close", &EDFFile::close)
+        .def("get_channel_numbers", &EDFFile::get_channel_numbers)
         .def("read_samples",
              py::overload_cast<std::vector<int>, int, long long>(&EDFFile::read_samples),
              "Read samples from a list of channel numbers",

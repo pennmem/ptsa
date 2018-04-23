@@ -45,12 +45,6 @@ private:
         }
     }
 
-    /**
-     * @brief Get channel numbers from a list of names.
-     * @param channel_names
-     */
-    std::vector<int> get_channel_numbers(std::vector<std::string> channel_names);
-
 public:
     /**
      * Open an EDF file for reading.
@@ -72,6 +66,12 @@ public:
     inline int get_num_channels() {
         return this->header.edfsignals;
     }
+
+    /**
+     * @brief Get channel numbers from a list of names.
+     * @param channel_names
+     */
+    std::vector<int> get_channel_numbers(std::vector<std::string> channel_names);
 
     /**
      * Return channel metadata.
