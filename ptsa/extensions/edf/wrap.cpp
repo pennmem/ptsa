@@ -76,10 +76,14 @@ PYBIND11_MODULE(edffile, m)
         .def_property_readonly("num_annotations", &EDFFile::get_num_annotations)
         .def("get_channel_info", &EDFFile::get_channel_info)
         .def("close", &EDFFile::close)
-        .def("read_samples",(py::array_t<double> (EDFFile::*)(std::vector<std::string>, int, long long)) &EDFFile::read_samples,
-             py::arg("channel"), py::arg("samples"), py::arg("offset") = 0)
-        .def("read_samples",(py::array_t<double> (EDFFile::*)(std::vector<int>, int, long long)) &EDFFile::read_samples,
-             py::arg("channel"), py::arg("samples"), py::arg("offset") = 0)
+        .def("read_samples",
+             py::overload_cast<std::vector<int>, int, long long>(&EDFFile::read_samples),
+             "Read samples from a list of channel numbers",
+             py::arg("channels"), py::arg("samples"), py::arg("offset") = 0)
+        .def("read_samples",
+             py::overload_cast<std::vector<std::string>, int, long long>(&EDFFile::read_samples),
+             "Read samples from a list of channel names",
+             py::arg("channels"), py::arg("samples"), py::arg("offset") = 0)
         .def("get_samplerate", &EDFFile::get_samplerate, py::arg("channel"))
     ;
 }
