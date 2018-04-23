@@ -352,11 +352,11 @@ PYBIND11_MODULE(edffile, m)
         .def_property_readonly("num_annotations", &EDFFile::get_num_annotations)
         .def("get_channel_info", &EDFFile::get_channel_info)
         .def("close", &EDFFile::close)
-        .def("get_channel_numbers",&EDFFile::get_channel_numbers)
-        .def("read_samples",(py::array_t<double> (EDFFile::*)(std::vector<std::string>,int,long long)) &EDFFile::read_samples,
+        .def("get_channel_numbers", &EDFFile::get_channel_numbers)
+        .def("read_samples",(py::array_t<double> (EDFFile::*)(std::vector<std::string>, int, long long)) &EDFFile::read_samples,
              py::arg("channel"), py::arg("samples"), py::arg("offset") = 0)
-        .def("read_samples",(py::array_t<double> (EDFFile::*)(std::vector<int>,int,long long)) &EDFFile::read_samples,
+        .def("read_samples",(py::array_t<double> (EDFFile::*)(std::vector<int>, int, long long)) &EDFFile::read_samples,
              py::arg("channel"), py::arg("samples"), py::arg("offset") = 0)
-        .def("get_samplerate",&EDFFile::get_samplerate,py::arg("channel"))
+        .def("get_samplerate", &EDFFile::get_samplerate, py::arg("channel"))
     ;
 }
