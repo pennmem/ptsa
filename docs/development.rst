@@ -16,6 +16,6 @@ Testing
 
 PTSA uses pytest_ as the test runner. Some tests are slow as they involve
 processing large amounts of data, so these are marked as such. To run all tests
-but the slow ones, use the ``-m "not slow"` command line option.
+but the slow ones, use the `-m "not slow"` command line option.
 
 .. _pytest: https://docs.pytest.org/en/latest/
