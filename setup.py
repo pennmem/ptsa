@@ -307,6 +307,7 @@ try:
             sources=[
                 'ptsa/extensions/edf/edflib.cpp',
                 'ptsa/extensions/edf/edffile.cpp',
+                'ptsa/extensions/edf/wrap.cpp',
             ],
         )
     ]
