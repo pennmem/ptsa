@@ -93,8 +93,9 @@ class MorletWaveletFilter(BaseFilter):
 
         mt = morlet.MorletWaveletTransformMP(self.cpus)
 
-        time_series_reshaped = np.ascontiguousarray(self.time_series.data.reshape(np.prod(self.time_series.shape[:-1]),
-                                                    self.time_series.shape[-1]),self.time_series.data.dtype)
+        time_series_reshaped = np.ascontiguousarray(self.time_series.data.reshape(np.prod(self.time_series.shape[:-1], dtype=int),
+                                                    self.time_series.shape[-1]),
+                                                    self.time_series.data.dtype)
         if self.output == 'power':
             mt.set_output_type(morlet.POWER)
         if self.output == 'phase':
@@ -142,8 +143,7 @@ class MorletWaveletFilter(BaseFilter):
         if powers_final is not None:
             powers_ts = TimeSeries(powers_final,
                                    dims=self.time_series.dims[:-1] + ('frequency', self.time_series.dims[-1],),
-                                   coords=coords
-                                   )
+                                   coords=coords)
             final_dims = (powers_ts.dims[-2],) + powers_ts.dims[:-2] + (powers_ts.dims[-1],)
 
             powers_ts = powers_ts.transpose(*final_dims)
@@ -151,8 +151,7 @@ class MorletWaveletFilter(BaseFilter):
         if phases_final is not None:
             phases_ts = TimeSeries(phases_final,
                                    dims=self.time_series.dims[:-1] + ('frequency', self.time_series.dims[-1],),
-                                   coords=coords
-                                   )
+                                   coords=coords)
 
             final_dims = (phases_ts.dims[-2],) + phases_ts.dims[:-2] + (phases_ts.dims[-1],)
 
@@ -162,8 +161,7 @@ class MorletWaveletFilter(BaseFilter):
             wavelet_complex_ts = TimeSeries(wavelet_complex_final,
                                             dims=self.time_series.dims[:-1] + (
                                              'frequency', self.time_series.dims[-1],),
-                                            coords=coords
-                                            )
+                                            coords=coords)
 
             final_dims = (wavelet_complex_ts.dims[-2],) + wavelet_complex_ts.dims[:-2] + (wavelet_complex_ts.dims[-1],)
 

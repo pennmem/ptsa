@@ -152,27 +152,31 @@ class TestFilters(unittest.TestCase):
             assert_equal(base_eegs_filtered_1, self.base_eegs)
 
 
-class TestFiltersExecute(unittest.TestCase):
-    def setUp(self):
-        times = np.linspace(0,1,1000)
+class TestFiltersExecute:
+    @classmethod
+    def setup_class(cls):
+        times = np.linspace(0, 1, 1000)
         ts = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
-        self.time_series = timeseries.TimeSeries(data=ts, dims=('time'), coords = {'time':times, 'samplerate':1000})
+        cls.time_series = timeseries.TimeSeries(data=ts, dims=('time'), coords = {'time':times, 'samplerate':1000})
 
-
-    def test_ButterworthFilter(self):
+    def test_butterworth(self):
         bfilter = ButterworthFilter(time_series = self.time_series,freq_range = [10.,20.],filt_type='stop',order=2)
         bfilter.filter()
-        return True
 
-    def test_MorletWaveletFilter(self):
-        mwf = MorletWaveletFilter(timeseries=self.time_series, freqs=np.array([10., 20., 40.]), width=4)
-        power,phase= mwf.filter()
-        assert power.shape == (3,1000)
-        assert phase.shape == (3,1000)
+    @pytest.mark.parametrize('output_type', ['power', 'phase', 'both'])
+    def test_morlet(self, output_type):
+        mwf = MorletWaveletFilter(timeseries=self.time_series,
+                                  freqs=np.array([10., 20., 40.]),
+                                  width=4, output=output_type)
+        output = mwf.filter()
 
+        if output_type in ['power', 'both']:
+            assert output['power'].shape == (3, 1000)
+        if output_type in ['phase', 'both']:
+            assert output['phase'].shape == (3, 1000)
 
-    def test_ResampleFilter(self):
-        rf = ResampleFilter(time_series = self.time_series,resamplerate=50.)
+    def test_resample(self):
+        rf = ResampleFilter(time_series=self.time_series, resamplerate=50.)
         new_ts = rf.filter()
         assert len(new_ts) == 50
         assert new_ts.samplerate == 50.
