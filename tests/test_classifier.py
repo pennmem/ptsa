@@ -45,7 +45,7 @@ class TestClassifier(unittest.TestCase):
         m2b = MonopolarToBipolarMapper(time_series=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
         bp_eegs = m2b.filter()
 
-        wf = MorletWaveletFilter(time_series=bp_eegs,
+        wf = MorletWaveletFilter(timeseries=bp_eegs,
                                  freqs=np.logspace(np.log10(3), np.log10(180), 8),
                                  output='power',
                                  frequency_dim_pos=0,

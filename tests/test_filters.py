@@ -102,7 +102,7 @@ class TestFilters(unittest.TestCase):
 
     def test_wavelets_with_event_data_chopper(self):
         wf_session = MorletWaveletFilter(
-            time_series=self.session_eegs[:, :, :int(self.session_eegs.shape[2] / 4)],
+            timeseries=self.session_eegs[:, :, :int(self.session_eegs.shape[2] / 4)],
             freqs=np.logspace(np.log10(3), np.log10(180), 8),
             output='power',
             frequency_dim_pos=0,
@@ -118,7 +118,7 @@ class TestFilters(unittest.TestCase):
         # removing buffer
         chopped_session_pow_wavelet = chopped_session_pow_wavelet[:, :, :, 500:-500]
 
-        wf = MorletWaveletFilter(time_series=self.base_eegs,
+        wf = MorletWaveletFilter(timeseries=self.base_eegs,
                                  freqs=np.logspace(np.log10(3), np.log10(180), 8),
                                  output='power',
                                  frequency_dim_pos=0,
@@ -165,7 +165,7 @@ class TestFiltersExecute(unittest.TestCase):
         return True
 
     def test_MorletWaveletFilter(self):
-        mwf = MorletWaveletFilter(time_series=self.time_series,freqs=np.array([10.,20.,40.]),width=4)
+        mwf = MorletWaveletFilter(timeseries=self.time_series, freqs=np.array([10., 20., 40.]), width=4)
         power,phase= mwf.filter()
         assert power.shape == (3,1000)
         assert phase.shape == (3,1000)
