@@ -75,16 +75,26 @@ struct edf_annotation_struct EDFFile::get_annotation(int index)
 }
 
 
+void EDFFile::seek(int channel, long long offset)
+{
+    const auto new_offset = edfseek(this->handle(), channel, offset, EDFSEEK_SET);
+    if (new_offset != offset && new_offset != -1) {
+        throw std::runtime_error(
+            "edfseek returned " + std::to_string(new_offset)
+            + " when expected " + std::to_string(offset)
+        );
+    }
+}
+
+
 std::vector<int> EDFFile::get_channel_numbers(std::vector<std::string> channel_names)
 {
     std::vector<int> channel_numbers;
     for (const std::string &name: channel_names) {
-        bool found = false;
         for(int c = 0; c < this->get_num_channels(); c++) {
             auto info = this->get_channel_info(c);
             std::string label = info.label;
             if(label.compare(0, name.size(), name) == 0) {
-                found = true;
                 channel_numbers.push_back(c);
                 break;
             }

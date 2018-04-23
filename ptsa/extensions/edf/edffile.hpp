@@ -28,15 +28,7 @@ private:
         return this->header.handle;
     }
 
-    inline void seek(int channel, long long offset) {
-        const auto new_offset = edfseek(this->handle(), channel, offset, EDFSEEK_SET);
-        if (new_offset != offset) {
-            throw std::runtime_error(
-                "edfseek returned " + std::to_string(new_offset)
-                + " when expected " + std::to_string(offset)
-            );
-        }
-    }
+    void seek(int channel, long long offset);
 
     /**
      * Open an EDF file.
