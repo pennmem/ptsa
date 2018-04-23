@@ -7,7 +7,7 @@ import numpy as np
 from numpy.testing import assert_array_equal, assert_array_almost_equal
 from ptsa.data import timeseries
 from ptsa.data.readers import BaseEventReader
-from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
+from ptsa.data.filters.morlet import MorletWaveletFilter
 from ptsa.data.readers.tal import TalReader
 from ptsa.data.readers import EEGReader
 from ptsa.data.filters import DataChopper
