@@ -1,14 +1,11 @@
 import time
 
 import numpy as np
-from scipy.fftpack import fft, ifft
 import traits.api
-import xarray as xr
 
 from ptsa.data.timeseries import TimeSeries
 from ptsa.data.filters import BaseFilter
 from ptsa.extensions import morlet
-from ptsa.wavelet import morlet_multi, next_pow2
 
 
 class MorletWaveletFilter(BaseFilter):
@@ -48,7 +45,13 @@ class MorletWaveletFilter(BaseFilter):
         super(MorletWaveletFilter, self).__init__(timeseries)
         self.freqs = freqs
         self.width = width
+
+        output_opts = ['power', 'phase', 'both', 'complex']
+        if output not in output_opts:
+            raise RuntimeError("output must be one of %r" % output_opts)
+
         self.output = output
+
         self.frequency_dim_pos = frequency_dim_pos
         self.verbose = verbose
         self.cpus = cpus
@@ -61,8 +64,9 @@ class MorletWaveletFilter(BaseFilter):
 
         Returns
         -------
-        (power,phase): tuple(TimeSeries or None, TimeSeries or None)
-            Returns a tuple containing the computed power and phase values.
+        A dictionary with keys `power`, `phase`, and `complex`. Unused values
+        will be `None`.
+
         """
 
         time_axis = self.time_series['time']
@@ -128,8 +132,6 @@ class MorletWaveletFilter(BaseFilter):
         if self.output == 'complex':
             wavelet_complex_final = wavelets_complex_reshaped.reshape(wavelet_dims + (self.time_series.shape[-1],))
 
-        # wavelets_final = powers_reshaped.reshape( wavelet_dims+(self.time_series.shape[-1],) )
-
         coords = {k: v for k, v in list(self.time_series.coords.items())}
         coords['frequency'] = self.freqs
 
@@ -170,7 +172,8 @@ class MorletWaveletFilter(BaseFilter):
         if self.verbose:
             print('CPP total time wavelet loop: ', time.time() - s)
 
-        if wavelet_complex_ts is not None:
-            return wavelet_complex_ts, None
-        else:
-            return powers_ts, phases_ts
+        return {
+            'power': powers_ts,
+            'phase': phases_ts,
+            'complex': wavelet_complex_ts
+        }
