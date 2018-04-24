@@ -11,6 +11,3 @@ def test_read_matlab_struct(filename):
     assert len(events.squeeze()) == 191
     assert events.list.max() == 1
 
-
-if __name__ == '__main__':
-    test_read_matlab_struct()
