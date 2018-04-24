@@ -17,6 +17,7 @@ from ptsa.data.filters import ResampleFilter
 from ptsa.test.utils import get_rhino_root, skip_without_rhino
 
 
+@pytest.mark.filters
 @skip_without_rhino
 class TestFilters(unittest.TestCase):
     def setUp(self):
@@ -152,15 +153,23 @@ class TestFilters(unittest.TestCase):
             assert_equal(base_eegs_filtered_1, self.base_eegs)
 
 
+@pytest.mark.filters
 class TestFiltersExecute:
     @classmethod
     def setup_class(cls):
         times = np.linspace(0, 1, 1000)
         ts = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
-        cls.time_series = timeseries.TimeSeries(data=ts, dims=('time'), coords = {'time':times, 'samplerate':1000})
+        cls.time_series = timeseries.TimeSeries(data=ts, dims=('time'),
+                                                coords={
+                                                    'time': times,
+                                                    'samplerate': 1000
+                                                })
 
     def test_butterworth(self):
-        bfilter = ButterworthFilter(time_series = self.time_series,freq_range = [10.,20.],filt_type='stop',order=2)
+        bfilter = ButterworthFilter(time_series=self.time_series,
+                                    freq_range=[10., 20.],
+                                    filt_type='stop',
+                                    order=2)
         bfilter.filter()
 
     @pytest.mark.parametrize('output_type', ['power', 'phase', 'both'])
