@@ -201,3 +201,22 @@ class TestFiltersExecute(unittest.TestCase):
         new_timeseries = chopper.filter()
         assert len(new_timeseries['start_offsets']) == len(offsets)
         assert len(new_timeseries['time']) == end_time*new_timeseries.samplerate
+
+    def test_MonopolarToBipolarMapper(self):
+        ts = np.array([self.time_series.values,self.time_series.values])
+        time_series = timeseries.TimeSeries(data=ts,
+                                            coords = {
+                                                'channels':['0','1'],
+                                                'time':self.time_series.time.values,
+                                                'samplerate':1000,
+                                            },
+                                            dims= ('channels','time'))
+        pairs = np.array([('0','1')],dtype=[('ch0','S1'),('ch1','S1')])
+        new_timeseries = MonopolarToBipolarMapper(time_series=time_series,
+                                                  bipolar_pairs=pairs).filter()
+        assert np.array_equal(new_timeseries,np.zeros(new_timeseries.shape))
+
+if __name__ =='__main__':
+    test = TestFiltersExecute()
+    test.setUp()
+    test.test_MonopolarToBipolarMapper()
