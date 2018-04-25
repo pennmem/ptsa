@@ -8,6 +8,7 @@ from numpy.testing import assert_array_equal, assert_array_almost_equal
 from ptsa.data import timeseries
 from ptsa.data.readers import BaseEventReader
 from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
+from ptsa.data.filters.MorletWaveletFilterCpp import MorletWaveletFilterCpp
 from ptsa.data.readers.tal import TalReader
 from ptsa.data.readers import EEGReader
 from ptsa.data.filters import DataChopper
@@ -170,13 +171,20 @@ class TestFiltersExecute(unittest.TestCase):
         assert power.shape == (3,1000)
         assert phase.shape == (3,1000)
 
+    def test_MorletWaveletFilterCpp(self):
+        mwf = MorletWaveletFilterCpp(time_series=self.time_series,freqs=np.array([10.,20.,40.]),width=4,
+                                     )
+        power,phase= mwf.filter()
+        assert power.shape == (3,1000)
+        assert phase.shape == (3,1000)
+
+
 
     def test_ResampleFilter(self):
         rf = ResampleFilter(time_series = self.time_series,resamplerate=50.)
         new_ts = rf.filter()
         assert len(new_ts) == 50
         assert new_ts.samplerate == 50.
-
 
 
 
