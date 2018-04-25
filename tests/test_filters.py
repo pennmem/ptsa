@@ -206,7 +206,7 @@ class TestFiltersExecute(unittest.TestCase):
         ts = np.array([self.time_series.values,self.time_series.values])
         time_series = timeseries.TimeSeries(data=ts,
                                             coords = {
-                                                'channels':['0','1'],
+                                                'channels':[b'0',b'1'],
                                                 'time':self.time_series.time.values,
                                                 'samplerate':1000,
                                             },
