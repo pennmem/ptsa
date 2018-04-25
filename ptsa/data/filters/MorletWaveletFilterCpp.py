@@ -11,7 +11,7 @@ class MorletWaveletFilterCpp(MorletWaveletFilter):
 
     cpus = traits.api.Int
 
-    def __init__(self, time_series, freqs,width=5,output='',frequency_dim_pos=-2,verbose=False,cpus = 1):
+    def __init__(self, time_series, freqs,width=5,output='both',frequency_dim_pos=-2,verbose=False,cpus = 1):
 
         super(MorletWaveletFilterCpp, self).__init__(time_series,freqs=freqs,width=width,output=output,
                                                      frequency_dim_pos=frequency_dim_pos,verbose=verbose)
