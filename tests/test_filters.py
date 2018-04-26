@@ -7,7 +7,7 @@ import numpy as np
 from numpy.testing import assert_array_equal, assert_array_almost_equal
 from ptsa.data import timeseries
 from ptsa.data.readers import BaseEventReader
-from ptsa.data.filters.MorletWaveletFilter import MorletWaveletFilter
+from ptsa.data.filters.morlet import MorletWaveletFilter
 from ptsa.data.readers.tal import TalReader
 from ptsa.data.readers import EEGReader
 from ptsa.data.filters import DataChopper
@@ -17,6 +17,7 @@ from ptsa.data.filters import ResampleFilter
 from ptsa.test.utils import get_rhino_root, skip_without_rhino
 
 
+@pytest.mark.filters
 @skip_without_rhino
 class TestFilters(unittest.TestCase):
     def setUp(self):
@@ -102,7 +103,7 @@ class TestFilters(unittest.TestCase):
 
     def test_wavelets_with_event_data_chopper(self):
         wf_session = MorletWaveletFilter(
-            time_series=self.session_eegs[:, :, :int(self.session_eegs.shape[2] / 4)],
+            timeseries=self.session_eegs[:, :, :int(self.session_eegs.shape[2] / 4)],
             freqs=np.logspace(np.log10(3), np.log10(180), 8),
             output='power',
             frequency_dim_pos=0,
@@ -118,7 +119,7 @@ class TestFilters(unittest.TestCase):
         # removing buffer
         chopped_session_pow_wavelet = chopped_session_pow_wavelet[:, :, :, 500:-500]
 
-        wf = MorletWaveletFilter(time_series=self.base_eegs,
+        wf = MorletWaveletFilter(timeseries=self.base_eegs,
                                  freqs=np.logspace(np.log10(3), np.log10(180), 8),
                                  output='power',
                                  frequency_dim_pos=0,
@@ -152,27 +153,39 @@ class TestFilters(unittest.TestCase):
             assert_equal(base_eegs_filtered_1, self.base_eegs)
 
 
-class TestFiltersExecute(unittest.TestCase):
-    def setUp(self):
-        times = np.linspace(0,1,1000)
+@pytest.mark.filters
+class TestFiltersExecute:
+    @classmethod
+    def setup_class(cls):
+        times = np.linspace(0, 1, 1000)
         ts = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
-        self.time_series = timeseries.TimeSeries(data=ts, dims=('time'), coords = {'time':times, 'samplerate':1000})
+        cls.time_series = timeseries.TimeSeries(data=ts, dims=('time'),
+                                                coords={
+                                                    'time': times,
+                                                    'samplerate': 1000
+                                                })
 
-
-    def test_ButterworthFilter(self):
-        bfilter = ButterworthFilter(time_series = self.time_series,freq_range = [10.,20.],filt_type='stop',order=2)
+    def test_butterworth(self):
+        bfilter = ButterworthFilter(time_series=self.time_series,
+                                    freq_range=[10., 20.],
+                                    filt_type='stop',
+                                    order=2)
         bfilter.filter()
-        return True
 
-    def test_MorletWaveletFilter(self):
-        mwf = MorletWaveletFilter(time_series=self.time_series,freqs=np.array([10.,20.,40.]),width=4)
-        power,phase= mwf.filter()
-        assert power.shape == (3,1000)
-        assert phase.shape == (3,1000)
+    @pytest.mark.parametrize('output_type', ['power', 'phase', 'both'])
+    def test_morlet(self, output_type):
+        mwf = MorletWaveletFilter(timeseries=self.time_series,
+                                  freqs=np.array([10., 20., 40.]),
+                                  width=4, output=output_type)
+        output = mwf.filter()
 
+        if output_type in ['power', 'both']:
+            assert output['power'].shape == (3, 1000)
+        if output_type in ['phase', 'both']:
+            assert output['phase'].shape == (3, 1000)
 
-    def test_ResampleFilter(self):
-        rf = ResampleFilter(time_series = self.time_series,resamplerate=50.)
+    def test_resample(self):
+        rf = ResampleFilter(time_series=self.time_series, resamplerate=50.)
         new_ts = rf.filter()
         assert len(new_ts) == 50
         assert new_ts.samplerate == 50.
