@@ -25,8 +25,6 @@ class MorletWaveletFilter(BaseFilter):
         The width of the wavelet
     output: str
         One of: 'power', 'phase', 'both', 'complex' (default: 'both')
-    frequency_dim_pos: int
-        The position of the new frequency axis in the output array
     verbose: bool
         Print out the wavelet parameters
     cpus : int
@@ -36,12 +34,11 @@ class MorletWaveletFilter(BaseFilter):
     freqs = traits.api.CArray
     width = traits.api.Int
     output = traits.api.Str
-    frequency_dim_pos = traits.api.Int
     verbose = traits.api.Bool
     cpus = traits.api.Int
 
     def __init__(self, timeseries, freqs, width=5, output='both',
-                 frequency_dim_pos=-2, verbose=True, cpus=1):
+                 verbose=True, cpus=1):
         super(MorletWaveletFilter, self).__init__(timeseries)
         self.freqs = freqs
         self.width = width
@@ -52,7 +49,6 @@ class MorletWaveletFilter(BaseFilter):
 
         self.output = output
 
-        self.frequency_dim_pos = frequency_dim_pos
         self.verbose = verbose
         self.cpus = cpus
         self.window = None
@@ -70,9 +66,6 @@ class MorletWaveletFilter(BaseFilter):
         """
 
         time_axis = self.time_series['time']
-
-        time_axis_size = time_axis.shape[0]
-        samplerate = float(self.time_series['samplerate'])
 
         wavelet_dims = self.time_series.shape[:-1] + (self.freqs.shape[0],)
 
@@ -109,8 +102,6 @@ class MorletWaveletFilter(BaseFilter):
         mt.set_wavelet_pow_array(powers_reshaped)
         mt.set_wavelet_phase_array(phases_reshaped)
         mt.set_wavelet_complex_array(wavelets_complex_reshaped)
-
-        # mt.initialize_arrays(time_series_reshaped, wavelets_reshaped)
 
         mt.initialize_signal_props(float(self.time_series['samplerate']))
         mt.initialize_wavelet_props(self.width, self.freqs)
