@@ -191,14 +191,43 @@ class TestFiltersExecute:
         assert len(new_ts) == 50
         assert new_ts.samplerate == 50.
 
+    def test_DataChopper(self):
+        time_series = timeseries.TimeSeries(data=self.time_series.values[None,:],
+                                            dims=('start_offsets', 'time'),
+                                            coords = {'time':self.time_series['time'].values,
+                                                      'samplerate':1000,
+                                                      'start_offsets':[0],
+                                                      'offsets':('time',range(1000))
+                                                      })
+
+        offsets = np.arange(0,900,100,dtype=int)
 
 
+        end_time = 0.09
+        chopper = DataChopper(time_series,end_time=end_time,
+                              start_offsets=offsets)
+        new_timeseries = chopper.filter()
+        assert len(new_timeseries['start_offsets']) == len(offsets)
+        assert len(new_timeseries['time']) == end_time*new_timeseries.samplerate
 
+    def test_MonopolarToBipolarMapper(self):
+        ts = np.array([self.time_series.values,self.time_series.values])
+        time_series = timeseries.TimeSeries(data=ts,
+                                            coords = {
+                                                'channels':[b'0',b'1'],
+                                                'time':self.time_series.time.values,
+                                                'samplerate':1000,
+                                            },
+                                            dims= ('channels','time'))
+        pairs = np.array([('0','1')],dtype=[('ch0','S1'),('ch1','S1')])
+        new_timeseries = MonopolarToBipolarMapper(time_series=time_series,
+                                                  bipolar_pairs=pairs).filter()
+        assert np.array_equal(new_timeseries,np.zeros(new_timeseries.shape))
 
 
 class TestFilterShapes:
     """
-    Filter behavior should not depend on shape of input array
+    Spectral filter behavior should not depend on shape of input array
     """
     @classmethod
     def setup_class(self):
@@ -214,15 +243,15 @@ class TestFilterShapes:
                                                 dims=('offsets','time'))
 
     def test_MorletWaveletFilterCpp(self):
-        results0 = MorletWaveletFilter(self.timeseries,freqs=self.freqs,
+        pow0,phase0 = MorletWaveletFilterCpp(self.timeseries,freqs=self.freqs,
                                     width=4,output='both').filter()
 
-        results1 = MorletWaveletFilter(self.timeseries.transpose(),
+        pow1,phase1 = MorletWaveletFilterCpp(self.timeseries.transpose(),
                                            freqs=self.freqs,
                                            width=4,output='both').filter()
 
-        xr.testing.assert_allclose(results0['power'],results1['power'])
-        xr.testing.assert_allclose(results0['phase'],results1['phase'])
+        xr.testing.assert_allclose(pow0,pow1.transpose(*pow0.dims))
+        xr.testing.assert_allclose(phase0,phase1.transpose(*phase0.dims))
 
     def test_ButterworthFilter(self):
         filtered0 = ButterworthFilter(self.timeseries,self.freqs.tolist()).filter()
@@ -230,7 +259,3 @@ class TestFilterShapes:
 
         xr.testing.assert_allclose(filtered0,filtered1.transpose(*filtered0.dims))
 
-
-if __name__ == '__main__':
-    TestFilterShapes.setup_class()
-    TestFilterShapes().test_MorletWaveletFilterCpp()
