@@ -2,6 +2,7 @@ import os
 import unittest
 import os.path as osp
 import pytest
+import xarray as xr
 
 import numpy as np
 from numpy.testing import assert_array_equal, assert_array_almost_equal
@@ -193,3 +194,43 @@ class TestFiltersExecute:
 
 
 
+
+
+class TestFilterShapes:
+    """
+    Filter behavior should not depend on shape of input array
+    """
+    @classmethod
+    def setup_class(self):
+        self.times = times = np.linspace(0,1,1000)
+        self.data = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
+        self.freqs=  np.array([10,20],dtype=float)
+        self.timeseries = timeseries.TimeSeries(data=self.data[None,:],
+                                                coords = {
+                                                    'offsets':[0],
+                                                    'time':self.times,
+                                                    'samplerate':1000
+                                                },
+                                                dims=('offsets','time'))
+
+    def test_MorletWaveletFilterCpp(self):
+        results0 = MorletWaveletFilter(self.timeseries,freqs=self.freqs,
+                                    width=4,output='both').filter()
+
+        results1 = MorletWaveletFilter(self.timeseries.transpose(),
+                                           freqs=self.freqs,
+                                           width=4,output='both').filter()
+
+        xr.testing.assert_allclose(results0['power'],results1['power'])
+        xr.testing.assert_allclose(results0['phase'],results1['phase'])
+
+    def test_ButterworthFilter(self):
+        filtered0 = ButterworthFilter(self.timeseries,self.freqs.tolist()).filter()
+        filtered1 = ButterworthFilter(self.timeseries.transpose(),self.freqs.tolist()).filter()
+
+        xr.testing.assert_allclose(filtered0,filtered1.transpose(*filtered0.dims))
+
+
+if __name__ == '__main__':
+    TestFilterShapes.setup_class()
+    TestFilterShapes().test_MorletWaveletFilterCpp()
