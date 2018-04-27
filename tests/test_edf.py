@@ -11,7 +11,7 @@ def edffile():
 
     """
     here = osp.realpath(osp.dirname(__file__))
-    fname = osp.join(here, 'data', 'eeg.edf')
+    fname = osp.join(here, 'data', 'eeg','eeg.edf')
     edf = EDFFile(fname)
     yield edf
     edf.close()
@@ -33,6 +33,17 @@ class TestEDFFile:
         assert info.label == "EEG FP1"
         assert info.smp_in_file == 2000
         assert info.smp_in_datarecord == 20
+
+    def test_get_channel_numbers(self,edffile):
+        assert edffile.get_channel_numbers(['EEG FP1'])[0]==0
+
+    def test_get_samplerate(self,edffile):
+        assert all([int(edffile.get_samplerate(chann))==200
+                    for chann in range(edffile.num_channels)])
+
+    @pytest.mark.xfail
+    def test_get_channel_numbers_failure(self,edffile):
+        edffile.get_channel_numbers(['LA1'])
 
     def test_read_samples(self, edffile):
         numbers = [0, 3, 6]
