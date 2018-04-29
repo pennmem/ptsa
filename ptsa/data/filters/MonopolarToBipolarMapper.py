@@ -79,10 +79,13 @@ class MonopolarToBipolarMapper(BaseFilter):
 
         dims_bp = list(self.time_series.dims)
 
-        coords_bp = {coord_name:coord for coord_name, coord in list(self.time_series.coords.items())}
+        coords_bp = {coord_name:coord
+                     for coord_name, coord in list(
+                             self.time_series.coords.items())}
         coords_bp[self.channels_dim] = self.bipolar_pairs
 
-        ts = TimeSeries(data=ts0.values - ts1.values, dims=dims_bp, coords=coords_bp)
+        ts = TimeSeries(data=ts0.values - ts1.values, dims=dims_bp,
+                        coords=coords_bp)
         ts['samplerate'] = self.time_series['samplerate']
 
         ts.attrs = self.time_series.attrs.copy()
