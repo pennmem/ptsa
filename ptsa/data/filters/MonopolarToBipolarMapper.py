@@ -47,11 +47,11 @@ class MonopolarToBipolarMapper(BaseFilter):
                     tst, names=chan_names)
             else:
                 raise ValueError(
-                    'bipolar_pair must be either a 1-D structured array where
-                    dtypes has two fields corresponding to chan_names or a 2-D
-                    container where the first dimension must be length 2
-                    corresponding to the two channels in the bipolar pair.
-                    Input was 2-D with the following dimensions: '+
+                    'bipolar_pair must be either a 1-D structured array where'
+                    'dtypes has two fields corresponding to chan_names or a 2-D'
+                    'container where the first dimension must be length 2'
+                    'corresponding to the two channels in the bipolar pair.'
+                    'Input was 2-D with the following dimensions: '+
                     str(np.shape(bipolar_pairs)))
         else:
             self.bipolar_pairs = bipolar_pairs
