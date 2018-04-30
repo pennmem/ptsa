@@ -12,6 +12,8 @@ class BaseFilter(traits.api.HasTraits):
     def __init__(self,time_series):
         super(BaseFilter, self).__init__()
         self.time_series = time_series
+        self.nontime_dims = tuple([d for d in self.time_series.dims if d !='time'])
+        self.nontime_sizes = tuple([len(self.time_series[d]) for d in self.nontime_dims])
 
     @abstractmethod
     def filter(self):
