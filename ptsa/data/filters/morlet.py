@@ -14,7 +14,7 @@ class MorletWaveletFilter(BaseFilter):
 
     Parameters
     ----------
-    time_series: TimeSeries
+    timeseries: TimeSeries
         The time series to filter
 
     Keyword Arguments
