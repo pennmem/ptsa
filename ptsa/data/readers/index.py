@@ -55,7 +55,8 @@ class JsonIndexReader(object):
         df : pd.DataFrame
 
         """
-        subjects = self.index["protocols"]["r1"]["subjects"]
+        protocol = os.path.splitext(os.path.basename(self.index_file))[0]
+        subjects = self.index["protocols"][protocol]["subjects"]
         entries = []
 
         for subject in subjects:
