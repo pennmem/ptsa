@@ -1,9 +1,12 @@
+from numpy import asarray
 from xarray import DataArray
+from ptsa.filt import buttfilt
 from ptsa.data.timeseries import TimeSeries
 from ptsa.data.common import get_axis_index
-from ptsa.filt import buttfilt
 from ptsa.data.filters import BaseFilter
 import traits.api
+
+__all__ = ['ButterworthFilter']
 
 class ButterworthFilter(BaseFilter):
     """Applies Butterworth filter to a time series.
@@ -59,24 +62,6 @@ class ButterworthFilter(BaseFilter):
         filtered_time_series.attrs = self.time_series.attrs.copy()
         return filtered_time_series
 
-
-
-from scipy.signal import butter, lfilter
-
-
-def butter_bandpass(lowcut, highcut, fs, order=4):
-    nyq = 0.5 * fs
-    low = lowcut / nyq
-    high = highcut / nyq
-    # b, a = butter(order, [low, high], btype='band')
-    b, a = butter(order, [low, high], btype='stop')
-    return b, a
-
-
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=4):
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = lfilter(b, a, data)
-    return y
 
 
 if __name__ == '__main__':
@@ -151,3 +136,5 @@ if __name__ == '__main__':
     plt.show()
 
     print()
+
+
