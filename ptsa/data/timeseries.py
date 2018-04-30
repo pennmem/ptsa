@@ -14,7 +14,7 @@ except ImportError:  # pragma: nocover
 
 from ptsa.version import version as ptsa_version
 from ptsa.data.common import get_axis_index
-from ptsa.filt import buttfilt
+from ptsa.data.filters.ButterworthFilter import buttfilt
 
 
 class ConcatenationError(Exception):

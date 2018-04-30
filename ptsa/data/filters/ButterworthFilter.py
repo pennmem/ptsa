@@ -1,7 +1,7 @@
+from numpy import asarray
 from xarray import DataArray
 from ptsa.data.timeseries import TimeSeries
 from ptsa.data.common import get_axis_index
-from ptsa.filt import buttfilt
 from ptsa.data.filters import BaseFilter
 import traits.api
 
@@ -61,7 +61,7 @@ class ButterworthFilter(BaseFilter):
 
 
 
-from scipy.signal import butter, lfilter
+from scipy.signal import butter, lfilter, filtfilt
 
 
 def butter_bandpass(lowcut, highcut, fs, order=4):
@@ -151,3 +151,35 @@ if __name__ == '__main__':
     plt.show()
 
     print()
+
+
+def buttfilt(dat,freq_range,sample_rate,filt_type,order,axis=-1):
+    """Wrapper for a Butterworth filter.
+
+    """
+
+    # make sure dat is an array
+    dat = asarray(dat)
+
+    # reshape the data to 2D with time on the 2nd dimension
+    #origshape = dat.shape
+    #dat = reshape_to_2d(dat,axis)
+
+    # set up the filter
+    freq_range = asarray(freq_range)
+
+    # Nyquist frequency
+    nyq=sample_rate/2.
+
+    # generate the butterworth filter coefficients
+    [b,a]=butter(order,freq_range/nyq,filt_type)
+
+    # loop over final dimension
+    #for i in range(dat.shape[0]):
+    #    dat[i] = filtfilt(b,a,dat[i])
+    #dat = filtfilt2(b,a,dat,axis=axis)
+    dat = filtfilt(b,a,dat,axis=axis)
+
+    # reshape the data back
+    #dat = reshape_from_2d(dat,axis,origshape)
+    return dat
