@@ -17,7 +17,7 @@ class MonopolarToBipolarMapper(BaseFilter):
 
     Parameters
     ----------
-    time_series: TimeSeries
+    timeseries: TimeSeries
         The time series to filter
     bipolar_pairs: array-like
         An array of bipolar electrode pairs. Must be either a 1-D
@@ -38,13 +38,13 @@ class MonopolarToBipolarMapper(BaseFilter):
 
     # bipolar_pairs = traits.api.Array(dtype=[('ch0', '|S3'), ('ch1', '|S3')])
 
-    def __init__(self, time_series, bipolar_pairs, channels_dim='channels',
+    def __init__(self, timeseries, bipolar_pairs, channels_dim='channels',
                  chan_names=['ch0', 'ch1']):
-        super(MonopolarToBipolarMapper, self).__init__(time_series)
+        super(MonopolarToBipolarMapper, self).__init__(timeseries)
         if (len(np.shape(bipolar_pairs)) == 2):
-            if np.shape(biolar_pairs)[0] == 2:
+            if np.shape(bipolar_pairs)[0] == 2:
                 self.bipolar_pairs = np.core.records.fromarrays(
-                    tst, names=chan_names)
+                    bipolar_pairs, names=chan_names)
             else:
                 raise ValueError(
                     'bipolar_pair must be either a 1-D structured array where'
@@ -89,6 +89,7 @@ class MonopolarToBipolarMapper(BaseFilter):
         ts['samplerate'] = self.time_series['samplerate']
 
         ts.attrs = self.time_series.attrs.copy()
+        ts.name = self.time_series.name
         return ts
 
 
