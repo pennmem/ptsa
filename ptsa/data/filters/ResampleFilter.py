@@ -22,6 +22,8 @@ class ResampleFilter(BaseFilter):
         Flag indicating if timepoints from original time axis
         should be reused after proper rounding. Defaults to False
 
+    .. versionchanged:: 2.0
+    Parameter "time_series" was renamed to "timeseries".
 """
 
     resamplerate = traits.api.CFloat
