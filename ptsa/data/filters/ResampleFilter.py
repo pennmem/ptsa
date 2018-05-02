@@ -12,7 +12,7 @@ class ResampleFilter(BaseFilter):
 
     Keyword Arguments
     -----------------
-    time_series
+    timeseries
         TimeSeries object
     resamplerate: float
         new sampling frequency
@@ -28,8 +28,8 @@ class ResampleFilter(BaseFilter):
     time_axis_index = traits.api.Int
     round_to_original_timepoints = traits.api.Bool
 
-    def __init__(self,time_series,resamplerate,time_axis_index=-1,round_to_original_timepoints=False):
-        super(ResampleFilter, self).__init__(time_series=time_series)
+    def __init__(self,timeseries, resamplerate, time_axis_index=-1, round_to_original_timepoints=False):
+        super(ResampleFilter, self).__init__(time_series=timeseries)
         self.resamplerate = resamplerate
         self.time_axis_index = time_axis_index
         self.round_to_original_timepoints = round_to_original_timepoints
