@@ -25,7 +25,7 @@ class MonopolarToBipolarMapper(BaseFilter):
         chan_names or a 2-D container where the first dimension must
         be length 2 corresponding to the two channels in the bipolar
         pair
-
+    
     Keyword Arguments
     -----------------
     channels_dim: str, optional
@@ -34,6 +34,9 @@ class MonopolarToBipolarMapper(BaseFilter):
         container with two elements corresponding to the names of the
         two channels in the bipolar pair
 
+    .. versionchanged:: 2.0
+    Support for 2-D bipolar_pairs and specification of channels_dim
+    and chan_names was added in version 2.0.
     """
 
     # bipolar_pairs = traits.api.Array(dtype=[('ch0', '|S3'), ('ch1', '|S3')])
