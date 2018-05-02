@@ -76,7 +76,7 @@ class DataChopper(traits.api.HasTraits):
     def filter(self):
         """
         Chops session into chunks corresponding to events
-        :return: timeSeriesX object with chopped session
+        :return: TimeSeries object with chopped session
         """
         chop_on_start_offsets_flag = bool(len(self.start_offsets))
 
