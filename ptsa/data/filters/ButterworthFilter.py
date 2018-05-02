@@ -14,7 +14,7 @@ class ButterworthFilter(BaseFilter):
     Keyword Arguments
     -----------------
 
-    time_series
+    timeseries
          TimeSeries object
     order
          Butterworth filter order
@@ -27,8 +27,8 @@ class ButterworthFilter(BaseFilter):
     filt_type=traits.api.Str
 
 
-    def __init__(self, time_series,freq_range,order=4,filt_type='stop'):
-        super(ButterworthFilter, self).__init__(time_series)
+    def __init__(self, timeseries,freq_range,order=4,filt_type='stop'):
+        super(ButterworthFilter, self).__init__(timeseries)
 
         self.freq_range = freq_range
         self.order = order
