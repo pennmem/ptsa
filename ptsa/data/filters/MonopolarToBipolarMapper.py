@@ -35,6 +35,7 @@ class MonopolarToBipolarMapper(BaseFilter):
         two channels in the bipolar pair
 
     .. versionchanged:: 2.0
+    Parameter "time_series" was renamed to "timeseries".
     Support for 2-D bipolar_pairs and specification of channels_dim
     and chan_names was added in version 2.0.
     """
