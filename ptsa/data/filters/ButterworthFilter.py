@@ -21,6 +21,8 @@ class ButterworthFilter(BaseFilter):
     freq_range: list-like
        Array [min_freq, max_freq] describing the filter range
 
+    .. versionchanged:: 2.0
+    Parameter "time_series" was renamed to "timeseries".
     """
     order=traits.api.Int
     freq_range = traits.api.List(maxlen=2)
