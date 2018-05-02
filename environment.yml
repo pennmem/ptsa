@@ -13,7 +13,6 @@ dependencies:
 - python
 - python-dateutil
 - pytz
-- pywavelets
 - readline
 - scipy
 - setuptools

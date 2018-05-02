@@ -337,7 +337,6 @@ setup(
         "numpy",
         "scipy",
         "xarray",
-        "PyWavelets"
     ],
     packages=find_packages(
         exclude=['*.tests', 'tests', 'tests.*', '*.outdated_tests']
