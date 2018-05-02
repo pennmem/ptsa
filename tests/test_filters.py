@@ -214,7 +214,7 @@ class TestFilters(unittest.TestCase):
         assert_array_equal(chopped_session, self.base_eegs)
 
     def test_monopolar_to_bipolar_filter(self):
-        m2b = MonopolarToBipolarMapper(time_series=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
+        m2b = MonopolarToBipolarMapper(timeseries=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
         bp_base_eegs = m2b.filter()
 
         bipolar_pairs = bp_base_eegs['bipolar_pairs'].data
@@ -230,7 +230,7 @@ class TestFilters(unittest.TestCase):
         session_reader = EEGReader(session_dataroot=dataroot, channels=self.monopolar_channels)
         session_eegs = session_reader.read()
 
-        m2b = MonopolarToBipolarMapper(time_series=session_eegs, bipolar_pairs=self.bipolar_pairs)
+        m2b = MonopolarToBipolarMapper(timeseries=session_eegs, bipolar_pairs=self.bipolar_pairs)
         bp_session_eegs = m2b.filter()
 
         sedc = DataChopper(events=self.base_events, session_data=bp_session_eegs, start_time=self.start_time,
@@ -238,7 +238,7 @@ class TestFilters(unittest.TestCase):
 
         bp_session_eegs_chopped = sedc.filter()
 
-        m2b = MonopolarToBipolarMapper(time_series=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
+        m2b = MonopolarToBipolarMapper(timeseries=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
         bp_base_eegs = m2b.filter()
 
         assert_array_equal(bp_session_eegs_chopped, bp_base_eegs)
@@ -283,7 +283,7 @@ class TestFilters(unittest.TestCase):
 
         from xarray.testing import assert_equal
 
-        b_filter = ButterworthFilter(time_series=self.base_eegs, freq_range=[58., 62.], filt_type='stop', order=4)
+        b_filter = ButterworthFilter(timeseries=self.base_eegs, freq_range=[58., 62.], filt_type='stop', order=4)
         base_eegs_filtered_1 = b_filter.filter()
 
         base_eegs_filtered_2 = self.base_eegs.filtered(freq_range=[58., 62.], filt_type='stop', order=4)
@@ -301,14 +301,14 @@ class TestFiltersExecute:
     def setup_class(cls):
         times = np.linspace(0, 1, 1000)
         ts = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
-        cls.time_series = timeseries.TimeSeries(data=ts, dims=('time'),
+        cls.timeseries = timeseries.TimeSeries(data=ts, dims=('time'),
                                                 coords={
                                                     'time': times,
                                                     'samplerate': 1000
                                                 })
 
     def test_butterworth(self):
-        bfilter = ButterworthFilter(time_series=self.time_series,
+        bfilter = ButterworthFilter(timeseries=self.timeseries,
                                     freq_range=[10., 20.],
                                     filt_type='stop',
                                     order=2)
@@ -316,7 +316,7 @@ class TestFiltersExecute:
 
     @pytest.mark.parametrize('output_type', ['power', 'phase', 'both'])
     def test_morlet(self, output_type):
-        mwf = MorletWaveletFilter(timeseries=self.time_series,
+        mwf = MorletWaveletFilter(timeseries=self.timeseries,
                                   freqs=np.array([10., 20., 40.]),
                                   width=4, output=output_type)
         output = mwf.filter()
@@ -327,7 +327,7 @@ class TestFiltersExecute:
             assert output['phase'].shape == (3, 1000)
 
     def test_resample(self):
-        rf = ResampleFilter(time_series=self.time_series, resamplerate=50.)
+        rf = ResampleFilter(timeseries=self.timeseries, resamplerate=50.)
         new_ts = rf.filter()
         assert len(new_ts) == 50
         assert new_ts.samplerate == 50.
