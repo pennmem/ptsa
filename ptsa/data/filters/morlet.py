@@ -29,7 +29,9 @@ class MorletWaveletFilter(BaseFilter):
         Print out the wavelet parameters
     cpus : int
         Number of threads to use when computing the transform (default: 1).
-
+    
+    .. versionchanged:: 2.0
+    Parameter "time_series" was renamed to "timeseries".
     """
     freqs = traits.api.CArray
     width = traits.api.Int
@@ -63,6 +65,8 @@ class MorletWaveletFilter(BaseFilter):
         A dictionary with keys `power`, `phase`, and `complex`. Unused values
         will be `None`.
 
+        .. versionchanged:: 2.0
+        Returns dictionary instead of tuple.
         """
 
         time_axis = self.timeseries['time']
