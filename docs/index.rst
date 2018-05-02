@@ -13,12 +13,6 @@ top of ``xarray.DataArray``. ``xarray.DataArray``, defined in the ``xarray`` Pyt
 Because ``TimeSeriesX`` is a subclass of ``xarray.DataArray`` it has all the functionality of ``xarray.DataArray``
 in addition to new functions it defines, used specifically in EEG data analysis.
 
-.. note::
-    In legacy versions of PTSA the object representing time series is called ``TimeSeries`` and is built on
-    top of custom-written ``dimarray`` module. To keep the old analysis code written for older PTSA versions running,
-    we append letter **X** to the object representing time-series in the new PTSA , hence the name ``TimeSeriesX``.
-
-
 Besides ``TimeSeriesX``, PTSA has 3 main categories of objects: readers, writers, filters. Readers
 read various data formats (e.g eeg files, bipolar electrodes files etc..) to make input operations as smooth as possible.
 Writers (still under development) will output data in several formats (currently only NetCDF output is supported). Filters

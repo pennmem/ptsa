@@ -14,7 +14,7 @@ class MorletWaveletFilter(BaseFilter):
 
     Parameters
     ----------
-    time_series: TimeSeries
+    timeseries: TimeSeries
         The time series to filter
 
     Keyword Arguments
@@ -67,27 +67,27 @@ class MorletWaveletFilter(BaseFilter):
 
         time_axis = self.time_series['time']
 
-        wavelet_dims = self.time_series.shape[:-1] + (self.freqs.shape[0],)
+        wavelet_dims = self.nontime_sizes + (self.freqs.shape[0],)
 
         powers_reshaped = np.array([[]], dtype=np.float)
         phases_reshaped = np.array([[]], dtype=np.float)
         wavelets_complex_reshaped = np.array([[]], dtype=np.complex)
 
         if self.output == 'power':
-            powers_reshaped = np.empty(shape=(np.prod(wavelet_dims), self.time_series.shape[-1]), dtype=np.float)
+            powers_reshaped = np.empty(shape=(np.prod(wavelet_dims), len(self.time_series['time'])), dtype=np.float)
         if self.output == 'phase':
-            phases_reshaped = np.empty(shape=(np.prod(wavelet_dims), self.time_series.shape[-1]), dtype=np.float)
+            phases_reshaped = np.empty(shape=(np.prod(wavelet_dims), len(self.time_series['time'])), dtype=np.float)
         if self.output == 'both':
-            powers_reshaped = np.empty(shape=(np.prod(wavelet_dims), self.time_series.shape[-1]), dtype=np.float)
-            phases_reshaped = np.empty(shape=(np.prod(wavelet_dims), self.time_series.shape[-1]), dtype=np.float)
+            powers_reshaped = np.empty(shape=(np.prod(wavelet_dims), len(self.time_series['time'])), dtype=np.float)
+            phases_reshaped = np.empty(shape=(np.prod(wavelet_dims), len(self.time_series['time'])), dtype=np.float)
         if self.output == 'complex':
-            wavelets_complex_reshaped = np.empty(shape=(np.prod(wavelet_dims), self.time_series.shape[-1]),
+            wavelets_complex_reshaped = np.empty(shape=(np.prod(wavelet_dims), len(self.time_series['time'])),
                                                  dtype=np.complex)
 
         mt = morlet.MorletWaveletTransformMP(self.cpus)
 
-        time_series_reshaped = np.ascontiguousarray(self.time_series.data.reshape(np.prod(self.time_series.shape[:-1], dtype=int),
-                                                    self.time_series.shape[-1]),
+        time_series_reshaped = np.ascontiguousarray(self.time_series.data.reshape(np.prod(self.nontime_sizes, dtype=int),
+                                                    len(self.time_series['time'])),
                                                     self.time_series.data.dtype)
         if self.output == 'power':
             mt.set_output_type(morlet.POWER)
@@ -115,14 +115,14 @@ class MorletWaveletFilter(BaseFilter):
         wavelet_complex_final = None
 
         if self.output == 'power':
-            powers_final = powers_reshaped.reshape(wavelet_dims + (self.time_series.shape[-1],))
+            powers_final = powers_reshaped.reshape(wavelet_dims + (len(self.time_series['time']),))
         if self.output == 'phase':
-            phases_final = phases_reshaped.reshape(wavelet_dims + (self.time_series.shape[-1],))
+            phases_final = phases_reshaped.reshape(wavelet_dims + (len(self.time_series['time']),))
         if self.output == 'both':
-            powers_final = powers_reshaped.reshape(wavelet_dims + (self.time_series.shape[-1],))
-            phases_final = phases_reshaped.reshape(wavelet_dims + (self.time_series.shape[-1],))
+            powers_final = powers_reshaped.reshape(wavelet_dims + (len(self.time_series['time']),))
+            phases_final = phases_reshaped.reshape(wavelet_dims + (len(self.time_series['time']),))
         if self.output == 'complex':
-            wavelet_complex_final = wavelets_complex_reshaped.reshape(wavelet_dims + (self.time_series.shape[-1],))
+            wavelet_complex_final = wavelets_complex_reshaped.reshape(wavelet_dims + (len(self.time_series['time']),))
 
         coords = {k: v for k, v in list(self.time_series.coords.items())}
         coords['frequency'] = self.freqs
@@ -133,7 +133,7 @@ class MorletWaveletFilter(BaseFilter):
 
         if powers_final is not None:
             powers_ts = TimeSeries(powers_final,
-                                   dims=self.time_series.dims[:-1] + ('frequency', self.time_series.dims[-1],),
+                                   dims=self.nontime_dims + ('frequency', 'time',),
                                    coords=coords)
             final_dims = (powers_ts.dims[-2],) + powers_ts.dims[:-2] + (powers_ts.dims[-1],)
 
@@ -141,7 +141,7 @@ class MorletWaveletFilter(BaseFilter):
 
         if phases_final is not None:
             phases_ts = TimeSeries(phases_final,
-                                   dims=self.time_series.dims[:-1] + ('frequency', self.time_series.dims[-1],),
+                                   dims=self.nontime_dims + ('frequency','time'),
                                    coords=coords)
 
             final_dims = (phases_ts.dims[-2],) + phases_ts.dims[:-2] + (phases_ts.dims[-1],)
@@ -150,8 +150,8 @@ class MorletWaveletFilter(BaseFilter):
 
         if wavelet_complex_final is not None:
             wavelet_complex_ts = TimeSeries(wavelet_complex_final,
-                                            dims=self.time_series.dims[:-1] + (
-                                             'frequency', self.time_series.dims[-1],),
+                                            dims=self.nontime_dims + (
+                                             'frequency', 'time',),
                                             coords=coords)
 
             final_dims = (wavelet_complex_ts.dims[-2],) + wavelet_complex_ts.dims[:-2] + (wavelet_complex_ts.dims[-1],)
