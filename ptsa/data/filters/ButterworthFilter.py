@@ -60,3 +60,4 @@ class ButterworthFilter(BaseFilter):
 
         # filtered_timeseries = TimeSeries(filtered_timeseries)
         filtered_timeseries.attrs = self.timeseries.attrs.copy()
+        return filtered_timeseries
