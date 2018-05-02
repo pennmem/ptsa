@@ -65,7 +65,7 @@ class MorletWaveletFilter(BaseFilter):
 
         """
 
-        time_axis = self.time_series['time']
+        time_axis = self.timeseries['time']
 
         wavelet_dims = self.nontime_sizes + (self.freqs.shape[0],)
 
@@ -74,21 +74,31 @@ class MorletWaveletFilter(BaseFilter):
         wavelets_complex_reshaped = np.array([[]], dtype=np.complex)
 
         if self.output == 'power':
-            powers_reshaped = np.empty(shape=(np.prod(wavelet_dims), len(self.time_series['time'])), dtype=np.float)
+            powers_reshaped = np.empty(
+                shape=(np.prod(wavelet_dims),
+                       len(self.timeseries['time'])), dtype=np.float)
         if self.output == 'phase':
-            phases_reshaped = np.empty(shape=(np.prod(wavelet_dims), len(self.time_series['time'])), dtype=np.float)
+            phases_reshaped = np.empty(
+                shape=(np.prod(wavelet_dims),
+                       len(self.timeseries['time'])), dtype=np.float)
         if self.output == 'both':
-            powers_reshaped = np.empty(shape=(np.prod(wavelet_dims), len(self.time_series['time'])), dtype=np.float)
-            phases_reshaped = np.empty(shape=(np.prod(wavelet_dims), len(self.time_series['time'])), dtype=np.float)
+            powers_reshaped = np.empty(
+                shape=(np.prod(wavelet_dims),
+                       len(self.timeseries['time'])), dtype=np.float)
+            phases_reshaped = np.empty(
+                shape=(np.prod(wavelet_dims),
+                       len(self.timeseries['time'])), dtype=np.float)
         if self.output == 'complex':
-            wavelets_complex_reshaped = np.empty(shape=(np.prod(wavelet_dims), len(self.time_series['time'])),
-                                                 dtype=np.complex)
+            wavelets_complex_reshaped = np.empty(
+                shape=(np.prod(wavelet_dims), len(self.timeseries['time'])),
+                dtype=np.complex)
 
         mt = morlet.MorletWaveletTransformMP(self.cpus)
 
-        time_series_reshaped = np.ascontiguousarray(self.time_series.data.reshape(np.prod(self.nontime_sizes, dtype=int),
-                                                    len(self.time_series['time'])),
-                                                    self.time_series.data.dtype)
+        timeseries_reshaped = np.ascontiguousarray(
+            self.timeseries.data.reshape(
+                np.prod(self.nontime_sizes, dtype=int),
+                len(self.timeseries['time'])), self.timeseries.data.dtype)
         if self.output == 'power':
             mt.set_output_type(morlet.POWER)
         if self.output == 'phase':
@@ -98,12 +108,12 @@ class MorletWaveletFilter(BaseFilter):
         if self.output == 'complex':
             mt.set_output_type(morlet.COMPLEX)
 
-        mt.set_signal_array(time_series_reshaped)
+        mt.set_signal_array(timeseries_reshaped)
         mt.set_wavelet_pow_array(powers_reshaped)
         mt.set_wavelet_phase_array(phases_reshaped)
         mt.set_wavelet_complex_array(wavelets_complex_reshaped)
 
-        mt.initialize_signal_props(float(self.time_series['samplerate']))
+        mt.initialize_signal_props(float(self.timeseries['samplerate']))
         mt.initialize_wavelet_props(self.width, self.freqs)
         mt.prepare_run()
 
@@ -115,16 +125,16 @@ class MorletWaveletFilter(BaseFilter):
         wavelet_complex_final = None
 
         if self.output == 'power':
-            powers_final = powers_reshaped.reshape(wavelet_dims + (len(self.time_series['time']),))
+            powers_final = powers_reshaped.reshape(wavelet_dims + (len(self.timeseries['time']),))
         if self.output == 'phase':
-            phases_final = phases_reshaped.reshape(wavelet_dims + (len(self.time_series['time']),))
+            phases_final = phases_reshaped.reshape(wavelet_dims + (len(self.timeseries['time']),))
         if self.output == 'both':
-            powers_final = powers_reshaped.reshape(wavelet_dims + (len(self.time_series['time']),))
-            phases_final = phases_reshaped.reshape(wavelet_dims + (len(self.time_series['time']),))
+            powers_final = powers_reshaped.reshape(wavelet_dims + (len(self.timeseries['time']),))
+            phases_final = phases_reshaped.reshape(wavelet_dims + (len(self.timeseries['time']),))
         if self.output == 'complex':
-            wavelet_complex_final = wavelets_complex_reshaped.reshape(wavelet_dims + (len(self.time_series['time']),))
+            wavelet_complex_final = wavelets_complex_reshaped.reshape(wavelet_dims + (len(self.timeseries['time']),))
 
-        coords = {k: v for k, v in list(self.time_series.coords.items())}
+        coords = {k: v for k, v in list(self.timeseries.coords.items())}
         coords['frequency'] = self.freqs
 
         powers_ts = None
