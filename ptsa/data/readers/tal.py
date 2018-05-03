@@ -17,9 +17,6 @@ class TalReader(BaseReader,traits.api.HasTraits):
     """
     Reader that reads tal structs Matlab file or pairs.json file and converts it to numpy recarray
     """
-    warnings.warn("Lab-specific readers may be moved to the cmlreaders package "
-                  "(https://github.com/pennmem/cmlreaders)",
-                  PendingDeprecationWarning)
 
     filename = traits.api.Str
     struct_name = traits.api.Str
@@ -41,6 +38,10 @@ class TalReader(BaseReader,traits.api.HasTraits):
         :return: None
 
         """
+        warnings.warn("Lab-specific readers may be moved to the cmlreaders "
+                      "package (https://github.com/pennmem/cmlreaders)",
+                      UserWarning)
+
         super(TalReader, self).__init__()
         self.filename = filename
         self.struct_name = struct_name

@@ -19,9 +19,7 @@ class JsonIndexReader(object):
     Allows for aggregation of values across any field with any constraint through the use of aggregateValues() or the
     specific methods subject(), experiment(), session() or montage().
     """
-    warnings.warn("Lab-specific readers may be moved to the cmlreaders package "
-                  "(https://github.com/pennmem/cmlreaders)",
-                  PendingDeprecationWarning)
+
     FIELD_KEYS = (('protocols', '{protocol}'),
                   ('subjects', '{subject}'),
                   ('experiments', '{experiment}'),
@@ -36,6 +34,9 @@ class JsonIndexReader(object):
         appears to be a path
         :param protocols: 'r1', 'ltp'
         """
+        warnings.warn("Lab-specific readers may be moved to the cmlreaders "
+                      "package (https://github.com/pennmem/cmlreaders)",
+                      UserWarning)
         self.protocols_root = os.path.dirname(index_file)
         self.index_file = index_file
         with open(index_file, 'r') as infile:

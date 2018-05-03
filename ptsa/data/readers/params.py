@@ -17,9 +17,6 @@ class ParamsReader(BaseReader, traits.api.HasTraits):
     """
     filename= traits.api.Str
     dataroot = traits.api.Str
-    warnings.warn("Lab-specific readers may be moved to the cmlreaders package "
-                  "(https://github.com/pennmem/cmlreaders)",
-                  PendingDeprecationWarning)
 
     def __init__(self, filename='',dataroot=''):
         """
@@ -31,6 +28,9 @@ class ParamsReader(BaseReader, traits.api.HasTraits):
 
         :return: None
         """
+        warnings.warn("Lab-specific readers may be moved to the cmlreaders "
+                      "package (https://github.com/pennmem/cmlreaders)",
+                      UserWarning)
         super(ParamsReader, self).__init__()
         self.filename = filename
         self.dataroot = dataroot
