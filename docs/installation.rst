@@ -36,7 +36,7 @@ Install dependencies with conda:
 
 .. code-block:: shell-session
 
-   conda install -y numpy scipy xarray pywavelets swig
+   conda install -y numpy scipy xarray swig
 
 Install PTSA:
 

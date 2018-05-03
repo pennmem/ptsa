@@ -18,18 +18,19 @@ class DataChopper(traits.api.HasTraits):
     buffer_time = traits.api.CFloat
     events = traits.api.Array
     start_offsets = traits.api.CArray
-    session_data=traits.api.Instance(TimeSeries)
+    timeseries=traits.api.Instance(TimeSeries)
 
 
 
-    def __init__(self, session_data,start_time=0.0,end_time=0.0,buffer_time=0.0,events=np.recarray((1,), dtype=[('x', int)]),
+    def __init__(self, timeseries, start_time=0.0, end_time=0.0, buffer_time=0.0,
+                 events=np.recarray((1,), dtype=[('x', int)]),
                  start_offsets = np.array([], dtype=int)):
         """
         Constructor:
 
         :param kwds:allowed values are:
         -------------------------------------
-        :param session_data {TimeSeries}-  TimeSeries object with eeg session data
+        :param timeseries {TimeSeries}-  TimeSeries object with eeg session data
         :param start_time {float} -  read start offset in seconds w.r.t to the eegeffset specified in the events recarray
         :param end_time {float} -  read end offset in seconds w.r.t to the eegeffset specified in the events recarray
         :param end_time {float} -  extra buffer in seconds (subtracted from start read and added to end read)
@@ -38,10 +39,13 @@ class DataChopper(traits.api.HasTraits):
 
 
         :return: None
+        
+        .. versionchanged:: 2.0
+        Parameter "time_series" was renamed to "timeseries".
         """
         super(DataChopper, self).__init__()
 
-        self.session_data=session_data
+        self.timeseries=timeseries
         self.start_time = start_time
         self.end_time = end_time
         self.buffer_time = buffer_time
@@ -76,7 +80,7 @@ class DataChopper(traits.api.HasTraits):
     def filter(self):
         """
         Chops session into chunks corresponding to events
-        :return: timeSeriesX object with chopped session
+        :return: TimeSeries object with chopped session
         """
         chop_on_start_offsets_flag = bool(len(self.start_offsets))
 
@@ -87,15 +91,14 @@ class DataChopper(traits.api.HasTraits):
             chopping_axis_data = start_offsets
         else:
 
-            evs = self.events[self.events.eegfile == self.session_data.attrs['dataroot']]
+            evs = self.events[self.events.eegfile == self.timeseries.attrs['dataroot']]
             start_offsets = evs.eegoffset
             chopping_axis_name = 'events'
             chopping_axis_data = evs
 
-
-        # samplerate = self.session_data.attrs['samplerate']
-        samplerate = float(self.session_data['samplerate'])
-        offset_time_array = self.session_data['offsets']
+            
+        samplerate = float(self.timeseries['samplerate'])
+        offset_time_array = self.timeseries['offsets']
 
         event_chunk_size, start_point_shift = self.get_event_chunk_size_and_start_point_shift(
         eegoffset=start_offsets[0],
@@ -113,7 +116,7 @@ class DataChopper(traits.api.HasTraits):
             start_chop_pos += start_point_shift
             selector_array = np.arange(start=start_chop_pos, stop=start_chop_pos + event_chunk_size)
 
-            chopped_data_array = self.session_data.isel(time=selector_array)
+            chopped_data_array = self.timeseries.isel(time=selector_array)
 
             chopped_data_array['time'] = event_time_axis
             chopped_data_array['start_offsets'] = [i]

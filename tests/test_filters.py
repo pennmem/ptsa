@@ -16,6 +16,147 @@ from ptsa.data.filters import ButterworthFilter
 from ptsa.data.filters import ResampleFilter
 from ptsa.test.utils import get_rhino_root, skip_without_rhino
 
+def test_monopolar_to_bipolar_filter_norhino():
+    data = np.random.random((20, 10, 5))
+    rate = 1000
+    dims = ('time', 'channels', 'events')
+    coords = {'time': np.linspace(0, 1, 20),
+              'channels': range(10),
+              'events': ['A', 'B', 'C', 'D', 'E']}
+    ts = timeseries.TimeSeries.create(
+        data, rate, coords=coords,
+        dims=dims, name="test", attrs={'test_attr': 1})
+    
+    bipolar_pairs1 = np.array([range(9), range(1,10)])
+    m2b1 = MonopolarToBipolarMapper(timeseries=ts,
+                                    bipolar_pairs=bipolar_pairs1)
+    ts_m2b1 = m2b1.filter()
+    
+    bipolar_pairs2 = np.array([(i, j) for i, j in zip(range(9), range(1,10))],
+                              dtype=[('ch0', '<i8'), ('ch1', '<i8')])
+    m2b2 = MonopolarToBipolarMapper(timeseries=ts,
+                                    bipolar_pairs=bipolar_pairs2)
+    ts_m2b2 = m2b2.filter()
+
+    assert np.all(ts_m2b1 == ts_m2b2)
+    # checking each coord is probably redundant (mismatching coords
+    # should cause failure in the above assertion), but won't hurt
+    for coord in ts_m2b1.coords:
+        assert np.all(ts_m2b1[coord] == ts_m2b2[coord])
+        if coord != 'channels':
+            assert np.all(ts[coord] == ts_m2b1[coord])
+    # sanity check that we haven't lost any coords:
+    for coord in ts.coords:
+        if coord != 'channels':
+            assert np.all(ts[coord] == ts_m2b1[coord])
+    for attr in ts.attrs:
+        assert np.all(ts_m2b1.attrs[attr] == ts_m2b2.attrs[attr])
+        assert np.all(ts.attrs[attr] == ts_m2b1.attrs[attr])
+    assert ts.name == ts_m2b1.name
+    assert ts.name == ts_m2b2.name
+    assert np.all(ts_m2b1['channels'] == bipolar_pairs2)
+    assert np.all(ts_m2b1 == (ts.sel(channels=range(9)).values -
+                              ts.sel(channels=range(1,10)).values))
+    assert np.all(ts_m2b2 == (ts.sel(channels=range(9)).values -
+                              ts.sel(channels=range(1,10)).values))
+    
+    dims2 = ('time', 'electrodes', 'events')
+    coords2 = {'time': np.linspace(0, 1, 20),
+              'electrodes': range(10),
+              'events': ['A', 'B', 'C', 'D', 'E']}
+    ts2 = timeseries.TimeSeries.create(
+        data, rate, coords=coords2,
+        dims=dims2, name="test", attrs={'test_attr': 1})
+    m2b3 = MonopolarToBipolarMapper(timeseries=ts2, channels_dim='electrodes',
+                                    bipolar_pairs=bipolar_pairs1)
+    ts_m2b3 = m2b3.filter()
+    assert np.all(ts_m2b3.values == ts_m2b1.values)
+    # checking each coord is probably redundant (mismatching coords
+    # should cause failure in the above assertion), but won't hurt
+    for coord in ts_m2b3.coords:
+        if coord != 'electrodes':
+            assert np.all(ts[coord] == ts_m2b3[coord])
+    assert np.all(ts_m2b3['electrodes'].values == ts_m2b1['channels'].values)
+    # sanity check that we haven't lost any coords:
+    for coord in ts.coords:
+        if coord != 'channels':
+            assert np.all(ts[coord] == ts_m2b3[coord])
+    for attr in ts.attrs:
+        assert np.all(ts_m2b3.attrs[attr] == ts_m2b1.attrs[attr])
+        assert np.all(ts.attrs[attr] == ts_m2b3.attrs[attr])
+    assert ts.name == ts_m2b3.name
+    assert np.all(ts_m2b3['electrodes'] == bipolar_pairs2)
+    assert np.all(ts_m2b3 == (ts.sel(channels=range(9)).values -
+                              ts.sel(channels=range(1,10)).values))
+    m2b4 = MonopolarToBipolarMapper(timeseries=ts2, channels_dim='electrodes',
+                                    bipolar_pairs=bipolar_pairs2)
+    ts_m2b4 = m2b4.filter()
+    assert np.all(ts_m2b4 == ts_m2b3)
+    # checking each coord is probably redundant (mismatching coords
+    # should cause failure in the above assertion), but won't hurt
+    for coord in ts_m2b4.coords:
+        assert np.all(ts_m2b3[coord] == ts_m2b4[coord])
+    # sanity check that we haven't lost any coords:
+    for coord in ts.coords:
+        if coord != 'channels':
+            assert np.all(ts[coord] == ts_m2b4[coord])
+    for attr in ts.attrs:
+        assert np.all(ts_m2b4.attrs[attr] == ts_m2b1.attrs[attr])
+        assert np.all(ts.attrs[attr] == ts_m2b4.attrs[attr])
+    assert ts.name == ts_m2b4.name
+    assert np.all(ts_m2b4['electrodes'] == bipolar_pairs2)
+    assert np.all(ts_m2b4 == (ts.sel(channels=range(9)).values -
+                              ts.sel(channels=range(1,10)).values))
+    
+    bipolar_pairs3 = np.array([(i, j) for i, j in zip(range(9), range(1,10))],
+                              dtype=[('channel0', '<i8'), ('channel1', '<i8')])
+    m2b5 = MonopolarToBipolarMapper(timeseries=ts2, channels_dim='electrodes',
+                                    bipolar_pairs=bipolar_pairs1,
+                                    chan_names=['channel0', 'channel1'])
+    ts_m2b5 = m2b5.filter()
+    assert np.all(ts_m2b5.values == ts_m2b1.values)
+    # checking each coord is probably redundant (mismatching coords
+    # should cause failure in the above assertion), but won't hurt
+    for coord in ts_m2b5.coords:
+        if coord != 'electrodes':
+            assert np.all(ts[coord] == ts_m2b5[coord])
+    for a, b in zip(ts_m2b5['electrodes'], ts_m2b1['channels']):
+        assert np.all(
+            np.array(a.values.tolist()) == np.array(b.values.tolist()))
+    # sanity check that we haven't lost any coords:
+    for coord in ts.coords:
+        if coord != 'channels':
+            assert np.all(ts[coord] == ts_m2b5[coord])
+    for attr in ts.attrs:
+        assert np.all(ts_m2b5.attrs[attr] == ts_m2b1.attrs[attr])
+        assert np.all(ts.attrs[attr] == ts_m2b5.attrs[attr])
+    assert ts.name == ts_m2b5.name
+    assert np.all(ts_m2b5['electrodes'] == bipolar_pairs3)
+    assert np.all(ts_m2b5 == (ts.sel(channels=range(9)).values -
+                              ts.sel(channels=range(1,10)).values))
+    m2b6 = MonopolarToBipolarMapper(timeseries=ts2, channels_dim='electrodes',
+                                    chan_names=['channel0', 'channel1'],
+                                    bipolar_pairs=bipolar_pairs3)
+    ts_m2b6 = m2b6.filter()
+    assert np.all(ts_m2b6 == ts_m2b5)
+    # checking each coord is probably redundant (mismatching coords
+    # should cause failure in the above assertion), but won't hurt
+    for coord in ts_m2b6.coords:
+        assert np.all(ts_m2b6[coord] == ts_m2b5[coord])
+    # sanity check that we haven't lost any coords:
+    for coord in ts.coords:
+        if coord != 'channels':
+            assert np.all(ts[coord] == ts_m2b6[coord])
+    for attr in ts.attrs:
+        assert np.all(ts_m2b6.attrs[attr] == ts_m2b1.attrs[attr])
+        assert np.all(ts.attrs[attr] == ts_m2b6.attrs[attr])
+    assert ts.name == ts_m2b6.name
+    assert np.all(ts_m2b6['electrodes'] == bipolar_pairs3)
+    assert np.all(ts_m2b6 == (ts.sel(channels=range(9)).values -
+                              ts.sel(channels=range(1,10)).values))
+
+
+
 
 @pytest.mark.filters
 @skip_without_rhino
@@ -72,7 +213,7 @@ class TestFilters(unittest.TestCase):
         assert_array_equal(chopped_session, self.base_eegs)
 
     def test_monopolar_to_bipolar_filter(self):
-        m2b = MonopolarToBipolarMapper(time_series=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
+        m2b = MonopolarToBipolarMapper(timeseries=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
         bp_base_eegs = m2b.filter()
 
         bipolar_pairs = bp_base_eegs['bipolar_pairs'].data
@@ -88,7 +229,7 @@ class TestFilters(unittest.TestCase):
         session_reader = EEGReader(session_dataroot=dataroot, channels=self.monopolar_channels)
         session_eegs = session_reader.read()
 
-        m2b = MonopolarToBipolarMapper(time_series=session_eegs, bipolar_pairs=self.bipolar_pairs)
+        m2b = MonopolarToBipolarMapper(timeseries=session_eegs, bipolar_pairs=self.bipolar_pairs)
         bp_session_eegs = m2b.filter()
 
         sedc = DataChopper(events=self.base_events, session_data=bp_session_eegs, start_time=self.start_time,
@@ -96,7 +237,7 @@ class TestFilters(unittest.TestCase):
 
         bp_session_eegs_chopped = sedc.filter()
 
-        m2b = MonopolarToBipolarMapper(time_series=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
+        m2b = MonopolarToBipolarMapper(timeseries=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
         bp_base_eegs = m2b.filter()
 
         assert_array_equal(bp_session_eegs_chopped, bp_base_eegs)
@@ -141,7 +282,7 @@ class TestFilters(unittest.TestCase):
 
         from xarray.testing import assert_equal
 
-        b_filter = ButterworthFilter(time_series=self.base_eegs, freq_range=[58., 62.], filt_type='stop', order=4)
+        b_filter = ButterworthFilter(timeseries=self.base_eegs, freq_range=[58., 62.], filt_type='stop', order=4)
         base_eegs_filtered_1 = b_filter.filter()
 
         base_eegs_filtered_2 = self.base_eegs.filtered(freq_range=[58., 62.], filt_type='stop', order=4)
@@ -159,14 +300,14 @@ class TestFiltersExecute:
     def setup_class(cls):
         times = np.linspace(0, 1, 1000)
         ts = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
-        cls.time_series = timeseries.TimeSeries(data=ts, dims=('time'),
+        cls.timeseries = timeseries.TimeSeries(data=ts, dims=('time'),
                                                 coords={
                                                     'time': times,
                                                     'samplerate': 1000
                                                 })
 
     def test_butterworth(self):
-        bfilter = ButterworthFilter(time_series=self.time_series,
+        bfilter = ButterworthFilter(timeseries=self.timeseries,
                                     freq_range=[10., 20.],
                                     filt_type='stop',
                                     order=2)
@@ -174,7 +315,7 @@ class TestFiltersExecute:
 
     @pytest.mark.parametrize('output_type', ['power', 'phase', 'both'])
     def test_morlet(self, output_type):
-        mwf = MorletWaveletFilter(timeseries=self.time_series,
+        mwf = MorletWaveletFilter(timeseries=self.timeseries,
                                   freqs=np.array([10., 20., 40.]),
                                   width=4, output=output_type)
         output = mwf.filter()
@@ -185,7 +326,7 @@ class TestFiltersExecute:
             assert output['phase'].shape == (3, 1000)
 
     def test_resample(self):
-        rf = ResampleFilter(time_series=self.time_series, resamplerate=50.)
+        rf = ResampleFilter(timeseries=self.timeseries, resamplerate=50.)
         new_ts = rf.filter()
         assert len(new_ts) == 50
         assert new_ts.samplerate == 50.

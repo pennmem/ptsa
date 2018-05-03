@@ -20,7 +20,7 @@ The following packages and modules have been removed:
 * ``ptsa.emd``, ``ptsa.iwasobi``, ``ptsa.ica`` and ``ptsa.wica`` (#147)
 * ``ptsa.filt`` - filtering is now contained primarily in ``ptsa.data.filters``
   (#158)
-* Old time series class (PR #?)
+* Old time series class (fb08e6c2)
 * All modules within ``ptsa.data`` that worked with the deprecated time series
   implementation
 
@@ -41,7 +41,7 @@ Other changes
     * The ``channels`` field has been changed from an object array of lists to an array of two integers
 
 * Added IPython notebook demonstrating reading localization information with TalReader (thanks @LoganJF !)
-* Replaced custom typing system with the ``traits`` package (PR #?)
+* Replaced custom typing system with the ``traits`` package (b2f4609d)
 * Improved ``TimeSeries.to_hdf`` (#138)
 
 
