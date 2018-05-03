@@ -1,6 +1,7 @@
 from .base import BaseReader
 import json, itertools
 import pandas as pd
+import warnings
 
 
 class LocReader(BaseReader):
@@ -10,6 +11,9 @@ class LocReader(BaseReader):
     The returned DataFrame is indexed by tyep type of entry ('contacts' or 'pairs') and by the name of the entry
     (either the name of the contact, or a tuple with the names of each half of the pair).
     """
+    warnings.warn("Lab-specific readers may be moved to the cmlreaders package "
+                  "(https://github.com/pennmem/cmlreaders)",
+                  PendingDeprecationWarning)
 
     def __init__(self,filename):
         with open(filename) as f:

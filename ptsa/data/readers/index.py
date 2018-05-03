@@ -1,6 +1,7 @@
 import copy
 import json
 import os
+import warnings
 
 import pandas as pd
 
@@ -18,7 +19,9 @@ class JsonIndexReader(object):
     Allows for aggregation of values across any field with any constraint through the use of aggregateValues() or the
     specific methods subject(), experiment(), session() or montage().
     """
-
+    warnings.warn("Lab-specific readers may be moved to the cmlreaders package "
+                  "(https://github.com/pennmem/cmlreaders)",
+                  PendingDeprecationWarning)
     FIELD_KEYS = (('protocols', '{protocol}'),
                   ('subjects', '{subject}'),
                   ('experiments', '{experiment}'),

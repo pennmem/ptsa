@@ -7,6 +7,7 @@ import re
 import json
 import unicodedata
 from collections import defaultdict
+import warnings
 import numpy as np
 import pandas as pd
 from abc import abstractmethod
@@ -56,6 +57,9 @@ class BaseEventReader(BaseReader,traits.api.HasTraits):
         '/' in the common_root
 
     """
+    warnings.warn("Lab-specific readers may be moved to the cmlreaders package "
+                  "(https://github.com/pennmem/cmlreaders)",
+                  PendingDeprecationWarning)
     filename = traits.api.Str
     eliminate_events_with_no_eeg = traits.api.Bool
     eliminate_nans= traits.api.Bool

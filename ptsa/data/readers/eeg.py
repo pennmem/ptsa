@@ -52,6 +52,9 @@ class EEGReader(traits.api.HasTraits):
     -----
     An EEGReader must be constructed using either :py:arg:events or :py:arg:session_dataroot.
     """
+    warnings.warn("Lab-specific readers may be moved to the cmlreaders package "
+                  "(https://github.com/pennmem/cmlreaders)",
+                  PendingDeprecationWarning)
     channels = traits.api.CArray
     start_time = traits.api.CFloat
     end_time = traits.api.CFloat
