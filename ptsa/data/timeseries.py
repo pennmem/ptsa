@@ -81,7 +81,7 @@ class TimeSeries(xr.DataArray):
 
     def to_hdf(self, filename, mode='w', compression=None,
                compression_opts=None, encode_string_arrays=True,
-               encoding='utf8', **kwargs):
+               encoding='utf8'):
         """Save to disk using HDF5.
 
         Parameters
@@ -107,8 +107,7 @@ class TimeSeries(xr.DataArray):
         encoding : str
             Encoding to use when forcing encoding of unicode string arrays.
             Default: ``'utf8'``.
-        kwargs : dict
-            Keyword arguments to be passed to :mod:`h5py.Group.create_dataset`.
+
         Notes
         -----
         The root node also has attributes:
@@ -166,9 +165,9 @@ class TimeSeries(xr.DataArray):
                             compression_kwargs[
                                 'compression_opts'] = compression_opts
                 try:
-                    dset = coords_group.create_dataset(name, data=data,
-                                                       chunks=chunks,
-                                                       **compression_kwargs)
+                    dset = coords_group.create_dataset(
+                        name, data=data, chunks=chunks,
+                        **compression_kwargs)
                 except TypeError as e:
                     if chunks is not False:
                         dset = coords_group.create_dataset(
