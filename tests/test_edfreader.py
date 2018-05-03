@@ -7,7 +7,7 @@ import numpy as np
 
 @pytest.fixture
 def local_eegfile():
-    return osp.join(osp.dirname(__file__), 'data', 'eeg.edf')
+    return osp.join(osp.dirname(__file__), 'data', 'eeg','eeg.edf')
 
 
 def test_read_local(local_eegfile):

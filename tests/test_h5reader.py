@@ -17,7 +17,7 @@ class TestH5Reader:
     @classmethod
     def setup_class(cls):
         cls.eegfile = osp.join(osp.dirname(__file__), 'data','eeg','eeg.h5')
-        cls.channels = np.array(['%.03d' % i for i in range(1, 10)])
+        cls.channels = np.array(['{:03d}'.format(i).encode() for i in range(1, 10)])
 
     @pytest.mark.parametrize(
         'offsets', [np.array([0]), np.arange(0, 2000, 500)]
@@ -99,7 +99,7 @@ class TestH5ReaderRhino:
             filename='R1275D_FR1_0_31May17_2109'
         )
 
-        cls.channels = np.array(['%.03d' % i for i in range(1, 10)])
+        cls.channels = np.array(['{:03d}'.format(i).encode() for i in range(1, 10)])
 
     @pytest.mark.parametrize(
         'offsets', [np.array([0]), np.arange(0, 210000, 3000)]
@@ -207,4 +207,4 @@ class TestH5ReaderRhino:
 if __name__ == '__main__':
     test = TestH5Reader()
     test.setup_class()
-    test.test_h5reader_empty_channels()
+    test.test_constructor()
