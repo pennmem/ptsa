@@ -40,7 +40,7 @@ class TalReader(BaseReader,traits.api.HasTraits):
         """
         warnings.warn("Lab-specific readers may be moved to the cmlreaders "
                       "package (https://github.com/pennmem/cmlreaders)",
-                      UserWarning)
+                      FutureWarning)
 
         super(TalReader, self).__init__()
         self.filename = filename

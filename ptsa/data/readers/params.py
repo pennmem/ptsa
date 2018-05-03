@@ -30,7 +30,7 @@ class ParamsReader(BaseReader, traits.api.HasTraits):
         """
         warnings.warn("Lab-specific readers may be moved to the cmlreaders "
                       "package (https://github.com/pennmem/cmlreaders)",
-                      UserWarning)
+                      FutureWarning)
         super(ParamsReader, self).__init__()
         self.filename = filename
         self.dataroot = dataroot

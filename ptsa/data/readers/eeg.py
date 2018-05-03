@@ -69,7 +69,7 @@ class EEGReader(traits.api.HasTraits):
                  start_time=0.0,end_time=0.0,buffer_time=0.0,session_dataroot='',remove_bad_events=True):
         warnings.warn("Lab-specific readers may be moved to the cmlreaders "
                       "package (https://github.com/pennmem/cmlreaders)",
-                      UserWarning)
+                      FutureWarning)
         self.events = events
         self.channels = channels
         self.start_time = start_time

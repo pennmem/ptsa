@@ -15,7 +15,7 @@ class LocReader(BaseReader):
     def __init__(self, filename):
         warnings.warn("Lab-specific readers may be moved to the cmlreaders "
                       "package (https://github.com/pennmem/cmlreaders)",
-                      UserWarning)
+                      FutureWarning)
         with open(filename) as f:
             self._dict = json.load(f)
 

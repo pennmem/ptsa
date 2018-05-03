@@ -70,7 +70,7 @@ class BaseEventReader(BaseReader,traits.api.HasTraits):
                  normalize_eeg_path=True):
         warnings.warn("Lab-specific readers may be moved to the cmlreaders "
                       "package (https://github.com/pennmem/cmlreaders)",
-                      UserWarning)
+                      FutureWarning)
         self.filename = filename
         self.common_root = common_root
         self.eliminate_events_with_no_eeg = eliminate_events_with_no_eeg

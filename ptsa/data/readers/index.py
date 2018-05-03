@@ -36,7 +36,7 @@ class JsonIndexReader(object):
         """
         warnings.warn("Lab-specific readers may be moved to the cmlreaders "
                       "package (https://github.com/pennmem/cmlreaders)",
-                      UserWarning)
+                      FutureWarning)
         self.protocols_root = os.path.dirname(index_file)
         self.index_file = index_file
         with open(index_file, 'r') as infile:
