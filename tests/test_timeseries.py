@@ -70,7 +70,7 @@ def test_hdf(tempdir):
         assert "created" in hfile.attrs
 
     loaded = TimeSeries.from_hdf(filename)
-    assert (loaded.data == data).all()
+    assert np.all(loaded.data == data)
     for coord in loaded.coords:
         assert (loaded.coords[coord] == ts.coords[coord]).all()
     for n, dim in enumerate(dims):
@@ -83,6 +83,25 @@ def test_hdf(tempdir):
     loaded = TimeSeries.from_hdf(filename)
     for key in ts_with_attrs.attrs:
         assert ts_with_attrs.attrs[key] == loaded.attrs[key]
+    assert np.all(loaded.data == data)
+    for coord in loaded.coords:
+        assert (loaded.coords[coord] == ts.coords[coord]).all()
+    for n, dim in enumerate(dims):
+        assert loaded.dims[n] == dim
+    assert loaded.name == "test"
+
+    # test compression:
+    ts_with_attrs.to_hdf(filename, compression='gzip', compression_opts=9)
+    loaded = TimeSeries.from_hdf(filename)
+    for key in ts_with_attrs.attrs:
+        assert ts_with_attrs.attrs[key] == loaded.attrs[key]
+    assert np.all(loaded.data == data)
+    for coord in loaded.coords:
+        assert (loaded.coords[coord] == ts.coords[coord]).all()
+    for n, dim in enumerate(dims):
+        assert loaded.dims[n] == dim
+    assert loaded.name == "test"
+    
 
 
 def test_filtered():
@@ -195,14 +214,16 @@ def test_samplerate_prop():
 def test_coords_ops():
     data = np.arange(1000).reshape(10,10,10)
 
-    ts_1 = TimeSeries.create(data, None, dims=['x', 'y', 'z'], coords={'x':np.arange(10),
-                                                                'y':np.arange(10),
-                                                                'z':np.arange(10)*2,
-                                                                    'samplerate': 1})
-    ts_2 = TimeSeries.create(data, None, dims=['x', 'y', 'z'], coords={'x':np.arange(10),
-                                                                'y':np.arange(10),
-                                                                'z':np.arange(10),
-                                                                    'samplerate': 1})
+    ts_1 = TimeSeries.create(data, None, dims=['x', 'y', 'z'],
+                             coords={'x':np.arange(10),
+                                     'y':np.arange(10),
+                                     'z':np.arange(10)*2,
+                                     'samplerate': 1})
+    ts_2 = TimeSeries.create(data, None, dims=['x', 'y', 'z'],
+                             coords={'x':np.arange(10),
+                                     'y':np.arange(10),
+                                     'z':np.arange(10),
+                                     'samplerate': 1})
     ts_out = ts_1 + ts_2
     assert ts_out.z.shape[0] == 5
 
@@ -220,11 +241,13 @@ def test_coords_ops():
 
 
 def test_mean():
-    """tests various ways to compute mean - collapsing different combination of axes"""
+    """tests various ways to compute mean - collapsing different
+combination of axes"""
     data = np.arange(100).reshape(10,10)
-    ts_1 = TimeSeries.create(data, None, dims=['x', 'y'], coords={'x': np.arange(10) * 2,
-                                                                'y':np.arange(10),
-                                                                    'samplerate': 1})
+    ts_1 = TimeSeries.create(data, None, dims=['x', 'y'],
+                             coords={'x': np.arange(10) * 2,
+                                     'y':np.arange(10),
+                                     'samplerate': 1})
     grand_mean = ts_1.mean()
 
     assert grand_mean == 49.5
@@ -245,9 +268,10 @@ def test_mean():
     # data_2[9,9] = 99
 
 
-    ts_2 = TimeSeries.create(data_2, None, dims=['x', 'y'], coords={'x': np.arange(10) * 2,
-                                                                'y':np.arange(10),
-                                                                    'samplerate': 1})
+    ts_2 = TimeSeries.create(data_2, None, dims=['x', 'y'],
+                             coords={'x': np.arange(10) * 2,
+                                     'y':np.arange(10),
+                                     'samplerate': 1})
 
     grand_mean = ts_2.mean(skipna=True)
     assert grand_mean == 49.5
@@ -259,12 +283,14 @@ def test_concatenate():
     """make sure we can concatenate easily time series x - test it with rec
     array as one of the coords.
 
-    This fails for xarray > 0.7. See https://github.com/pydata/xarray/issues/1434
-    for details.
+    This fails for xarray > 0.7. See
+    https://github.com/pydata/xarray/issues/1434 for details.
 
     """
-    p1 = np.array([('John', 180), ('Stacy', 150), ('Dick',200)], dtype=[('name', '|S256'), ('height', int)])
-    p2 = np.array([('Bernie', 170), ('Donald', 250), ('Hillary',150)], dtype=[('name', '|S256'), ('height', int)])
+    p1 = np.array([('John', 180), ('Stacy', 150), ('Dick',200)],
+                  dtype=[('name', '|S256'), ('height', int)])
+    p2 = np.array([('Bernie', 170), ('Donald', 250), ('Hillary',150)],
+                  dtype=[('name', '|S256'), ('height', int)])
 
     data = np.arange(50, 80, 1, dtype=np.float)
     dims = ['measurement', 'participant']
@@ -289,7 +315,8 @@ def test_concatenate():
     assert (combined.participant.data['height'] ==
             np.array([180, 150, 200, 170, 250, 150])).all()
     assert (combined.participant.data['name'] ==
-            np.array(['John', 'Stacy', 'Dick', 'Bernie', 'Donald', 'Hillary'])).all()
+            np.array([
+                'John', 'Stacy', 'Dick', 'Bernie', 'Donald', 'Hillary'])).all()
 
 
 def test_append_simple():
@@ -310,7 +337,8 @@ def test_append_simple():
     assert (combined.data == np.concatenate([data1, data2])).all()
     assert combined.dims == ts1.dims
     assert combined.dims == ts2.dims
-    assert (combined.coords['time'] == np.concatenate([coords1['time'], coords2['time']])).all()
+    assert (combined.coords['time'] == np.concatenate(
+        [coords1['time'], coords2['time']])).all()
 
     # Incompatible sample rates
     ts1 = TimeSeries.create(data1, samplerate, coords=coords1, dims=dims)
@@ -321,8 +349,10 @@ def test_append_simple():
 
 def test_append_recarray():
     """Test appending along a dimension with a recarray."""
-    p1 = np.array([('John', 180), ('Stacy', 150), ('Dick',200)], dtype=[('name', '|S256'), ('height', int)])
-    p2 = np.array([('Bernie', 170), ('Donald', 250), ('Hillary',150)], dtype=[('name', '|S256'), ('height', int)])
+    p1 = np.array([('John', 180), ('Stacy', 150), ('Dick',200)],
+                  dtype=[('name', '|S256'), ('height', int)])
+    p2 = np.array([('Bernie', 170), ('Donald', 250), ('Hillary',150)],
+                  dtype=[('name', '|S256'), ('height', int)])
 
     data = np.arange(50, 80, 1, dtype=np.float)
     dims = ['measurement', 'participant']
@@ -358,8 +388,10 @@ def test_append_recarray():
     combined = ts1.append(ts2, dim='participant')
 
     assert isinstance(combined, TimeSeries)
-    assert (combined.participant.data['height'] == np.array([180, 150, 200, 170, 250, 150])).all()
-    names = np.array([b'John', b'Stacy', b'Dick', b'Bernie', b'Donald', b'Hillary'])
+    assert (combined.participant.data['height'] == np.array(
+        [180, 150, 200, 170, 250, 150])).all()
+    names = np.array([b'John', b'Stacy', b'Dick', b'Bernie',
+                      b'Donald', b'Hillary'])
     assert (combined.participant.data['name'] == names).all()
 
     # incompatible sample rates

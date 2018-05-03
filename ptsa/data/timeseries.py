@@ -81,22 +81,25 @@ class TimeSeries(xr.DataArray):
 
     def to_hdf(self, filename, mode='w', compression=None,
                compression_opts=None, encode_string_arrays=True,
-               encoding='utf8'):
+               encoding='utf8', **kwargs):
         """Save to disk using HDF5.
 
         Parameters
         ----------
-        filename : str
-            Full path to the HDF5 file
-        mode : str
-            File mode to use. See the :mod:`h5py` documentation for details.
+        filename : str or :mod:`h5py.h5f.FileID` instance
+            Path to or identifier for the HDF5 file. See the
+            :mod:`h5py.File` documentation.
+        mode : str, optional
+            File mode to use. See the :mod:`h5py.File` documentation
+            for details.
             Default: ``'w'``
         compression : str or None
-            Compression to use with arrays (see :mod:`h5py` documentation for
-            valid choices).
+            Compression to use with arrays (see
+            :mod:`h5py.Group.create_dataset` documentation for valid
+            choices).
         compression_opts : int or None
             Compression options, generally a number specifying compression level
-            (see :mod:`h5py` documentation for details).
+            (see :mod:`h5py.Group.create_dataset` documentation for details).
         encode_string_arrays : bool
             When True, force encoding of arrays of unicode strings using the
             ``encoding`` keyword argument. Not setting this will result in
@@ -104,7 +107,8 @@ class TimeSeries(xr.DataArray):
         encoding : str
             Encoding to use when forcing encoding of unicode string arrays.
             Default: ``'utf8'``.
-
+        kwargs : dict
+            Keyword arguments to be passed to :mod:`h5py.Group.create_dataset`.
         Notes
         -----
         The root node also has attributes:
@@ -119,10 +123,14 @@ class TimeSeries(xr.DataArray):
             hfile.attrs['ptsa_version'] = ptsa_version
             hfile.attrs['created'] = time.time()
 
-            hfile.create_dataset("data", data=self.data, chunks=True)
+            hfile.create_dataset("data", data=self.data, chunks=True,
+                                 compression=compression,
+                                 compression_opts=compression_opts)
 
             dims = [dim.encode(encoding) for dim in self.dims]
-            hfile.create_dataset("dims", data=dims)
+            hfile.create_dataset("dims", data=dims, chunks=True,
+                                 compression=compression,
+                                 compression_opts=compression_opts)
 
             coords_group = hfile.create_group("coords")
             coords = []
@@ -164,8 +172,7 @@ class TimeSeries(xr.DataArray):
                 except TypeError as e:
                     if chunks is not False:
                         dset = coords_group.create_dataset(
-                            name, data=data, chunks=False,
-                            **compression_kwargs)
+                            name, data=data, chunks=False)
                     else:
                         raise e
                 # Store the data type as an attribute to make it easier to
