@@ -1,4 +1,4 @@
-from .raw import BaseRawReader
+from ptsa.data.readers import BaseRawReader
 from collections import namedtuple
 from .params import ParamsReader
 import six
