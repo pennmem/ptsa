@@ -88,18 +88,18 @@ class TimeSeries(xr.DataArray):
         ----------
         filename : str or :mod:`h5py.h5f.FileID` instance
             Path to or identifier for the HDF5 file. See the
-            :mod:`h5py.File` documentation.
+            :class:`h5py.File` documentation.
         mode : str, optional
-            File mode to use. See the :mod:`h5py.File` documentation
+            File mode to use. See the :class:`h5py.File` documentation
             for details.
             Default: ``'w'``
         compression : str or None
             Compression to use with arrays (see
-            :mod:`h5py.Group.create_dataset` documentation for valid
+            :meth:`h5py.Group.create_dataset` documentation for valid
             choices).
         compression_opts : int or None
             Compression options, generally a number specifying compression level
-            (see :mod:`h5py.Group.create_dataset` documentation for details).
+            (see :meth:`h5py.Group.create_dataset` documentation for details).
         encode_string_arrays : bool
             When True, force encoding of arrays of unicode strings using the
             ``encoding`` keyword argument. Not setting this will result in
