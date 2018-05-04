@@ -15,7 +15,6 @@ requirements:
     - python {{ python }}
     - numpy
     - pip
-    - pywavelets
     - pytables
     - setuptools
     - scipy
@@ -26,7 +25,6 @@ requirements:
     - python {{ python }}
     - h5py
     - numpy
-    - pywavelets
     - pytables
     - scipy
     - vs2015_runtime  [win]
@@ -37,7 +35,6 @@ test:
   # Test that we can import ptsa and its extension modules
   imports:
     - ptsa
-    - dimarray
     - ptsa.extensions.morlet
     - ptsa.extensions.circular_stat
 

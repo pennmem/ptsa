@@ -9,7 +9,7 @@ python:
 notifications:
   email: false
 env:
-  - CC=gcc-4.9 CXX=g++-4.9 NO_RHINO=1
+  - CC=gcc-6 CXX=g++-6 NO_RHINO=1
 install:
   # We do this conditionally because it saves us some downloading if the
   # version is the same.
@@ -25,7 +25,7 @@ install:
   - conda update -q conda
   # Useful for debugging any issues with conda
   - conda info -a
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy xarray pywavelets h5py swig pytables traits
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy xarray h5py swig pytables traits
   - source activate test-environment
   - conda install -y -c conda-forge pybind11
   - pip install pytest pytest-cov codecov
@@ -35,8 +35,8 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - gcc-4.9
-      - g++-4.9
+      - gcc-6
+      - g++-6
       - libfftw3-dev
 
 script:

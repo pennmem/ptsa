@@ -12,7 +12,7 @@ class ResampleFilter(BaseFilter):
 
     Keyword Arguments
     -----------------
-    time_series
+    timeseries
         TimeSeries object
     resamplerate: float
         new sampling frequency
@@ -22,14 +22,16 @@ class ResampleFilter(BaseFilter):
         Flag indicating if timepoints from original time axis
         should be reused after proper rounding. Defaults to False
 
+    .. versionchanged:: 2.0
+    Parameter "time_series" was renamed to "timeseries".
 """
 
     resamplerate = traits.api.CFloat
     time_axis_index = traits.api.Int
     round_to_original_timepoints = traits.api.Bool
 
-    def __init__(self,time_series,resamplerate,time_axis_index=-1,round_to_original_timepoints=False):
-        super(ResampleFilter, self).__init__(time_series=time_series)
+    def __init__(self,timeseries, resamplerate, time_axis_index=-1, round_to_original_timepoints=False):
+        super(ResampleFilter, self).__init__(timeseries=timeseries)
         self.resamplerate = resamplerate
         self.time_axis_index = time_axis_index
         self.round_to_original_timepoints = round_to_original_timepoints
@@ -43,17 +45,17 @@ class ResampleFilter(BaseFilter):
             resampled time series with sampling frequency set to resamplerate
 
         """
-        samplerate = float(self.time_series['samplerate'])
+        samplerate = float(self.timeseries['samplerate'])
 
-        time_axis_length = np.squeeze(self.time_series.coords['time'].shape)
+        time_axis_length = np.squeeze(self.timeseries.coords['time'].shape)
         new_length = int(np.round(time_axis_length*self.resamplerate/samplerate))
 
         print(new_length)
 
         if self.time_axis_index<0:
-            self.time_axis_index = self.time_series.get_axis_num('time')
+            self.time_axis_index = self.timeseries.get_axis_num('time')
 
-        time_axis = self.time_series.coords[ self.time_series.dims[self.time_axis_index] ]
+        time_axis = self.timeseries.coords[ self.timeseries.dims[self.time_axis_index] ]
 
         try:
             time_axis_data = time_axis.data['time'] # time axis can be recarray with one of the arrays being time
@@ -65,7 +67,7 @@ class ResampleFilter(BaseFilter):
 
 
         if self.round_to_original_timepoints:
-            filtered_array, new_time_idx_array = resample(self.time_series.data,
+            filtered_array, new_time_idx_array = resample(self.timeseries.data,
                                              new_length, t=time_idx_array,
                                              axis=self.time_axis_index)
 
@@ -76,17 +78,17 @@ class ResampleFilter(BaseFilter):
             new_time_axis = time_axis[new_time_idx_array]
 
         else:
-            filtered_array, new_time_axis = resample(self.time_series.data,
+            filtered_array, new_time_axis = resample(self.timeseries.data,
                                              new_length, t=time_axis_data,
                                              axis=self.time_axis_index)
 
         coords = {}
-        for i, dim_name in enumerate(self.time_series.dims):
+        for i, dim_name in enumerate(self.timeseries.dims):
             if i != self.time_axis_index:
-                coords[dim_name]= self.time_series.coords[dim_name].copy()
+                coords[dim_name]= self.timeseries.coords[dim_name].copy()
             else:
                 coords[dim_name]=new_time_axis
         coords['samplerate']=self.resamplerate
 
-        filtered_time_series = TimeSeries(filtered_array, coords=coords, dims=self.time_series.dims)
-        return filtered_time_series
+        filtered_timeseries = TimeSeries(filtered_array, coords=coords, dims=self.timeseries.dims)
+        return filtered_timeseries

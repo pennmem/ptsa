@@ -1,6 +1,7 @@
 import copy
 import json
 import os
+import warnings
 
 import pandas as pd
 
@@ -33,6 +34,9 @@ class JsonIndexReader(object):
         appears to be a path
         :param protocols: 'r1', 'ltp'
         """
+        warnings.warn("Lab-specific readers may be moved to the cmlreaders "
+                      "package (https://github.com/pennmem/cmlreaders)",
+                      FutureWarning)
         self.protocols_root = os.path.dirname(index_file)
         self.index_file = index_file
         with open(index_file, 'r') as infile:
@@ -55,7 +59,8 @@ class JsonIndexReader(object):
         df : pd.DataFrame
 
         """
-        subjects = self.index["protocols"]["r1"]["subjects"]
+        protocol = os.path.splitext(os.path.basename(self.index_file))[0]
+        subjects = self.index["protocols"][protocol]["subjects"]
         entries = []
 
         for subject in subjects:

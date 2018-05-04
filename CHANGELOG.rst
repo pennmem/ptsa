@@ -1,15 +1,48 @@
-Release Notes
-=============
+Changes
+=======
 
-Upcoming
---------
+Version 2.0.0
+-------------
 
-Summary of changes:
-* Reformatted output of ``TalReader(filename='.../pairs.json').read()
-  - The 'atlases' field is a nested structured array, rather than an array of dictionaries
-  - Most (?) idioms for getting coordinates and atlas labels for an electrode should continue to work in the new format
-  - The 'channels' field has been changed from an object array of lists to an array of two integers
+**Unreleased**
+
+Version 2.0 of PTSA is a major update which includes several breaking changes
+including the removal of several packages and modules, name changes, and
+deprecations.
+
+Removals
+^^^^^^^^
+
+The following packages and modules have been removed:
+
+* ``ptsa.plotting`` - see https://github.com/pennmem/ptsa_plot instead (#147)
+* ``ptsa.stats`` - most functionality now exists in SciPy (#147)
+* ``ptsa.emd``, ``ptsa.iwasobi``, ``ptsa.ica`` and ``ptsa.wica`` (#147)
+* ``ptsa.filt`` - filtering is now contained primarily in ``ptsa.data.filters``
+  (#158)
+* Old time series class (fb08e6c2)
+* All modules within ``ptsa.data`` that worked with the deprecated time series
+  implementation
+
+Renames
+^^^^^^^
+
+* ``TimeSeriesX`` has been renamed to ``TimeSeries`` and is now found in the
+  ``ptsa.data.timeseries`` module (#141). ``TimeSeriesX`` still exists as an
+  alias but will give a ``DeprecationWarning``.
+
+Other changes
+^^^^^^^^^^^^^
+
+* Reformatted output of ``TalReader.read``
+
+    * The ``atlases`` field is a nested structured array, rather than an array of dictionaries
+    * Most idioms for getting coordinates and atlas labels for an electrode should continue to work in the new format
+    * The ``channels`` field has been changed from an object array of lists to an array of two integers
+
 * Added IPython notebook demonstrating reading localization information with TalReader (thanks @LoganJF !)
+* Replaced custom typing system with the ``traits`` package (b2f4609d)
+* Improved ``TimeSeries.to_hdf`` (#138)
 
 
 Version 1.1.5

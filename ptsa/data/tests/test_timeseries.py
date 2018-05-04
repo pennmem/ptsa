@@ -8,11 +8,11 @@
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
 
 import numpy as np
-import re
 from numpy.testing import TestCase
 
-from ptsa.data import Dim,DimArray,TimeSeries
-from ptsa import filt
+import ptsa.data.filters.ButterworthFilter
+from ptsa.data import TimeSeriesX as TimeSeries
+
 
 # from numpy.testing import NumpyTest, TestCase
 
@@ -124,8 +124,8 @@ class test_TimeSeries(TestCase):
         order = 4
         ts = TimeSeries(self.dat200,'time',samplerate,dims=self.dims200)
         ts_filt = ts.filtered(freqRange, filtType, order)
-        test = filt.buttfilt(self.dat200,freqRange,samplerate,filtType,
-                             order,axis=ts.taxis)
+        test = ptsa.data.filters.ButterworthFilter.buttfilt(self.dat200, freqRange, samplerate, filtType,
+                                                            order, axis=ts.taxis)
         np.testing.assert_array_almost_equal(ts_filt[:],test[:],decimal=6)
 
     def test_resample(self):

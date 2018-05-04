@@ -10,63 +10,88 @@ import traits.api
 
 
 class MonopolarToBipolarMapper(BaseFilter):
+    """Object that takes as an input time series for monopolar electrodes
+    and an array of bipolar pairs and outputs a TimeSeries object
+    where the data is a difference between time series corresponding
+    to different electrodes as specified by bipolar pairs.
+
+    Parameters
+    ----------
+    timeseries: TimeSeries
+        The time series to filter
+    bipolar_pairs: array-like
+        An array of bipolar electrode pairs. Must be either a 1-D
+        structured array where dtypes has two fields corresponding to
+        chan_names or a 2-D container where the first dimension must
+        be length 2 corresponding to the two channels in the bipolar
+        pair
+    
+    Keyword Arguments
+    -----------------
+    channels_dim: str, optional
+        Name of the channels dimension
+    chan_names: container, optional
+        container with two elements corresponding to the names of the
+        two channels in the bipolar pair
+
+    .. versionchanged:: 2.0
+    Parameter "time_series" was renamed to "timeseries".
+    Support for 2-D bipolar_pairs and specification of channels_dim
+    and chan_names was added in version 2.0.
     """
-    Object that takes as an input time series for monopolar electrodes and an array of bipolar pairs and outputs
-    Time series where 'channels' axis is replaced by 'bipolar_pairs' axis and the time series data is a difference
-    between time series corresponding to different electrodes as specified by bipolar pairs
-    """
 
-    bipolar_pairs = traits.api.Array(dtype=[('ch0', '|S3'), ('ch1', '|S3')])
+    # bipolar_pairs = traits.api.Array(dtype=[('ch0', '|S3'), ('ch1', '|S3')])
 
-    def __init__(self, time_series,bipolar_pairs):
-        """
-        Constructor:
-
-        :param kwds:allowed values are:
-        -------------------------------------
-        :param time_series  -  TimeSeries object with eeg session data and 'channels as one of the axes'
-        :param bipolar_pairs {np.recarray} - an array of bipolar electrode pairs
-
-        :return: None
-        """
-        super(MonopolarToBipolarMapper, self).__init__(time_series)
-        self.bipolar_pairs = bipolar_pairs
-
+    def __init__(self, timeseries, bipolar_pairs, channels_dim='channels',
+                 chan_names=['ch0', 'ch1']):
+        super(MonopolarToBipolarMapper, self).__init__(timeseries)
+        if (len(np.shape(bipolar_pairs)) == 2):
+            if np.shape(bipolar_pairs)[0] == 2:
+                self.bipolar_pairs = np.core.records.fromarrays(
+                    bipolar_pairs, names=chan_names)
+            else:
+                raise ValueError(
+                    'bipolar_pair must be either a 1-D structured array where'
+                    'dtypes has two fields corresponding to chan_names or a 2-D'
+                    'container where the first dimension must be length 2'
+                    'corresponding to the two channels in the bipolar pair.'
+                    'Input was 2-D with the following dimensions: '+
+                    str(np.shape(bipolar_pairs)))
+        else:
+            self.bipolar_pairs = bipolar_pairs
+        self.channels_dim = channels_dim
+        self.chan_names = chan_names
 
     def filter(self):
+        """Apply the constructed filter.
+
+        Returns
+        -------
+        A TimeSeries object.
+
         """
-        Turns time series for monopolar electrodes into time series where where 'channels' axis is replaced by
-        'bipolar_pairs' axis and the time series data is a difference
-        between time series corresponding to different electrodes as specified by bipolar pairs
+        channel_axis = self.timeseries[self.channels_dim]
 
-        :return: TimeSeries object
-        """
-
-        channel_axis = self.time_series['channels']
-
-        ch0 = self.bipolar_pairs['ch0']
-        ch1 = self.bipolar_pairs['ch1']
+        ch0 = self.bipolar_pairs[self.chan_names[0]]
+        ch1 = self.bipolar_pairs[self.chan_names[1]]
 
         sel0 = channel_axis.loc[ch0]
         sel1 = channel_axis.loc[ch1]
 
-        ts0 = self.time_series.loc[dict(channels=sel0)]
-        ts1 = self.time_series.loc[dict(channels=sel1)]
+        ts0 = self.timeseries.loc[{self.channels_dim: sel0}]
+        ts1 = self.timeseries.loc[{self.channels_dim: sel1}]
 
-        dims_bp = list(self.time_series.dims)
-        channels_idx = dims_bp.index('channels')
-        dims_bp[channels_idx] = 'bipolar_pairs'
+        dims_bp = list(self.timeseries.dims)
 
-        # coords_bp = [self.time_series[dim_name].copy() for dim_name in self.time_series.dims]
-        # coords_bp[channels_idx] = self.bipolar_pairs
+        coords_bp = {coord_name:coord
+                     for coord_name, coord in list(
+                             self.timeseries.coords.items())}
+        coords_bp[self.channels_dim] = self.bipolar_pairs
 
-        coords_bp = {coord_name:coord for coord_name, coord in list(self.time_series.coords.items())}
-        del coords_bp['channels']
-        coords_bp['bipolar_pairs'] = self.bipolar_pairs
+        ts = TimeSeries(data=ts0.values - ts1.values, dims=dims_bp,
+                        coords=coords_bp)
+        ts['samplerate'] = self.timeseries['samplerate']
 
-
-        ts = TimeSeries(data=ts0.values - ts1.values, dims=dims_bp, coords=coords_bp)
-        ts['samplerate'] = self.time_series['samplerate']
-
-        ts.attrs = self.time_series.attrs.copy()
+        ts.attrs = self.timeseries.attrs.copy()
+        ts.name = self.timeseries.name
         return ts

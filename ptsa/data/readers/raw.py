@@ -5,6 +5,7 @@ from ptsa.data.readers.params import ParamsReader
 from abc import abstractmethod
 import traits.api
 
+
 class BaseRawReader(BaseReader, traits.api.HasTraits):
     """
     Abstract base class for objects that know how to read binary EEG files.

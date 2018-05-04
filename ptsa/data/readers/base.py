@@ -7,6 +7,7 @@ import re
 import json
 import unicodedata
 from collections import defaultdict
+import warnings
 import numpy as np
 import pandas as pd
 from abc import abstractmethod
@@ -56,6 +57,7 @@ class BaseEventReader(BaseReader,traits.api.HasTraits):
         '/' in the common_root
 
     """
+
     filename = traits.api.Str
     eliminate_events_with_no_eeg = traits.api.Bool
     eliminate_nans= traits.api.Bool
@@ -66,6 +68,9 @@ class BaseEventReader(BaseReader,traits.api.HasTraits):
     def __init__(self, filename,common_root='data/events',
                  eliminate_events_with_no_eeg=True,eliminate_nans=True,use_reref_eeg=False,
                  normalize_eeg_path=True):
+        warnings.warn("Lab-specific readers may be moved to the cmlreaders "
+                      "package (https://github.com/pennmem/cmlreaders)",
+                      FutureWarning)
         self.filename = filename
         self.common_root = common_root
         self.eliminate_events_with_no_eeg = eliminate_events_with_no_eeg

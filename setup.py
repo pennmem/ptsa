@@ -108,7 +108,7 @@ def get_libfftw_path():
 def get_compiler_args():
     """Return extra compiler arguments for building extensions."""
     if sys.platform.startswith('darwin'):
-        return ['-std=c++14', '-stdlib=libc++', '-mmacosx-version-min=10.8']
+        return ['-std=c++14', '-stdlib=libc++', '-mmacosx-version-min=10.9']
     elif sys.platform.startswith('win'):
         return ['/EHsc']  # exception handling
     else:
@@ -307,6 +307,7 @@ try:
             sources=[
                 'ptsa/extensions/edf/edflib.cpp',
                 'ptsa/extensions/edf/edffile.cpp',
+                'ptsa/extensions/edf/wrap.cpp',
             ],
         )
     ]
@@ -336,7 +337,6 @@ setup(
         "numpy",
         "scipy",
         "xarray",
-        "PyWavelets"
     ],
     packages=find_packages(
         exclude=['*.tests', 'tests', 'tests.*', '*.outdated_tests']
