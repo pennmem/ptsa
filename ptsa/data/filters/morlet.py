@@ -12,6 +12,11 @@ class MorletWaveletFilter(BaseFilter):
     """Applies a Morlet wavelet transform to a time series, returning the power
     and phase spectra over time.
 
+    .. versionchanged:: 2.0
+
+        Return type is now a :class:`TimeSeries` to conform with other
+        filter types.
+
     Parameters
     ----------
     timeseries: TimeSeries
@@ -23,15 +28,14 @@ class MorletWaveletFilter(BaseFilter):
         The frequencies to use in the decomposition
     width: int
         The width of the wavelet
-    output: str
-        One of: 'power', 'phase', 'both', 'complex' (default: 'both')
+    output: List[str] or str
+        A string or a list of strings containing power, phase, and/or
+        complex (default: ``['power', 'phase']``)
     verbose: bool
         Print out the wavelet parameters
     cpus : int
         Number of threads to use when computing the transform (default: 1).
-    
-    .. versionchanged:: 2.0
-    Parameter "time_series" was renamed to "timeseries".
+
     """
     freqs = traits.api.CArray
     width = traits.api.Int
@@ -39,15 +43,20 @@ class MorletWaveletFilter(BaseFilter):
     verbose = traits.api.Bool
     cpus = traits.api.Int
 
-    def __init__(self, timeseries, freqs, width=5, output='both',
-                 verbose=True, cpus=1):
+    def __init__(self, timeseries, freqs, width=5,
+                 output=['power', 'phase'], verbose=True, cpus=1):
         super(MorletWaveletFilter, self).__init__(timeseries)
         self.freqs = freqs
         self.width = width
 
-        output_opts = ['power', 'phase', 'both', 'complex']
-        if output not in output_opts:
-            raise RuntimeError("output must be one of %r" % output_opts)
+        output_opts = ['power', 'phase', 'complex']
+
+        if isinstance(output, str):
+            output = [output]
+
+        for el in output:
+            if el not in output_opts:
+                raise RuntimeError("output must be one of %r" % output_opts)
 
         self.output = output
 
@@ -58,17 +67,7 @@ class MorletWaveletFilter(BaseFilter):
         self.compute_power_and_phase_fcn = None
 
     def filter(self):
-        """Apply the constructed filter.
-
-        Returns
-        -------
-        A dictionary with keys `power`, `phase`, and `complex`. Unused values
-        will be `None`.
-
-        .. versionchanged:: 2.0
-        Returns dictionary instead of tuple.
-        """
-
+        """Apply the constructed filter."""
         time_axis = self.timeseries['time']
 
         wavelet_dims = self.nontime_sizes + (self.freqs.shape[0],)
@@ -77,22 +76,15 @@ class MorletWaveletFilter(BaseFilter):
         phases_reshaped = np.array([[]], dtype=np.float)
         wavelets_complex_reshaped = np.array([[]], dtype=np.complex)
 
-        if self.output == 'power':
+        if 'power' in self.output:
             powers_reshaped = np.empty(
                 shape=(np.prod(wavelet_dims),
                        len(self.timeseries['time'])), dtype=np.float)
-        if self.output == 'phase':
+        if 'phase' in self.output:
             phases_reshaped = np.empty(
                 shape=(np.prod(wavelet_dims),
                        len(self.timeseries['time'])), dtype=np.float)
-        if self.output == 'both':
-            powers_reshaped = np.empty(
-                shape=(np.prod(wavelet_dims),
-                       len(self.timeseries['time'])), dtype=np.float)
-            phases_reshaped = np.empty(
-                shape=(np.prod(wavelet_dims),
-                       len(self.timeseries['time'])), dtype=np.float)
-        if self.output == 'complex':
+        if 'complex' in self.output:
             wavelets_complex_reshaped = np.empty(
                 shape=(np.prod(wavelet_dims), len(self.timeseries['time'])),
                 dtype=np.complex)
@@ -103,13 +95,16 @@ class MorletWaveletFilter(BaseFilter):
             self.timeseries.data.reshape(
                 np.prod(self.nontime_sizes, dtype=int),
                 len(self.timeseries['time'])), self.timeseries.data.dtype)
-        if self.output == 'power':
+
+        if self.output == ['power']:
             mt.set_output_type(morlet.POWER)
-        if self.output == 'phase':
+        if self.output == ['phase']:
             mt.set_output_type(morlet.PHASE)
-        if self.output == 'both':
+        if 'power' in self.output and 'phase' in self.output:
             mt.set_output_type(morlet.BOTH)
-        if self.output == 'complex':
+
+        # FIXME: update to allow outputing complex as well as power/phase
+        if self.output == ['complex']:
             mt.set_output_type(morlet.COMPLEX)
 
         mt.set_signal_array(timeseries_reshaped)
@@ -128,14 +123,11 @@ class MorletWaveletFilter(BaseFilter):
         phases_final = None
         wavelet_complex_final = None
 
-        if self.output == 'power':
+        if 'power' in self.output:
             powers_final = powers_reshaped.reshape(wavelet_dims + (len(self.timeseries['time']),))
-        if self.output == 'phase':
+        if 'phase' in self.output:
             phases_final = phases_reshaped.reshape(wavelet_dims + (len(self.timeseries['time']),))
-        if self.output == 'both':
-            powers_final = powers_reshaped.reshape(wavelet_dims + (len(self.timeseries['time']),))
-            phases_final = phases_reshaped.reshape(wavelet_dims + (len(self.timeseries['time']),))
-        if self.output == 'complex':
+        if 'complex' in self.output:
             wavelet_complex_final = wavelets_complex_reshaped.reshape(wavelet_dims + (len(self.timeseries['time']),))
 
         coords = {k: v for k, v in list(self.timeseries.coords.items())}
@@ -175,6 +167,7 @@ class MorletWaveletFilter(BaseFilter):
         if self.verbose:
             print('CPP total time wavelet loop: ', time.time() - s)
 
+        # TODO: return a single TimeSeries
         return {
             'power': powers_ts,
             'phase': phases_ts,
