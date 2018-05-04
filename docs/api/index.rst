@@ -21,20 +21,3 @@ Helpers
 .. automodule:: ptsa.helper
     :members:
 
-Other
------
-
-.. automodule:: ptsa.hilbert
-    :members:
-
-.. automodule:: ptsa.iwasobi
-    :members:
-
-.. automodule:: ptsa.pca
-    :members:
-
-.. automodule:: ptsa.wica
-    :members:
-
-.. automodule:: ptsa.emd
-    :members:

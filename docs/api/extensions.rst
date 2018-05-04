@@ -139,9 +139,57 @@ in order to take advantage of the speed provided by the FFTW library.
 
 ptsa.extensions.edf
 -------------------
-File-like wrapper around parts of edflib to provide an interface
+File-like wrapper around parts of EDFlib_ to provide an interface
 for reading the EDF+ family of EEG formats.
 :py:mod:`ptsa.data.readers.EDFRawReader` provides a
 slightly higher-level interface for doing the same thing.
 
-.. automodule:: ptsa.extensions.edf
+.. py:class:: ChannelInfo
+
+    Channel data including label, number of samples, etc. These objects are
+    returned by :meth:`EDFFile.get_channel_info`, and have the following
+    read-only attributes:
+
+    :ivar str label: The name of the channel
+    :ivar int smp_in_file: Number of samples in file
+    :ivar float phys_max: Maximum representable value in physical units
+    :ivar float phys_min: Minimum representable value in physical units
+    :ivar int dig_max: Maximum representable value in digital units
+    :ivar int dig_min: Minimum representable value in digital units
+    :ivar int smp_in_datarecord: Number of samples stored in one record
+    :ivar str physdimension: Dimension of physical units
+    :ivar str prefilter: Type of prefiltering performed on signal
+    :ivar str transducer: Transducer type (e.g. 'AgAgCl electrode')
+
+.. py:class:: EDFFile
+
+    Reads the EDF family of files.
+
+    Notes
+    -----
+    This class utilizes EDFlib_ to read EDF/BDF/EDF+/BDF+ files.
+
+    Parameters
+    ----------
+    filename : str
+        Path to EDF file.
+
+
+    .. _EDFlib: https://www.teuniz.net/edflib/
+
+
+    .. py:method:: get_channel_info(channel)
+
+        Return the information on a given channel
+
+        :param channel: int
+
+    .. py:method:: get_channel_numbers(channel_names)
+
+    .. py:method:: get_samplerate(channel)
+
+    .. py:method:: read_samples(channels,samples,offset)
+
+        Read samples from a list of channels. Channels
+        can be specified by either a list of numbers or a list of labels.
+
