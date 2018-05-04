@@ -1,4 +1,3 @@
-import os
 import unittest
 import os.path as osp
 import pytest
@@ -27,12 +26,12 @@ def test_monopolar_to_bipolar_filter_norhino():
     ts = timeseries.TimeSeries.create(
         data, rate, coords=coords,
         dims=dims, name="test", attrs={'test_attr': 1})
-    
+
     bipolar_pairs1 = np.array([range(9), range(1,10)])
     m2b1 = MonopolarToBipolarMapper(timeseries=ts,
                                     bipolar_pairs=bipolar_pairs1)
     ts_m2b1 = m2b1.filter()
-    
+
     bipolar_pairs2 = np.array([(i, j) for i, j in zip(range(9), range(1,10))],
                               dtype=[('ch0', '<i8'), ('ch1', '<i8')])
     m2b2 = MonopolarToBipolarMapper(timeseries=ts,
@@ -60,7 +59,7 @@ def test_monopolar_to_bipolar_filter_norhino():
                               ts.sel(channels=range(1,10)).values))
     assert np.all(ts_m2b2 == (ts.sel(channels=range(9)).values -
                               ts.sel(channels=range(1,10)).values))
-    
+
     dims2 = ('time', 'electrodes', 'events')
     coords2 = {'time': np.linspace(0, 1, 20),
               'electrodes': range(10),
@@ -108,7 +107,7 @@ def test_monopolar_to_bipolar_filter_norhino():
     assert np.all(ts_m2b4['electrodes'] == bipolar_pairs2)
     assert np.all(ts_m2b4 == (ts.sel(channels=range(9)).values -
                               ts.sel(channels=range(1,10)).values))
-    
+
     bipolar_pairs3 = np.array([(i, j) for i, j in zip(range(9), range(1,10))],
                               dtype=[('channel0', '<i8'), ('channel1', '<i8')])
     m2b5 = MonopolarToBipolarMapper(timeseries=ts2, channels_dim='electrodes',
@@ -203,12 +202,12 @@ class TestFilters(unittest.TestCase):
         session_reader = EEGReader(session_dataroot=dataroot, channels=self.monopolar_channels)
         session_eegs = session_reader.read()
 
-        sedc = DataChopper(events=self.base_events, session_data=session_eegs,
+        sedc = DataChopper(events=self.base_events, timeseries=session_eegs,
                            start_time=self.start_time, end_time=self.end_time, buffer_time=self.buffer_time)
         chopped_session = sedc.filter()
         assert_array_equal(chopped_session, self.base_eegs)
 
-        sedc = DataChopper(start_offsets=self.base_events.eegoffset, session_data=session_eegs,
+        sedc = DataChopper(start_offsets=self.base_events.eegoffset, timeseries=session_eegs,
                            start_time=self.start_time, end_time=self.end_time, buffer_time=self.buffer_time)
         chopped_session = sedc.filter()
         assert_array_equal(chopped_session, self.base_eegs)
@@ -217,13 +216,14 @@ class TestFilters(unittest.TestCase):
         m2b = MonopolarToBipolarMapper(timeseries=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
         bp_base_eegs = m2b.filter()
 
-        bipolar_pairs = bp_base_eegs['bipolar_pairs'].data
+        bipolar_pairs = bp_base_eegs['channels'].data
         for i, bp in enumerate(bipolar_pairs):
             e0 = self.base_eegs.sel(channels=bp[0])
             e1 = self.base_eegs.sel(channels=bp[1])
             # res = e0.__sub__(e1)
             assert_array_equal(e0 - e1, bp_base_eegs[i])
 
+    @pytest.mark.slow
     def test_monopolar_to_bipolar_filter_and_data_chopper(self):
         dataroot = self.base_events[0].eegfile
 
@@ -233,7 +233,7 @@ class TestFilters(unittest.TestCase):
         m2b = MonopolarToBipolarMapper(timeseries=session_eegs, bipolar_pairs=self.bipolar_pairs)
         bp_session_eegs = m2b.filter()
 
-        sedc = DataChopper(events=self.base_events, session_data=bp_session_eegs, start_time=self.start_time,
+        sedc = DataChopper(events=self.base_events, timeseries=bp_session_eegs, start_time=self.start_time,
                            end_time=self.end_time, buffer_time=self.buffer_time)
 
         bp_session_eegs_chopped = sedc.filter()
@@ -243,18 +243,19 @@ class TestFilters(unittest.TestCase):
 
         assert_array_equal(bp_session_eegs_chopped, bp_base_eegs)
 
+    @pytest.mark.slow
+    @pytest.mark.xfail
     def test_wavelets_with_event_data_chopper(self):
         wf_session = MorletWaveletFilter(
             timeseries=self.session_eegs[:, :, :int(self.session_eegs.shape[2] / 4)],
             freqs=np.logspace(np.log10(3), np.log10(180), 8),
             output='power',
-            frequency_dim_pos=0,
             verbose=True
         )
 
-        pow_wavelet_session, phase_wavelet_session = wf_session.filter()
+        pow_wavelet_session = wf_session.filter()['power']
 
-        sedc = DataChopper(events=self.base_events, session_data=pow_wavelet_session, start_time=self.start_time,
+        sedc = DataChopper(events=self.base_events, timeseries=pow_wavelet_session, start_time=self.start_time,
                            end_time=self.end_time, buffer_time=self.buffer_time)
         chopped_session_pow_wavelet = sedc.filter()
 
@@ -264,7 +265,6 @@ class TestFilters(unittest.TestCase):
         wf = MorletWaveletFilter(timeseries=self.base_eegs,
                                  freqs=np.logspace(np.log10(3), np.log10(180), 8),
                                  output='power',
-                                 frequency_dim_pos=0,
                                  verbose=True
                                  )
 
@@ -278,7 +278,6 @@ class TestFilters(unittest.TestCase):
             decimal=5
         )
 
-    @pytest.mark.slow
     def test_ButterwothFilter(self):
 
         from xarray.testing import assert_equal
@@ -295,28 +294,30 @@ class TestFilters(unittest.TestCase):
             assert_equal(base_eegs_filtered_1, self.base_eegs)
 
 
+@pytest.fixture
+def time_series():
+    times = np.linspace(0, 1, 1000)
+    ts = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
+    return timeseries.TimeSeries(data=ts, dims=('time'),
+                                            coords={
+                                                'time': times,
+                                                'samplerate': 1000
+                                            })
+
 @pytest.mark.filters
 class TestFiltersExecute:
     @classmethod
-    def setup_class(cls):
-        times = np.linspace(0, 1, 1000)
-        ts = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
-        cls.timeseries = timeseries.TimeSeries(data=ts, dims=('time'),
-                                                coords={
-                                                    'time': times,
-                                                    'samplerate': 1000
-                                                })
 
-    def test_butterworth(self):
-        bfilter = ButterworthFilter(timeseries=self.timeseries,
+    def test_butterworth(self,time_series):
+        bfilter = ButterworthFilter(timeseries=time_series,
                                     freq_range=[10., 20.],
                                     filt_type='stop',
                                     order=2)
         bfilter.filter()
 
     @pytest.mark.parametrize('output_type', ['power', 'phase', 'both'])
-    def test_morlet(self, output_type):
-        mwf = MorletWaveletFilter(timeseries=self.timeseries,
+    def test_morlet(self, time_series,output_type):
+        mwf = MorletWaveletFilter(timeseries=time_series,
                                   freqs=np.array([10., 20., 40.]),
                                   width=4, output=output_type)
         output = mwf.filter()
@@ -326,15 +327,44 @@ class TestFiltersExecute:
         if output_type in ['phase', 'both']:
             assert output['phase'].shape == (3, 1000)
 
-    def test_resample(self):
-        rf = ResampleFilter(timeseries=self.timeseries, resamplerate=50.)
+    def test_resample(self,time_series):
+        rf = ResampleFilter(timeseries=time_series, resamplerate=50.)
         new_ts = rf.filter()
         assert len(new_ts) == 50
         assert new_ts.samplerate == 50.
 
+    def test_DataChopper(self,time_series):
+        time_series = timeseries.TimeSeries(data=time_series.values[None,:],
+                                            dims=('start_offsets', 'time'),
+                                            coords = {'time':time_series['time'].values,
+                                                      'samplerate':1000,
+                                                      'start_offsets':[0],
+                                                      'offsets':('time',range(1000))
+                                                      })
+
+        offsets = np.arange(0,900,100,dtype=int)
 
 
+        end_time = 0.09
+        chopper = DataChopper(time_series,end_time=end_time,
+                              start_offsets=offsets)
+        new_timeseries = chopper.filter()
+        assert len(new_timeseries['start_offsets']) == len(offsets)
+        assert len(new_timeseries['time']) == end_time*new_timeseries.samplerate
 
+    def test_MonopolarToBipolarMapper(self,time_series):
+        ts = np.array([time_series.values,time_series.values])
+        time_series = timeseries.TimeSeries(data=ts,
+                                            coords = {
+                                                'channels':[b'0',b'1'],
+                                                'time':time_series.time.values,
+                                                'samplerate':1000,
+                                            },
+                                            dims= ('channels','time'))
+        pairs = np.array([('0','1')],dtype=[('ch0','S1'),('ch1','S1')])
+        new_timeseries = MonopolarToBipolarMapper(timeseries=time_series,
+                                                  bipolar_pairs=pairs).filter()
+        assert np.array_equal(new_timeseries,np.zeros(new_timeseries.shape))
 
 
 class TestFilterShapes:
