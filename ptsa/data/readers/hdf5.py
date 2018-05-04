@@ -3,7 +3,7 @@ import os.path as osp
 import h5py
 import numpy as np
 
-from ptsa.data.readers.raw import BaseRawReader
+from ptsa.data.readers import BaseRawReader
 
 __all__ = [
     'H5RawReader',

@@ -5,7 +5,7 @@ import warnings
 
 import numpy as np
 
-from ptsa.data.readers.raw import BaseRawReader
+from ptsa.data.readers import BaseRawReader
 from ptsa.extensions.edf import EDFFile
 
 logger = logging.getLogger(__name__)
@@ -133,7 +133,7 @@ class EDFRawReader(BaseRawReader):
             return data, read_ok_mask
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     logger.addHandler(logging.StreamHandler())
     fname = osp.expanduser("/Volumes/rhino_root/data/eeg/eeg/scalp/ltp/ltpFR2/LTP375/session_0/eeg/LTP375_session_0.bdf")
 
