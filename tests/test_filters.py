@@ -152,29 +152,30 @@ class TestFilters(unittest.TestCase):
         with self.assertRaises(AssertionError):
             assert_equal(base_eegs_filtered_1, self.base_eegs)
 
+@pytest.fixture
+def time_series():
+    times = np.linspace(0, 1, 1000)
+    ts = np.sin(8 * times) + np.sin(16 * times) + np.sin(32 * times)
+    return timeseries.TimeSeries(data=ts, dims=('time'),
+                                            coords={
+                                                'time': times,
+                                                'samplerate': 1000
+                                            })
+
 
 @pytest.mark.filters
 class TestFiltersExecute:
-    @classmethod
-    def setup_class(cls):
-        times = np.linspace(0, 1, 1000)
-        ts = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
-        cls.time_series = timeseries.TimeSeries(data=ts, dims=('time'),
-                                                coords={
-                                                    'time': times,
-                                                    'samplerate': 1000
-                                                })
 
-    def test_butterworth(self):
-        bfilter = ButterworthFilter(time_series=self.time_series,
+    def test_butterworth(self,time_series):
+        bfilter = ButterworthFilter(time_series=time_series,
                                     freq_range=[10., 20.],
                                     filt_type='stop',
                                     order=2)
         bfilter.filter()
 
     @pytest.mark.parametrize('output_type', ['power', 'phase', 'both'])
-    def test_morlet(self, output_type):
-        mwf = MorletWaveletFilter(timeseries=self.time_series,
+    def test_morlet(self, output_type,time_series):
+        mwf = MorletWaveletFilter(timeseries=time_series,
                                   freqs=np.array([10., 20., 40.]),
                                   width=4, output=output_type)
         output = mwf.filter()
@@ -184,16 +185,16 @@ class TestFiltersExecute:
         if output_type in ['phase', 'both']:
             assert output['phase'].shape == (3, 1000)
 
-    def test_resample(self):
-        rf = ResampleFilter(time_series=self.time_series, resamplerate=50.)
+    def test_resample(self,time_series):
+        rf = ResampleFilter(time_series=time_series, resamplerate=50.)
         new_ts = rf.filter()
         assert len(new_ts) == 50
         assert new_ts.samplerate == 50.
 
-    def test_DataChopper(self):
-        time_series = timeseries.TimeSeries(data=self.time_series.values[None,:],
+    def test_DataChopper(self,time_series):
+        time_series = timeseries.TimeSeries(data=time_series.values[None,:],
                                             dims=('start_offsets', 'time'),
-                                            coords = {'time':self.time_series['time'].values,
+                                            coords = {'time':time_series['time'].values,
                                                       'samplerate':1000,
                                                       'start_offsets':[0],
                                                       'offsets':('time',range(1000))
@@ -209,12 +210,12 @@ class TestFiltersExecute:
         assert len(new_timeseries['start_offsets']) == len(offsets)
         assert len(new_timeseries['time']) == end_time*new_timeseries.samplerate
 
-    def test_MonopolarToBipolarMapper(self):
-        ts = np.array([self.time_series.values,self.time_series.values])
+    def test_MonopolarToBipolarMapper(self,time_series):
+        ts = np.array([time_series.values,time_series.values])
         time_series = timeseries.TimeSeries(data=ts,
                                             coords = {
                                                 'channels':[b'0',b'1'],
-                                                'time':self.time_series.time.values,
+                                                'time':time_series.time.values,
                                                 'samplerate':1000,
                                             },
                                             dims= ('channels','time'))
