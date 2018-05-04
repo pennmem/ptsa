@@ -1,4 +1,3 @@
-import os
 import unittest
 import os.path as osp
 import pytest
@@ -332,8 +331,24 @@ class TestFiltersExecute:
         assert len(new_ts) == 50
         assert new_ts.samplerate == 50.
 
+    def test_DataChopper(self):
+        time_series = timeseries.TimeSeries(data=self.time_series.values[None,:],
+                                            dims=('start_offsets', 'time'),
+                                            coords = {'time':self.time_series['time'].values,
+                                                      'samplerate':1000,
+                                                      'start_offsets':[0],
+                                                      'offsets':('time',range(1000))
+                                                      })
+
+        offsets = np.arange(0,900,100,dtype=int)
 
 
+        end_time = 0.09
+        chopper = DataChopper(time_series,end_time=end_time,
+                              start_offsets=offsets)
+        new_timeseries = chopper.filter()
+        assert len(new_timeseries['start_offsets']) == len(offsets)
+        assert len(new_timeseries['time']) == end_time*new_timeseries.samplerate
 
 
 

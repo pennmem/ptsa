@@ -1,0 +1,11 @@
+{
+  "R1111M_FR1_0_22Jan16_1638": {
+    "data_format": "int16", 
+    "n_samples": 1623160, 
+    "name": "R1111M_FR1_0_22Jan16_1638", 
+    "sample_rate": 500.0, 
+    "source_file": "R1111M_012216_FR1_s0.edf", 
+    "start_time_ms": 1453480709000, 
+    "start_time_str": "22Jan16_1638"
+  }
+}

@@ -71,7 +71,6 @@ class MonopolarToBipolarMapper(BaseFilter):
 
         """
         channel_axis = self.timeseries[self.channels_dim]
-
         ch0 = self.bipolar_pairs[self.chan_names[0]]
         ch1 = self.bipolar_pairs[self.chan_names[1]]
 

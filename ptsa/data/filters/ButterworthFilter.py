@@ -1,8 +1,8 @@
 from numpy import asarray
 from xarray import DataArray
-from ptsa.filt import buttfilt
 from ptsa.data.timeseries import TimeSeries
 from ptsa.data.common import get_axis_index
+from ptsa.filt import buttfilt
 from ptsa.data.filters import BaseFilter
 import traits.api
 
@@ -59,6 +59,7 @@ class ButterworthFilter(BaseFilter):
             dims=dims,
             coords=coords_dict
         )
+
 
         # filtered_timeseries = TimeSeries(filtered_timeseries)
         filtered_timeseries.attrs = self.timeseries.attrs.copy()
