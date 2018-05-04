@@ -11,7 +11,7 @@ __all__ = [
 ]
 
 
-class ParamsReader( BaseReader,traits.api.HasTraits):
+class ParamsReader(BaseReader, traits.api.HasTraits):
     """
     Reader for parameter file (e.g. params.txt)
     """
@@ -28,6 +28,9 @@ class ParamsReader( BaseReader,traits.api.HasTraits):
 
         :return: None
         """
+        warnings.warn("Lab-specific readers may be moved to the cmlreaders "
+                      "package (https://github.com/pennmem/cmlreaders)",
+                      FutureWarning)
         super(ParamsReader, self).__init__()
         self.filename = filename
         self.dataroot = dataroot

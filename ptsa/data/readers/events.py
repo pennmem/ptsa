@@ -31,8 +31,6 @@ class CMLEventReader(BaseEventReader):
         'data2', etc... are converted to 'data'
 
     """
-
-
     eeg_fname_search_pattern = traits.api.Str
     eeg_fname_replace_pattern = traits.api.Str
 

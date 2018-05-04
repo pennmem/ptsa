@@ -38,6 +38,10 @@ class TalReader(BaseReader,traits.api.HasTraits):
         :return: None
 
         """
+        warnings.warn("Lab-specific readers may be moved to the cmlreaders "
+                      "package (https://github.com/pennmem/cmlreaders)",
+                      FutureWarning)
+
         super(TalReader, self).__init__()
         self.filename = filename
         self.struct_name = struct_name

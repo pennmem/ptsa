@@ -1,6 +1,7 @@
 from .base import BaseReader
 import json, itertools
 import pandas as pd
+import warnings
 
 
 class LocReader(BaseReader):
@@ -11,7 +12,10 @@ class LocReader(BaseReader):
     (either the name of the contact, or a tuple with the names of each half of the pair).
     """
 
-    def __init__(self,filename):
+    def __init__(self, filename):
+        warnings.warn("Lab-specific readers may be moved to the cmlreaders "
+                      "package (https://github.com/pennmem/cmlreaders)",
+                      FutureWarning)
         with open(filename) as f:
             self._dict = json.load(f)
 
