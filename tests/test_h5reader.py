@@ -1,6 +1,5 @@
 import os.path as osp
 import time
-import unittest
 import pytest
 
 import h5py
@@ -13,8 +12,49 @@ from ptsa.data.readers import EEGReader
 from ptsa.test.utils import get_rhino_root, skip_without_rhino
 
 
-@skip_without_rhino
+
 class TestH5Reader:
+    @classmethod
+    def setup_class(cls):
+        cls.eegfile = osp.join(osp.dirname(__file__), 'data','eeg','eeg.h5')
+        cls.channels = np.array(['{:03d}'.format(i).encode() for i in range(1, 10)])
+
+    @pytest.mark.parametrize(
+        'offsets', [np.array([0]), np.arange(0, 2000, 500)]
+    )
+    def test_with_offsets(self, offsets):
+        with h5py.File(self.eegfile, 'r') as hfile:
+            h5_data, _ = H5RawReader.read_h5file(hfile, self.channels, offsets,
+                                                 1000)
+
+
+    def test_with_negative_offsets(self):
+        offsets = np.array([-1, 0])
+        with h5py.File(self.eegfile, 'r') as hfile:
+            h5_data, h5_mask = H5RawReader.read_h5file(hfile, self.channels,
+                                                       offsets, 1000)
+
+
+    def test_out_of_bounds(self):
+        offsets = np.arange(0, 5000, 2000)
+        with h5py.File(self.eegfile, 'r') as hfile:
+            h5_data, h5_mask = H5RawReader.read_h5file(hfile, self.channels,
+                                                       offsets, 1000)
+        assert not h5_mask.all()
+
+    def test_constructor(self):
+
+        reader = H5RawReader(dataroot=self.eegfile,
+                             channels=self.channels,
+                             start_offsets= [0, 500,1000],
+                             read_size=200)
+        reader.read()
+        assert reader.channel_name == 'bipolar_pairs'
+
+
+
+@skip_without_rhino
+class TestH5ReaderRhino:
     @classmethod
     def setup_class(cls):
         root = get_rhino_root()
@@ -59,7 +99,7 @@ class TestH5Reader:
             filename='R1275D_FR1_0_31May17_2109'
         )
 
-        cls.channels = np.array(['%.03d' % i for i in range(1, 10)])
+        cls.channels = np.array(['{:03d}'.format(i).encode() for i in range(1, 10)])
 
     @pytest.mark.parametrize(
         'offsets', [np.array([0]), np.arange(0, 210000, 3000)]
@@ -167,4 +207,4 @@ class TestH5Reader:
 if __name__ == '__main__':
     test = TestH5Reader()
     test.setup_class()
-    test.test_h5reader_empty_channels()
+    test.test_constructor()

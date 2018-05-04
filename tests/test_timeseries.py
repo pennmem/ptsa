@@ -111,7 +111,7 @@ def test_filtered():
     ts = TimeSeries.create(data, 10, dims=dims)
 
     # TODO: real test (i.e., actually care about the filtering)
-    with warnings.catch_warnings(record=True) as w:
+    with pytest.warns(UserWarning) as w:
         new_ts = ts.filtered([1, 2])
         assert len(w) == 1
         assert ts['samplerate'] == new_ts['samplerate']
@@ -421,3 +421,6 @@ def test_append_recarray():
 #     print ('filename =',filename )
 #     ts.to_hdf(filename)
 
+
+if __name__ =='__main__':
+    test_hdf(next(tempdir()))

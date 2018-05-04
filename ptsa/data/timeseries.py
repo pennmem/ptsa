@@ -253,8 +253,10 @@ class TimeSeries(xr.DataArray):
 
                     # Update dtypes of the data. This will coerce the
                     # bytes fields to unicode automatically
-                    data = np.array(data).astype(final_dtypes).view(
+                    data = data[:].astype(final_dtypes).view(
                         np.recarray)
+                else:
+                    data = data[()]
                 coords[name] = data
             name = root.attrs.get('name', None)
             if name is not None:

@@ -1,0 +1,11 @@
+{
+  "eeg.h5": {
+    "data_format": "int16", 
+    "n_samples": 3000,
+    "name": "eeg.h5",
+    "sample_rate": 1000, 
+    "source_file": "eeg_timeseries.h5", 
+    "start_time_ms": 1509726997321, 
+    "start_time_str": "03Nov17_1636"
+  }
+}

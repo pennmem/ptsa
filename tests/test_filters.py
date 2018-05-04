@@ -243,16 +243,16 @@ class TestFilters(unittest.TestCase):
 
         assert_array_equal(bp_session_eegs_chopped, bp_base_eegs)
 
+    @pytest.mark.xfail
     def test_wavelets_with_event_data_chopper(self):
         wf_session = MorletWaveletFilter(
             timeseries=self.session_eegs[:, :, :int(self.session_eegs.shape[2] / 4)],
             freqs=np.logspace(np.log10(3), np.log10(180), 8),
             output='power',
-            frequency_dim_pos=0,
             verbose=True
         )
 
-        pow_wavelet_session, phase_wavelet_session = wf_session.filter()
+        pow_wavelet_session = wf_session.filter()['power']
 
         sedc = DataChopper(events=self.base_events, session_data=pow_wavelet_session, start_time=self.start_time,
                            end_time=self.end_time, buffer_time=self.buffer_time)
@@ -264,11 +264,10 @@ class TestFilters(unittest.TestCase):
         wf = MorletWaveletFilter(timeseries=self.base_eegs,
                                  freqs=np.logspace(np.log10(3), np.log10(180), 8),
                                  output='power',
-                                 frequency_dim_pos=0,
                                  verbose=True
                                  )
 
-        pow_wavelet, phase_wavelet = wf.filter()
+        pow_wavelet = wf.filter()['power']
 
         pow_wavelet = pow_wavelet[:, :, :, 500:-500]
 
@@ -332,14 +331,43 @@ class TestFiltersExecute:
         assert len(new_ts) == 50
         assert new_ts.samplerate == 50.
 
+    def test_DataChopper(self):
+        time_series = timeseries.TimeSeries(data=self.time_series.values[None,:],
+                                            dims=('start_offsets', 'time'),
+                                            coords = {'time':self.time_series['time'].values,
+                                                      'samplerate':1000,
+                                                      'start_offsets':[0],
+                                                      'offsets':('time',range(1000))
+                                                      })
+
+        offsets = np.arange(0,900,100,dtype=int)
 
 
+        end_time = 0.09
+        chopper = DataChopper(time_series,end_time=end_time,
+                              start_offsets=offsets)
+        new_timeseries = chopper.filter()
+        assert len(new_timeseries['start_offsets']) == len(offsets)
+        assert len(new_timeseries['time']) == end_time*new_timeseries.samplerate
 
+    def test_MonopolarToBipolarMapper(self):
+        ts = np.array([self.time_series.values,self.time_series.values])
+        time_series = timeseries.TimeSeries(data=ts,
+                                            coords = {
+                                                'channels':[b'0',b'1'],
+                                                'time':self.time_series.time.values,
+                                                'samplerate':1000,
+                                            },
+                                            dims= ('channels','time'))
+        pairs = np.array([('0','1')],dtype=[('ch0','S1'),('ch1','S1')])
+        new_timeseries = MonopolarToBipolarMapper(time_series=time_series,
+                                                  bipolar_pairs=pairs).filter()
+        assert np.array_equal(new_timeseries,np.zeros(new_timeseries.shape))
 
 
 class TestFilterShapes:
     """
-    Filter behavior should not depend on shape of input array
+    Spectral filter behavior should not depend on shape of input array
     """
     @classmethod
     def setup_class(self):
@@ -354,16 +382,19 @@ class TestFilterShapes:
                                                 },
                                                 dims=('offsets','time'))
 
-    def test_MorletWaveletFilterCpp(self):
-        results0 = MorletWaveletFilter(self.timeseries,freqs=self.freqs,
-                                    width=4,output='both').filter()
+    def test_morlet(self):
+        out0 = MorletWaveletFilter(self.timeseries,freqs=self.freqs,
+                                        width=4,output='both').filter()
+        pow0,phase0 = [out0[k] for k in ('power','phase')]
 
-        results1 = MorletWaveletFilter(self.timeseries.transpose(),
+        out1 = MorletWaveletFilter(self.timeseries.transpose(),
                                            freqs=self.freqs,
                                            width=4,output='both').filter()
 
-        xr.testing.assert_allclose(results0['power'],results1['power'])
-        xr.testing.assert_allclose(results0['phase'],results1['phase'])
+        pow1,phase1 = [out1[k] for k in ('power','phase')]
+
+        xr.testing.assert_allclose(pow0,pow1.transpose(*pow0.dims))
+        xr.testing.assert_allclose(phase0,phase1.transpose(*phase0.dims))
 
     def test_ButterworthFilter(self):
         filtered0 = ButterworthFilter(self.timeseries,self.freqs.tolist()).filter()
@@ -371,7 +402,3 @@ class TestFilterShapes:
 
         xr.testing.assert_allclose(filtered0,filtered1.transpose(*filtered0.dims))
 
-
-if __name__ == '__main__':
-    TestFilterShapes.setup_class()
-    TestFilterShapes().test_MorletWaveletFilterCpp()
