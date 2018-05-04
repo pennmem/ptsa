@@ -76,11 +76,13 @@ class H5RawReader(BaseRawReader):
                         ),
                         dtype=[('ch0', int), ('ch1', int)])
 
-                    self.channel_name = 'bipolar_pairs'
+                    is_bipolar = True
+                else:
+                    is_bipolar = False
             except KeyError:
-                pass
+                is_bipolar = False
 
-            channels_ = channels_ if self.channel_name == 'channels' else self.channel_labels.ch0
+            channels_ = channels_ if not is_bipolar else self.channel_labels.ch0
             event_data, read_ok_mask = self.read_h5file(eegfile, channels_,
                                                         start_offsets, read_size)
             if self.read_size == -1:
