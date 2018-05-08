@@ -327,9 +327,9 @@ class TestFiltersExecute:
         result = mwf.filter()
 
         if 'power' in mwf.output:
-            assert result['power'].shape == (3, 1000)
+            assert result.data.shape == (3, 1000)
         if 'phase' in mwf.output:
-            assert result['phase'].shape == (3, 1000)
+            assert result.data.shape == (3, 1000)
 
     def test_resample(self):
         rf = ResampleFilter(timeseries=self.timeseries, resamplerate=50.)
