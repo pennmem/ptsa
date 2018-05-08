@@ -315,17 +315,21 @@ class TestFiltersExecute:
         bfilter.filter()
 
     @pytest.mark.morlet
-    @pytest.mark.parametrize('output_type', ['power', 'phase', 'both'])
+    @pytest.mark.parametrize('output_type', [
+        'power',
+        'phase',
+        ['power', 'phase'],
+    ])
     def test_morlet(self, output_type):
         mwf = MorletWaveletFilter(timeseries=self.timeseries,
                                   freqs=np.array([10., 20., 40.]),
                                   width=4, output=output_type)
-        output = mwf.filter()
+        result = mwf.filter()
 
-        if output_type in ['power', 'both']:
-            assert output['power'].shape == (3, 1000)
-        if output_type in ['phase', 'both']:
-            assert output['phase'].shape == (3, 1000)
+        if 'power' in mwf.output:
+            assert result['power'].shape == (3, 1000)
+        if 'phase' in mwf.output:
+            assert result['phase'].shape == (3, 1000)
 
     def test_resample(self):
         rf = ResampleFilter(timeseries=self.timeseries, resamplerate=50.)
@@ -340,7 +344,7 @@ class TestFilterShapes:
     def setup_class(self):
         self.times = times = np.linspace(0,1,1000)
         self.data = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
-        self.freqs=  np.array([10,20],dtype=float)
+        self.freqs = np.array([10,20],dtype=float)
         self.timeseries = timeseries.TimeSeries(data=self.data[None,:],
                                                 coords={
                                                     'offsets': [0],
