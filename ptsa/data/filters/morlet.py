@@ -39,7 +39,6 @@ class MorletWaveletFilter(BaseFilter):
     """
     freqs = traits.api.CArray
     width = traits.api.Int
-    output = traits.api.Str
     verbose = traits.api.Bool
     cpus = traits.api.Int
 
