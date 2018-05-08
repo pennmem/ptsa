@@ -47,15 +47,13 @@ class ResampleFilter(BaseFilter):
         """
         samplerate = float(self.timeseries['samplerate'])
 
-        time_axis_length = np.squeeze(self.timeseries.coords['time'].shape)
-        new_length = int(np.round(time_axis_length*self.resamplerate/samplerate))
-
-        print(new_length)
-
         if self.time_axis_index<0:
             self.time_axis_index = self.timeseries.get_axis_num('time')
 
         time_axis = self.timeseries.coords[ self.timeseries.dims[self.time_axis_index] ]
+
+        time_axis_length = len(time_axis)
+        new_length = int(np.round(time_axis_length*self.resamplerate/samplerate))
 
         try:
             time_axis_data = time_axis.data['time'] # time axis can be recarray with one of the arrays being time
