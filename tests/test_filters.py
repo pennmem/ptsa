@@ -308,6 +308,15 @@ def time_series():
 @pytest.mark.filters
 class TestFiltersExecute:
     @classmethod
+    def setup_class(cls):
+        times = np.linspace(0, 1, 1000)
+        ts = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
+        cls.timeseries = timeseries.TimeSeries(data=ts, dims=('time'),
+                                                coords={
+                                                    'time': times,
+                                                    'samplerate': 1000
+                                                })
+
 
     def test_butterworth(self,time_series):
         bfilter = ButterworthFilter(timeseries=time_series,
