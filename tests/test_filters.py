@@ -27,12 +27,12 @@ def test_monopolar_to_bipolar_filter_norhino():
     ts = timeseries.TimeSeries.create(
         data, rate, coords=coords,
         dims=dims, name="test", attrs={'test_attr': 1})
-    
+
     bipolar_pairs1 = np.array([range(9), range(1,10)])
     m2b1 = MonopolarToBipolarMapper(timeseries=ts,
                                     bipolar_pairs=bipolar_pairs1)
     ts_m2b1 = m2b1.filter()
-    
+
     bipolar_pairs2 = np.array([(i, j) for i, j in zip(range(9), range(1,10))],
                               dtype=[('ch0', '<i8'), ('ch1', '<i8')])
     m2b2 = MonopolarToBipolarMapper(timeseries=ts,
@@ -60,7 +60,7 @@ def test_monopolar_to_bipolar_filter_norhino():
                               ts.sel(channels=range(1,10)).values))
     assert np.all(ts_m2b2 == (ts.sel(channels=range(9)).values -
                               ts.sel(channels=range(1,10)).values))
-    
+
     dims2 = ('time', 'electrodes', 'events')
     coords2 = {'time': np.linspace(0, 1, 20),
               'electrodes': range(10),
@@ -108,7 +108,7 @@ def test_monopolar_to_bipolar_filter_norhino():
     assert np.all(ts_m2b4['electrodes'] == bipolar_pairs2)
     assert np.all(ts_m2b4 == (ts.sel(channels=range(9)).values -
                               ts.sel(channels=range(1,10)).values))
-    
+
     bipolar_pairs3 = np.array([(i, j) for i, j in zip(range(9), range(1,10))],
                               dtype=[('channel0', '<i8'), ('channel1', '<i8')])
     m2b5 = MonopolarToBipolarMapper(timeseries=ts2, channels_dim='electrodes',
@@ -314,6 +314,7 @@ class TestFiltersExecute:
                                     order=2)
         bfilter.filter()
 
+    @pytest.mark.morlet
     @pytest.mark.parametrize('output_type', ['power', 'phase', 'both'])
     def test_morlet(self, output_type):
         mwf = MorletWaveletFilter(timeseries=self.timeseries,
@@ -333,43 +334,37 @@ class TestFiltersExecute:
         assert new_ts.samplerate == 50.
 
 
-
-
-
-
 class TestFilterShapes:
-    """
-    Filter behavior should not depend on shape of input array
-    """
+    """Filter behavior should not depend on shape of input array."""
     @classmethod
     def setup_class(self):
         self.times = times = np.linspace(0,1,1000)
         self.data = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
         self.freqs=  np.array([10,20],dtype=float)
         self.timeseries = timeseries.TimeSeries(data=self.data[None,:],
-                                                coords = {
-                                                    'offsets':[0],
-                                                    'time':self.times,
-                                                    'samplerate':1000
+                                                coords={
+                                                    'offsets': [0],
+                                                    'time': self.times,
+                                                    'samplerate': 1000
                                                 },
-                                                dims=('offsets','time'))
+                                                dims=('offsets', 'time'))
 
     def test_MorletWaveletFilterCpp(self):
-        results0 = MorletWaveletFilter(self.timeseries,freqs=self.freqs,
-                                    width=4,output='both').filter()
+        results0 = MorletWaveletFilter(self.timeseries, freqs=self.freqs,
+                                       width=4, output='both').filter()
 
         results1 = MorletWaveletFilter(self.timeseries.transpose(),
-                                           freqs=self.freqs,
-                                           width=4,output='both').filter()
+                                       freqs=self.freqs,
+                                       width=4, output='both').filter()
 
-        xr.testing.assert_allclose(results0['power'],results1['power'])
-        xr.testing.assert_allclose(results0['phase'],results1['phase'])
+        xr.testing.assert_allclose(results0['power'], results1['power'])
+        xr.testing.assert_allclose(results0['phase'], results1['phase'])
 
     def test_ButterworthFilter(self):
-        filtered0 = ButterworthFilter(self.timeseries,self.freqs.tolist()).filter()
-        filtered1 = ButterworthFilter(self.timeseries.transpose(),self.freqs.tolist()).filter()
+        filtered0 = ButterworthFilter(self.timeseries, self.freqs.tolist()).filter()
+        filtered1 = ButterworthFilter(self.timeseries.transpose(), self.freqs.tolist()).filter()
 
-        xr.testing.assert_allclose(filtered0,filtered1.transpose(*filtered0.dims))
+        xr.testing.assert_allclose(filtered0, filtered1.transpose(*filtered0.dims))
 
 
 if __name__ == '__main__':

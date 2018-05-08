@@ -167,9 +167,12 @@ class MorletWaveletFilter(BaseFilter):
         if self.verbose:
             print('CPP total time wavelet loop: ', time.time() - s)
 
-        # TODO: return a single TimeSeries
-        return {
-            'power': powers_ts,
-            'phase': phases_ts,
-            'complex': wavelet_complex_ts
-        }
+        if wavelet_complex_ts is not None:
+            return wavelet_complex_ts
+        else:
+            if powers_ts is None:
+                return phases_ts
+            elif phases_ts is None:
+                return powers_ts
+            else:
+                return powers_ts.append(phases_ts)
