@@ -36,6 +36,7 @@ class MorletWaveletFilter(BaseFilter):
     cpus : int
         Number of threads to use when computing the transform (default: 1).
 
+
     """
     freqs = traits.api.CArray
     width = traits.api.Int
@@ -178,4 +179,5 @@ class MorletWaveletFilter(BaseFilter):
             elif phases_ts is None:
                 return powers_ts
             else:
-                return powers_ts.append(phases_ts, dim='frequency')
+                return powers_ts.append(phases_ts, dim='output').assign_coords(
+                    output=['power','phase'])

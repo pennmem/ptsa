@@ -203,12 +203,12 @@ class TestFilters(unittest.TestCase):
         session_reader = EEGReader(session_dataroot=dataroot, channels=self.monopolar_channels)
         session_eegs = session_reader.read()
 
-        sedc = DataChopper(events=self.base_events, session_data=session_eegs,
+        sedc = DataChopper(events=self.base_events, timeseries=session_eegs,
                            start_time=self.start_time, end_time=self.end_time, buffer_time=self.buffer_time)
         chopped_session = sedc.filter()
         assert_array_equal(chopped_session, self.base_eegs)
 
-        sedc = DataChopper(start_offsets=self.base_events.eegoffset, session_data=session_eegs,
+        sedc = DataChopper(start_offsets=self.base_events.eegoffset, timeseries=session_eegs,
                            start_time=self.start_time, end_time=self.end_time, buffer_time=self.buffer_time)
         chopped_session = sedc.filter()
         assert_array_equal(chopped_session, self.base_eegs)
@@ -217,7 +217,7 @@ class TestFilters(unittest.TestCase):
         m2b = MonopolarToBipolarMapper(timeseries=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
         bp_base_eegs = m2b.filter()
 
-        bipolar_pairs = bp_base_eegs['bipolar_pairs'].data
+        bipolar_pairs = bp_base_eegs['channels'].data
         for i, bp in enumerate(bipolar_pairs):
             e0 = self.base_eegs.sel(channels=bp[0])
             e1 = self.base_eegs.sel(channels=bp[1])
@@ -233,7 +233,7 @@ class TestFilters(unittest.TestCase):
         m2b = MonopolarToBipolarMapper(timeseries=session_eegs, bipolar_pairs=self.bipolar_pairs)
         bp_session_eegs = m2b.filter()
 
-        sedc = DataChopper(events=self.base_events, session_data=bp_session_eegs, start_time=self.start_time,
+        sedc = DataChopper(events=self.base_events, timeseries=bp_session_eegs, start_time=self.start_time,
                            end_time=self.end_time, buffer_time=self.buffer_time)
 
         bp_session_eegs_chopped = sedc.filter()
@@ -248,13 +248,12 @@ class TestFilters(unittest.TestCase):
             timeseries=self.session_eegs[:, :, :int(self.session_eegs.shape[2] / 4)],
             freqs=np.logspace(np.log10(3), np.log10(180), 8),
             output='power',
-            frequency_dim_pos=0,
             verbose=True
         )
 
-        pow_wavelet_session, phase_wavelet_session = wf_session.filter()
+        pow_wavelet_session = wf_session.filter()
 
-        sedc = DataChopper(events=self.base_events, session_data=pow_wavelet_session, start_time=self.start_time,
+        sedc = DataChopper(events=self.base_events, timeseries=pow_wavelet_session, start_time=self.start_time,
                            end_time=self.end_time, buffer_time=self.buffer_time)
         chopped_session_pow_wavelet = sedc.filter()
 
@@ -264,11 +263,10 @@ class TestFilters(unittest.TestCase):
         wf = MorletWaveletFilter(timeseries=self.base_eegs,
                                  freqs=np.logspace(np.log10(3), np.log10(180), 8),
                                  output='power',
-                                 frequency_dim_pos=0,
                                  verbose=True
                                  )
 
-        pow_wavelet, phase_wavelet = wf.filter()
+        pow_wavelet = wf.filter()
 
         pow_wavelet = pow_wavelet[:, :, :, 500:-500]
 
@@ -358,14 +356,17 @@ class TestFilterShapes:
 
     def test_MorletWaveletFilterCpp(self):
         results0 = MorletWaveletFilter(self.timeseries, freqs=self.freqs,
-                                       width=4, output='both').filter()
+                                       width=4, output=['power','phase']).filter()
 
         results1 = MorletWaveletFilter(self.timeseries.transpose(),
                                        freqs=self.freqs,
-                                       width=4, output='both').filter()
+                                       width=4, output=['power','phase']).filter()
+        print(results0)
 
-        xr.testing.assert_allclose(results0['power'], results1['power'])
-        xr.testing.assert_allclose(results0['phase'], results1['phase'])
+        xr.testing.assert_allclose(results0.sel(output='power'),
+                                   results1.sel(output='power'))
+        xr.testing.assert_allclose(results0.sel(output='phase'),
+                                   results1.sel(output='phase'))
 
     def test_ButterworthFilter(self):
         filtered0 = ButterworthFilter(self.timeseries, self.freqs.tolist()).filter()
