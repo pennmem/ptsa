@@ -44,19 +44,19 @@ class MorletWaveletFilter(BaseFilter):
     cpus = traits.api.Int
 
     def __init__(self, timeseries, freqs, width=5,
-                 output=['power', 'phase'], verbose=True, cpus=1):
+                 output=('power', 'phase'), verbose=True, cpus=1):
         super(MorletWaveletFilter, self).__init__(timeseries)
         self.freqs = freqs
         self.width = width
 
-        output_opts = ['power', 'phase', 'complex']
+        output_opts = ('power', 'phase', 'complex')
 
         if isinstance(output, str):
             output = [output]
 
         for el in output:
             if el not in output_opts:
-                raise RuntimeError("output must be one of %r" % output_opts)
+                raise RuntimeError("invalid output option: {}".format(el))
 
         self.output = output
 
@@ -139,7 +139,7 @@ class MorletWaveletFilter(BaseFilter):
 
         if powers_final is not None:
             powers_ts = TimeSeries(powers_final,
-                                   dims=self.nontime_dims + ('frequency', 'time',),
+                                   dims=self.nontime_dims + ('frequency', 'time'),
                                    coords=coords)
             final_dims = (powers_ts.dims[-2],) + powers_ts.dims[:-2] + (powers_ts.dims[-1],)
 
@@ -147,7 +147,7 @@ class MorletWaveletFilter(BaseFilter):
 
         if phases_final is not None:
             phases_ts = TimeSeries(phases_final,
-                                   dims=self.nontime_dims + ('frequency','time'),
+                                   dims=self.nontime_dims + ('frequency', 'time'),
                                    coords=coords)
 
             final_dims = (phases_ts.dims[-2],) + phases_ts.dims[:-2] + (phases_ts.dims[-1],)

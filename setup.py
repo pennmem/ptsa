@@ -234,7 +234,7 @@ def make_pybind_extension(module, **kwargs):
     ----------
     module : str
         Name of the extension module to produce.
-    kwargs : dict
+    kwargs
         Keyword arguments to pass to the constructor of :class:`Extension`.
 
     Returns
