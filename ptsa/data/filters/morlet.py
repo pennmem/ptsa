@@ -57,6 +57,10 @@ class MorletWaveletFilter(BaseFilter):
             if el not in output_opts:
                 raise RuntimeError("invalid output option: {}".format(el))
 
+        # TODO: update extension module to allow for this scenario
+        if 'complex' in output and len(output) > 1:
+            raise RuntimeError("complex output requires not also requesting power/phase")
+
         self.output = output
 
         self.verbose = verbose
@@ -102,7 +106,7 @@ class MorletWaveletFilter(BaseFilter):
         if 'power' in self.output and 'phase' in self.output:
             mt.set_output_type(morlet.BOTH)
 
-        # FIXME: update to allow outputing complex as well as power/phase
+        # TODO: update to allow outputing complex as well as power/phase
         if self.output == ['complex']:
             mt.set_output_type(morlet.COMPLEX)
 
