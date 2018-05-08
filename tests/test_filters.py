@@ -1,4 +1,3 @@
-import os
 import unittest
 import os.path as osp
 import pytest
@@ -224,6 +223,7 @@ class TestFilters(unittest.TestCase):
             # res = e0.__sub__(e1)
             assert_array_equal(e0 - e1, bp_base_eegs[i])
 
+    @pytest.mark.slow
     def test_monopolar_to_bipolar_filter_and_data_chopper(self):
         dataroot = self.base_events[0].eegfile
 
@@ -243,6 +243,8 @@ class TestFilters(unittest.TestCase):
 
         assert_array_equal(bp_session_eegs_chopped, bp_base_eegs)
 
+    @pytest.mark.slow
+    @pytest.mark.xfail
     def test_wavelets_with_event_data_chopper(self):
         wf_session = MorletWaveletFilter(
             timeseries=self.session_eegs[:, :, :int(self.session_eegs.shape[2] / 4)],
@@ -250,6 +252,7 @@ class TestFilters(unittest.TestCase):
             output='power',
             verbose=True
         )
+
 
         pow_wavelet_session = wf_session.filter()
 
@@ -276,7 +279,6 @@ class TestFilters(unittest.TestCase):
             decimal=5
         )
 
-    @pytest.mark.slow
     def test_ButterwothFilter(self):
 
         from xarray.testing import assert_equal
@@ -293,20 +295,22 @@ class TestFilters(unittest.TestCase):
             assert_equal(base_eegs_filtered_1, self.base_eegs)
 
 
+@pytest.fixture
+def time_series():
+    times = np.linspace(0, 1, 1000)
+    ts = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
+    return timeseries.TimeSeries(data=ts, dims=('time'),
+                                            coords={
+                                                'time': times,
+                                                'samplerate': 1000
+                                            })
+
 @pytest.mark.filters
 class TestFiltersExecute:
     @classmethod
-    def setup_class(cls):
-        times = np.linspace(0, 1, 1000)
-        ts = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
-        cls.timeseries = timeseries.TimeSeries(data=ts, dims=('time'),
-                                                coords={
-                                                    'time': times,
-                                                    'samplerate': 1000
-                                                })
 
-    def test_butterworth(self):
-        bfilter = ButterworthFilter(timeseries=self.timeseries,
+    def test_butterworth(self,time_series):
+        bfilter = ButterworthFilter(timeseries=time_series,
                                     freq_range=[10., 20.],
                                     filt_type='stop',
                                     order=2)
@@ -332,12 +336,11 @@ class TestFiltersExecute:
         else:
             assert result.data.shape == (2,3,1000)
 
-    def test_resample(self):
-        rf = ResampleFilter(timeseries=self.timeseries, resamplerate=50.)
+    def test_resample(self,time_series):
+        rf = ResampleFilter(timeseries=time_series, resamplerate=50.)
         new_ts = rf.filter()
         assert len(new_ts) == 50
         assert new_ts.samplerate == 50.
-
 
 class TestFilterShapes:
     """Filter behavior should not depend on shape of input array."""

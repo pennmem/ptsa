@@ -109,7 +109,6 @@ class TestH5Reader:
         )
         reader = H5RawReader(dataroot=dataroot, channels=np.array(['{:03d}'.format(i).encode() for i in range(1, 10)]))
         reader.read()
-        assert reader.channel_name == 'bipolar_pairs'
 
     def test_with_events(self):
         dataroot = self.task_events_template.format(
@@ -132,7 +131,7 @@ class TestH5Reader:
         events = CMLEventReader(filename=dataroot).read()[:20]
         eeg = EEGReader(events=events, channels=np.array([]),
                         start_time=0.0, end_time=0.5).read()
-        assert len(eeg.bipolar_pairs) > 0
+        assert len(eeg['channels']) > 0
 
     def test_h5reader_full_session(self):
         dataroot = self.dataroot_template.format(
