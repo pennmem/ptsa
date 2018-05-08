@@ -178,4 +178,4 @@ class MorletWaveletFilter(BaseFilter):
             elif phases_ts is None:
                 return powers_ts
             else:
-                return powers_ts.append(phases_ts)
+                return powers_ts.append(phases_ts, dim='frequency')
