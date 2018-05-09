@@ -74,11 +74,13 @@ To run the PTSA test suite locally, first set up a testing environment:
     conda env create -f environment.yml
     source activate ptsa
 
-and then run the test suite:
+and then build build the extension modules and run the  test suite:
 
 .. code-block:: shell-session
 
-   ./run_tests
+    python setup.py develop
+    pytest tests/
+
 
 
 Building conda packages
