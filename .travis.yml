@@ -40,7 +40,7 @@ addons:
       - libfftw3-dev
 
 script:
-  - python setup.py install
+  - python setup.py develop
   - cd tests
   - python run.py
 
