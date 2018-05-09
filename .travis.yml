@@ -40,9 +40,9 @@ addons:
       - libfftw3-dev
 
 script:
-  - python setup.py develop
+  - python setup.py install
   - cd tests
   - python run.py
 
-after_success:
+after_success:  
   - codecov
