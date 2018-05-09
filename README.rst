@@ -67,7 +67,14 @@ Install PTSA:
 
 Running Tests
 -------------
-To run the PTSA test suite locally:
+To run the PTSA test suite locally, first set up a testing environment:
+
+.. code-block:: shell-session
+
+    conda env create -f environment.yml
+    source activate ptsa
+
+and then run the test suite:
 
 .. code-block:: shell-session
 
