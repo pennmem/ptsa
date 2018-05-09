@@ -65,6 +65,15 @@ Install PTSA:
    python setup.py install
 
 
+Running Tests
+-------------
+To run the PTSA test suite locally:
+
+.. code-block:: shell-session
+
+   ./run_tests
+
+
 Building conda packages
 -----------------------
 
