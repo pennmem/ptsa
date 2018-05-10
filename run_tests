@@ -1,4 +1,3 @@
 python setup.py develop
-cd tests
-python run.py "$@"
+pytest tests/ --import-mode prepend "$@"
 

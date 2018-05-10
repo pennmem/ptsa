@@ -79,7 +79,10 @@ and then build build the extension modules and run the  test suite:
 .. code-block:: shell-session
 
     python setup.py develop
-    pytest tests/
+    pytest tests/ --import-mode=prepend
+
+The shell script `run_tests` will also run the test suite,
+ assuming the environment is configured.
 
 
 
