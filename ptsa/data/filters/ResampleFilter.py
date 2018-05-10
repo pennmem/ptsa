@@ -21,7 +21,11 @@ class ResampleFilter(BaseFilter):
         should be reused after proper rounding. Defaults to False
 
     .. versionchanged:: 2.0
-    Parameter "time_series" was renamed to "timeseries".
+
+       Parameter "time_series" was renamed to "timeseries".
+       Parameter "time_axis_index" was removed; the time axis is assumed to be named
+       "time"
+
 """
 
     resamplerate = traits.api.CFloat
