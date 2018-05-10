@@ -14,13 +14,10 @@ represents N-D arrays. Because ``TimeSeries`` is a subclass of
 :class:`xarray.DataArray` in addition to new functions it defines, used
 specifically in EEG data analysis.
 
-Besides ``TimeSeries``, PTSA has 3 main categories of objects: readers, writers,
-filters. Readers read various data formats (e.g eeg files, bipolar electrodes
-files etc..) to make input operations as smooth as possible. Writers (still
-under development) will output data in several formats. Filters take as an input
-``TimeSeries`` object and output different ``TimeSeries`` object. Most of the
-tasks related to EEG analysis will rely on using those 3 categories of PTSA
-objects.
+Besides ``TimeSeries``, PTSA has 2 main categories of objects: readers and
+filters. Readers read various data formats (EEG files, event files, etc.) to
+make input operations as smooth as possible. Filters take a ``TimeSeries``
+object as an input and output a modified ``TimeSeries`` object.
 
 If you'd like to learn Python via series of statistics tutorials look no further than
 `introduction to computational statistics in Python <http://people.duke.edu/~ccc14/sta-663-2016/>`__
