@@ -47,11 +47,9 @@ ptsa.extensions.circular_stat
     when partitioned into two classes, and stores the results in fstat.
 
     :param phase_diffs: A matrix of phase differences
-    :param classes: A boolean vector indicating which observation belongs in which class.
-    Should be the same length as the first dimension of ``phase_diffs``
+    :param classes: A boolean vector indicating which observation belongs in which class Should be the same length as the first dimension of ``phase_diffs``
 
     :param f_stat: An empty vector the same length as the second dimension of ``phase_diffs``
-
 
 .. function:: compute_z_scores(m, n_perms)
 
@@ -60,7 +58,6 @@ ptsa.extensions.circular_stat
 
 .. function:: single_trial_ppc_all_features(wavelets, theta_avg_recalls,\
     theta_avg_non_recalls, outsample_features,n_freqs, n_bps, n_threads)
-
 
 
 ptsa.extensions.morlet
@@ -80,6 +77,7 @@ This module uses the following wavelet for frequency :math:`f` and Gaussian widt
 where
 
 .. math::
+
     \sigma = \frac{w}{2\pi f}
 
 The Gaussian envelope is only computed to a width of :math:`3.5\sigma`
@@ -89,6 +87,7 @@ The convolution of a signal :math:`\Psi` with a wavelet :math:`\Phi`
 is computed using the identity
 
 .. math::
+
     \Psi * \Phi = N^{-1} \big(\widehat{\hat{\Psi} \cdot \hat \Phi }\big)
 
 where :math:`N` is the number of samples in the the signal :math:`\Psi`,
@@ -111,10 +110,10 @@ in order to take advantage of the speed provided by the FFTW library.
 
 .. seealso::
 
-    :py:mod:`ptsa.data.filters.MorletWaveletFilterCpp`
+    :mod:`ptsa.data.filters.MorletWaveletFilterCpp`
 
 
-.. py:class:: MorletWaveletTransform
+.. :class:: MorletWaveletTransform
 
     Implementation of the Morlet wavelet transform. Should be constructed
     using either `freqs` or using `low_freq` and `high_freq`,
@@ -141,10 +140,10 @@ ptsa.extensions.edf
 -------------------
 File-like wrapper around parts of EDFlib_ to provide an interface
 for reading the EDF+ family of EEG formats.
-:py:mod:`ptsa.data.readers.EDFRawReader` provides a
+:mod:`ptsa.data.readers.EDFRawReader` provides a
 slightly higher-level interface for doing the same thing.
 
-.. py:class:: ChannelInfo
+.. class:: ChannelInfo
 
     Channel data including label, number of samples, etc. These objects are
     returned by :meth:`EDFFile.get_channel_info`, and have the following
@@ -161,35 +160,29 @@ slightly higher-level interface for doing the same thing.
     :ivar str prefilter: Type of prefiltering performed on signal
     :ivar str transducer: Transducer type (e.g. 'AgAgCl electrode')
 
-.. py:class:: EDFFile
+.. class:: EDFFile
 
     Reads the EDF family of files.
 
-    Notes
-    -----
     This class utilizes EDFlib_ to read EDF/BDF/EDF+/BDF+ files.
-
-    Parameters
-    ----------
-    filename : str
-        Path to EDF file.
-
 
     .. _EDFlib: https://www.teuniz.net/edflib/
 
+    .. method:: __init__(filename)
 
-    .. py:method:: get_channel_info(channel)
+        :param str filename:
+
+    .. method:: get_channel_info(channel)
 
         Return the information on a given channel
 
         :param channel: int
 
-    .. py:method:: get_channel_numbers(channel_names)
+    .. method:: get_channel_numbers(channel_names)
 
-    .. py:method:: get_samplerate(channel)
+    .. method:: get_samplerate(channel)
 
-    .. py:method:: read_samples(channels,samples,offset)
+    .. method:: read_samples(channels,samples,offset)
 
         Read samples from a list of channels. Channels
         can be specified by either a list of numbers or a list of labels.
-

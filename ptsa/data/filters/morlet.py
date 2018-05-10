@@ -29,7 +29,7 @@ class MorletWaveletFilter(BaseFilter):
         Print out the wavelet parameters
     cpus : int
         Number of threads to use when computing the transform (default: 1).
-    
+
     .. versionchanged:: 2.0
     Parameter "time_series" was renamed to "timeseries".
     """
