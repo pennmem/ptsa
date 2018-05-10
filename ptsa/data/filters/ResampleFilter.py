@@ -16,8 +16,6 @@ class ResampleFilter(BaseFilter):
         TimeSeries object
     resamplerate: float
         new sampling frequency
-    time_axis_index: int
-        index of the time axis
     round_to_original_timepoints: bool
         Flag indicating if timepoints from original time axis
         should be reused after proper rounding. Defaults to False
@@ -27,13 +25,11 @@ class ResampleFilter(BaseFilter):
 """
 
     resamplerate = traits.api.CFloat
-    time_axis_index = traits.api.Int
     round_to_original_timepoints = traits.api.Bool
 
-    def __init__(self,timeseries, resamplerate, time_axis_index=-1, round_to_original_timepoints=False):
+    def __init__(self,timeseries, resamplerate, round_to_original_timepoints=False):
         super(ResampleFilter, self).__init__(timeseries=timeseries)
         self.resamplerate = resamplerate
-        self.time_axis_index = time_axis_index
         self.round_to_original_timepoints = round_to_original_timepoints
 
     def filter(self):
@@ -47,8 +43,7 @@ class ResampleFilter(BaseFilter):
         """
         samplerate = float(self.timeseries['samplerate'])
 
-        if self.time_axis_index<0:
-            self.time_axis_index = self.timeseries.get_axis_num('time')
+        self.time_axis_index = self.timeseries.get_axis_num('time')
 
         time_axis = self.timeseries.coords[ self.timeseries.dims[self.time_axis_index] ]
 
