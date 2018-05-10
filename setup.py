@@ -2,15 +2,12 @@ from contextlib import contextmanager
 import distutils
 import os
 import os.path as osp
-from setuptools import setup, Extension, Command, find_packages
+from setuptools import setup, Extension, find_packages
 from setuptools.command.build_py import build_py
 from setuptools.command.install import install
 from setuptools.command.develop import develop
-import shutil
 import site
-from subprocess import check_call
 import sys
-from zipfile import ZipFile
 
 import numpy as np
 
@@ -19,8 +16,6 @@ build_subdir = 'build'
 morlet_dir = osp.join(root_dir, 'ptsa', 'extensions', 'morlet')
 extensions_dir = osp.join(root_dir, 'ptsa', 'extensions')
 circ_stat_dir = osp.join(root_dir, 'ptsa', 'extensions', 'circular_stat')
-third_party_build_dir = osp.join(root_dir, build_subdir, 'third_party_build')
-third_party_install_dir = osp.join(root_dir, build_subdir, 'third_party_install')
 
 for path in site.getsitepackages():
     if path.endswith("site-packages"):
@@ -72,19 +67,7 @@ def get_include_dirs():
         osp.join(extensions_dir, 'ThreadPool'),
     ]
 
-    if sys.platform.startswith("win"):
-        dirs += [third_party_install_dir]
-    else:
-        dirs += [osp.join(third_party_install_dir, 'include')]
     return dirs
-
-
-def get_lib_dirs():
-    """Return extra library directories for building extensions."""
-    if sys.platform.startswith('win'):
-        return [third_party_install_dir]
-    else:
-        return [osp.join(third_party_install_dir, 'lib')]
 
 
 def get_fftw_libs():
@@ -121,14 +104,14 @@ class CustomInstall(install):
         self.run_command("build_ext")
         install.run(self)
 
-        if sys.platform.startswith("win"):
-            # FIXME: copy DLLs in a less stupid way
-            dll_path = osp.join(third_party_install_dir, "libfftw3-3.dll")
-            ext_path = osp.join(site_packages, "ptsa", "extensions")
-            morlet_path = osp.join(ext_path, "morlet")
-            circ_stat_path = osp.join(ext_path, "circular_stat")
-            shutil.copy(dll_path, morlet_path)
-            shutil.copy(dll_path, circ_stat_path)
+        # FIXME: check if this is still necessary on windows
+        # if sys.platform.startswith("win"):
+        #     dll_path = osp.join(third_party_install_dir, "libfftw3-3.dll")
+        #     ext_path = osp.join(site_packages, "ptsa", "extensions")
+        #     morlet_path = osp.join(ext_path, "morlet")
+        #     circ_stat_path = osp.join(ext_path, "circular_stat")
+        #     shutil.copy(dll_path, morlet_path)
+        #     shutil.copy(dll_path, circ_stat_path)
 
 
 def make_pybind_extension(module, **kwargs):
@@ -186,7 +169,6 @@ ext_modules = [
                  osp.join(morlet_dir, 'morlet.i')],
         swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
-        library_dirs=get_lib_dirs(),
         extra_compile_args=get_compiler_args(),
         libraries=get_fftw_libs(),
     ),
@@ -199,7 +181,6 @@ ext_modules = [
         ],
         swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
-        library_dirs=get_lib_dirs(),
         extra_compile_args=get_compiler_args(),
         libraries=get_fftw_libs(),
     ),
