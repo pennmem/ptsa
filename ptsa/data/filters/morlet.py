@@ -36,7 +36,6 @@ class MorletWaveletFilter(BaseFilter):
     cpus : int
         Number of threads to use when computing the transform (default: 1).
 
-
     """
     freqs = traits.api.CArray
     width = traits.api.Int

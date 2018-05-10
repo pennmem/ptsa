@@ -5,6 +5,7 @@ import os.path as osp
 from setuptools import setup, Extension, Command, find_packages
 from setuptools.command.build_py import build_py
 from setuptools.command.install import install
+from setuptools.command.develop import develop
 import shutil
 import site
 from subprocess import check_call
@@ -207,6 +208,12 @@ class CustomBuild(build_py):
         self.run_command("build_ext")
         build_py.run(self)
 
+class CustomDevelop(develop):
+    def run(self):
+        self.run_command("build_fftw")
+        self.run_command("build_ext")
+        develop.run(self)
+
 
 class CustomInstall(install):
     def run(self):
@@ -326,7 +333,8 @@ setup(
     cmdclass={
         'build_fftw': BuildFftw,
         'build_py': CustomBuild,
-        'install': CustomInstall
+        'install': CustomInstall,
+        'develop': CustomDevelop,
     },
     ext_modules=ext_modules,
 

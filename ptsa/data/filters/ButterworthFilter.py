@@ -8,6 +8,7 @@ import traits.api
 
 __all__ = ['ButterworthFilter']
 
+
 class ButterworthFilter(BaseFilter):
     """Applies Butterworth filter to a time series.
 
@@ -22,12 +23,13 @@ class ButterworthFilter(BaseFilter):
        Array [min_freq, max_freq] describing the filter range
 
     .. versionchanged:: 2.0
-    Parameter "time_series" was renamed to "timeseries".
-    """
-    order=traits.api.Int
-    freq_range = traits.api.List(maxlen=2)
-    filt_type=traits.api.Str
 
+        Parameter "time_series" was renamed to "timeseries".
+
+    """
+    order = traits.api.Int
+    freq_range = traits.api.List(maxlen=2)
+    filt_type = traits.api.Str
 
     def __init__(self, timeseries,freq_range,order=4,filt_type='stop'):
         super(ButterworthFilter, self).__init__(timeseries)

@@ -42,7 +42,7 @@ addons:
 script:
   - python setup.py install
   - cd tests
-  - python run.py
+  - python run.py --import-mode=append
 
-after_success:
+after_success:  
   - codecov
