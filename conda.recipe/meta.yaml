@@ -15,7 +15,6 @@ requirements:
     - python {{ python }}
     - numpy
     - pip
-    - pytables
     - setuptools
     - scipy
     - swig
@@ -25,7 +24,6 @@ requirements:
     - python {{ python }}
     - h5py
     - numpy
-    - pytables
     - scipy
     - vs2015_runtime  [win]
     - xarray
