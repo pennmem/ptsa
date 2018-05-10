@@ -24,6 +24,7 @@ dependencies:
 - tk
 - wheel
 - xarray
+- h5py
 - xz
 - zlib
 - pip:
@@ -35,6 +36,7 @@ dependencies:
   - docutils
   - entrypoints
   - html5lib
+  - pybind11
   - imagesize
   - ipython-genutils
   - jinja2

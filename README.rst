@@ -65,6 +65,27 @@ Install PTSA:
    python setup.py install
 
 
+Running Tests
+-------------
+To run the PTSA test suite locally, first set up a testing environment:
+
+.. code-block:: shell-session
+
+    conda env create -f environment.yml
+    source activate ptsa
+
+and then build build the extension modules and run the  test suite:
+
+.. code-block:: shell-session
+
+    python setup.py develop
+    pytest tests/
+
+The shell script `run_tests` will also run the test suite,
+ assuming the environment is configured.
+
+
+
 Building conda packages
 -----------------------
 
