@@ -13,6 +13,4 @@ __ https://github.com/pennmem/ptsa_new/tree/master/docs/examples
     eeg.ipynb
     events_SPC.ipynb
     pyFR_demo.ipynb
-    TalReader_Demo.ipynb
     classifier_time_series.ipynb
-
