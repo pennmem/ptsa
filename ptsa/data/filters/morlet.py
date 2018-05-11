@@ -35,6 +35,9 @@ class MorletWaveletFilter(BaseFilter):
         Print out the wavelet parameters
     cpus : int
         Number of threads to use when computing the transform (default: 1).
+    output_dim : str
+        Name of the output dimension when returning both power and phase
+        (default: ``'output'``)
 
     """
     freqs = traits.api.CArray
@@ -43,7 +46,8 @@ class MorletWaveletFilter(BaseFilter):
     cpus = traits.api.Int
 
     def __init__(self, timeseries, freqs, width=5,
-                 output=('power', 'phase'), verbose=True, cpus=1):
+                 output=('power', 'phase'), verbose=True, cpus=1,
+                 output_dim='output'):
         super(MorletWaveletFilter, self).__init__(timeseries)
         self.freqs = freqs
         self.width = width
@@ -66,6 +70,7 @@ class MorletWaveletFilter(BaseFilter):
         self.verbose = verbose
         self.cpus = cpus
         self.window = None
+        self.output_dim = output_dim
 
         self.compute_power_and_phase_fcn = None
 
@@ -178,5 +183,5 @@ class MorletWaveletFilter(BaseFilter):
             elif phases_ts is None:
                 return powers_ts
             else:
-                return powers_ts.append(phases_ts, dim='output').assign_coords(
-                    output=['power','phase'])
+                return powers_ts.append(phases_ts, dim=self.output_dim).assign_coords(
+                    output=['power', 'phase'])
