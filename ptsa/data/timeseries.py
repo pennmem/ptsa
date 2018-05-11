@@ -323,6 +323,7 @@ class TimeSeries(xr.DataArray):
         """Append another :class:`TimeSeries` to this one.
 
         .. versionchanged:: 2.0
+
            Appending along a dimension not present will cause that
            dimension to be created.
 
@@ -349,7 +350,6 @@ class TimeSeries(xr.DataArray):
             new_self = self.expand_dims(dim).assign_coords(**{dim:[0]})
             other = other.expand_dims(dim).assign_coords(**{dim:[1]})
             return new_self.append(other,dim=dim)
-
 
         for key in self.coords:
             if len(self[key].shape) == 0:
