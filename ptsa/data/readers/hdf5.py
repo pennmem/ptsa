@@ -37,7 +37,7 @@ class H5RawReader(BaseRawReader):
         super(H5RawReader, self).__init__(**kwargs)
         with h5py.File(self.dataroot,'r') as eegfile:
             if 'samplerate' in eegfile:
-                self.params_dict['samplerate']= eegfile['samplerate'][0]
+                self.params_dict['samplerate']= eegfile['samplerate'].value
         self.channels = channels
         self.channel_labels_to_string()
 
