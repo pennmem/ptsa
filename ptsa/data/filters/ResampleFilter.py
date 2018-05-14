@@ -19,22 +19,26 @@ class ResampleFilter(BaseFilter):
     round_to_original_timepoints: bool
         Flag indicating if timepoints from original time axis
         should be reused after proper rounding. Defaults to False
+    time_axis: str
+        Name of the time axis.
 
     .. versionchanged:: 2.0
 
-       Parameter "time_series" was renamed to "timeseries".
-       Parameter "time_axis_index" was removed; the time axis is assumed to be named
-       "time"
+       Parameter "time_series" was renamed to "timeseries".  Parameter
+       "time_axis_index" was removed; the time axis is assumed to be
+       named "time"
 
-"""
+    """
 
     resamplerate = traits.api.CFloat
     round_to_original_timepoints = traits.api.Bool
 
-    def __init__(self,timeseries, resamplerate, round_to_original_timepoints=False):
+    def __init__(self, timeseries, resamplerate,
+                 round_to_original_timepoints=False, time_axis_name='time'):
         super(ResampleFilter, self).__init__(timeseries=timeseries)
         self.resamplerate = resamplerate
         self.round_to_original_timepoints = round_to_original_timepoints
+        self.time_axis_name = time_axis_name
 
     def filter(self):
         """resamples time series
@@ -47,16 +51,20 @@ class ResampleFilter(BaseFilter):
         """
         samplerate = float(self.timeseries['samplerate'])
 
-        self.time_axis_index = self.timeseries.get_axis_num('time')
+        self.time_axis_index = self.timeseries.get_axis_num(
+            self.time_axis_name)
 
-        time_axis = self.timeseries.coords[ self.timeseries.dims[self.time_axis_index] ]
+        time_axis = self.timeseries.coords[
+            self.timeseries.dims[self.time_axis_index]]
 
         time_axis_length = len(time_axis)
-        new_length = int(np.round(time_axis_length*self.resamplerate/samplerate))
+        new_length = int(np.round(
+            time_axis_length*self.resamplerate/samplerate))
 
         try:
-            time_axis_data = time_axis.data['time'] # time axis can be recarray with one of the arrays being time
-        except (KeyError ,IndexError) as excp:
+            # time axis can be recarray with one of the arrays being time
+            time_axis_data = time_axis.data[self.time_axis_name]
+        except (KeyError, IndexError) as excp:
             # if we get here then most likely time axis is ndarray of floats
             time_axis_data = time_axis.data
 
@@ -64,9 +72,9 @@ class ResampleFilter(BaseFilter):
 
 
         if self.round_to_original_timepoints:
-            filtered_array, new_time_idx_array = resample(self.timeseries.data,
-                                             new_length, t=time_idx_array,
-                                             axis=self.time_axis_index)
+            filtered_array, new_time_idx_array = resample(
+                self.timeseries.data, new_length, t=time_idx_array,
+                axis=self.time_axis_index)
 
             # print new_time_axis
 
@@ -87,5 +95,6 @@ class ResampleFilter(BaseFilter):
                 coords[dim_name]=new_time_axis
         coords['samplerate']=self.resamplerate
 
-        filtered_timeseries = TimeSeries(filtered_array, coords=coords, dims=self.timeseries.dims)
+        filtered_timeseries = TimeSeries(filtered_array, coords=coords,
+                                         dims=self.timeseries.dims)
         return filtered_timeseries
