@@ -332,8 +332,8 @@ class TimeSeries(xr.DataArray):
         other : TimeSeries
         dim : str or None
             Dimension to concatenate on. If None, attempt to concatenate all
-            data (likely to fail with truly multidimensional data). If not present,
-            a new dimension will be created with coords [0,1].
+            data using :func:`numpy.concatenate`. If not present, a new
+            dimension will be created with coords [0,1].
 
         Returns
         -------
