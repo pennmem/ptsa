@@ -12,9 +12,6 @@ Filtering
 .. automodule:: ptsa.filt
     :members:
 
-.. automodule:: ptsa.filtfilt
-    :members:
-
 Helpers
 -------
 

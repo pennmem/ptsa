@@ -1,5 +1,3 @@
-__author__ = 'm'
-
 import numpy as np
 from scipy.signal import resample
 
@@ -7,8 +5,13 @@ from ptsa.data.timeseries import TimeSeries
 from ptsa.data.filters import BaseFilter
 import traits.api
 
+
 class ResampleFilter(BaseFilter):
     """Upsample or downsample a time series to a new sample rate.
+
+    .. versionchanged:: 2.0
+
+        Parameter "time_series" was renamed to "timeseries".
 
     Keyword Arguments
     -----------------
@@ -22,9 +25,7 @@ class ResampleFilter(BaseFilter):
         Flag indicating if timepoints from original time axis
         should be reused after proper rounding. Defaults to False
 
-    .. versionchanged:: 2.0
-    Parameter "time_series" was renamed to "timeseries".
-"""
+    """
 
     resamplerate = traits.api.CFloat
     time_axis_index = traits.api.Int

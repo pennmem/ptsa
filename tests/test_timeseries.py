@@ -101,7 +101,6 @@ def test_hdf(tempdir):
     for n, dim in enumerate(dims):
         assert loaded.dims[n] == dim
     assert loaded.name == "test"
-    
 
 
 def test_filtered():
@@ -319,6 +318,7 @@ def test_concatenate():
                 'John', 'Stacy', 'Dick', 'Bernie', 'Donald', 'Hillary'])).all()
 
 
+@pytest.mark.only
 def test_append_simple():
     """Test appending without regard to dimensions."""
     points = 100
@@ -339,6 +339,11 @@ def test_append_simple():
     assert combined.dims == ts2.dims
     assert (combined.coords['time'] == np.concatenate(
         [coords1['time'], coords2['time']])).all()
+
+    # Append along a new dimension
+    combined = ts1.append(ts2, dim='notyet')
+    assert combined.shape == (2, 100)
+    assert hasattr(combined, 'notyet')
 
     # Incompatible sample rates
     ts1 = TimeSeries.create(data1, samplerate, coords=coords1, dims=dims)
@@ -401,23 +406,3 @@ def test_append_recarray():
     # incompatible other dimensions (measurement)
     with pytest.raises(ConcatenationError):
         ts1.append(ts4)
-
-# @pytest.mark.hdf5_with_struct_arrays
-# def test_hdf5_with_struct_arrays():
-#
-#     p1 = np.array([('John', 180), ('Stacy', 150), ('Dick',200)], dtype=[('name', '|U256'), ('height', int)])
-#     data = np.arange(50, 80, 1, dtype=np.float)
-#     dims = ['measurement', 'participant']
-#
-#     ts = TimeSeries.create(data.reshape(10, 3), None, dims=dims,
-#                              coords={
-#                                  'measurement': np.arange(10),
-#                                  'participant': p1,
-#                                  'samplerate': 1
-#                              })
-#
-#     print ('tempdir= ',tempfile.gettempdir())
-#     filename = osp.join(tempfile.gettempdir(), "timeseries.h5")
-#     print ('filename =',filename )
-#     ts.to_hdf(filename)
-

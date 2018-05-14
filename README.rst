@@ -84,6 +84,12 @@ and then build build the extension modules and run the  test suite:
 The shell script `run_tests` will also run the test suite,
  assuming the environment is configured.
 
+To skip tests that depend on Rhino the NO_RHINO environment variable must be set:
+
+.. code-block:: shell-session
+
+    export NO_RHINO=TRUE
+
 
 
 Building conda packages

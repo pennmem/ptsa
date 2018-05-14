@@ -322,12 +322,18 @@ class TimeSeries(xr.DataArray):
     def append(self, other, dim=None):
         """Append another :class:`TimeSeries` to this one.
 
+        .. versionchanged:: 2.0
+
+           Appending along a dimension not present will cause that
+           dimension to be created.
+
         Parameters
         ----------
         other : TimeSeries
         dim : str or None
             Dimension to concatenate on. If None, attempt to concatenate all
-            data (likely to fail with truly multidimensional data).
+            data using :func:`numpy.concatenate`. If not present, a new
+            dimension will be created with coords [0,1].
 
         Returns
         -------
@@ -339,6 +345,11 @@ class TimeSeries(xr.DataArray):
 
         dims = self.dims
         coords = dict()
+
+        if dim is not None and dim not in dims:
+            new_self = self.expand_dims(dim).assign_coords(**{dim:[0]})
+            other = other.expand_dims(dim).assign_coords(**{dim:[1]})
+            return new_self.append(other,dim=dim)
 
         for key in self.coords:
             if len(self[key].shape) == 0:
@@ -364,8 +375,6 @@ class TimeSeries(xr.DataArray):
         if dim is None:
             data = np.concatenate([self.data, other.data])
         else:
-            if dim not in dims:
-                raise ConcatenationError("Dimension {!s} not found".format(dim))
             axis = np.where(np.array(dims) == dim)[0][0]
             data = np.concatenate([self.data, other.data], axis=axis)
 
