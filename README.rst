@@ -61,10 +61,10 @@ or on Mac using homebrew:
 On Rhino:
 
 Some environment variables need to be set for the installation to succeed.
-If your anaconda distribution is installed in $HOME/anaconda3 and the environment name is ptsa,
-set the CPATH and the LD_PATH as follows:
+If your anaconda distribution is installed in `$HOME/anaconda3' and the environment name is `ptsa',
+set the `CPATH' and the `LD_LIBRARY_PATH' as follows:
 
-.. code-block:: 
+.. code-block:: shell-session
     export CPATH=$HOME/anaconda3/envs/ptsa/include
     export LD_LIBRARY_PATH=$HOME/anaconda3/envs/ptsa/lib
 
