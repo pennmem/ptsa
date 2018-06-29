@@ -43,8 +43,8 @@ Mac:
 
 .. code-block:: shell-session
 
-    conda install -y -c conda-forge fftw=3.3.4
-
+    conda install -y -c conda-forge fftw
+    
 Alternatively, it can be installed with the system package manager on Linux
 (Debian-based command shown below):
 
