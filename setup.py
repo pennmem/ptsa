@@ -72,7 +72,6 @@ def get_include_dirs():
                              stdout=subprocess.PIPE)
         stdout, _ = p.communicate()
         info = json.loads(stdout)
-        print(info)
         conda_include.append(os.path.join(info["active_prefix"], "include"))
     except Exception as e:
         # looks like we're not using conda
