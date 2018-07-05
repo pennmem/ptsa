@@ -37,9 +37,7 @@ Install dependencies:
 
    conda install -y numpy scipy xarray swig
 
-You can also optionally install FFTW. If it is not found, PTSA ships with a copy
-of it and will automatically compile it. To install FFTW with conda on Linux or
-Mac:
+You will also need to install FFTW. To install FFTW with conda on Linux or Mac:
 
 .. code-block:: shell-session
 
