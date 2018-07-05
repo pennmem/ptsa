@@ -35,7 +35,7 @@ Install dependencies:
 
 .. code-block:: shell-session
 
-   conda install -y numpy scipy xarray swig
+   conda install -y numpy scipy xarray swig traits
 
 You will also need to install FFTW. To install FFTW with conda on Linux or Mac:
 
