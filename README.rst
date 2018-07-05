@@ -44,7 +44,7 @@ Mac:
 .. code-block:: shell-session
 
     conda install -y -c conda-forge fftw
-    
+
 Alternatively, it can be installed with the system package manager on Linux
 (Debian-based command shown below):
 
@@ -58,11 +58,10 @@ or on Mac using homebrew:
 
     brew install fftw
 
-On Rhino:
-
-Some environment variables need to be set for the installation to succeed.
-If your anaconda distribution is installed in `$HOME/anaconda3` and the environment name is `ptsa`,
-set the `CPATH` and the `LD_LIBRARY_PATH` as follows:
+Some environment variables need to be set for the installation to succeed,
+particularly if you installed FFTW with conda. If your anaconda distribution is
+installed in ``$HOME/anaconda3`` and the environment name is ``ptsa``,
+set the ``CPATH`` and the ``LD_LIBRARY_PATH`` as follows:
 
 .. code-block:: shell-session
 
@@ -78,6 +77,7 @@ Install PTSA:
 
 Running Tests
 -------------
+
 To run the PTSA test suite locally, first set up a testing environment:
 
 .. code-block:: shell-session
