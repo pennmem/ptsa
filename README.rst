@@ -35,7 +35,7 @@ Install dependencies:
 
 .. code-block:: shell-session
 
-   conda install -y numpy scipy xarray swig
+   conda install -y numpy scipy xarray swig traits
 
 You will also need to install FFTW. To install FFTW with conda on Linux or Mac:
 
@@ -56,21 +56,30 @@ or on Mac using homebrew:
 
     brew install fftw
 
-Some environment variables need to be set for the installation to succeed,
-particularly if you installed FFTW with conda. If your anaconda distribution is
-installed in ``$HOME/anaconda3`` and the environment name is ``ptsa``,
-set the ``CPATH`` and the ``LD_LIBRARY_PATH`` as follows:
+To read EDF__ files, you will also need to install pybind11:
+
 
 .. code-block:: shell-session
 
-    export CPATH=$HOME/anaconda3/envs/ptsa/include
-    export LD_LIBRARY_PATH=$HOME/anaconda3/envs/ptsa/lib
+    conda install -y -c conda-forge pybind11
+
+__ http://www.edfplus.info/
 
 Install PTSA:
 
 .. code-block:: shell-session
 
    python setup.py install
+
+If you encounter problems installing, some environment variables may need to be
+set, particularly if you installed FFTW with conda. If your anaconda
+distribution is installed in ``$HOME/anaconda3`` and the environment name is
+``ptsa``, set the ``CPATH`` and the ``LD_LIBRARY_PATH`` as follows:
+
+.. code-block:: shell-session
+
+    export CPATH=$HOME/anaconda3/envs/ptsa/include
+    export LD_LIBRARY_PATH=$HOME/anaconda3/envs/ptsa/lib
 
 
 Running Tests

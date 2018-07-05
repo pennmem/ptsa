@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 import distutils
+import json
 import os
 import os.path as osp
 from setuptools import setup, Extension, find_packages
@@ -7,6 +8,7 @@ from setuptools.command.build_py import build_py
 from setuptools.command.install import install
 from setuptools.command.develop import develop
 import site
+import subprocess
 import sys
 
 import numpy as np
@@ -52,25 +54,34 @@ def get_version_str():
     return version
 
 
-def get_numpy_include_dir():
-    """Returns the numpy include dir. Only a separate function so that we can
-    have setuptools fetch numpy for us if we don't have it yet.
-
-    """
-    return np.get_include()
-
-
 def get_include_dirs():
     """Return extra include directories for building extensions."""
     dirs = [
-        get_numpy_include_dir(),
+        np.get_include(),
         osp.join(extensions_dir, 'ThreadPool'),
     ]
 
+    conda_include = []
+
+    try:
+        # Note: we can't just call conda because that might find the wrong one.
+        # Instead, we use the CONDA_EXE environment variable that conda should
+        # set.
+        p = subprocess.Popen([os.environ["CONDA_EXE"], "info", "--json"],
+                             env=os.environ,
+                             stdout=subprocess.PIPE)
+        stdout, _ = p.communicate()
+        info = json.loads(stdout)
+        conda_include.append(os.path.join(info["active_prefix"], "include"))
+    except Exception as e:
+        # looks like we're not using conda
+        pass
+
+    dirs += conda_include
     return dirs
 
 
-def get_fftw_libs():
+def get_libs():
     if sys.platform.startswith("win"):
         return ['libfftw3-3']
     else:
@@ -170,7 +181,7 @@ ext_modules = [
         swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
         extra_compile_args=get_compiler_args(),
-        libraries=get_fftw_libs(),
+        libraries=get_libs(),
     ),
 
     Extension(
@@ -182,7 +193,7 @@ ext_modules = [
         swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
         extra_compile_args=get_compiler_args(),
-        libraries=get_fftw_libs(),
+        libraries=get_libs(),
     ),
 ]
 
