@@ -20,7 +20,10 @@ def get_rhino_root():
         if osp.exists(osp.join(root, 'etc', 'hostname')):
             try:
                 with open(hostname_file, 'r') as f:
-                    if f.read().startswith("rhino"):
+                    # if we're not on the head node, the hostname won't start
+                    # with rhino, so just check that it's in there somewhere
+                    names = f.read().split(".")
+                    if "rhino" in names:
                         return root
             except:
                 continue
@@ -30,5 +33,3 @@ def get_rhino_root():
 # Decorator to skip tests that require data on rhino
 skip_without_rhino = pytest.mark.skipif("NO_RHINO" in os.environ,
                                         reason="No access to rhino")
-
-
