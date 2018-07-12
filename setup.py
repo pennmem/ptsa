@@ -50,8 +50,8 @@ def check_dependencies():
 
 
 def get_version_str():
-    from ptsa.version import version
-    return version
+    from ptsa import __version__
+    return __version__
 
 
 def get_include_dirs():
