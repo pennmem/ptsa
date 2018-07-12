@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Extension Modules &mdash; PTSA 1.1.4 documentation</title>
+  <title>Extension Modules &mdash; PTSA 2.0.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="PTSA 1.1.4 documentation" href="../index.html"/>
+    <link rel="top" title="PTSA 2.0.0 documentation" href="../index.html"/>
         <link rel="up" title="API Reference" href="index.html"/>
         <link rel="next" title="Development guidelines" href="../development.html"/>
         <link rel="prev" title="Filters" href="data/filters.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.1.4
+                2.0.0
               </div>
             
           
@@ -92,8 +92,6 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">PTSA Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ramdata.html">Interacting with RAM Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filters.html">Filtering Time Series</a></li>
@@ -101,12 +99,12 @@
 <li class="toctree-l2"><a class="reference internal" href="data.html">ptsa.data</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Extension Modules</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-ptsa.extensions.circular_stat">ptsa.extensions.circular_stat</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#ptsa-extensions-morlet">ptsa.extensions.morlet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-ptsa.extensions.morlet">ptsa.extensions.morlet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ptsa-extensions-edf">ptsa.extensions.edf</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#module-ptsa.filt">Filtering</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#module-ptsa.helper">Helpers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#module-ptsa.hilbert">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../development.html">Development guidelines</a></li>
@@ -250,14 +248,16 @@ The computation is performed in parallel over <code class="docutils literal"><sp
 <dl class="function">
 <dt id="ptsa.extensions.circular_stat.circ_mean">
 <code class="descclassname">ptsa.extensions.circular_stat.</code><code class="descname">circ_mean</code><span class="sig-paren">(</span><em>Z</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_mean" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the average angle of a vector of complex numbers, weighted by the magnitude of each number.
+<dd><p>Returns the average angle of a vector of complex numbers,
+weighted by the magnitude of each number.
 Thus, circ_mean([1+0j, 1+0j, 0+1j]) == circ_mean([2+0j, 0+1j])</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="ptsa.extensions.circular_stat.circ_diff_time_bins">
 <code class="descclassname">ptsa.extensions.circular_stat.</code><code class="descname">circ_diff_time_bins</code><span class="sig-paren">(</span><em>c1</em>, <em>c2</em>, <em>c_diff</em>, <em>cdiff_means</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_diff_time_bins" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the circular difference of <code class="docutils literal"><span class="pre">c1</span></code> and <code class="docutils literal"><span class="pre">c2</span></code>, stores the result in <code class="docutils literal"><span class="pre">c_diff</span></code>, then fills <code class="docutils literal"><span class="pre">cdiff_means</span></code> with the average
+<dd><p>Computes the circular difference of <code class="docutils literal"><span class="pre">c1</span></code> and <code class="docutils literal"><span class="pre">c2</span></code>,
+stores the result in <code class="docutils literal"><span class="pre">c_diff</span></code>, then fills <code class="docutils literal"><span class="pre">cdiff_means</span></code> with the average
 binned differences.</p>
 <p><code class="docutils literal"><span class="pre">len(cdiff_means)</span></code> must divide <code class="docutils literal"><span class="pre">len(c1)</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -281,8 +281,7 @@ when partitioned into two classes, and stores the results in fstat.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>phase_diffs</strong> – A matrix of phase differences</li>
-<li><strong>classes</strong> – A boolean vector indicating which observation belongs in which class. Should be the same length as
-the first dimension of <code class="docutils literal"><span class="pre">phase_diffs</span></code></li>
+<li><strong>classes</strong> – A boolean vector indicating which observation belongs in which class Should be the same length as the first dimension of <code class="docutils literal"><span class="pre">phase_diffs</span></code></li>
 <li><strong>f_stat</strong> – An empty vector the same length as the second dimension of <code class="docutils literal"><span class="pre">phase_diffs</span></code></li>
 </ul>
 </td>
@@ -307,11 +306,131 @@ the first dimension of <code class="docutils literal"><span class="pre">phase_di
 <dd></dd></dl>
 
 </div>
-<div class="section" id="ptsa-extensions-morlet">
-<h2>ptsa.extensions.morlet<a class="headerlink" href="#ptsa-extensions-morlet" title="Permalink to this headline">¶</a></h2>
-<p>Low-level functions for quickly computing Morlet wavelet decompositions.
-<a class="reference internal" href="data/filters.html#ptsa.data.filters.MorletWaveletFilterCpp" title="ptsa.data.filters.MorletWaveletFilterCpp"><code class="xref py py-mod docutils literal"><span class="pre">MorletWaveletFilterCpp</span></code></a> provides a higher-level interface for these same functions.</p>
-<span class="target" id="module-ptsa.extensions.morlet"></span></div>
+<div class="section" id="module-ptsa.extensions.morlet">
+<span id="ptsa-extensions-morlet"></span><h2>ptsa.extensions.morlet<a class="headerlink" href="#module-ptsa.extensions.morlet" title="Permalink to this headline">¶</a></h2>
+<p>Low-level extension module for quickly computing Morlet wavelet decompositions.</p>
+<p>This module uses the following wavelet for frequency <span class="math">\(f\)</span> and Gaussian width <span class="math">\(w\)</span>:</p>
+<div class="math">
+\[\Phi(t) =  \sigma^{-\frac{1}{2}} \pi^{-\frac{1}{4}}
+e^{\frac{-t^2}{{2 \sigma^2}}} e^{\frac{iwt}{\sigma}}\]</div>
+<p>where</p>
+<div class="math">
+\[\sigma = \frac{w}{2\pi f}\]</div>
+<p>The Gaussian envelope is only computed to a width of <span class="math">\(3.5\sigma\)</span>
+on each side of the peak. Any points beyond that are rounded to 0.</p>
+<p>The convolution of a signal <span class="math">\(\Psi\)</span> with a wavelet <span class="math">\(\Phi\)</span>
+is computed using the identity</p>
+<div class="math">
+\[\Psi * \Phi = N^{-1} \big(\widehat{\hat{\Psi} \cdot \hat \Phi }\big)\]</div>
+<p>where <span class="math">\(N\)</span> is the number of samples in the the signal <span class="math">\(\Psi\)</span>,
+in order to take advantage of the speed provided by the FFTW library.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Example:</span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">signal</span> <span class="o">=</span> <span class="c1">#... A 1D array</span>
+<span class="n">n_freqs</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">pow_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">n_freqs</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">signal</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">transform</span> <span class="o">=</span> <span class="n">MorletWaveletTransform</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                                   <span class="n">low_freq</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                                   <span class="n">high_freq</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                                   <span class="n">nf</span><span class="o">=</span><span class="n">n_freqs</span><span class="p">,</span>
+                                   <span class="n">sample_freq</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+                                   <span class="n">signal_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+                                   <span class="p">)</span>
+<span class="n">transformed_signal</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">multiphasevec</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span><span class="n">pow_mat</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n_freqs</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="data/filters.html#ptsa.data.filters.MorletWaveletFilterCpp" title="ptsa.data.filters.MorletWaveletFilterCpp"><code class="xref py py-mod docutils literal"><span class="pre">ptsa.data.filters.MorletWaveletFilterCpp</span></code></a></p>
+</div>
+</div>
+<div class="section" id="ptsa-extensions-edf">
+<h2>ptsa.extensions.edf<a class="headerlink" href="#ptsa-extensions-edf" title="Permalink to this headline">¶</a></h2>
+<p>File-like wrapper around parts of <a class="reference external" href="https://www.teuniz.net/edflib/">EDFlib</a> to provide an interface
+for reading the EDF+ family of EEG formats.
+<code class="xref py py-mod docutils literal"><span class="pre">ptsa.data.readers.EDFRawReader</span></code> provides a
+slightly higher-level interface for doing the same thing.</p>
+<dl class="class">
+<dt id="ptsa.extensions.morlet.ChannelInfo">
+<em class="property">class </em><code class="descclassname">ptsa.extensions.morlet.</code><code class="descname">ChannelInfo</code><a class="headerlink" href="#ptsa.extensions.morlet.ChannelInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Channel data including label, number of samples, etc. These objects are
+returned by <a class="reference internal" href="#ptsa.extensions.morlet.EDFFile.get_channel_info" title="ptsa.extensions.morlet.EDFFile.get_channel_info"><code class="xref py py-meth docutils literal"><span class="pre">EDFFile.get_channel_info()</span></code></a>, and have the following
+read-only attributes:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>label</strong> (<em>str</em>) – The name of the channel</li>
+<li><strong>smp_in_file</strong> (<em>int</em>) – Number of samples in file</li>
+<li><strong>phys_max</strong> (<em>float</em>) – Maximum representable value in physical units</li>
+<li><strong>phys_min</strong> (<em>float</em>) – Minimum representable value in physical units</li>
+<li><strong>dig_max</strong> (<em>int</em>) – Maximum representable value in digital units</li>
+<li><strong>dig_min</strong> (<em>int</em>) – Minimum representable value in digital units</li>
+<li><strong>smp_in_datarecord</strong> (<em>int</em>) – Number of samples stored in one record</li>
+<li><strong>physdimension</strong> (<em>str</em>) – Dimension of physical units</li>
+<li><strong>prefilter</strong> (<em>str</em>) – Type of prefiltering performed on signal</li>
+<li><strong>transducer</strong> (<em>str</em>) – Transducer type (e.g. ‘AgAgCl electrode’)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="ptsa.extensions.morlet.EDFFile">
+<em class="property">class </em><code class="descclassname">ptsa.extensions.morlet.</code><code class="descname">EDFFile</code><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the EDF family of files.</p>
+<p>This class utilizes <a class="reference external" href="https://www.teuniz.net/edflib/">EDFlib</a> to read EDF/BDF/EDF+/BDF+ files.</p>
+<dl class="method">
+<dt id="ptsa.extensions.morlet.EDFFile.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ptsa.extensions.morlet.EDFFile.get_channel_info">
+<code class="descname">get_channel_info</code><span class="sig-paren">(</span><em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.get_channel_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the information on a given channel</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> – int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ptsa.extensions.morlet.EDFFile.get_channel_numbers">
+<code class="descname">get_channel_numbers</code><span class="sig-paren">(</span><em>channel_names</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.get_channel_numbers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ptsa.extensions.morlet.EDFFile.get_samplerate">
+<code class="descname">get_samplerate</code><span class="sig-paren">(</span><em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.get_samplerate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ptsa.extensions.morlet.EDFFile.read_samples">
+<code class="descname">read_samples</code><span class="sig-paren">(</span><em>channels</em>, <em>samples</em>, <em>offset</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.read_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read samples from a list of channels. Channels
+can be specified by either a list of numbers or a list of labels.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -336,7 +455,7 @@ the first dimension of <code class="docutils literal"><span class="pre">phase_di
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017.
+        &copy; Copyright 2018.
 
     </p>
   </div>
@@ -358,7 +477,7 @@ the first dimension of <code class="docutils literal"><span class="pre">phase_di
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.1.4',
+            VERSION:'2.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

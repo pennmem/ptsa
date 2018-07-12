@@ -1,5 +1,5 @@
-TimeSeriesX
------------
+TimeSeries
+----------
 
-.. autoclass:: ptsa.data.TimeSeriesX.TimeSeriesX
+.. autoclass:: ptsa.data.timeseries.TimeSeries
     :members:

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; PTSA 1.1.4 documentation</title>
+  <title>API Reference &mdash; PTSA 2.0.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="PTSA 1.1.4 documentation" href="../index.html"/>
+    <link rel="top" title="PTSA 2.0.0 documentation" href="../index.html"/>
         <link rel="next" title="ptsa.data" href="data.html"/>
         <link rel="prev" title="Filtering Time Series" href="../filters.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                1.1.4
+                2.0.0
               </div>
             
           
@@ -91,8 +91,6 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">PTSA Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ramdata.html">Interacting with RAM Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filters.html">Filtering Time Series</a></li>
@@ -101,7 +99,6 @@
 <li class="toctree-l2"><a class="reference internal" href="extensions.html">Extension Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-ptsa.filt">Filtering</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-ptsa.helper">Helpers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-ptsa.hilbert">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../development.html">Development guidelines</a></li>
@@ -207,14 +204,15 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="data.html">ptsa.data</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="data/timeseriesx.html">TimeSeriesX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data/timeseriesx.html">TimeSeries</a></li>
 <li class="toctree-l2"><a class="reference internal" href="data/readers.html">Readers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="data/filters.html">Filters</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="extensions.html">Extension Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="extensions.html#module-ptsa.extensions.circular_stat">ptsa.extensions.circular_stat</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extensions.html#ptsa-extensions-morlet">ptsa.extensions.morlet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extensions.html#module-ptsa.extensions.morlet">ptsa.extensions.morlet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extensions.html#ptsa-extensions-edf">ptsa.extensions.edf</a></li>
 </ul>
 </li>
 </ul>
@@ -225,195 +223,6 @@
 <dt id="ptsa.filt.buttfilt">
 <code class="descclassname">ptsa.filt.</code><code class="descname">buttfilt</code><span class="sig-paren">(</span><em>dat</em>, <em>freq_range</em>, <em>sample_rate</em>, <em>filt_type</em>, <em>order</em>, <em>axis=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.filt.buttfilt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper for a Butterworth filter.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="ptsa.filt.decimate">
-<code class="descclassname">ptsa.filt.</code><code class="descname">decimate</code><span class="sig-paren">(</span><em>x</em>, <em>q</em>, <em>n=None</em>, <em>ftype=’iir’</em>, <em>axis=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.filt.decimate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downsample the signal x by an integer factor q, using an order n filter</p>
-<p>By default, an order 8 Chebyshev type I filter is used or a 30 point FIR
-filter with hamming window if ftype is ‘fir’.</p>
-<p>(port to python of the GNU Octave function decimate.)</p>
-<dl class="docutils">
-<dt>Inputs:</dt>
-<dd><p class="first">x – the signal to be downsampled (N-dimensional array)
-q – the downsampling factor
-n – order of the filter (1 less than the length of the filter for a</p>
-<blockquote>
-<div>‘fir’ filter)</div></blockquote>
-<p class="last">ftype – type of the filter; can be ‘iir’ or ‘fir’
-axis – the axis along which the filter should be applied</p>
-</dd>
-<dt>Outputs:</dt>
-<dd>y – the downsampled signal</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="ptsa.filt.firls">
-<code class="descclassname">ptsa.filt.</code><code class="descname">firls</code><span class="sig-paren">(</span><em>N</em>, <em>f</em>, <em>D=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.filt.firls" title="Permalink to this definition">¶</a></dt>
-<dd><p>Least-squares FIR filter.
-N – filter length, must be odd
-f – list of tuples of band edges</p>
-<blockquote>
-<div>Units of band edges are Hz with 0.5 Hz == Nyquist
-and assumed 1 Hz sampling frequency</div></blockquote>
-<p>D – list of desired responses, one per band</p>
-</dd></dl>
-
-<span class="target" id="module-ptsa.filtfilt"></span><dl class="function">
-<dt id="ptsa.filtfilt.filtfilt">
-<code class="descclassname">ptsa.filtfilt.</code><code class="descname">filtfilt</code><span class="sig-paren">(</span><em>b</em>, <em>a</em>, <em>x</em>, <em>axis=-1</em>, <em>padtype=’odd’</em>, <em>padlen=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.filtfilt.filtfilt" title="Permalink to this definition">¶</a></dt>
-<dd><p>A forward-backward filter.</p>
-<p>This function applies a linear filter twice, once forward
-and once backwards. The combined filter has linear phase.</p>
-<p>Before applying the filter, the function can pad the data along the
-given axis in one of three ways: odd, even or constant. The odd
-and even extensions have the corresponding symmetry about the end point
-of the data. The constant extension extends the data with the values
-at end points. On both the forward and backwards passes, the
-initial condition of the filter is found by using lfilter_zi and
-scaling it by the end point of the extended data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>b</strong> (<em>array_like</em><em>, </em><em>1-D</em>) – </li>
-<li><strong>numerator coefficient vector of the filter.</strong> (<em>The</em>) – </li>
-<li><strong>a</strong> (<em>array_like</em><em>, </em><em>1-D</em>) – </li>
-<li><strong>denominator coefficient vector of the filter. If a</strong><strong>[</strong><strong>0</strong><strong>]</strong> (<em>The</em>) – </li>
-<li><strong>not 1</strong><strong>, </strong><strong>then both a and b are normalized by a</strong><strong>[</strong><strong>0</strong><strong>]</strong><strong></strong> (<em>is</em>) – </li>
-<li><strong>x</strong> (<em>array_like</em>) – </li>
-<li><strong>array of data to be filtered.</strong> (<em>The</em>) – </li>
-<li><strong>axis</strong> (<em>int</em><em>, </em><em>optional</em>) – </li>
-<li><strong>axis of x to which the filter is applied.</strong> (<em>The</em>) – </li>
-<li><strong>is -1.</strong> (<em>Default</em>) – </li>
-<li><strong>padtype</strong> (<em>str</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – </li>
-<li><strong>be 'odd'</strong><strong>, </strong><strong>'even'</strong><strong>, </strong><strong>'constant'</strong><strong>, or </strong><strong>None. This determines the</strong> (<em>Must</em>) – </li>
-<li><strong>of extension to use for the padded signal to which the filter</strong> (<em>type</em>) – </li>
-<li><strong>applied. If padtype is None</strong><strong>, </strong><strong>no padding is used. The default</strong> (<em>is</em>) – </li>
-<li><strong>'odd'.</strong> (<em>is</em>) – </li>
-<li><strong>padlen</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – </li>
-<li><strong>number of elements by which to extend x at both ends of</strong> (<em>The</em>) – </li>
-<li><strong>before applying the filter. This value must be less than</strong> (<em>axis</em>) – </li>
-<li><strong>padlen=0 implies no padding.</strong> (<em>x.shape</em><em>[</em><em>axis</em><em>]</em><em>-1.</em>) – </li>
-<li><strong>default value is 3*max</strong><strong>(</strong><strong>len</strong><strong>(</strong><strong>a</strong><strong>)</strong><strong>,</strong><strong>len</strong><strong>(</strong><strong>b</strong><strong>)</strong><strong>)</strong><strong></strong> (<em>The</em>) – </li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>y</strong> (<em>ndarray</em>)</li>
-<li><em>The filtered output, an array of type numpy.float64 with the same</em></li>
-<li>shape as <cite>x</cite>.</li>
-</ul>
-</p>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#ptsa.filtfilt.lfilter_zi" title="ptsa.filtfilt.lfilter_zi"><code class="xref py py-func docutils literal"><span class="pre">lfilter_zi()</span></code></a>, <code class="xref py py-func docutils literal"><span class="pre">lfilter()</span></code></p>
-</div>
-<p class="rubric">Examples</p>
-<p>First we create a one second signal that is the sum of two pure sine
-waves, with frequencies 5 Hz and 250 Hz, sampled at 2000 Hz.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">2001</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">xlow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">xhigh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">250</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">xlow</span> <span class="o">+</span> <span class="n">xhigh</span>
-</pre></div>
-</div>
-<p>Now create a lowpass Butterworth filter with a cutoff of 0.125 times
-the Nyquist rate, or 125 Hz, and apply it to x with filtfilt. The
-result should be approximately xlow, with no phase shift.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="k">import</span> <span class="n">butter</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">butter</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">filtfilt</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">padlen</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">xlow</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-<span class="go">9.1086182074789912e-06</span>
-</pre></div>
-</div>
-<p>We get a fairly clean result for this artificial example because
-the odd extension is exact, and with the moderately long padding,
-the filter’s transients have dissipated by the time the actual data
-is reached. In general, transient effects at the edges are
-unavoidable.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="ptsa.filtfilt.lfilter_zi">
-<code class="descclassname">ptsa.filtfilt.</code><code class="descname">lfilter_zi</code><span class="sig-paren">(</span><em>b</em>, <em>a</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.filtfilt.lfilter_zi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute an initial state <cite>zi</cite> for the lfilter function that corresponds
-to the steady state of the step response.</p>
-<p>A typical use of this function is to set the initial state so that the
-output of the filter starts at the same value as the first element of
-the signal to be filtered.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> (<em>b</em><em>,</em>) – </li>
-<li><strong>IIR filter coefficients. See scipy.signal.lfilter for more</strong> (<em>The</em>) – </li>
-<li><strong>information.</strong> – </li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>zi</strong> (<em>1-D ndarray</em>)</li>
-<li><em>The initial state for the filter.</em></li>
-</ul>
-</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Notes</p>
-<p>A linear filter with order m has a state space representation (A, B, C, D),
-for which the output y of the filter can be expressed as:</p>
-<p>z(n+1) = A*z(n) + B*x(n)
-y(n) = C*z(n) + D*x(n)</p>
-<p>where z(n) is a vector of length m, A has shape (m, m), B has shape
-(m, 1), C has shape (1, m) and D has shape (1, 1) (assuming x(n) is
-a scalar). lfilter_zi solves:</p>
-<p>zi = A*zi + B</p>
-<p>In other words, it finds the initial condition for which the response
-to an input of all ones is a constant.</p>
-<p>Given the filter coefficients <cite>a</cite> and <cite>b</cite>, the state space matrices
-for the transposed direct form II implementation of the linear filter,
-which is the implementation used by scipy.signal.lfilter, are:</p>
-<p>A = scipy.linalg.companion(a).T
-B = b[1:] - a[1:]*b[0]</p>
-<p>assuming <cite>a[0]</cite> is 1.0; if <cite>a[0]</cite> is not 1, <cite>a</cite> and <cite>b</cite> are first
-divided by a[0].</p>
-<p class="rubric">Examples</p>
-<p>The following code creates a lowpass Butterworth filter. Then it
-applies that filter to an array whose values are all 1.0; the
-output is also all 1.0, as expected for a lowpass filter. If the
-<cite>zi</cite> argument of <cite>lfilter</cite> had not been given, the output would have
-shown the transient signal.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">ones</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="k">import</span> <span class="n">lfilter</span><span class="p">,</span> <span class="n">lfilter_zi</span><span class="p">,</span> <span class="n">butter</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">butter</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">zi</span> <span class="o">=</span> <span class="n">lfilter_zi</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="p">,</span> <span class="n">zo</span> <span class="o">=</span> <span class="n">lfilter</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">ones</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">zi</span><span class="o">=</span><span class="n">zi</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span>
-<span class="go">array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1.])</span>
-</pre></div>
-</div>
-<p>Another example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="p">,</span> <span class="n">zf</span> <span class="o">=</span> <span class="n">lfilter</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">zi</span><span class="o">=</span><span class="n">zi</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span>
-<span class="go">array([ 0.5 , 0.5 , 0.5 , 0.49836039, 0.48610528,</span>
-<span class="go">0.44399389, 0.35505241])</span>
-</pre></div>
-</div>
-<p>Note that the <cite>zi</cite> argument to <cite>lfilter</cite> was computed using
-<cite>lfilter_zi</cite> and scaled by <cite>x[0]</cite>. Then the output <cite>y</cite> has no
-transient until the input drops from 0.5 to 0.0.</p>
 </dd></dl>
 
 </div>
@@ -535,225 +344,6 @@ from degrees if radians==False.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-ptsa.hilbert">
-<span id="other"></span><h2>Other<a class="headerlink" href="#module-ptsa.hilbert" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="ptsa.hilbert.hilbert_pow">
-<code class="descclassname">ptsa.hilbert.</code><code class="descname">hilbert_pow</code><span class="sig-paren">(</span><em>dat_ts</em>, <em>bands=None</em>, <em>pad_to_pow2=False</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.hilbert.hilbert_pow" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<span class="target" id="module-ptsa.iwasobi"></span><dl class="class">
-<dt id="ptsa.iwasobi.IWASOBI">
-<em class="property">class </em><code class="descclassname">ptsa.iwasobi.</code><code class="descname">IWASOBI</code><span class="sig-paren">(</span><em>ar_max=10</em>, <em>rmax=0.99</em>, <em>eps0=5e-07</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.iwasobi.IWASOBI" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implements algorithm WASOBI for blind source separation of
-AR sources in a fast way, allowing separation up to 100 sources
-in the running time of the order of tens of seconds.</p>
-<p>Ported from MATLAB code by Jakub Petkov / Petr Tichavsky</p>
-<dl class="method">
-<dt id="ptsa.iwasobi.IWASOBI.CRLB4">
-<code class="descname">CRLB4</code><span class="sig-paren">(</span><em>ARC</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.iwasobi.IWASOBI.CRLB4" title="Permalink to this definition">¶</a></dt>
-<dd><p>function ISR = CRLB4(ARC)</p>
-<p>% CRLB4(ARC) generates the CRLB for gain matrix elements (in term
-% of ISR) for blind separation of K Gaussian autoregressive sources
-% whose AR coefficients (of the length M, where M-1 is the AR order)
-% are stored as columns in matrix ARC.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ptsa.iwasobi.IWASOBI.ar2r">
-<code class="descname">ar2r</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.iwasobi.IWASOBI.ar2r" title="Permalink to this definition">¶</a></dt>
-<dd><p>function [ r ] = ar2r( a )</p>
-<blockquote>
-<div>Computes covariance function of AR processes from
-the autoregressive coefficients using an inverse Schur algorithm
-and an inverse Levinson algorithm (for one column it is equivalent to
-“rlevinson.m” in matlab)</div></blockquote>
-</dd></dl>
-
-<dl class="method">
-<dt id="ptsa.iwasobi.IWASOBI.armodel">
-<code class="descname">armodel</code><span class="sig-paren">(</span><em>R</em>, <em>rmax</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.iwasobi.IWASOBI.armodel" title="Permalink to this definition">¶</a></dt>
-<dd><p>function [AR,sigmy]=armodel(R,rmax)</p>
-<blockquote>
-<div>to compute AR coefficients of the sources given covariance functions
-but if the zeros have magnitude &gt; rmax, the zeros are pushed back.</div></blockquote>
-</dd></dl>
-
-<dl class="method">
-<dt id="ptsa.iwasobi.IWASOBI.corr_est">
-<code class="descname">corr_est</code><span class="sig-paren">(</span><em>x</em>, <em>T</em>, <em>q</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.iwasobi.IWASOBI.corr_est" title="Permalink to this definition">¶</a></dt>
-<dd><p># function R_est=corr_est(x,T,q)</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ptsa.iwasobi.IWASOBI.uwajd">
-<code class="descname">uwajd</code><span class="sig-paren">(</span><em>M</em>, <em>maxnumiter=20</em>, <em>W_est0=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.iwasobi.IWASOBI.uwajd" title="Permalink to this definition">¶</a></dt>
-<dd><p>function [W_est Ms]=uwajd(M,maxnumiter,W_est0)</p>
-<p>% my approximate joint diagonalization with uniform weights
-%
-% Input: M …. the matrices to be diagonalized, stored as [M1 M2 … ML]
-%        West0 … initial estimate of the demixing matrix, if available
-%
-% Output: W_est …. estimated demixing matrix
-%                    such that W_est * M_k * W_est’ are roughly diagonal
-%         Ms …. diagonalized matrices composed of W_est*M_k*W_est’
-%         crit … stores values of the diagonalization criterion at each
-%                  iteration
-%</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ptsa.iwasobi.IWASOBI.wajd">
-<code class="descname">wajd</code><span class="sig-paren">(</span><em>M</em>, <em>H</em>, <em>W_est0=None</em>, <em>maxnumit=100</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.iwasobi.IWASOBI.wajd" title="Permalink to this definition">¶</a></dt>
-<dd><p>function [W_est Ms]=wajd(M,H,W_est0,maxnumit)</p>
-<p>% my approximate joint diagonalization with non-uniform weights
-%
-% Input: M …. the matrices to be diagonalized, stored as [M1 M2 … ML]
-%        H …. diagonal blocks of the weight matrix stored similarly
-%                     as M, but there is dd2 blocks, each of the size L x L
-%        West0 … initial estimate of the demixing matrix, if available
-%        maxnumit … maximum number of iterations
-%
-% Output: W_est …. estimated demixing matrix
-%                    such that W_est * M_k * W_est’ are roughly diagonal
-%         Ms …. diagonalized matrices composed of W_est*M_k*W_est’
-%         crit … stores values of the diagonalization criterion at each
-%                  iteration
-%
-%</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ptsa.iwasobi.IWASOBI.weights">
-<code class="descname">weights</code><span class="sig-paren">(</span><em>Ms</em>, <em>rmax</em>, <em>eps0</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.iwasobi.IWASOBI.weights" title="Permalink to this definition">¶</a></dt>
-<dd><p>function [H ARC]=weights(Ms,rmax,eps0)</p>
-</dd></dl>
-
-</dd></dl>
-
-<span class="target" id="module-ptsa.pca"></span><dl class="function">
-<dt id="ptsa.pca.pca">
-<code class="descclassname">ptsa.pca.</code><code class="descname">pca</code><span class="sig-paren">(</span><em>X</em>, <em>ncomps=None</em>, <em>eigratio=1000000.0</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.pca.pca" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div>Principal components analysis</div></blockquote>
-<p>%   [W,Y] = pca(X,NBC,EIGRATIO) returns the PCA matrix W and the principal
-%   components Y corresponding to the data matrix X (realizations
-%   columnwise). The number of components is NBC components unless the
-%   ratio between the maximum and minimum covariance eigenvalue is below
-%   EIGRATIO. In such a case, the function will return as few components as
-%   are necessary to guarantee that such ratio is greater than EIGRATIO.</p>
-</dd></dl>
-
-<span class="target" id="module-ptsa.wica"></span><dl class="class">
-<dt id="ptsa.wica.WICA">
-<em class="property">class </em><code class="descclassname">ptsa.wica.</code><code class="descname">WICA</code><span class="sig-paren">(</span><em>data</em>, <em>samplerate</em>, <em>pure_range=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.wica.WICA" title="Permalink to this definition">¶</a></dt>
-<dd><p>Clean data with the Wavelet-ICA method described here:</p>
-<p>N.P. Castellanos, and V.A. Makarov (2006). ‘Recovering EEG brain signals: Artifact
-suppression with wavelet enhanced independent component analysis’
-J. Neurosci. Methods, 158, 300–312.</p>
-<p>Instead of using the Infomax ICA algorithm, we use the (much much
-faster) IWASOBI algorithm.</p>
-<p>We also pick components to clean by only cleaning components that
-weigh heavily on the EOG electrodes.</p>
-<p>This ICA algorithm works better if you pass in data that have been
-high-pass filtered to remove big non-neural fluctuations and
-drifts.</p>
-<p>You do not have to run the ICA step on your entire dataset.
-Instead, it is possible to provide the start and end indicies for
-a continguous chunk of data that is ‘clean’ except for having lots
-of eyeblink examples.  This range will also be used inside the
-wavelet-based artifact correction code to determine the best
-threshold for identifying artifacts.  You do, however, want to try
-and make sure you provide enough samples for a good ICA
-decomposition.  A good rule of thumb is 3*(N^2) where N is the
-number of channels/sources.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="ptsa.wica.find_blinks">
-<code class="descclassname">ptsa.wica.</code><code class="descname">find_blinks</code><span class="sig-paren">(</span><em>dat</em>, <em>L</em>, <em>fast_rate=0.5</em>, <em>slow_rate=0.975</em>, <em>thresh=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.wica.find_blinks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Identify eyeblinks with fast and slow running averages.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="ptsa.wica.remove_strong_artifacts">
-<code class="descclassname">ptsa.wica.</code><code class="descname">remove_strong_artifacts</code><span class="sig-paren">(</span><em>data</em>, <em>A</em>, <em>icaEEG</em>, <em>Comp</em>, <em>Kthr=1.25</em>, <em>F=256</em>, <em>Cthr=None</em>, <em>num_mp_procs=0</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.wica.remove_strong_artifacts" title="Permalink to this definition">¶</a></dt>
-<dd><p>% This function denoise high amplitude artifacts (e.g. ocular) and remove them from the
-% Independent Components (ICs).
-%</p>
-<p>Ported and enhanced from Matlab code distributed by the authors of:</p>
-<p>N.P. Castellanos, and V.A. Makarov (2006). ‘Recovering EEG brain signals: Artifact
-suppression with wavelet enhanced independent component analysis’
-J. Neurosci. Methods, 158, 300–312.</p>
-<p>% INPUT:
-%
-% icaEEG - matrix of ICA components (Nchanel x Nobservations)
-%
-% Comp   - # of ICs to be denoised and cleaned (can be a vector)
-%
-% Kthr   - threshold (multiplayer) for denoising of artifacts
-%          (default Kthr = 1.15)
-%
-% F      - acquisition frequency
-%          (default F = 256 Hz)
-%
-% OUTPUT:
-%
-% opt    - vector of threshold values used for filtering of corresponding
-%          ICs
-%
-% NOTE: If a component has no artifacts of a relatively high amplitude
-%       the function will skip this component (no action), dispaly a
-%       warning and the corresponding output “opt” will be set to zero.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="ptsa.wica.wica_clean">
-<code class="descclassname">ptsa.wica.</code><code class="descname">wica_clean</code><span class="sig-paren">(</span><em>data, samplerate=None, pure_range=(None, None), EOG_elecs=[0, 1], std_fact=1.5, Kthr=2.5, num_mp_procs=0</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.wica.wica_clean" title="Permalink to this definition">¶</a></dt>
-<dd><p>Clean data with the Wavelet-ICA method described here:</p>
-<p>N.P. Castellanos, and V.A. Makarov (2006). ‘Recovering EEG brain signals: Artifact
-suppression with wavelet enhanced independent component analysis’
-J. Neurosci. Methods, 158, 300–312.</p>
-<p>Instead of using the Infomax ICA algorithm, we use the (much much
-faster) IWASOBI algorithm.</p>
-<p>We also pick components to clean by only cleaning components that
-weigh heavily on the EOG electrodes.</p>
-<p>This ICA algorithm works better if you pass in data that have been
-high-pass filtered to remove big non-neural fluctuations and
-drifts.</p>
-<p>You do not have to run the ICA step on your entire dataset.
-Instead, it is possible to provide the start and end indicies for
-a continguous chunk of data that is ‘clean’ except for having lots
-of eyeblink examples.  This range will also be used inside the
-wavelet-based artifact correction code to determine the best
-threshold for identifying artifacts.  You do, however, want to try
-and make sure you provide enough samples for a good ICA
-decomposition.  A good rule of thumb is 3*(N^2) where N is the
-number of channels/sources.</p>
-</dd></dl>
-
-<span class="target" id="module-ptsa.emd"></span><p>Empirical Mode Decomposition</p>
-<dl class="function">
-<dt id="ptsa.emd.calc_inst_info">
-<code class="descclassname">ptsa.emd.</code><code class="descname">calc_inst_info</code><span class="sig-paren">(</span><em>modes</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.emd.calc_inst_info" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the instantaneous frequency, amplitude, and phase of
-each mode.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="ptsa.emd.eemd">
-<code class="descclassname">ptsa.emd.</code><code class="descname">eemd</code><span class="sig-paren">(</span><em>data</em>, <em>noise_std=0.2</em>, <em>num_ensembles=100</em>, <em>num_sifts=10</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.emd.eemd" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ensemble Empirical Mode Decomposition (EEMD)</p>
-<p><strong>* Must still add in post-processing with EMD *</strong></p>
-</dd></dl>
-
-<dl class="function">
-<dt id="ptsa.emd.emd">
-<code class="descclassname">ptsa.emd.</code><code class="descname">emd</code><span class="sig-paren">(</span><em>data</em>, <em>max_modes=10</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.emd.emd" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the Emprical Mode Decomposition of a signal.</p>
-</dd></dl>
-
-</div>
 </div>
 
 
@@ -778,7 +368,7 @@ each mode.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017.
+        &copy; Copyright 2018.
 
     </p>
   </div>
@@ -800,7 +390,7 @@ each mode.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.1.4',
+            VERSION:'2.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Interacting with RAM Data &mdash; PTSA 1.1.4 documentation</title>
+  <title>Interacting with RAM Data &mdash; PTSA 2.0.0 documentation</title>
   
 
   
@@ -35,9 +35,9 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="PTSA 1.1.4 documentation" href="index.html"/>
+    <link rel="top" title="PTSA 2.0.0 documentation" href="index.html"/>
         <link rel="next" title="Filtering Time Series" href="filters.html"/>
-        <link rel="prev" title="Classifier time series" href="examples/classifier_time_series.html"/> 
+        <link rel="prev" title="Reading EEG Data from events" href="examples/eeg.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                1.1.4
+                2.0.0
               </div>
             
           
@@ -91,8 +91,6 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">PTSA Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/index.html">Examples</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Interacting with RAM Data</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#reading-events-using-baseeventreader">Reading events using BaseEventReader</a></li>
@@ -204,6 +202,13 @@
 </style>
 <div class="section" id="interacting-with-ram-data">
 <span id="ramdata"></span><h1>Interacting with RAM Data<a class="headerlink" href="#interacting-with-ram-data" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This section utilizes many deprecated ways of using PTSA so may not work as
+expected. Future versions of PTSA will not know how to load data specific to
+a particular experiment, instead outsourcing that functionality to other
+tools.</p>
+</div>
 <p>Even though PTSA is a general Python framework for time series analysis, it has some built-in
 modules that facilitate working with various formats of EEG data and associated experimental data.
 In this section we will see how to efficiently ready and process data store in formats used by the
@@ -441,7 +446,7 @@ that extract a list of individual channel numbers and a list of bipolar pairs.</
         <a href="filters.html" class="btn btn-neutral float-right" title="Filtering Time Series" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="examples/classifier_time_series.html" class="btn btn-neutral" title="Classifier time series" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="examples/eeg.html" class="btn btn-neutral" title="Reading EEG Data from events" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -450,7 +455,7 @@ that extract a list of individual channel numbers and a list of bipolar pairs.</
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017.
+        &copy; Copyright 2018.
 
     </p>
   </div>
@@ -472,7 +477,7 @@ that extract a list of individual channel numbers and a list of bipolar pairs.</
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.1.4',
+            VERSION:'2.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
