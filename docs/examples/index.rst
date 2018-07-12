@@ -11,4 +11,3 @@ __ https://github.com/pennmem/ptsa_new/tree/master/docs/examples
 
     getting_started.ipynb
     eeg.ipynb
-    classifier_time_series.ipynb
