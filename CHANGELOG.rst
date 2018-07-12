@@ -10,6 +10,13 @@ Version 2.0 of PTSA is a major update which includes several breaking changes
 including the removal of several packages and modules, name changes, and
 deprecations.
 
+PTSA 2.0 is the last major version to support loading of lab-specific data. In
+future releases, all of this functionality will be removed in favor of using
+the cmlreaders_ package which includes the ability to load timeseries data and
+transform into a PTSA-compatible format.
+
+.. _cmlreaders: https://github.com/pennmem/cmlreaders
+
 Removals
 ^^^^^^^^
 
@@ -30,6 +37,9 @@ Renames
 * ``TimeSeriesX`` has been renamed to ``TimeSeries`` and is now found in the
   ``ptsa.data.timeseries`` module (#141). ``TimeSeriesX`` still exists as an
   alias but will give a ``DeprecationWarning``.
+* Most modules have been renamed to conform to PEP8 module naming conventions.
+  These renames are generally not noticed by users if loading readers from the
+  ``ptsa.data.readers`` namespace.
 
 Other changes
 ^^^^^^^^^^^^^
