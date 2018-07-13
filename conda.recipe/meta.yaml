@@ -1,6 +1,7 @@
 package:
   name: ptsa
   version: 2.0.0
+  channels: anaconda conda-forge
 
 source:
   git_url: ../
@@ -19,6 +20,7 @@ requirements:
     - scipy
     - swig
     - xarray
+    - fftw
 
   run:
     - python {{ python }}
@@ -40,3 +42,4 @@ about:
   home: https://github.com/pennmem/ptsa_new
   license: GPLv3
   license_file: LICENSE
+  summary: Python Time Series Analysis toolbox
