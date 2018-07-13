@@ -6,7 +6,6 @@ import pytest
 import numpy as np
 import xarray as xr
 import h5py
-import tempfile
 
 from ptsa.data.timeseries import TimeSeries, ConcatenationError
 
@@ -318,7 +317,6 @@ def test_concatenate():
                 'John', 'Stacy', 'Dick', 'Bernie', 'Donald', 'Hillary'])).all()
 
 
-@pytest.mark.only
 def test_append_simple():
     """Test appending without regard to dimensions."""
     points = 100
