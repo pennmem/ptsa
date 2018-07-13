@@ -4,7 +4,7 @@ Changes
 Version 2.0.0
 -------------
 
-**Unreleased**
+**2018-07-13**
 
 Version 2.0 of PTSA is a major update which includes several breaking changes
 including the removal of several packages and modules, name changes, and

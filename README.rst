@@ -99,8 +99,8 @@ and then build build the extension modules and run the  test suite:
     python setup.py develop
     pytest tests/
 
-The shell script `run_tests` will also run the test suite,
- assuming the environment is configured.
+The shell script `run_tests` will also run the test suite, assuming the
+environment is configured.
 
 To skip tests that depend on Rhino the NO_RHINO environment variable must be set:
 
@@ -108,6 +108,8 @@ To skip tests that depend on Rhino the NO_RHINO environment variable must be set
 
     export NO_RHINO=TRUE
 
+When running tests which require rhino access, the path to the root rhino
+directory is guessed based on common mount points.
 
 
 Building conda packages
