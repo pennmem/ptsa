@@ -5,6 +5,7 @@ import os.path as osp
 from ptsa.test import utils
 import pytest
 
+
 @utils.skip_without_rhino
 def test_talreader_on_database():
     old_reader = TalReader(filename=osp.join(utils.get_rhino_root(),'data/eeg/R1234D/tal/R1234D_talLocs_database_bipol.mat'))
@@ -861,8 +862,9 @@ def test_old_behavior():
     pairinfo = TalReader(filename=osp.join(osp.dirname(__file__), 'data', 'pairs.json'),unpack=False).read()
     assert pairinfo.dtype['atlases'] is np.dtype(object)
 
+
 def test_old_behavior_warning():
-    with pytest.deprecated_call():
+    with pytest.warns(FutureWarning):
         TalReader(filename=osp.join(osp.dirname(__file__), 'data', 'pairs.json'), unpack=False).read()
 
 
