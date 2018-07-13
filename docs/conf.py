@@ -14,6 +14,7 @@
 
 # import sys
 import os
+from datetime import datetime
 # sys.path.insert(0, '..')
 from ptsa import __version__
 
@@ -61,7 +62,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'PTSA'
-copyright = u'2017'
+copyright = str(datetime.now().year)
 author = u'Contributors'
 
 # The version info for the project you're documenting, acts as replacement for

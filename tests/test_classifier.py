@@ -48,10 +48,9 @@ class TestClassifier(unittest.TestCase):
         wf = MorletWaveletFilter(timeseries=bp_eegs,
                                  freqs=np.logspace(np.log10(3), np.log10(180), 8),
                                  output='power',
-                                 verbose=True
-                                 )
+                                 verbose=True)
 
-        pow_wavelet = wf.filter()['power']
+        pow_wavelet = wf.filter()
 
         pow_wavelet = pow_wavelet.remove_buffer(duration=1.0)
         print(pow_wavelet)

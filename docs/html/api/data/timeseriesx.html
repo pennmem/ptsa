@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>TimeSeriesX &mdash; PTSA 1.1.4 documentation</title>
+  <title>TimeSeries &mdash; PTSA 2.0.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="PTSA 1.1.4 documentation" href="../../index.html"/>
+    <link rel="top" title="PTSA 2.0.0 documentation" href="../../index.html"/>
         <link rel="up" title="ptsa.data" href="../data.html"/>
         <link rel="next" title="Readers" href="readers.html"/>
         <link rel="prev" title="ptsa.data" href="../data.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.1.4
+                2.0.0
               </div>
             
           
@@ -92,14 +92,12 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">PTSA Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../ramdata.html">Interacting with RAM Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../filters.html">Filtering Time Series</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../data.html">ptsa.data</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">TimeSeriesX</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">TimeSeries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="readers.html">Readers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="filters.html">Filters</a></li>
 </ul>
@@ -107,7 +105,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../extensions.html">Extension Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#module-ptsa.filt">Filtering</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#module-ptsa.helper">Helpers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../index.html#module-ptsa.hilbert">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../development.html">Development guidelines</a></li>
@@ -159,7 +156,7 @@
         
           <li><a href="../data.html">ptsa.data</a> &raquo;</li>
         
-      <li>TimeSeriesX</li>
+      <li>TimeSeries</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -212,11 +209,11 @@
     margin-right: 4px;  /* make room for the exclamation icon */
 }
 </style>
-<div class="section" id="timeseriesx">
-<h1>TimeSeriesX<a class="headerlink" href="#timeseriesx" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="timeseries">
+<h1>TimeSeries<a class="headerlink" href="#timeseries" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="ptsa.data.TimeSeriesX.TimeSeriesX">
-<em class="property">class </em><code class="descclassname">ptsa.data.TimeSeriesX.</code><code class="descname">TimeSeriesX</code><span class="sig-paren">(</span><em>data</em>, <em>coords</em>, <em>dims=None</em>, <em>name=None</em>, <em>attrs=None</em>, <em>encoding=None</em>, <em>fastpath=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.TimeSeriesX.TimeSeriesX" title="Permalink to this definition">¶</a></dt>
+<dt id="ptsa.data.timeseries.TimeSeries">
+<em class="property">class </em><code class="descclassname">ptsa.data.timeseries.</code><code class="descname">TimeSeries</code><span class="sig-paren">(</span><em>data</em>, <em>coords</em>, <em>dims=None</em>, <em>name=None</em>, <em>attrs=None</em>, <em>encoding=None</em>, <em>fastpath=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries" title="Permalink to this definition">¶</a></dt>
 <dd><p>A thin wrapper around <code class="xref py py-class docutils literal"><span class="pre">xr.DataArray</span></code> for dealing with time series
 data.</p>
 <p>Note that xarray internals prevent us from overriding the constructor which
@@ -251,8 +248,8 @@ coordinate.</li>
 </dl>
 </div>
 <dl class="method">
-<dt id="ptsa.data.TimeSeriesX.TimeSeriesX.add_mirror_buffer">
-<code class="descname">add_mirror_buffer</code><span class="sig-paren">(</span><em>duration</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.TimeSeriesX.TimeSeriesX.add_mirror_buffer" title="Permalink to this definition">¶</a></dt>
+<dt id="ptsa.data.timeseries.TimeSeries.add_mirror_buffer">
+<code class="descname">add_mirror_buffer</code><span class="sig-paren">(</span><em>duration</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.add_mirror_buffer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds mirrors data at both ends of the time series (up to specified
 length/duration) and appends such buffers at both ends of the series.
 The new series total time duration is:</p>
@@ -273,24 +270,29 @@ The new series total time duration is:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ptsa.data.TimeSeriesX.TimeSeriesX.append">
-<code class="descname">append</code><span class="sig-paren">(</span><em>other</em>, <em>dim=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.TimeSeriesX.TimeSeriesX.append" title="Permalink to this definition">¶</a></dt>
-<dd><p>Append another <code class="xref py py-class docutils literal"><span class="pre">TimeSeriesX</span></code> to this one.</p>
+<dt id="ptsa.data.timeseries.TimeSeries.append">
+<code class="descname">append</code><span class="sig-paren">(</span><em>other</em>, <em>dim=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append another <code class="xref py py-class docutils literal"><span class="pre">TimeSeries</span></code> to this one.</p>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 2.0: </span>Appending along a dimension not present will cause that
+dimension to be created.</p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>other</strong> (<a class="reference internal" href="#ptsa.data.TimeSeriesX.TimeSeriesX" title="ptsa.data.TimeSeriesX.TimeSeriesX"><em>TimeSeriesX</em></a>) – </li>
+<li><strong>other</strong> (<a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries"><em>TimeSeries</em></a>) – </li>
 <li><strong>dim</strong> (<em>str</em><em> or </em><em>None</em>) – Dimension to concatenate on. If None, attempt to concatenate all
-data (likely to fail with truly multidimensional data).</li>
+data using <code class="xref py py-func docutils literal"><span class="pre">numpy.concatenate()</span></code>. If not present, a new
+dimension will be created with coords [0,1].</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Appended TimeSeriesX</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Appended TimeSeries</p>
 </td>
 </tr>
 </tbody>
@@ -298,8 +300,8 @@ data (likely to fail with truly multidimensional data).</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="ptsa.data.TimeSeriesX.TimeSeriesX.baseline_corrected">
-<code class="descname">baseline_corrected</code><span class="sig-paren">(</span><em>base_range</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.TimeSeriesX.TimeSeriesX.baseline_corrected" title="Permalink to this definition">¶</a></dt>
+<dt id="ptsa.data.timeseries.TimeSeries.baseline_corrected">
+<code class="descname">baseline_corrected</code><span class="sig-paren">(</span><em>base_range</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.baseline_corrected" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a baseline corrected timeseries by subtracting the
 average value in the baseline range from all other time points
 for each dimension.</p>
@@ -319,15 +321,15 @@ for the baseline.</td>
 </dd></dl>
 
 <dl class="classmethod">
-<dt id="ptsa.data.TimeSeriesX.TimeSeriesX.create">
-<em class="property">classmethod </em><code class="descname">create</code><span class="sig-paren">(</span><em>data</em>, <em>samplerate</em>, <em>coords=None</em>, <em>dims=None</em>, <em>name=None</em>, <em>attrs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.TimeSeriesX.TimeSeriesX.create" title="Permalink to this definition">¶</a></dt>
+<dt id="ptsa.data.timeseries.TimeSeries.create">
+<em class="property">classmethod </em><code class="descname">create</code><span class="sig-paren">(</span><em>data</em>, <em>samplerate</em>, <em>coords=None</em>, <em>dims=None</em>, <em>name=None</em>, <em>attrs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Factory function for creating a new timeseries object with passing
 the sample rate as a parameter. See <code class="xref py py-meth docutils literal"><span class="pre">__init__()</span></code> for parameters.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ptsa.data.TimeSeriesX.TimeSeriesX.filtered">
-<code class="descname">filtered</code><span class="sig-paren">(</span><em>freq_range</em>, <em>filt_type=’stop’</em>, <em>order=4</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.TimeSeriesX.TimeSeriesX.filtered" title="Permalink to this definition">¶</a></dt>
+<dt id="ptsa.data.timeseries.TimeSeries.filtered">
+<code class="descname">filtered</code><span class="sig-paren">(</span><em>freq_range</em>, <em>filt_type=’stop’</em>, <em>order=4</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.filtered" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter the data using a Butterworth filter and return a new
 TimeSeries instance.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -341,10 +343,10 @@ TimeSeries instance.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ts</strong> – A TimeSeriesX instance with the filtered data.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ts</strong> – A TimeSeries instance with the filtered data.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#ptsa.data.TimeSeriesX.TimeSeriesX" title="ptsa.data.TimeSeriesX.TimeSeriesX">TimeSeriesX</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </td>
 </tr>
 </tbody>
@@ -352,23 +354,36 @@ TimeSeries instance.</p>
 </dd></dl>
 
 <dl class="classmethod">
-<dt id="ptsa.data.TimeSeriesX.TimeSeriesX.from_hdf">
-<em class="property">classmethod </em><code class="descname">from_hdf</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.TimeSeriesX.TimeSeriesX.from_hdf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load from an HDF5 file.</p>
-<p>FIXME: load name and attrs</p>
+<dt id="ptsa.data.timeseries.TimeSeries.from_hdf">
+<em class="property">classmethod </em><code class="descname">from_hdf</code><span class="sig-paren">(</span><em>filename</em>, <em>decode_string_arrays=True</em>, <em>encoding=’utf-8’</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.from_hdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize from HDF5 using <code class="xref py py-mod docutils literal"><span class="pre">h5py</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) – Path to HDF5 file.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>str</em>) – </li>
+<li><strong>decode_string_arrays</strong> (<em>bool</em>) – Arrays of bytes should be decoded into strings</li>
+<li><strong>encoding</strong> (<em>str</em>) – Encoding scheme to use for decoding. To read files saved
+with earlier PTSA versions use ‘legacy’ (but note that
+support for reading legacy files is deprecated, so do save
+them out with to_hdf5 to update their format).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Deserialized instance</p>
+</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="ptsa.data.TimeSeriesX.TimeSeriesX.remove_buffer">
-<code class="descname">remove_buffer</code><span class="sig-paren">(</span><em>duration</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.TimeSeriesX.TimeSeriesX.remove_buffer" title="Permalink to this definition">¶</a></dt>
+<dt id="ptsa.data.timeseries.TimeSeries.remove_buffer">
+<code class="descname">remove_buffer</code><span class="sig-paren">(</span><em>duration</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.remove_buffer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the desired buffer duration (in seconds) and reset the
 time range.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -385,15 +400,15 @@ from the beginning and end.</td>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>ts</strong> – A TimeSeries instance with the requested durations removed from the
 beginning and/or end.</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#ptsa.data.TimeSeriesX.TimeSeriesX" title="ptsa.data.TimeSeriesX.TimeSeriesX">TimeSeriesX</a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="ptsa.data.TimeSeriesX.TimeSeriesX.resampled">
-<code class="descname">resampled</code><span class="sig-paren">(</span><em>resampled_rate</em>, <em>window=None</em>, <em>loop_axis=None</em>, <em>num_mp_procs=0</em>, <em>pad_to_pow2=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.TimeSeriesX.TimeSeriesX.resampled" title="Permalink to this definition">¶</a></dt>
+<dt id="ptsa.data.timeseries.TimeSeries.resampled">
+<code class="descname">resampled</code><span class="sig-paren">(</span><em>resampled_rate</em>, <em>window=None</em>, <em>loop_axis=None</em>, <em>num_mp_procs=0</em>, <em>pad_to_pow2=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.resampled" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resamples the time series.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -419,32 +434,38 @@ beginning and/or end.</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="ptsa.data.TimeSeriesX.TimeSeriesX.to_hdf">
-<code class="descname">to_hdf</code><span class="sig-paren">(</span><em>filename</em>, <em>mode=’w’</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.TimeSeriesX.TimeSeriesX.to_hdf" title="Permalink to this definition">¶</a></dt>
+<dt id="ptsa.data.timeseries.TimeSeries.to_hdf">
+<code class="descname">to_hdf</code><span class="sig-paren">(</span><em>filename</em>, <em>mode=’w’</em>, <em>compression=None</em>, <em>compression_opts=None</em>, <em>encode_string_arrays=True</em>, <em>encoding=’utf8’</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.to_hdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save to disk using HDF5.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>filename</strong> (<em>str</em>) – Full path to the HDF5 file</li>
-<li><strong>mode</strong> (<em>str</em>) – File mode to use. See the <code class="xref py py-mod docutils literal"><span class="pre">h5py</span></code> documentation for details.
+<li><strong>filename</strong> (str or <code class="xref py py-mod docutils literal"><span class="pre">h5py.h5f.FileID</span></code> instance) – Path to or identifier for the HDF5 file. See the
+<code class="xref py py-class docutils literal"><span class="pre">h5py.File</span></code> documentation.</li>
+<li><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – File mode to use. See the <code class="xref py py-class docutils literal"><span class="pre">h5py.File</span></code> documentation
+for details.
 Default: <code class="docutils literal"><span class="pre">'w'</span></code></li>
+<li><strong>compression</strong> (<em>str</em><em> or </em><em>None</em>) – Compression to use with arrays (see
+<code class="xref py py-meth docutils literal"><span class="pre">h5py.Group.create_dataset()</span></code> documentation for valid
+choices).</li>
+<li><strong>compression_opts</strong> (<em>int</em><em> or </em><em>None</em>) – Compression options, generally a number specifying compression level
+(see <code class="xref py py-meth docutils literal"><span class="pre">h5py.Group.create_dataset()</span></code> documentation for details).</li>
+<li><strong>encode_string_arrays</strong> (<em>bool</em>) – When True, force encoding of arrays of unicode strings using the
+<code class="docutils literal"><span class="pre">encoding</span></code> keyword argument. Not setting this will result in
+errors if using arrays of unicode strings. Default: True.</li>
+<li><strong>encoding</strong> (<em>str</em>) – Encoding to use when forcing encoding of unicode string arrays.
+Default: <code class="docutils literal"><span class="pre">'utf8'</span></code>.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p>Because recarrays can complicate things when unicode is involved, saving
-coordinates is a multi-step process:</p>
-<ol class="arabic simple">
-<li>Save to a buffer using <code class="xref py py-func docutils literal"><span class="pre">np.save()</span></code>. This uses Numpy’s own binary
-format and should Just Work.</li>
-<li>Base64-encode the buffer to eliminate NULL bytes which HDF5 can’t
-handle.</li>
-<li>Write the bytes contained in the buffer to the HDF5 file.</li>
-</ol>
+<p>The root node also has attributes:
+* <code class="docutils literal"><span class="pre">classname</span></code> - the class name of the instance being serialized
+* <code class="docutils literal"><span class="pre">python_module</span></code> - the Python module in which the class is defined</p>
 </dd></dl>
 
 </dd></dl>
@@ -473,7 +494,7 @@ handle.</li>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017.
+        &copy; Copyright 2018.
 
     </p>
   </div>
@@ -495,7 +516,7 @@ handle.</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'1.1.4',
+            VERSION:'2.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

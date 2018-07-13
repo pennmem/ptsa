@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>PTSA - EEG Time Series Analysis in Python &mdash; PTSA 1.1.4 documentation</title>
+  <title>PTSA - EEG Time Series Analysis in Python &mdash; PTSA 2.0.0 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="PTSA 1.1.4 documentation" href="#"/>
-        <link rel="next" title="Installation" href="installation.html"/> 
+    <link rel="top" title="PTSA 2.0.0 documentation" href="#"/>
+        <link rel="next" title="Examples" href="examples/index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.1.4
+                2.0.0
               </div>
             
           
@@ -90,8 +90,6 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">PTSA Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ramdata.html">Interacting with RAM Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="filters.html">Filtering Time Series</a></li>
@@ -197,43 +195,72 @@
 <div class="section" id="ptsa-eeg-time-series-analysis-in-python">
 <h1>PTSA - EEG Time Series Analysis in Python<a class="headerlink" href="#ptsa-eeg-time-series-analysis-in-python" title="Permalink to this headline">¶</a></h1>
 <p><strong>PTSA</strong> is an open source Python package that facilitates time-series
-analysis of EEG signals. PTSA builds on xarray functionality
-and provides several convenience tools that significantly simplify analysis of the EEG data..</p>
-<p>To use all features provided by PTSA you will need to install several dependencies:
-xarray, scipy, numpy, PyWavelets and make sure you have working C/C++ compiler on your machine when you install PTSA</p>
-<p>The main object that you will be using in the new PTSA API is called <code class="docutils literal"><span class="pre">TimeSeriesX</span></code>. <code class="docutils literal"><span class="pre">TimeSeriesX</span></code> is built on
-top of <code class="docutils literal"><span class="pre">xarray.DataArray</span></code>. <code class="docutils literal"><span class="pre">xarray.DataArray</span></code>, defined in the <code class="docutils literal"><span class="pre">xarray</span></code> Python package, represents N-D arrays.
-Because <code class="docutils literal"><span class="pre">TimeSeriesX</span></code> is a subclass of <code class="docutils literal"><span class="pre">xarray.DataArray</span></code> it has all the functionality of <code class="docutils literal"><span class="pre">xarray.DataArray</span></code>
-in addition to new functions it defines, used specifically in EEG data analysis.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">In legacy versions of PTSA the object representing time series is called <code class="docutils literal"><span class="pre">TimeSeries</span></code> and is built on
-top of custom-written <code class="docutils literal"><span class="pre">dimarray</span></code> module. To keep the old analysis code written for older PTSA versions running,
-we append letter <strong>X</strong> to the object representing time-series in the new PTSA , hence the name <code class="docutils literal"><span class="pre">TimeSeriesX</span></code>.</p>
-</div>
-<p>Besides <code class="docutils literal"><span class="pre">TimeSeriesX</span></code>, PTSA has 3 main categories of objects: readers, writers, filters. Readers
-read various data formats (e.g eeg files, bipolar electrodes files etc..) to make input operations as smooth as possible.
-Writers (still under development) will output data in several formats (currently only NetCDF output is supported). Filters
-take as an input <code class="docutils literal"><span class="pre">TimeSeriesX</span></code> object and output diffrent <code class="docutils literal"><span class="pre">TimeSeriesX</span></code> object. Most of the tasks
-related to EEG analysis will rely on using those 3 categories of PTSA objects.</p>
+analysis of EEG signals. PTSA builds on <code class="xref py py-mod docutils literal"><span class="pre">xarray</span></code> functionality
+and provides several convenience tools that significantly simplify analysis of
+EEG data.</p>
+<p>The main object that you will be using in the new PTSA API is called
+<code class="docutils literal"><span class="pre">TimeSeries</span></code>. <code class="docutils literal"><span class="pre">TimeSeries</span></code> is built on top of <code class="xref py py-class docutils literal"><span class="pre">xarray.DataArray</span></code>.
+<code class="xref py py-class docutils literal"><span class="pre">xarray.DataArray</span></code>, defined in the <code class="xref py py-mod docutils literal"><span class="pre">xarray</span></code> Python package,
+represents N-D arrays. Because <code class="docutils literal"><span class="pre">TimeSeries</span></code> is a subclass of
+<code class="xref py py-class docutils literal"><span class="pre">xarray.DataArray</span></code> it has all the functionality of
+<code class="xref py py-class docutils literal"><span class="pre">xarray.DataArray</span></code> in addition to new functions it defines, used
+specifically in EEG data analysis.</p>
+<p>Besides <code class="docutils literal"><span class="pre">TimeSeries</span></code>, PTSA has 2 main categories of objects: readers and
+filters. Readers read various data formats (EEG files, event files, etc.) to
+make input operations as smooth as possible. Filters take a <code class="docutils literal"><span class="pre">TimeSeries</span></code>
+object as an input and output a modified <code class="docutils literal"><span class="pre">TimeSeries</span></code> object.</p>
 <p>If you’d like to learn Python via series of statistics tutorials look no further than
 <a class="reference external" href="http://people.duke.edu/~ccc14/sta-663-2016/">introduction to computational statistics in Python</a></p>
-<div class="admonition tip">
-<p class="first admonition-title">Tip</p>
-<p class="last">If you’d like to see PTSA in action check the following self-contained tutorial:
-<a class="reference external" href="https://github.com/maciekswat/ptsa_new/blob/master/ptsa/tests/test_classifier_notebook-R1111M-presentation.ipynb">Computing classifier of good memory using RAM Data</a></p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="installing-pre-built-binaries">
+<h3>Installing pre-built binaries<a class="headerlink" href="#installing-pre-built-binaries" title="Permalink to this headline">¶</a></h3>
+<p>The recommended way to install <code class="xref py py-mod docutils literal"><span class="pre">ptsa</span></code> is to install with conda:</p>
+<div class="highlight-shell-session"><div class="highlight"><pre><span></span><span class="go">conda install -c pennmem ptsa</span>
+</pre></div>
 </div>
-<p>Contents:</p>
+</div>
+<div class="section" id="installing-with-conda-from-source">
+<h3>Installing with conda from source<a class="headerlink" href="#installing-with-conda-from-source" title="Permalink to this headline">¶</a></h3>
+<p>If you’d rather install the latest development version, you’ll need to perform
+the following steps:</p>
+<p>Clone the git repository:</p>
+<div class="highlight-shell-session"><div class="highlight"><pre><span></span><span class="go">git clone https://github.com/pennmem/ptsa_new.git</span>
+</pre></div>
+</div>
+<p>Install dependencies with conda:</p>
+<div class="highlight-shell-session"><div class="highlight"><pre><span></span><span class="go">conda install -y numpy scipy xarray swig</span>
+</pre></div>
+</div>
+<p>Install PTSA:</p>
+<div class="highlight-shell-session"><div class="highlight"><pre><span></span><span class="go">python setup.py install</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="optional-dependencies">
+<h3>Optional dependencies<a class="headerlink" href="#optional-dependencies" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="for-netcdf-and-io">
+<h4>For netCDF and IO<a class="headerlink" href="#for-netcdf-and-io" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Unidata/netcdf4-python">netCDF4</a>: recommended if you
+want to use <code class="xref py py-mod docutils literal"><span class="pre">xarray</span></code> for reading or writing netCDF files</li>
+<li><a class="reference external" href="https://github.com/shoyer/h5netcdf">h5netcdf</a>: an alternative library for
+reading and writing netCDF4 files that does not use the netCDF-C libraries</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">PTSA Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ramdata.html">Interacting with RAM Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="filters.html">Filtering Time Series</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development guidelines</a></li>
 </ul>
+</div>
 </div>
 </div>
 
@@ -247,7 +274,7 @@ related to EEG analysis will rely on using those 3 categories of PTSA objects.</
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="examples/index.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -257,7 +284,7 @@ related to EEG analysis will rely on using those 3 categories of PTSA objects.</
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017.
+        &copy; Copyright 2018.
 
     </p>
   </div>
@@ -279,7 +306,7 @@ related to EEG analysis will rely on using those 3 categories of PTSA objects.</
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.1.4',
+            VERSION:'2.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

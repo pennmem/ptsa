@@ -2,7 +2,7 @@ import json
 import time
 import warnings
 from io import BytesIO
-from base64 import b64encode, b64decode
+from base64 import b64decode
 import xarray as xr
 import numpy as np
 from scipy.signal import resample
@@ -12,7 +12,7 @@ try:
 except ImportError:  # pragma: nocover
     h5py = None
 
-from ptsa.version import version as ptsa_version
+from ptsa import __version__ as ptsa_version
 from ptsa.data.common import get_axis_index
 from ptsa.filt import buttfilt
 
@@ -263,9 +263,11 @@ class TimeSeries(xr.DataArray):
             if attrs is not None:
                 attrs = json.loads(attrs.decode(encoding))
 
-            array = cls.create(hfile['data'].value, None, coords=coords,
-                               dims=[dim.decode() for dim in dims],
-                               name=name, attrs=attrs)
+            array = TimeSeries(hfile["data"].value,
+                               coords={k: v.value for k, v in coords.items()},
+                               dims=[dim.decode(encoding) for dim in dims],
+                               name=name,
+                               attrs=attrs)
             return array
 
     @classmethod
