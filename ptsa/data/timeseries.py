@@ -268,11 +268,6 @@ class TimeSeries(xr.DataArray):
                         dims=[dim.decode(encoding) for dim in dims],
                         name=name,
                         attrs=attrs)
-           # array = TimeSeries(hfile["data"].value,
-           #                     coords={k: v.value for k, v in coords.items()},
-           #                     dims=[dim.decode(encoding) for dim in dims],
-           #                     name=name,
-           #                     attrs=attrs)
             return array
 
     @classmethod
