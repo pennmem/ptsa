@@ -134,7 +134,17 @@ def test_hdf(tempdir):
         assert ts.attrs[key] == loaded.attrs[key]
     assert np.all(loaded.data == data)
     for coord in loaded.coords:
-        assert (loaded.coords[coord] == ts.coords[coord]).all()
+        # dtypes can be slightly differnt for recarrays:
+        assert (
+            np.array(
+                loaded.coords[coord], ts[coord].values.dtype) ==
+            ts.coords[coord]).all()
+    for coord in ts.coords:
+        # dtypes can be slightly differnt for recarrays:
+        assert (
+            np.array(
+                loaded.coords[coord], ts[coord].values.dtype) ==
+            ts.coords[coord]).all()
     for n, dim in enumerate(dims):
         assert loaded.dims[n] == dim
     assert loaded.name == "container test"
