@@ -1,6 +1,19 @@
 Changes
 =======
 
+Version 2.0.1
+-------------
+
+**2018-07-18**
+
+This is a minor bugfix release.
+
+Issues addressed:
+
+* Require a newer version of xarray and fix HDF5 serialization (#204)
+* Optionally coerce datatypes to double for filters (#205)
+
+
 Version 2.0.0
 -------------
 
