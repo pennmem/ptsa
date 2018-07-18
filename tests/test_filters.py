@@ -424,3 +424,27 @@ class TestBaseFilter:
         with pytest.raises(NotImplementedError):
             filt = BaseFilter(self.dummy_ts)
             filt.filter()
+
+
+@pytest.mark.only
+class TestMorletFilter:
+    def test_non_double(self):
+        """Test that we can use a TimeSeries that starts out as a dtype other
+        than double.
+
+        """
+        lim = 10000
+        data = np.random.uniform(-lim, lim, (100, 1000)).astype(np.int16)
+
+        ts = timeseries.TimeSeries(
+            data=data,
+            dims=("x", "time"),
+            coords={
+                "x": np.linspace(0, data.shape[0], data.shape[0]),
+                "time": np.arange(data.shape[1]),
+                "samplerate": 1,
+            }
+        )
+
+        mwf = MorletWaveletFilter(ts, np.array(range(70, 171, 10)), output="power")
+        mwf.filter()
