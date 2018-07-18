@@ -418,7 +418,8 @@ class TestBaseFilter:
 
         """
         ts = self.dummy_ts.astype(dtype)
-        assert ts.data.dtype == dtype
+        filt = BaseFilter(ts, None)
+        assert filt.timeseries.data.dtype == dtype
 
     def test_filter(self):
         with pytest.raises(NotImplementedError):
@@ -426,7 +427,6 @@ class TestBaseFilter:
             filt.filter()
 
 
-@pytest.mark.only
 class TestMorletFilter:
     def test_non_double(self):
         """Test that we can use a TimeSeries that starts out as a dtype other
