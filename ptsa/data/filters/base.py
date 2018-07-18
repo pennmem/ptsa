@@ -1,4 +1,3 @@
-from abc import abstractmethod
 import traits.api
 
 from ptsa.data.timeseries import TimeSeries
@@ -15,6 +14,5 @@ class BaseFilter(traits.api.HasTraits):
         self.nontime_dims = tuple([d for d in self.timeseries.dims if d != 'time'])
         self.nontime_sizes = tuple([len(self.timeseries[d]) for d in self.nontime_dims])
 
-    @abstractmethod
     def filter(self):
-        pass
+        raise NotImplementedError
