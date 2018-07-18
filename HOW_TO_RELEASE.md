@@ -2,6 +2,7 @@
 
 The following steps should be taken when making an "official" release:
 
+0. Update CHANGELOG.rst
 1. Create a new `staging` branch
 2. Run tests, make sure they pass.
 3. Increment the version number in `ptsa/__init__.py`.
