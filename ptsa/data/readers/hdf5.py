@@ -42,7 +42,6 @@ class H5RawReader(BaseRawReader):
         self.channel_labels_to_string()
 
 
-
     def read_file(self, filename, channels, start_offsets=np.array([0]), read_size=-1):
         """
         Overloads BaseRawReader.read_file(). Does some mangling of the channels parameter if it is empty or if the

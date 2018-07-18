@@ -5,16 +5,16 @@ import xarray as xr
 
 import numpy as np
 from numpy.testing import assert_array_equal, assert_array_almost_equal
+
 from ptsa.data import timeseries
-from ptsa.data.readers import BaseEventReader
-from ptsa.data.filters.morlet import MorletWaveletFilter
+from ptsa.data.filters import (
+    BaseFilter, ButterworthFilter, DataChopper, MonopolarToBipolarMapper,
+    MorletWaveletFilter, ResampleFilter
+)
+from ptsa.data.readers import BaseEventReader, EEGReader
 from ptsa.data.readers.tal import TalReader
-from ptsa.data.readers import EEGReader
-from ptsa.data.filters import DataChopper
-from ptsa.data.filters import MonopolarToBipolarMapper
-from ptsa.data.filters import ButterworthFilter
-from ptsa.data.filters import ResampleFilter
 from ptsa.test.utils import get_rhino_root, skip_without_rhino
+
 
 def test_monopolar_to_bipolar_filter_norhino():
     data = np.random.random((20, 10, 5))
@@ -39,12 +39,14 @@ def test_monopolar_to_bipolar_filter_norhino():
     ts_m2b2 = m2b2.filter()
 
     assert np.all(ts_m2b1 == ts_m2b2)
+
     # checking each coord is probably redundant (mismatching coords
     # should cause failure in the above assertion), but won't hurt
     for coord in ts_m2b1.coords:
         assert np.all(ts_m2b1[coord] == ts_m2b2[coord])
         if coord != 'channels':
             assert np.all(ts[coord] == ts_m2b1[coord])
+
     # sanity check that we haven't lost any coords:
     for coord in ts.coords:
         if coord != 'channels':
@@ -52,6 +54,7 @@ def test_monopolar_to_bipolar_filter_norhino():
     for attr in ts.attrs:
         assert np.all(ts_m2b1.attrs[attr] == ts_m2b2.attrs[attr])
         assert np.all(ts.attrs[attr] == ts_m2b1.attrs[attr])
+
     assert ts.name == ts_m2b1.name
     assert ts.name == ts_m2b2.name
     assert np.all(ts_m2b1['channels'] == bipolar_pairs2)
@@ -156,8 +159,6 @@ def test_monopolar_to_bipolar_filter_norhino():
                               ts.sel(channels=range(1,10)).values))
 
 
-
-
 @pytest.mark.filters
 @skip_without_rhino
 class TestFilters(unittest.TestCase):
@@ -253,7 +254,6 @@ class TestFilters(unittest.TestCase):
             verbose=True
         )
 
-
         pow_wavelet_session = wf_session.filter()
 
         sedc = DataChopper(events=self.base_events, timeseries=pow_wavelet_session, start_time=self.start_time,
@@ -305,6 +305,7 @@ def time_series():
                                                 'samplerate': 1000
                                             })
 
+
 @pytest.mark.filters
 class TestFiltersExecute:
     @classmethod
@@ -316,7 +317,6 @@ class TestFiltersExecute:
                                                     'time': times,
                                                     'samplerate': 1000
                                                 })
-
 
     def test_butterworth(self,time_series):
         bfilter = ButterworthFilter(timeseries=time_series,
@@ -350,6 +350,7 @@ class TestFiltersExecute:
         new_ts = rf.filter()
         assert len(new_ts) == 50
         assert new_ts.samplerate == 50.
+
 
 class TestFilterShapes:
     """Filter behavior should not depend on shape of input array."""
@@ -387,6 +388,63 @@ class TestFilterShapes:
         xr.testing.assert_allclose(filtered0, filtered1.transpose(*filtered0.dims))
 
 
-if __name__ == '__main__':
-    TestFilterShapes.setup_class()
-    TestFilterShapes().test_MorletWaveletFilterCpp()
+class TestBaseFilter:
+    @property
+    def dummy_ts(self):
+        return timeseries.TimeSeries(
+            np.linspace(0, 10, 10),
+            dims=("x",),
+            coords={
+                "x": range(10),
+                "samplerate": 1
+            }
+        )
+
+    @pytest.mark.parametrize("dtype,expected_dtype", [
+        (None, np.float64),
+        (np.float64, np.float64),
+        ("double", np.float64),
+        ("float32", np.float32),
+        ("int", np.int),
+    ])
+    def test_dtypes(self, dtype, expected_dtype):
+        filt = BaseFilter(self.dummy_ts, dtype)
+        assert filt.timeseries.data.dtype == expected_dtype
+
+    @pytest.mark.parametrize("dtype", [np.int8, np.uint16, np.float32])
+    def test_unchanged_dtype(self, dtype):
+        """Special case test where we use a weird input dtype. The previous
+        test works with None since by default Numpy uses float64.
+
+        """
+        ts = self.dummy_ts.astype(dtype)
+        filt = BaseFilter(ts, None)
+        assert filt.timeseries.data.dtype == dtype
+
+    def test_filter(self):
+        with pytest.raises(NotImplementedError):
+            filt = BaseFilter(self.dummy_ts)
+            filt.filter()
+
+
+class TestMorletFilter:
+    def test_non_double(self):
+        """Test that we can use a TimeSeries that starts out as a dtype other
+        than double.
+
+        """
+        lim = 10000
+        data = np.random.uniform(-lim, lim, (100, 1000)).astype(np.int16)
+
+        ts = timeseries.TimeSeries(
+            data=data,
+            dims=("x", "time"),
+            coords={
+                "x": np.linspace(0, data.shape[0], data.shape[0]),
+                "time": np.arange(data.shape[1]),
+                "samplerate": 1,
+            }
+        )
+
+        mwf = MorletWaveletFilter(ts, np.array(range(70, 171, 10)), output="power")
+        mwf.filter()

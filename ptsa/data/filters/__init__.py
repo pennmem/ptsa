@@ -1,4 +1,4 @@
-from .BaseFilter import BaseFilter
+from .base import BaseFilter
 from .ButterworthFilter import ButterworthFilter
 from .DataChopper import DataChopper
 from .MonopolarToBipolarMapper import MonopolarToBipolarMapper
