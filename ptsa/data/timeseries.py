@@ -263,11 +263,11 @@ class TimeSeries(xr.DataArray):
             if attrs is not None:
                 attrs = json.loads(attrs.decode(encoding))
 
-            array = TimeSeries(hfile["data"].value,
-                               coords={k: v.value for k, v in coords.items()},
-                               dims=[dim.decode(encoding) for dim in dims],
-                               name=name,
-                               attrs=attrs)
+            array = cls(hfile['data'].value,
+                        coords=coords,
+                        dims=[dim.decode(encoding) for dim in dims],
+                        name=name,
+                        attrs=attrs)
             return array
 
     @classmethod
