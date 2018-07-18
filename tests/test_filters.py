@@ -385,7 +385,6 @@ class TestFilterShapes:
         xr.testing.assert_allclose(filtered0, filtered1.transpose(*filtered0.dims))
 
 
-@pytest.mark.only
 class TestBaseFilter:
     @property
     def dummy_ts(self):
@@ -408,6 +407,15 @@ class TestBaseFilter:
     def test_dtypes(self, dtype, expected_dtype):
         filt = BaseFilter(self.dummy_ts, dtype)
         assert filt.timeseries.data.dtype == expected_dtype
+
+    @pytest.mark.parametrize("dtype", [np.int8, np.uint16, np.float32])
+    def test_unchanged_dtype(self, dtype):
+        """Special case test where we use a weird input dtype. The previous
+        test works with None since by default Numpy uses float64.
+
+        """
+        ts = self.dummy_ts.astype(dtype)
+        assert ts.data.dtype == dtype
 
     def test_filter(self):
         with pytest.raises(NotImplementedError):
