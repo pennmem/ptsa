@@ -39,12 +39,14 @@ def test_monopolar_to_bipolar_filter_norhino():
     ts_m2b2 = m2b2.filter()
 
     assert np.all(ts_m2b1 == ts_m2b2)
+
     # checking each coord is probably redundant (mismatching coords
     # should cause failure in the above assertion), but won't hurt
     for coord in ts_m2b1.coords:
         assert np.all(ts_m2b1[coord] == ts_m2b2[coord])
         if coord != 'channels':
             assert np.all(ts[coord] == ts_m2b1[coord])
+
     # sanity check that we haven't lost any coords:
     for coord in ts.coords:
         if coord != 'channels':
@@ -52,6 +54,7 @@ def test_monopolar_to_bipolar_filter_norhino():
     for attr in ts.attrs:
         assert np.all(ts_m2b1.attrs[attr] == ts_m2b2.attrs[attr])
         assert np.all(ts.attrs[attr] == ts_m2b1.attrs[attr])
+
     assert ts.name == ts_m2b1.name
     assert ts.name == ts_m2b2.name
     assert np.all(ts_m2b1['channels'] == bipolar_pairs2)

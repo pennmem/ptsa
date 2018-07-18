@@ -23,10 +23,10 @@ class BaseFilter(traits.api.HasTraits):
     def __init__(self, timeseries, dtype=np.float64):
         super(BaseFilter, self).__init__()
 
-        if dtype is None:
-            self.timeseries = timeseries
-        else:
-            self.timeseries = timeseries.astype(dtype)
+        self.timeseries = timeseries
+
+        if dtype is not None:
+            self.timeseries.data = timeseries.data.astype(dtype)
 
         self.nontime_dims = tuple([d for d in self.timeseries.dims if d != 'time'])
         self.nontime_sizes = tuple([len(self.timeseries[d]) for d in self.nontime_dims])
