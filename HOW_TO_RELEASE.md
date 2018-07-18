@@ -10,7 +10,7 @@ The following steps should be taken when making an "official" release:
 5. Build conda packages on Mac, Linux, Windows: `python maint/build.py`
 6. Upload to Anaconda Cloud: `anaconda upload --user pennmem ./ptsa-*.tar.bz2`.
    This needs to be done from the directory where the tarballs are emitted.
-7. Rebuild documentation: `maint/build_docs.sh`
+7. Rebuild documentation: `maint/build_docs.py`
 8. Create a pull request for the `staging` branch titled `Version x.y.z` where
    `x.y.z` is the new version number.
 9. Merge.
