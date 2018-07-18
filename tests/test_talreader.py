@@ -863,11 +863,6 @@ def test_old_behavior():
     assert pairinfo.dtype['atlases'] is np.dtype(object)
 
 
-def test_old_behavior_warning():
-    with pytest.warns(FutureWarning):
-        TalReader(filename=osp.join(osp.dirname(__file__), 'data', 'pairs.json'), unpack=False).read()
-
-
 def test_talreader():
     pairinfo = TalReader(filename=osp.join(osp.dirname(__file__),'data','pairs.json')).read()
     _ = pairinfo.atlases.avg[['x','y','z']]
