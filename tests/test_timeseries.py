@@ -7,6 +7,7 @@ import numpy as np
 import xarray as xr
 import h5py
 
+from ptsa.data.filters import ResampleFilter
 from ptsa.data.timeseries import TimeSeries, ConcatenationError
 
 
@@ -148,6 +149,33 @@ def test_hdf(tempdir):
     for n, dim in enumerate(dims):
         assert loaded.dims[n] == dim
     assert loaded.name == "container test"
+
+
+@pytest.mark.parametrize("cls,kwargs", [
+    (None, {}),
+    (ResampleFilter, {"resamplerate": 1.}),
+])
+def test_filter_with(cls, kwargs):
+    ts = TimeSeries.create(
+        np.random.random((2, 100)),
+        samplerate=10,
+        dims=("x", "time"),
+        coords={
+            "x": range(2),
+            "time": range(100),
+        }
+    )
+
+    if cls is None:
+        class MyClass(object):
+            pass
+
+        with pytest.raises(TypeError):
+            ts.filter_with(MyClass)
+    else:
+        tsf = ts.filter_with(cls, **kwargs)
+        assert isinstance(tsf, TimeSeries)
+        assert tsf.data != ts.data
 
 
 def test_filtered():
