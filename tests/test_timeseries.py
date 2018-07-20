@@ -151,6 +151,7 @@ def test_hdf(tempdir):
     assert loaded.name == "container test"
 
 
+@pytest.mark.only
 @pytest.mark.parametrize("cls,kwargs", [
     (None, {}),
     (ResampleFilter, {"resamplerate": 1.}),
@@ -175,7 +176,7 @@ def test_filter_with(cls, kwargs):
     else:
         tsf = ts.filter_with(cls, **kwargs)
         assert isinstance(tsf, TimeSeries)
-        assert tsf.data != ts.data
+        assert tsf.data.shape != ts.data.shape
 
 
 def test_filtered():

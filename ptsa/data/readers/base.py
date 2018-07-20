@@ -284,7 +284,8 @@ class BaseEventReader(BaseReader):
 
     @classmethod
     def from_json(cls, json_filename):
-        d = json.load(open(json_filename))
+        with open(json_filename, "r") as f:
+            d = json.load(f)
         return cls.from_dict(d)
 
     @classmethod
