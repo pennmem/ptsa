@@ -288,7 +288,6 @@ class TestFilters(unittest.TestCase):
 
         base_eegs_filtered_2 = self.base_eegs.filtered(freq_range=[58., 62.], filt_type='stop', order=4)
 
-
         assert_equal(base_eegs_filtered_1, base_eegs_filtered_2)
 
         with self.assertRaises(AssertionError):
@@ -367,7 +366,7 @@ class TestFilterShapes:
                                                 },
                                                 dims=('offsets', 'time'))
 
-    def test_MorletWaveletFilterCpp(self):
+    def test_morlet(self):
         results0 = MorletWaveletFilter(self.timeseries, freqs=self.freqs,
                                        width=4, output=['power','phase']).filter()
 
@@ -381,7 +380,7 @@ class TestFilterShapes:
         xr.testing.assert_allclose(results0.sel(output='phase'),
                                    results1.sel(output='phase'))
 
-    def test_ButterworthFilter(self):
+    def test_butterworth(self):
         filtered0 = ButterworthFilter(self.timeseries, self.freqs.tolist()).filter()
         filtered1 = ButterworthFilter(self.timeseries.transpose(), self.freqs.tolist()).filter()
 
