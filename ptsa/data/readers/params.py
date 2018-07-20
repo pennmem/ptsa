@@ -87,7 +87,8 @@ class ParamsReader(BaseReader, traits.api.HasTraits):
             return self.read_json()
 
     def read_json(self):
-        json_params = json.load(open(self.filename))[basename(self.dataroot)]
+        with open(self.filename) as f:
+            json_params = json.load(f)[basename(self.dataroot)]
         params = {}
         params['samplerate'] = json_params['sample_rate']
         params['gain'] = 1
@@ -120,11 +121,11 @@ class ParamsReader(BaseReader, traits.api.HasTraits):
                 except KeyError:
                     pass
 
-        if not 'gain' in params.keys():
+        if 'gain' not in params.keys():
             params['gain'] = 1.0
             warnings.warn('Did not find "gain" in the params.txt file. Assuming gain=1.0', RuntimeWarning)
 
-        if not set(params.keys()).issuperset(set(['gain', 'samplerate'])):
+        if not set(params.keys()).issuperset({'gain', 'samplerate'}):
             raise ValueError(
                 'Params file must contain samplerate and gain!\n' +
                 'The following fields were supplied:\n' + str(list(params.keys())))
