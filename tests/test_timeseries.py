@@ -151,7 +151,6 @@ def test_hdf(tempdir):
     assert loaded.name == "container test"
 
 
-@pytest.mark.only
 @pytest.mark.parametrize("cls,kwargs", [
     (None, {}),
     (ResampleFilter, {"resamplerate": 1.}),
