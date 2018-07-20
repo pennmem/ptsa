@@ -69,7 +69,6 @@ class ResampleFilter(BaseFilter):
 
         time_idx_array = np.arange(len(time_axis))
 
-
         if self.round_to_original_timepoints:
             filtered_array, new_time_idx_array = resample(
                 self.timeseries.data, new_length, t=time_idx_array,
@@ -82,17 +81,19 @@ class ResampleFilter(BaseFilter):
             new_time_axis = time_axis[new_time_idx_array]
 
         else:
-            filtered_array, new_time_axis = resample(self.timeseries.data,
-                                             new_length, t=time_axis_data,
-                                             axis=self.time_axis_index)
+            filtered_array, new_time_axis = \
+                resample(self.timeseries.data,
+                         new_length,
+                         t=time_axis_data,
+                         axis=self.time_axis_index)
 
         coords = {}
         for i, dim_name in enumerate(self.timeseries.dims):
             if i != self.time_axis_index:
-                coords[dim_name]= self.timeseries.coords[dim_name].copy()
+                coords[dim_name] = self.timeseries.coords[dim_name].copy()
             else:
-                coords[dim_name]=new_time_axis
-        coords['samplerate']=self.resamplerate
+                coords[dim_name] = new_time_axis
+        coords['samplerate'] = self.resamplerate
 
         filtered_timeseries = TimeSeries(filtered_array, coords=coords,
                                          dims=self.timeseries.dims)
