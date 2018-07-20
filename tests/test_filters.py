@@ -382,8 +382,8 @@ class TestFilterShapes:
 
     @pytest.mark.slow
     def test_butterworth(self):
-        filtered0 = ButterworthFilter(self.timeseries, self.freqs.tolist()).filter()
-        filtered1 = ButterworthFilter(self.timeseries.transpose(), self.freqs.tolist()).filter()
+        filtered0 = ButterworthFilter(self.timeseries, self.freqs).filter()
+        filtered1 = ButterworthFilter(self.timeseries.transpose(), self.freqs).filter()
 
         xr.testing.assert_allclose(filtered0, filtered1.transpose(*filtered0.dims))
 

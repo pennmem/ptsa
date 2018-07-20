@@ -27,7 +27,7 @@ class ButterworthFilter(BaseFilter):
 
     """
     order = traits.api.Int
-    freq_range = traits.api.List(maxlen=2)
+    freq_range = traits.api.CList(maxlen=2)
     filt_type = traits.api.Str
 
     def __init__(self, timeseries, freq_range, order=4, filt_type='stop'):
