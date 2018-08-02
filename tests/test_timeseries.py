@@ -1,3 +1,4 @@
+from copy import copy
 from tempfile import mkdtemp
 import os.path as osp
 import shutil
@@ -47,6 +48,28 @@ def test_arithmetic_operations():
     ts_out = ts_1 + ts_2
 
     print('ts_out=', ts_out)
+
+
+@pytest.mark.parametrize("dtype", [np.int, None, np.float32, np.float64])
+def test_coerce_to(dtype):
+    shape = (1, 10, 100)
+
+    ts = TimeSeries.create(
+        np.random.random(shape),
+        samplerate=1,
+        dims=("a", "b", "c"),
+        coords={
+            "a": np.linspace(0, 1, shape[0]),
+            "b": np.linspace(0, 1, shape[1]),
+            "c": np.linspace(0, 1, shape[2])
+        }
+    )
+
+    orig_dtype = copy(ts.data.dtype)
+    ts.coerce_to(dtype)
+    assert ts.data.dtype == dtype
+    if orig_dtype != dtype:
+        assert ts.data.dtype != orig_dtype
 
 
 def test_hdf(tempdir):

@@ -79,6 +79,14 @@ class TimeSeries(xr.DataArray):
             coords['samplerate'] = float(samplerate)
         return cls(data, coords=coords, dims=dims, name=name, attrs=attrs)
 
+    def coerce_to(self, dtype=np.float64):
+        """Coerce the data to the specified dtype in place. If dtype is None,
+        this method does nothing. Default: coerce to ``np.float64``.
+
+        """
+        if dtype is not None:
+            self.data = self.data.astype(dtype)
+
     def to_hdf(self, filename, mode='w', compression=None,
                compression_opts=None, encode_string_arrays=True,
                encoding='utf8'):
