@@ -28,7 +28,7 @@ class MorletWaveletFilter(BaseFilter):
         The frequencies to use in the decomposition
     width: int
         The width of the wavelet
-    output: List[str] or str
+    output: Union[Iterable[str], str]
         A string or a list of strings containing power, phase, and/or
         complex (default: ``['power', 'phase']``)
     verbose: bool
@@ -44,11 +44,11 @@ class MorletWaveletFilter(BaseFilter):
     width = traits.api.Int
     verbose = traits.api.Bool
     cpus = traits.api.Int
+    output = []
+    output_dim = traits.api.Str
 
-    def __init__(self, timeseries, freqs, width=5,
-                 output=('power', 'phase'), verbose=True, cpus=1,
-                 output_dim='output'):
-        super(MorletWaveletFilter, self).__init__(timeseries)
+    def initialize(self, freqs, width=5, output=('power', 'phase'),
+                   verbose=True, cpus=1, output_dim='output'):
         self.freqs = freqs
         self.width = width
 
@@ -69,10 +69,7 @@ class MorletWaveletFilter(BaseFilter):
 
         self.verbose = verbose
         self.cpus = cpus
-        self.window = None
         self.output_dim = output_dim
-
-        self.compute_power_and_phase_fcn = None
 
     def filter(self):
         """Apply the constructed filter."""

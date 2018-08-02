@@ -1,12 +1,8 @@
-__author__ = 'm'
-
 import numpy as np
-from ptsa.data.timeseries import TimeSeries
-# from memory_profiler import profile
-import time
-
-from ptsa.data.filters import BaseFilter
 import traits.api
+
+from ptsa.data.timeseries import TimeSeries
+from ptsa.data.filters import BaseFilter
 
 
 class MonopolarToBipolarMapper(BaseFilter):
@@ -35,17 +31,19 @@ class MonopolarToBipolarMapper(BaseFilter):
         two channels in the bipolar pair
 
     .. versionchanged:: 2.0
-    Parameter "time_series" was renamed to "timeseries".
-    Support for 2-D bipolar_pairs and specification of channels_dim
-    and chan_names was added in version 2.0.
+
+        Parameter "time_series" was renamed to "timeseries".
+        Support for 2-D bipolar_pairs and specification of channels_dim
+        and chan_names was added in version 2.0.
+
     """
+    bipolar_pairs = traits.api.Array()
+    channels_dim = traits.api.String()
+    chan_names = traits.api.ListStr()
 
-    # bipolar_pairs = traits.api.Array(dtype=[('ch0', '|S3'), ('ch1', '|S3')])
-
-    def __init__(self, timeseries, bipolar_pairs, channels_dim='channels',
-                 chan_names=['ch0', 'ch1']):
-        super(MonopolarToBipolarMapper, self).__init__(timeseries)
-        if (len(np.shape(bipolar_pairs)) == 2):
+    def initialize(self, bipolar_pairs, channels_dim="channels",
+                   chan_names=["ch0", "ch1"]):
+        if len(np.shape(bipolar_pairs)) == 2:
             if np.shape(bipolar_pairs)[0] == 2:
                 self.bipolar_pairs = np.core.records.fromarrays(
                     bipolar_pairs, names=chan_names)

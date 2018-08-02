@@ -1,24 +1,16 @@
 import numpy as np
 from scipy.signal import resample
+import traits.api
 
 from ptsa.data.timeseries import TimeSeries
 from ptsa.data.filters import BaseFilter
-import traits.api
 
 
 class ResampleFilter(BaseFilter):
-    """Upsample or downsample a time series to a new sample rate.
+    """Resample a time series to a new sample rate.
 
-    .. versionchanged:: 2.0
-
-        Parameter "time_series" was renamed to "timeseries". Parameter
-        "time_axis_index" was removed; the time axis is assumed to be named
-        "time"
-
-    Keyword Arguments
-    -----------------
-    timeseries
-        TimeSeries object
+    Parameters
+    ----------
     resamplerate: float
         new sampling frequency
     round_to_original_timepoints: bool
@@ -27,14 +19,21 @@ class ResampleFilter(BaseFilter):
     time_axis: str
         Name of the time axis.
 
+    .. versionchanged:: 2.0
+
+        Parameter "time_series" was renamed to "timeseries". Parameter
+        "time_axis_index" was removed; the time axis is assumed to be named
+        "time"
+
     """
 
     resamplerate = traits.api.CFloat
     round_to_original_timepoints = traits.api.Bool
+    time_axis_name = traits.api.Str
+    time_axis_index = traits.api.Int
 
-    def __init__(self, timeseries, resamplerate,
-                 round_to_original_timepoints=False, time_axis_name='time'):
-        super(ResampleFilter, self).__init__(timeseries=timeseries)
+    def initialize(self, resamplerate, round_to_original_timepoints=False,
+                   time_axis_name="time"):
         self.resamplerate = resamplerate
         self.round_to_original_timepoints = round_to_original_timepoints
         self.time_axis_name = time_axis_name

@@ -30,9 +30,7 @@ class ButterworthFilter(BaseFilter):
     freq_range = traits.api.CList(maxlen=2)
     filt_type = traits.api.Str
 
-    def __init__(self, timeseries, freq_range, order=4, filt_type='stop'):
-        super(ButterworthFilter, self).__init__(timeseries)
-
+    def initialize(self, freq_range, order=4, filt_type="stop"):
         self.freq_range = freq_range
         self.order = order
         self.filt_type = filt_type
@@ -61,6 +59,5 @@ class ButterworthFilter(BaseFilter):
             coords=coords_dict
         )
 
-        # filtered_timeseries = TimeSeries(filtered_timeseries)
         filtered_timeseries.attrs = self.timeseries.attrs.copy()
         return filtered_timeseries

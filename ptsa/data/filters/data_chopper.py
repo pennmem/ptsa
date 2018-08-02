@@ -1,9 +1,7 @@
-__author__ = 'm'
-
 import numpy as np
-
-import xarray as xr
 import traits.api
+import xarray as xr
+
 from ptsa.data.timeseries import TimeSeries
 
 
@@ -20,17 +18,10 @@ class DataChopper(traits.api.HasTraits):
     start_offsets = traits.api.CArray
     timeseries=traits.api.Instance(TimeSeries)
 
-
-
-    def __init__(self, timeseries, start_time=0.0, end_time=0.0, buffer_time=0.0,
-                 events=np.recarray((1,), dtype=[('x', int)]),
-                 start_offsets = np.array([], dtype=int)):
+    def initialize(self, start_time=0.0, end_time=0.0, buffer_time=0.0,
+                   events=np.recarray((1,), dtype=[('x', int)]),
+                   start_offsets=np.array([], dtype=int)):
         """
-        Constructor:
-
-        :param kwds:allowed values are:
-        -------------------------------------
-        :param timeseries {TimeSeries}-  TimeSeries object with eeg session data
         :param start_time {float} -  read start offset in seconds w.r.t to the eegeffset specified in the events recarray
         :param end_time {float} -  read end offset in seconds w.r.t to the eegeffset specified in the events recarray
         :param end_time {float} -  extra buffer in seconds (subtracted from start read and added to end read)
@@ -39,13 +30,12 @@ class DataChopper(traits.api.HasTraits):
 
 
         :return: None
-        
-        .. versionchanged:: 2.0
-        Parameter "time_series" was renamed to "timeseries".
-        """
-        super(DataChopper, self).__init__()
 
-        self.timeseries=timeseries
+        .. versionchanged:: 2.0
+
+            Parameter "time_series" was renamed to "timeseries".
+
+        """
         self.start_time = start_time
         self.end_time = end_time
         self.buffer_time = buffer_time
@@ -96,7 +86,7 @@ class DataChopper(traits.api.HasTraits):
             chopping_axis_name = 'events'
             chopping_axis_data = evs
 
-            
+
         samplerate = float(self.timeseries['samplerate'])
         offset_time_array = self.timeseries['offsets']
 
