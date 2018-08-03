@@ -403,15 +403,13 @@ class TimeSeries(xr.DataArray):
         """
         return int(np.ceil(float(self['samplerate']) * duration))
 
-    def filter_with(self, filter_class, **kwargs):
-        """Filter the time series data using the specified filter class.
+    def filter_with(self, filters):
+        """Filter the time series data using the specified filters in order.
 
         Parameters
         ----------
-        filter_class : type
-            The filter class to use.
-        kwargs
-            Keyword arguments to pass along to ``filter_class``.
+        filters : BaseFilter or Iterable[BaseFilter]
+            The filter(s) to use.
 
         Returns
         -------
@@ -424,12 +422,14 @@ class TimeSeries(xr.DataArray):
             When ``filter_class`` is not a valid filter class.
 
         """
-        from ptsa.data.filters.base import BaseFilter
+        if not isinstance(filters, (list, tuple)):
+            filters = [filters]
 
-        if not issubclass(filter_class, BaseFilter):
-            raise TypeError("filter_class must be a child of BaseFilter")
+        filtered = self
 
-        filtered = filter_class(**kwargs).filter(self)
+        for filter_ in filters:
+            filtered = filter_.filter(filtered)
+
         return filtered
 
     def filtered(self, freq_range, filt_type='stop', order=4):
