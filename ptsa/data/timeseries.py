@@ -297,6 +297,7 @@ class TimeSeries(xr.DataArray):
             raise RuntimeError("You must install h5py to save as HDF5")
 
         with h5py.File(filename, mode) as hfile:
+            hfile.attrs['ptsa_version'] = ptsa_version
             hfile.create_dataset("data", data=self.data, chunks=True)
 
             dims = [dim.encode() for dim in self.dims]
