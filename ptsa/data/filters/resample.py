@@ -48,7 +48,7 @@ class ResampleFilter(BaseFilter):
             resampled time series with sampling frequency set to resamplerate
 
         """
-        timeseries = timeseries.coerce_to_dtype(timeseries, np.float64)
+        timeseries.coerce_to(np.float64)
         samplerate = float(timeseries['samplerate'])
 
         self.time_axis_index = timeseries.get_axis_num(

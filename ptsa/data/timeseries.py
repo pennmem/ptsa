@@ -429,7 +429,7 @@ class TimeSeries(xr.DataArray):
         if not issubclass(filter_class, BaseFilter):
             raise TypeError("filter_class must be a child of BaseFilter")
 
-        filtered = filter_class(self, **kwargs).filter()
+        filtered = filter_class(**kwargs).filter(self)
         return filtered
 
     def filtered(self, freq_range, filt_type='stop', order=4):
