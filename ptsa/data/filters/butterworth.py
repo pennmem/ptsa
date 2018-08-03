@@ -30,12 +30,13 @@ class ButterworthFilter(BaseFilter):
     freq_range = traits.api.CList(maxlen=2)
     filt_type = traits.api.Str
 
-    def initialize(self, freq_range, order=4, filt_type="stop"):
+    def __init__(self, freq_range, order=4, filt_type="stop"):
+        super().__init__()
         self.freq_range = freq_range
         self.order = order
         self.filt_type = filt_type
 
-    def filter(self):
+    def filter(self, timeseries):
         """
         Applies Butterwoth filter to input time series and returns filtered TimeSeriesX object
 
@@ -45,19 +46,19 @@ class ButterworthFilter(BaseFilter):
             The filtered time series
 
         """
-        time_axis_index = get_axis_index(self.timeseries, axis_name='time')
-        filtered_array = buttfilt(self.timeseries,
-                                  self.freq_range, float(self.timeseries['samplerate']), self.filt_type,
+        time_axis_index = get_axis_index(timeseries, axis_name='time')
+        filtered_array = buttfilt(timeseries,
+                                  self.freq_range, float(timeseries['samplerate']), self.filt_type,
                                   self.order, axis=time_axis_index)
 
-        coords_dict = {coord_name: DataArray(coord.copy()) for coord_name, coord in list(self.timeseries.coords.items())}
-        coords_dict['samplerate'] = self.timeseries['samplerate']
-        dims = [dim_name for dim_name in self.timeseries.dims]
+        coords_dict = {coord_name: DataArray(coord.copy()) for coord_name, coord in list(timeseries.coords.items())}
+        coords_dict['samplerate'] = timeseries['samplerate']
+        dims = [dim_name for dim_name in timeseries.dims]
         filtered_timeseries = TimeSeries(
             filtered_array,
             dims=dims,
             coords=coords_dict
         )
 
-        filtered_timeseries.attrs = self.timeseries.attrs.copy()
+        filtered_timeseries.attrs = timeseries.attrs.copy()
         return filtered_timeseries

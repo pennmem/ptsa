@@ -32,7 +32,7 @@ class MorletWaveletFilter(BaseFilter):
         A string or a list of strings containing power, phase, and/or
         complex (default: ``['power', 'phase']``)
     verbose: bool
-        Print out the wavelet parameters
+        Print out the wavelet parameters (default: False)
     cpus : int
         Number of threads to use when computing the transform (default: 1).
     output_dim : str
@@ -47,8 +47,10 @@ class MorletWaveletFilter(BaseFilter):
     output = []
     output_dim = traits.api.Str
 
-    def initialize(self, freqs, width=5, output=('power', 'phase'),
-                   verbose=True, cpus=1, output_dim='output'):
+    def __init__(self, freqs, width=5, output=('power', 'phase'),
+                 verbose=False, cpus=1, output_dim='output'):
+        super().__init__()
+
         self.freqs = freqs
         self.width = width
 
@@ -71,11 +73,12 @@ class MorletWaveletFilter(BaseFilter):
         self.cpus = cpus
         self.output_dim = output_dim
 
-    def filter(self):
+    def filter(self, timeseries):
         """Apply the constructed filter."""
-        time_axis = self.timeseries['time']
+        nontime_dims = self.get_nontime_dims(timeseries)
+        nontime_sizes = self.get_nontime_sizes(timeseries)
 
-        wavelet_dims = self.nontime_sizes + (self.freqs.shape[0],)
+        wavelet_dims = nontime_sizes(timeseries) + (self.freqs.shape[0],)
 
         powers_reshaped = np.array([[]], dtype=np.float)
         phases_reshaped = np.array([[]], dtype=np.float)
@@ -98,7 +101,7 @@ class MorletWaveletFilter(BaseFilter):
 
         timeseries_reshaped = np.ascontiguousarray(
             self.timeseries.data.reshape(
-                np.prod(self.nontime_sizes, dtype=int),
+                np.prod(nontime_sizes, dtype=int),
                 len(self.timeseries['time'])), self.timeseries.data.dtype)
 
         if self.output == ['power']:
@@ -144,7 +147,7 @@ class MorletWaveletFilter(BaseFilter):
 
         if powers_final is not None:
             powers_ts = TimeSeries(powers_final,
-                                   dims=self.nontime_dims + ('frequency', 'time'),
+                                   dims=nontime_dims + ('frequency', 'time'),
                                    coords=coords)
             final_dims = (powers_ts.dims[-2],) + powers_ts.dims[:-2] + (powers_ts.dims[-1],)
 
@@ -152,7 +155,7 @@ class MorletWaveletFilter(BaseFilter):
 
         if phases_final is not None:
             phases_ts = TimeSeries(phases_final,
-                                   dims=self.nontime_dims + ('frequency', 'time'),
+                                   dims=nontime_dims + ('frequency', 'time'),
                                    coords=coords)
 
             final_dims = (phases_ts.dims[-2],) + phases_ts.dims[:-2] + (phases_ts.dims[-1],)
@@ -161,7 +164,7 @@ class MorletWaveletFilter(BaseFilter):
 
         if wavelet_complex_final is not None:
             wavelet_complex_ts = TimeSeries(wavelet_complex_final,
-                                            dims=self.nontime_dims + (
+                                            dims=nontime_dims + (
                                              'frequency', 'time',),
                                             coords=coords)
 

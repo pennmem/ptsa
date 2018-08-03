@@ -1,4 +1,3 @@
-import numpy as np
 import traits.api
 
 from ptsa.data.timeseries import TimeSeries
@@ -7,62 +6,48 @@ __all__ = ['BaseFilter']
 
 
 class BaseFilter(traits.api.HasTraits):
-    """Base class for constructing filters.
+    """Base class for constructing filters."""
+    nontime_dims = traits.api.Tuple
+    nontime_sizes = traits.api.Tuple
 
-    Parameters
-    ----------
-    timeseries : TimeSeries or None
-        The :class:`TimeSeries` to filter (None to set later).
-    args
-        Arguments that get passed on to :meth:`initialize`.
-
-    Keyword arguments
-    -----------------
-    dtype : str or np.dtype or None
-        When given, coerce the input to a valid numpy dtype. When ``None``,
-        leave as the original dtype. Default: coerce to ``np.float64``.
-    kwargs
-        Additional keyword arguments that get passed on to :meth:`initialize`.
-
-    Notes
-    -----
-    Do not override the :meth:`__init__` method. Instead, perform
-    filter-specific initialization in the :meth:`initialize` method.
-
-    """
-    _timeseries = traits.api.Instance(TimeSeries)
-
-    def __init__(self, timeseries, *args, **kwargs):
+    def __init__(self):
         super(BaseFilter, self).__init__()
 
-        self._dtype = kwargs.pop("dtype", np.float64)
-        self.timeseries = timeseries
+    def get_nontime_dims(self, timeseries):
+        """Return a tuple of all dimensions that are not time.
 
-        self.nontime_dims = tuple([d for d in self.timeseries.dims if d != 'time'])
-        self.nontime_sizes = tuple([len(self.timeseries[d]) for d in self.nontime_dims])
-
-        self.initialize(*args, **kwargs)
-
-    def initialize(self, *args, **kwargs):
-        """Override this method to include additional filter-specific
-        initialization steps.
+        Returns
+        -------
+        Tuple[str]
 
         """
+        return tuple([d for d in timeseries.dims if d != 'time'])
 
-    @property
-    def timeseries(self):
-        return self._timeseries
+    def get_nontime_sizes(self, timeseries):
+        """Return a tuple of all dimension sizes for dimensions other than
+        time.
 
-    @timeseries.setter
-    def timeseries(self, ts):
-        """Set the time series data and coerce types if neccessary."""
-        if ts is None:
-            self._timeseries = None
-            return
+        Returns
+        -------
+        Tuple[int]
 
-        self._timeseries = ts
-        if self._dtype is not None:
-            self._timeseries.data = ts.data.astype(self._dtype)
+        """
+        dims = self.get_nontime_dims(timeseries)
+        return tuple([len(timeseries[dim]) for dim in dims])
 
-    def filter(self):
+    def filter(self, timeseries):
+        """Apply the filter.
+
+        Parameters
+        ----------
+        timeseries : TimeSeries
+
+        Notes
+        -----
+        Some filters may require certain numpy datatypes to work. To coerce to
+        the proper datatype, use :meth:`TimeSeries.coerce_to` when implementing
+        this method.
+
+        """
         raise NotImplementedError
+

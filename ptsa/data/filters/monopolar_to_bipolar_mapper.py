@@ -41,8 +41,10 @@ class MonopolarToBipolarMapper(BaseFilter):
     channels_dim = traits.api.String()
     chan_names = traits.api.ListStr()
 
-    def initialize(self, bipolar_pairs, channels_dim="channels",
-                   chan_names=["ch0", "ch1"]):
+    def __init__(self, bipolar_pairs, channels_dim="channels",
+                 chan_names=["ch0", "ch1"]):
+        super().__init__()
+
         if len(np.shape(bipolar_pairs)) == 2:
             if np.shape(bipolar_pairs)[0] == 2:
                 self.bipolar_pairs = np.core.records.fromarrays(
@@ -53,14 +55,14 @@ class MonopolarToBipolarMapper(BaseFilter):
                     'dtypes has two fields corresponding to chan_names or a 2-D'
                     'container where the first dimension must be length 2'
                     'corresponding to the two channels in the bipolar pair.'
-                    'Input was 2-D with the following dimensions: '+
+                    'Input was 2-D with the following dimensions: ' +
                     str(np.shape(bipolar_pairs)))
         else:
             self.bipolar_pairs = bipolar_pairs
         self.channels_dim = channels_dim
         self.chan_names = chan_names
 
-    def filter(self):
+    def filter(self, timeseries):
         """Apply the constructed filter.
 
         Returns
@@ -68,7 +70,7 @@ class MonopolarToBipolarMapper(BaseFilter):
         A TimeSeries object.
 
         """
-        channel_axis = self.timeseries[self.channels_dim]
+        channel_axis = timeseries[self.channels_dim]
 
         ch0 = self.bipolar_pairs[self.chan_names[0]]
         ch1 = self.bipolar_pairs[self.chan_names[1]]
@@ -76,20 +78,21 @@ class MonopolarToBipolarMapper(BaseFilter):
         sel0 = channel_axis.loc[ch0]
         sel1 = channel_axis.loc[ch1]
 
-        ts0 = self.timeseries.loc[{self.channels_dim: sel0}]
-        ts1 = self.timeseries.loc[{self.channels_dim: sel1}]
+        ts0 = timeseries.loc[{self.channels_dim: sel0}]
+        ts1 = timeseries.loc[{self.channels_dim: sel1}]
 
-        dims_bp = list(self.timeseries.dims)
+        dims_bp = list(timeseries.dims)
 
-        coords_bp = {coord_name:coord
-                     for coord_name, coord in list(
-                             self.timeseries.coords.items())}
+        coords_bp = {
+            coord_name: coord
+            for coord_name, coord in list(timeseries.coords.items())
+        }
         coords_bp[self.channels_dim] = self.bipolar_pairs
 
         ts = TimeSeries(data=ts0.values - ts1.values, dims=dims_bp,
                         coords=coords_bp)
-        ts['samplerate'] = self.timeseries['samplerate']
+        ts['samplerate'] = timeseries['samplerate']
 
-        ts.attrs = self.timeseries.attrs.copy()
-        ts.name = self.timeseries.name
+        ts.attrs = timeseries.attrs.copy()
+        ts.name = timeseries.name
         return ts
