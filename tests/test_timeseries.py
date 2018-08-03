@@ -3,10 +3,12 @@ from tempfile import mkdtemp
 import os.path as osp
 import shutil
 import warnings
-import pytest
-import numpy as np
-import xarray as xr
+
 import h5py
+import numpy as np
+from numpy.testing import assert_equal, assert_allclose
+import pytest
+import xarray as xr
 
 from ptsa.data.filters import ResampleFilter
 from ptsa.data.timeseries import TimeSeries, ConcatenationError
@@ -174,31 +176,59 @@ def test_hdf(tempdir):
     assert loaded.name == "container test"
 
 
-@pytest.mark.parametrize("cls,kwargs", [
-    (None, {}),
-    (ResampleFilter, {"resamplerate": 1.}),
-])
-def test_filter_with(cls, kwargs):
-    ts = TimeSeries.create(
-        np.random.random((2, 100)),
-        samplerate=10,
-        dims=("x", "time"),
-        coords={
-            "x": range(2),
-            "time": range(100),
-        }
-    )
+class TestFilterWith:
+    @pytest.mark.parametrize("cls,kwargs", [
+        (ResampleFilter, {"resamplerate": 1.}),
+    ])
+    def test_single_filter(self, cls, kwargs):
+        ts = TimeSeries.create(
+            np.random.random((2, 100)),
+            samplerate=10,
+            dims=("x", "time"),
+            coords={
+                "x": range(2),
+                "time": range(100),
+            }
+        )
 
-    if cls is None:
-        class MyClass(object):
-            pass
-
-        with pytest.raises(TypeError):
-            ts.filter_with(MyClass)
-    else:
-        tsf = ts.filter_with(cls, **kwargs)
+        filt = cls(**kwargs)
+        tsf = ts.filter_with(filt)
         assert isinstance(tsf, TimeSeries)
         assert tsf.data.shape != ts.data.shape
+
+    def test_multi_filter(self):
+        from ptsa.data.filters.base import BaseFilter
+
+        class NegationFilter(BaseFilter):
+            def filter(self, timeseries: TimeSeries) -> TimeSeries:
+                return timeseries * -1
+
+        class DoubleFilter(BaseFilter):
+            def filter(self, timeseries: TimeSeries) -> TimeSeries:
+                return timeseries * 2
+
+        filters = [
+            NegationFilter(),
+            DoubleFilter()
+        ]
+
+        init_data = np.random.random((10, 10, 10))
+
+        ts = TimeSeries.create(
+            init_data, 1,
+            coords={
+                "events": np.linspace(0, init_data.shape[0], init_data.shape[0]),
+                "channels": np.linspace(0, init_data.shape[1], init_data.shape[1]),
+                "time": np.linspace(0, init_data.shape[2], init_data.shape[2]),
+            },
+            dims=["events", "channels", "time"]
+        )
+
+        new_ts = ts.filter_with(filters)
+        assert_equal((-ts * 2).data, new_ts.data)
+        assert_equal(ts["time"].data, new_ts["time"].data)
+        assert_equal(ts.coords.keys(), new_ts.coords.keys())
+        assert_equal(ts.dims, new_ts.dims)
 
 
 def test_filtered():
