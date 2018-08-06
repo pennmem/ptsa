@@ -1,6 +1,19 @@
 Changes
 =======
 
+Version 3.0.0
+-------------
+
+Version 3.0 of PTSA is largely a cleanup release. Several deprecated features
+have been removed and things have been reorganized.
+
+Removals
+^^^^^^^^
+
+* ``TimeSeriesX`` backwards compatibility has been removed. Use ``TimeSeries``
+  instead.
+
+
 Version 2.0.1
 -------------
 

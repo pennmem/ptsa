@@ -38,7 +38,8 @@ class ButterworthFilter(BaseFilter):
 
     def filter(self, timeseries):
         """
-        Applies Butterwoth filter to input time series and returns filtered TimeSeriesX object
+        Applies Butterwoth filter to input time series and returns filtered
+        :class:`TimeSeries` object.
 
         Returns
         -------
