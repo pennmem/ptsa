@@ -8,7 +8,7 @@ from ptsa.data.filters.morlet import MorletWaveletFilter
 from ptsa.data.readers.tal import TalReader
 from ptsa.data.readers import EEGReader
 from ptsa.data.filters import MonopolarToBipolarMapper
-from ptsa.test.utils import get_rhino_root, skip_without_rhino
+from tests.utils import get_rhino_root, skip_without_rhino
 
 
 @skip_without_rhino

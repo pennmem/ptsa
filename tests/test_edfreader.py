@@ -1,7 +1,7 @@
 from ptsa.data.readers import EDFRawReader, JsonIndexReader, BaseEventReader, EEGReader
 import pytest
 import os.path as osp
-from ptsa.test.utils import get_rhino_root, skip_without_rhino
+from tests.utils import get_rhino_root, skip_without_rhino
 import numpy as np
 
 

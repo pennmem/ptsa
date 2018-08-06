@@ -1,6 +1,5 @@
 import os.path as osp
 import time
-import unittest
 import pytest
 
 import h5py
@@ -10,7 +9,7 @@ from ptsa.data.readers.hdf5 import H5RawReader
 from ptsa.data.readers.binary import BinaryRawReader
 from ptsa.data.readers.events import CMLEventReader
 from ptsa.data.readers import EEGReader
-from ptsa.test.utils import get_rhino_root, skip_without_rhino
+from tests.utils import get_rhino_root, skip_without_rhino
 
 
 @skip_without_rhino
