@@ -285,7 +285,7 @@ class TimeSeries(xr.DataArray):
         the to_hdf5 method in previous versions of PTSA.
         This method is DEPRECATED: old hdf5 files should be converted
         by reading them in with this function and saving the resulting
-        TimeSeriesX object with the current to_hdf5 method to maintain
+        :class:`TimeSeries` object with the current to_hdf5 method to maintain
         accessibility.
 
         Parameters
@@ -298,7 +298,7 @@ class TimeSeries(xr.DataArray):
         warnings.warn(
             'This method is DEPRECATED: old hdf5 files should be converted by' +
             'reading them in with this function and saving the resulting' +
-            'TimeSeriesX object with the current to_hdf5 method to maintain' +
+            'TimeSeries object with the current to_hdf5 method to maintain' +
             'accessibility.')
         if h5py is None:  # pragma: nocover
             raise RuntimeError("You must install h5py to load from HDF5")
@@ -605,14 +605,3 @@ class TimeSeries(xr.DataArray):
 
         """
         return self - self.isel(time=(self['time'] >= base_range[0]) & (self['time'] <= base_range[1])).mean(dim='time')
-
-
-class TimeSeriesX(TimeSeries):
-    def __init__(self, data, coords, dims=None, name=None,
-                 attrs=None, encoding=None, fastpath=False):
-        with warnings.catch_warnings():
-            warnings.simplefilter('always')
-            warnings.warn("TimeSeriesX has been renamed TimeSeries",
-                          DeprecationWarning)
-            super(TimeSeriesX, self).__init__(data, coords, dims, name, attrs,
-                                              encoding, fastpath)
