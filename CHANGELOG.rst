@@ -12,6 +12,8 @@ Removals
 
 * ``TimeSeriesX`` backwards compatibility has been removed. Use ``TimeSeries``
   instead.
+* ``ptsa.helper`` and ``ptsa.filt``: older modules that were left after the
+  reorginzation of PTSA 2.0.
 
 
 Version 2.0.1
