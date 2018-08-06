@@ -13,7 +13,7 @@ from ptsa.data.filters import (
 )
 from ptsa.data.readers import BaseEventReader, EEGReader
 from ptsa.data.readers.tal import TalReader
-from ptsa.test.utils import get_rhino_root, skip_without_rhino
+from tests.utils import get_rhino_root, skip_without_rhino
 
 
 def test_monopolar_to_bipolar_filter_norhino():

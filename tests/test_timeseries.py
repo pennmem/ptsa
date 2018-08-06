@@ -231,6 +231,10 @@ class TestFilterWith:
         assert_equal(ts.dims, new_ts.dims)
 
 
+def test_remove_line_noise():
+    ts = None
+
+
 def test_filtered():
     data = np.random.random(1000)
     dims = ['time']
