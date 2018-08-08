@@ -26,7 +26,7 @@ def clean():
 
 def build():
     """Build conda packages."""
-    for pyver in ['2.7', '3.6']:
+    for pyver in ['2.7', '3.6', '3.7']:
         build_cmd = "conda build conda.recipe --python {} --output-folder build/".format(pyver)
         print(build_cmd)
         check_call(shlex.split(build_cmd))
