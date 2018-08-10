@@ -41,7 +41,7 @@ You will also need to install FFTW. To install FFTW with conda on Linux or Mac:
 
 .. code-block:: shell-session
 
-    conda install -y -c conda-forge fftw
+    conda install -y -c pennmem fftw
 
 Alternatively, it can be installed with the system package manager on Linux
 (Debian-based command shown below):
