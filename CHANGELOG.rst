@@ -1,6 +1,28 @@
 Changes
 =======
 
+Version 2.0.2
+-------------
+
+**2018-08-08**
+
+New features:
+
+* ``TimeSeries`` now has a ``filter_with`` method to make applying filters
+  slightly easier (#211)
+
+Fixes:
+
+* Resource warnings were resolved by ensuring files get closed (#212)
+* ``ButterworthFilter``'s ``freq_range`` argument is now coerced to a list (#214)
+
+Other:
+
+* Filter modules have been renamed to conform with PEP8 (#213). This should not
+  affect normal usage since all filters are imported to the top-level filter
+  namespace by default.
+
+
 Version 2.0.1
 -------------
 
