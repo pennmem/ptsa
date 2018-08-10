@@ -81,7 +81,7 @@ def get_include_dirs():
     return dirs
 
 
-def get_libs():
+def get_fftw_libs():
     if sys.platform.startswith("win"):
         return ['libfftw3-3']
     else:
@@ -181,7 +181,7 @@ ext_modules = [
         swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
         extra_compile_args=get_compiler_args(),
-        libraries=get_libs(),
+        libraries=get_fftw_libs(),
     ),
 
     Extension(
@@ -193,7 +193,6 @@ ext_modules = [
         swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
         extra_compile_args=get_compiler_args(),
-        libraries=get_libs(),
     ),
 ]
 
