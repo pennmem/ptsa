@@ -2,7 +2,7 @@ import json
 import time
 import warnings
 from io import BytesIO
-from base64 import b64decode
+from base64 import b64decode, b64encode
 import xarray as xr
 import numpy as np
 from scipy.signal import resample
@@ -79,10 +79,10 @@ class TimeSeries(xr.DataArray):
             coords['samplerate'] = float(samplerate)
         return cls(data, coords=coords, dims=dims, name=name, attrs=attrs)
 
-    def to_hdf(self, filename, mode='w', compression=None,
+    def to_hdf_christoph(self, filename, mode='w', compression=None,
                compression_opts=None, encode_string_arrays=True,
                encoding='utf8'):
-        """Save to disk using HDF5.
+        """Save to disk using HDF5. Broken do not use
 
         Parameters
         ----------
@@ -189,7 +189,7 @@ class TimeSeries(xr.DataArray):
                 root.attrs['attrs'] = json.dumps(self.attrs).encode(encoding)
 
     @classmethod
-    def from_hdf(cls, filename, decode_string_arrays=True,
+    def from_hdf_christoph(cls, filename, decode_string_arrays=True,
                  encoding='utf-8'):
         """Deserialize from HDF5 using :mod:`h5py`.
 
@@ -263,22 +263,74 @@ class TimeSeries(xr.DataArray):
             if attrs is not None:
                 attrs = json.loads(attrs.decode(encoding))
 
-            array = cls(hfile['data'].value,
-                        coords=coords,
-                        dims=[dim.decode(encoding) for dim in dims],
-                        name=name,
-                        attrs=attrs)
+            array = TimeSeries(hfile["data"].value,
+                               coords={k: v.value for k, v in coords.items()},
+                               dims=[dim.decode(encoding) for dim in dims],
+                               name=name,
+                               attrs=attrs)
             return array
+        
+    def to_hdf(self, filename, mode='w'):
+        """Save to disk using HDF5.
+
+        Parameters
+        ----------
+        filename : str
+            Full path to the HDF5 file
+        mode : str
+            File mode to use. See the :mod:`h5py` documentation for details.
+            Default: ``'w'``
+
+        Notes
+        -----
+        Because recarrays can complicate things when unicode is involved, saving
+        coordinates is a multi-step process:
+
+        1. Save to a buffer using :func:`np.save`. This uses Numpy's own binary
+           format and should Just Work.
+        2. Base64-encode the buffer to eliminate NULL bytes which HDF5 can't
+           handle.
+        3. Write the bytes contained in the buffer to the HDF5 file.
+
+        """
+        if h5py is None:  # pragma: nocover
+            raise RuntimeError("You must install h5py to save as HDF5")
+
+        with h5py.File(filename, mode) as hfile:
+            hfile.attrs['ptsa_version'] = ptsa_version
+            hfile.create_dataset("data", data=self.data, chunks=True)
+
+            dims = [dim.encode() for dim in self.dims]
+            hfile.create_dataset("dims", data=dims)
+
+            coords_group = hfile.create_group("coords")
+            coords = []
+            for name, data in self.coords.items():
+                coords.append(name)
+                buffer = BytesIO()
+                np.save(buffer, data)
+                buffer.seek(0)
+                output = b64encode(buffer.read())
+                try:
+                    coords_group.create_dataset(name, data=output)
+                except:
+                    print(output)
+                    raise
+            names = json.dumps(coords).encode()
+            coords_group.attrs.update(names=names)
+
+            root = hfile['/']
+            if self.name is not None:
+                root.attrs['name'] = self.name.encode()
+            if self.attrs is not None:
+                root.attrs['attrs'] = json.dumps(self.attrs).encode()
 
     @classmethod
-    def _from_hdf_legacy(cls, filename):
+    def from_hdf(cls, filename):
         """
-        Legacy function to support loading in old files created with
+        Function to support loading files created with
         the to_hdf5 method in previous versions of PTSA.
-        This method is DEPRECATED: old hdf5 files should be converted
-        by reading them in with this function and saving the resulting
-        TimeSeriesX object with the current to_hdf5 method to maintain
-        accessibility.
+
 
         Parameters
         ----------
@@ -287,11 +339,7 @@ class TimeSeries(xr.DataArray):
 
         """
         import warnings
-        warnings.warn(
-            'This method is DEPRECATED: old hdf5 files should be converted by' +
-            'reading them in with this function and saving the resulting' +
-            'TimeSeriesX object with the current to_hdf5 method to maintain' +
-            'accessibility.')
+        
         if h5py is None:  # pragma: nocover
             raise RuntimeError("You must install h5py to load from HDF5")
 
@@ -394,35 +442,6 @@ class TimeSeries(xr.DataArray):
 
         """
         return int(np.ceil(float(self['samplerate']) * duration))
-
-    def filter_with(self, filter_class, **kwargs):
-        """Filter the time series data using the specified filter class.
-
-        Parameters
-        ----------
-        filter_class : type
-            The filter class to use.
-        kwargs
-            Keyword arguments to pass along to ``filter_class``.
-
-        Returns
-        -------
-        filtered : TimeSeries
-            The resulting data from the filter.
-
-        Raises
-        ------
-        TypeError
-            When ``filter_class`` is not a valid filter class.
-
-        """
-        from ptsa.data.filters.base import BaseFilter
-
-        if not issubclass(filter_class, BaseFilter):
-            raise TypeError("filter_class must be a child of BaseFilter")
-
-        filtered = filter_class(self, **kwargs).filter()
-        return filtered
 
     def filtered(self, freq_range, filt_type='stop', order=4):
         """
