@@ -102,6 +102,10 @@ class TimeSeries(xr.DataArray):
            handle.
         3. Write the bytes contained in the buffer to the HDF5 file.
 
+        When recarrays use the ``'O'`` dtype, pickling will occur. This means
+        that serialized data may not be readable in older versions of Python
+        than that used to save it.
+
         """
         if h5py is None:  # pragma: nocover
             raise RuntimeError("You must install h5py to save as HDF5")
