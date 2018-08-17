@@ -1,6 +1,17 @@
 Changes
 =======
 
+Version 2.0.3
+-------------
+
+**2018-08-17**
+
+* ``TimeSeries.to_hdf`` and ``from_hdf`` have been reverted to the previous
+  behavior of base 64-encoding Numpy recarrays before writing to disk. This
+  makes the stored files less human-readable, but offers the advantage of being
+  much more robust.
+
+
 Version 2.0.2
 -------------
 
