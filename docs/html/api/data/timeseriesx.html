@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>TimeSeries &mdash; PTSA 2.0.1 documentation</title>
+  <title>TimeSeries &mdash; PTSA 2.0.3 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="PTSA 2.0.1 documentation" href="../../index.html"/>
+    <link rel="top" title="PTSA 2.0.3 documentation" href="../../index.html"/>
         <link rel="up" title="ptsa.data" href="../data.html"/>
         <link rel="next" title="Readers" href="readers.html"/>
         <link rel="prev" title="ptsa.data" href="../data.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.0.1
+                2.0.3
               </div>
             
           
@@ -328,6 +328,33 @@ the sample rate as a parameter. See <code class="xref py py-meth docutils litera
 </dd></dl>
 
 <dl class="method">
+<dt id="ptsa.data.timeseries.TimeSeries.filter_with">
+<code class="descname">filter_with</code><span class="sig-paren">(</span><em>filter_class</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.filter_with" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the time series data using the specified filter class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filter_class</strong> (<em>type</em>) – The filter class to use.</li>
+<li><strong>kwargs</strong> – Keyword arguments to pass along to <code class="docutils literal"><span class="pre">filter_class</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>filtered</strong> – The resulting data from the filter.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> – When <code class="docutils literal"><span class="pre">filter_class</span></code> is not a valid filter class.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="ptsa.data.timeseries.TimeSeries.filtered">
 <code class="descname">filtered</code><span class="sig-paren">(</span><em>freq_range</em>, <em>filt_type=’stop’</em>, <em>order=4</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.filtered" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter the data using a Butterworth filter and return a new
@@ -355,27 +382,13 @@ TimeSeries instance.</p>
 
 <dl class="classmethod">
 <dt id="ptsa.data.timeseries.TimeSeries.from_hdf">
-<em class="property">classmethod </em><code class="descname">from_hdf</code><span class="sig-paren">(</span><em>filename</em>, <em>decode_string_arrays=True</em>, <em>encoding=’utf-8’</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.from_hdf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deserialize from HDF5 using <code class="xref py py-mod docutils literal"><span class="pre">h5py</span></code>.</p>
+<em class="property">classmethod </em><code class="descname">from_hdf</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.from_hdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a serialized time series from an HDF5 file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>filename</strong> (<em>str</em>) – </li>
-<li><strong>decode_string_arrays</strong> (<em>bool</em>) – Arrays of bytes should be decoded into strings</li>
-<li><strong>encoding</strong> (<em>str</em>) – Encoding scheme to use for decoding. To read files saved
-with earlier PTSA versions use ‘legacy’ (but note that
-support for reading legacy files is deprecated, so do save
-them out with to_hdf5 to update their format).</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Deserialized instance</p>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) – Path to HDF5 file.</td>
 </tr>
 </tbody>
 </table>
@@ -435,37 +448,34 @@ beginning and/or end.</td>
 
 <dl class="method">
 <dt id="ptsa.data.timeseries.TimeSeries.to_hdf">
-<code class="descname">to_hdf</code><span class="sig-paren">(</span><em>filename</em>, <em>mode=’w’</em>, <em>compression=None</em>, <em>compression_opts=None</em>, <em>encode_string_arrays=True</em>, <em>encoding=’utf8’</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.to_hdf" title="Permalink to this definition">¶</a></dt>
+<code class="descname">to_hdf</code><span class="sig-paren">(</span><em>filename</em>, <em>mode=’w’</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.to_hdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save to disk using HDF5.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>filename</strong> (str or <code class="xref py py-mod docutils literal"><span class="pre">h5py.h5f.FileID</span></code> instance) – Path to or identifier for the HDF5 file. See the
-<code class="xref py py-class docutils literal"><span class="pre">h5py.File</span></code> documentation.</li>
-<li><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – File mode to use. See the <code class="xref py py-class docutils literal"><span class="pre">h5py.File</span></code> documentation
-for details.
+<li><strong>filename</strong> (<em>str</em>) – Full path to the HDF5 file</li>
+<li><strong>mode</strong> (<em>str</em>) – File mode to use. See the <code class="xref py py-mod docutils literal"><span class="pre">h5py</span></code> documentation for details.
 Default: <code class="docutils literal"><span class="pre">'w'</span></code></li>
-<li><strong>compression</strong> (<em>str</em><em> or </em><em>None</em>) – Compression to use with arrays (see
-<code class="xref py py-meth docutils literal"><span class="pre">h5py.Group.create_dataset()</span></code> documentation for valid
-choices).</li>
-<li><strong>compression_opts</strong> (<em>int</em><em> or </em><em>None</em>) – Compression options, generally a number specifying compression level
-(see <code class="xref py py-meth docutils literal"><span class="pre">h5py.Group.create_dataset()</span></code> documentation for details).</li>
-<li><strong>encode_string_arrays</strong> (<em>bool</em>) – When True, force encoding of arrays of unicode strings using the
-<code class="docutils literal"><span class="pre">encoding</span></code> keyword argument. Not setting this will result in
-errors if using arrays of unicode strings. Default: True.</li>
-<li><strong>encoding</strong> (<em>str</em>) – Encoding to use when forcing encoding of unicode string arrays.
-Default: <code class="docutils literal"><span class="pre">'utf8'</span></code>.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p>The root node also has attributes:
-* <code class="docutils literal"><span class="pre">classname</span></code> - the class name of the instance being serialized
-* <code class="docutils literal"><span class="pre">python_module</span></code> - the Python module in which the class is defined</p>
+<p>Because recarrays can complicate things when unicode is involved, saving
+coordinates is a multi-step process:</p>
+<ol class="arabic simple">
+<li>Save to a buffer using <code class="xref py py-func docutils literal"><span class="pre">np.save()</span></code>. This uses Numpy’s own binary
+format and should Just Work.</li>
+<li>Base64-encode the buffer to eliminate NULL bytes which HDF5 can’t
+handle.</li>
+<li>Write the bytes contained in the buffer to the HDF5 file.</li>
+</ol>
+<p>When recarrays use the <code class="docutils literal"><span class="pre">'O'</span></code> dtype, pickling will occur. This means
+that serialized data may not be readable in older versions of Python
+than that used to save it.</p>
 </dd></dl>
 
 </dd></dl>
@@ -516,7 +526,7 @@ Default: <code class="docutils literal"><span class="pre">'utf8'</span></code>.<
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'2.0.1',
+            VERSION:'2.0.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
