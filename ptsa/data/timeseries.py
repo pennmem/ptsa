@@ -1,8 +1,9 @@
+from base64 import b64encode, b64decode
+from io import BytesIO
 import json
 import time
 import warnings
-from io import BytesIO
-from base64 import b64decode
+
 import xarray as xr
 import numpy as np
 from scipy.signal import resample
@@ -79,206 +80,68 @@ class TimeSeries(xr.DataArray):
             coords['samplerate'] = float(samplerate)
         return cls(data, coords=coords, dims=dims, name=name, attrs=attrs)
 
-    def to_hdf(self, filename, mode='w', compression=None,
-               compression_opts=None, encode_string_arrays=True,
-               encoding='utf8'):
+    def to_hdf(self, filename, mode='w'):
         """Save to disk using HDF5.
 
         Parameters
         ----------
-        filename : str or :mod:`h5py.h5f.FileID` instance
-            Path to or identifier for the HDF5 file. See the
-            :class:`h5py.File` documentation.
-        mode : str, optional
-            File mode to use. See the :class:`h5py.File` documentation
-            for details.
+        filename : str
+            Full path to the HDF5 file
+        mode : str
+            File mode to use. See the :mod:`h5py` documentation for details.
             Default: ``'w'``
-        compression : str or None
-            Compression to use with arrays (see
-            :meth:`h5py.Group.create_dataset` documentation for valid
-            choices).
-        compression_opts : int or None
-            Compression options, generally a number specifying compression level
-            (see :meth:`h5py.Group.create_dataset` documentation for details).
-        encode_string_arrays : bool
-            When True, force encoding of arrays of unicode strings using the
-            ``encoding`` keyword argument. Not setting this will result in
-            errors if using arrays of unicode strings. Default: True.
-        encoding : str
-            Encoding to use when forcing encoding of unicode string arrays.
-            Default: ``'utf8'``.
 
         Notes
         -----
-        The root node also has attributes:
-        * ``classname`` - the class name of the instance being serialized
-        * ``python_module`` - the Python module in which the class is defined
+        Because recarrays can complicate things when unicode is involved, saving
+        coordinates is a multi-step process:
+
+        1. Save to a buffer using :func:`np.save`. This uses Numpy's own binary
+           format and should Just Work.
+        2. Base64-encode the buffer to eliminate NULL bytes which HDF5 can't
+           handle.
+        3. Write the bytes contained in the buffer to the HDF5 file.
+
+        When recarrays use the ``'O'`` dtype, pickling will occur. This means
+        that serialized data may not be readable in older versions of Python
+        than that used to save it.
 
         """
         if h5py is None:  # pragma: nocover
             raise RuntimeError("You must install h5py to save as HDF5")
 
         with h5py.File(filename, mode) as hfile:
-            hfile.attrs['ptsa_version'] = ptsa_version
-            hfile.attrs['created'] = time.time()
+            hfile.create_dataset("data", data=self.data, chunks=True)
 
-            hfile.create_dataset("data", data=self.data, chunks=True,
-                                 compression=compression,
-                                 compression_opts=compression_opts)
-
-            dims = [dim.encode(encoding) for dim in self.dims]
-            hfile.create_dataset("dims", data=dims, chunks=True,
-                                 compression=compression,
-                                 compression_opts=compression_opts)
+            dims = [dim.encode() for dim in self.dims]
+            hfile.create_dataset("dims", data=dims)
 
             coords_group = hfile.create_group("coords")
             coords = []
+
             for name, data in self.coords.items():
                 coords.append(name)
-                data_has_fields = len(data.values.dtype) > 0
-                # Encode each element of an array containing unicode
-                # elements
-                if ~data_has_fields and data.dtype.char == 'U':
-                    data = [s.encode(encoding) for s in np.atleast_1d(data)]
-                elif data_has_fields:
-                    # Determine what the final dtypes will be
-                    final_dtypes = []
-                    unicode_fields = []
-                    for i, field in enumerate(data.values.dtype.names):
-                        if data.values[field].dtype.kind != 'U':
-                            final_dtypes.append((field,
-                                                 data.values[
-                                                     field].dtype.str))
-                        else:
-                            final_dtypes.append((field, 'S256'))
-                            unicode_fields.append(field)
+                buffer = BytesIO()
+                np.save(buffer, data)
+                output = b64encode(buffer.getvalue())
+                coords_group.create_dataset(name, data=output)
 
-                    # Update dtypes of the data. This will coerce the
-                    # unicode fields to bytes automatically
-                    data = data.astype(final_dtypes)
-                chunks = True if hasattr(data, '__len__') else False
-                compression_kwargs = {}
-                if chunks:
-                    if compression is not None:
-                        compression_kwargs['compression'] = compression
-                        if compression_opts is not None:
-                            compression_kwargs[
-                                'compression_opts'] = compression_opts
-                try:
-                    dset = coords_group.create_dataset(
-                        name, data=data, chunks=chunks,
-                        **compression_kwargs)
-                except TypeError as e:
-                    if chunks is not False:
-                        dset = coords_group.create_dataset(
-                            name, data=data, chunks=False)
-                    else:
-                        raise e
-                # Store the data type as an attribute to make it easier to
-                # reconstruct with correct data types
-                dset.attrs['type'] = str(type(data))
-
-            names = json.dumps(coords).encode(encoding)
+            names = json.dumps(coords).encode()
             coords_group.attrs.update(names=names)
-            hfile.attrs['classname'] = self.__class__.__name__
-            hfile.attrs['python_module'] = self.__class__.__module__
+
             root = hfile['/']
+
             if self.name is not None:
-                root.attrs['name'] = self.name.encode(encoding)
+                root.attrs['name'] = self.name.encode()
             if self.attrs is not None:
-                root.attrs['attrs'] = json.dumps(self.attrs).encode(encoding)
+                root.attrs['attrs'] = json.dumps(self.attrs).encode()
+
+            root.attrs["created"] = time.time()
+            root.attrs["ptsa_version"] = ptsa_version
 
     @classmethod
-    def from_hdf(cls, filename, decode_string_arrays=True,
-                 encoding='utf-8'):
-        """Deserialize from HDF5 using :mod:`h5py`.
-
-        Parameters
-        ----------
-        filename : str
-        decode_string_arrays: bool
-            Arrays of bytes should be decoded into strings
-        encoding: str
-            Encoding scheme to use for decoding. To read files saved
-            with earlier PTSA versions use 'legacy' (but note that
-            support for reading legacy files is deprecated, so do save
-            them out with to_hdf5 to update their format).
-
-        Returns
-        -------
-        Deserialized instance
-
-        """
-        if encoding.upper() == 'LEGACY':
-            return cls._from_hdf_legacy(filename)
-        if h5py is None:  # pragma: nocover
-            raise RuntimeError("You must install h5py to load from HDF5")
-
-        with h5py.File(filename, 'r') as hfile:
-            dims = hfile['dims'][:]
-
-            root = hfile['/']
-            version = root.attrs.get('ptsa_version', None)
-            if version is not None:
-                # if ptsa_version <= 1.1.5, run legacy code:
-                version_thresh = [5, 1, 1]
-                version_nums = [np.int(v) for v in version.split('.')][::-1]
-                new_version = False
-                while (len(version_nums) > 0) and (len(version_thresh) > 0):
-                    if version_nums.pop() > version_thresh.pop():
-                        new_version = True
-                if len(version_nums) > 0:
-                    new_version = True
-                if not new_version:
-                    return cls._from_hdf_legacy(filename)
-            coords_group = hfile['coords']
-            names = json.loads(coords_group.attrs['names'].decode(encoding))
-            coords = dict()
-            for name in names:
-                data = coords_group[name]
-                data_has_fields = len(data.dtype) > 0
-                if ~data_has_fields and data.dtype.char == 'S':
-                    data = [s.decode(encoding) for s in np.atleast_1d(data)]
-                elif data_has_fields:
-                    # Determine what the final dtypes will be
-                    final_dtypes = []
-                    bytes_fields = []
-                    for i, field in enumerate(data.dtype.names):
-                        if data[field].dtype.kind != 'S':
-                            final_dtypes.append((field,
-                                                 data[field].dtype.str))
-                        else:
-                            final_dtypes.append((field, 'U256'))
-                            bytes_fields.append(field)
-
-                    # Update dtypes of the data. This will coerce the
-                    # bytes fields to unicode automatically
-                    data = np.array(data).astype(final_dtypes).view(
-                        np.recarray)
-                coords[name] = data
-            name = root.attrs.get('name', None)
-            if name is not None:
-                name = name.decode(encoding)
-            attrs = root.attrs.get('attrs', None)
-            if attrs is not None:
-                attrs = json.loads(attrs.decode(encoding))
-
-            array = cls(hfile['data'].value,
-                        coords=coords,
-                        dims=[dim.decode(encoding) for dim in dims],
-                        name=name,
-                        attrs=attrs)
-            return array
-
-    @classmethod
-    def _from_hdf_legacy(cls, filename):
-        """
-        Legacy function to support loading in old files created with
-        the to_hdf5 method in previous versions of PTSA.
-        This method is DEPRECATED: old hdf5 files should be converted
-        by reading them in with this function and saving the resulting
-        TimeSeriesX object with the current to_hdf5 method to maintain
-        accessibility.
+    def from_hdf(cls, filename):
+        """Load a serialized time series from an HDF5 file.
 
         Parameters
         ----------
@@ -286,12 +149,6 @@ class TimeSeries(xr.DataArray):
             Path to HDF5 file.
 
         """
-        import warnings
-        warnings.warn(
-            'This method is DEPRECATED: old hdf5 files should be converted by' +
-            'reading them in with this function and saving the resulting' +
-            'TimeSeriesX object with the current to_hdf5 method to maintain' +
-            'accessibility.')
         if h5py is None:  # pragma: nocover
             raise RuntimeError("You must install h5py to load from HDF5")
 
@@ -302,7 +159,8 @@ class TimeSeries(xr.DataArray):
 
             coords_group = hfile['coords']
             names = json.loads(coords_group.attrs['names'].decode())
-            coords = dict()
+            coords = {}
+
             for name in names:
                 buffer = BytesIO(b64decode(coords_group[name].value))
                 coord = np.load(buffer)
@@ -311,6 +169,7 @@ class TimeSeries(xr.DataArray):
             name = root.attrs.get('name', None)
             if name is not None:
                 name = name.decode()
+
             attrs = root.attrs.get('attrs', None)
             if attrs is not None:
                 attrs = json.loads(attrs.decode())

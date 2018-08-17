@@ -7,6 +7,7 @@ import numpy as np
 import xarray as xr
 import h5py
 
+from ptsa import __version__
 from ptsa.data.filters import ResampleFilter
 from ptsa.data.timeseries import TimeSeries, ConcatenationError
 
@@ -67,12 +68,15 @@ def test_hdf(tempdir):
         assert "coords" in hfile
         assert "name" in list(hfile['/'].attrs.keys())
         assert "ptsa_version" in hfile.attrs
+        assert hfile.attrs["ptsa_version"] == __version__
         assert "created" in hfile.attrs
 
     loaded = TimeSeries.from_hdf(filename)
     assert np.all(loaded.data == data)
+
     for coord in loaded.coords:
         assert (loaded.coords[coord] == ts.coords[coord]).all()
+
     for n, dim in enumerate(dims):
         assert loaded.dims[n] == dim
     assert loaded.name == "test"
@@ -81,74 +85,18 @@ def test_hdf(tempdir):
                                       name="test", attrs=dict(a=1, b=[1, 2]))
     ts_with_attrs.to_hdf(filename)
     loaded = TimeSeries.from_hdf(filename)
+
     for key in ts_with_attrs.attrs:
         assert ts_with_attrs.attrs[key] == loaded.attrs[key]
     assert np.all(loaded.data == data)
+
     for coord in loaded.coords:
         assert (loaded.coords[coord] == ts_with_attrs.coords[coord]).all()
-    for n, dim in enumerate(dims):
-        assert loaded.dims[n] == dim
-    assert loaded.name == "test"
 
-    # test compression:
-    ts_with_attrs.to_hdf(filename, compression='gzip', compression_opts=9)
-    loaded = TimeSeries.from_hdf(filename)
-    for key in ts_with_attrs.attrs:
-        assert ts_with_attrs.attrs[key] == loaded.attrs[key]
-    assert np.all(loaded.data == data)
-    for coord in loaded.coords:
-        assert (loaded.coords[coord] == ts_with_attrs.coords[coord]).all()
     for n, dim in enumerate(dims):
         assert loaded.dims[n] == dim
-    assert loaded.name == "test"
 
-    # test different containers as dims:
-    data = np.random.random((3, 7, 10, 4))
-    dims = ('time', 'recarray', 'list', 'recordarray')
-    coords = {'time': np.linspace(0, 1, 3),
-              'recarray': np.array(
-                  [(i, j, k) for i, j, k in zip(
-                      np.linspace(0, 1, 7), np.linspace(1000, 2000, 7),
-                      np.linspace(0, 1, 7))],
-                  dtype=[('field1', np.float), ('field2', np.int),
-                         ('field3', 'U20')]),
-              'list': list(np.linspace(100, 200, 10)),
-              'recordarray': np.array(
-                  [(i, j, k) for i, j, k in zip(
-                      np.linspace(0, 1, 4), np.linspace(1000, 2000, 4),
-                      np.linspace(0, 1, 4))],
-                  dtype=[('field1', np.float), ('field2', np.int),
-                         ('field3', 'U20')]).view(np.recarray)}
-    rate = 1
-    ts = TimeSeries.create(data, rate, coords=coords, dims=dims,
-                           name="container test")
-    ts.to_hdf(filename, compression='gzip', compression_opts=9)
-    with h5py.File(filename, 'r') as hfile:
-        assert "data" in hfile
-        assert "dims" in hfile
-        assert "coords" in hfile
-        assert "name" in list(hfile['/'].attrs.keys())
-        assert "ptsa_version" in hfile.attrs
-        assert "created" in hfile.attrs
-    loaded = TimeSeries.from_hdf(filename)
-    for key in ts.attrs:
-        assert ts.attrs[key] == loaded.attrs[key]
-    assert np.all(loaded.data == data)
-    for coord in loaded.coords:
-        # dtypes can be slightly differnt for recarrays:
-        assert (
-            np.array(
-                loaded.coords[coord], ts[coord].values.dtype) ==
-            ts.coords[coord]).all()
-    for coord in ts.coords:
-        # dtypes can be slightly differnt for recarrays:
-        assert (
-            np.array(
-                loaded.coords[coord], ts[coord].values.dtype) ==
-            ts.coords[coord]).all()
-    for n, dim in enumerate(dims):
-        assert loaded.dims[n] == dim
-    assert loaded.name == "container test"
+    assert loaded.name == "test"
 
 
 @pytest.mark.parametrize("cls,kwargs", [
