@@ -1,6 +1,8 @@
+{% set setup_data = load_setup_py_data() %}
+
 package:
   name: ptsa
-  version: 2.0.3
+  version: {{ setup_data['version'] }}
   channels: anaconda pennmem
 
 source:
