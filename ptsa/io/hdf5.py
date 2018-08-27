@@ -154,7 +154,7 @@ def load_records(hfile, where):
         columns[name] = vdecode(columns[name])
 
     for name in json_encoded:
-        columns[name] = [json.loads(col) for col in columns[name]]
+        columns[name] = [json.loads(col.decode()) for col in columns[name]]
 
     df = pd.DataFrame(columns)
 
