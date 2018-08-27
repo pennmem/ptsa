@@ -5,8 +5,32 @@ import pytest
 
 from ptsa.io import hdf5
 
+@pytest.fixture
+def hfilename(tmpdir):
+    return str(tmpdir.join("test.h5"))
+
 
 class TestHDF5IO:
+    def test_maxlen(self):
+        array = ["a", "bb", "ccc", "dddd"]
+        assert hdf5.maxlen(array) == 4
+
+    @pytest.mark.parametrize("data", [
+        np.linspace(0, 100, 100, dtype=int),
+        np.array(["R1111M", "R1", "whatever", "another string"]),
+        pd.DataFrame({
+            "a": [1, 2, 3],
+            "b": [3, 2, 1],
+        })
+    ])
+    def test_save_load_array(self, data, hfilename):
+        with h5py.File(hfilename, "w") as hfile:
+            hdf5.save_array(hfile, "data", data)
+
+        with h5py.File(hfilename, "r") as hfile:
+            data_out = hdf5.load_array(hfile, "data")
+            assert all(data == data_out)
+
     @pytest.mark.parametrize("data_in", [
         pd.DataFrame({
             "string": ["a", "string"],

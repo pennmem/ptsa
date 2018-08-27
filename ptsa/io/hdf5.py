@@ -10,6 +10,57 @@ vencode = np.vectorize(codecs.encode)
 vdecode = np.vectorize(codecs.decode)
 
 
+def maxlen(a):
+    return np.amax(vlen(a))
+
+
+def save_array(hfile, where, data):
+    """Save a generic numpy array or pandas DataFrame to HDF5.
+
+    Parameters
+    ----------
+    hfile: h5py.File
+        Opened HDF5 file object.
+    where: str
+        Dataset name.
+    data: Union[pd.DataFrame, np.array]
+        The data to write.
+
+    Notes
+    -----
+    When saving a DataFrame, the index information will be lost.
+
+    """
+    if isinstance(data, np.ndarray):
+        if len(data.dtype) > 0:
+            return save_records(hfile, where, data)
+    elif isinstance(data, pd.DataFrame):
+        return save_records(hfile, where, data)
+
+    if data.dtype.char == "U":
+        strlen = maxlen(data)
+        hfile[where] = data.astype("|S{}".format(strlen))
+        hfile[where].attrs["string"] = True
+    else:
+        hfile[where] = data
+        hfile[where].attrs["string"] = False
+
+    hfile[where].attrs["tabular"] = False
+
+
+def load_array(hfile, where):
+    """Load an array from HDF5 that was saved with :func:`save_array`."""
+    if hfile[where].attrs["tabular"]:
+        return load_records(hfile, where)
+
+    data = hfile[where].value
+
+    if hfile[where].attrs["string"]:
+        return vdecode(data)
+    else:
+        return data
+
+
 def save_records(hfile, where, data):
     """Save record array-like data to HDF5.
 
@@ -41,8 +92,7 @@ def save_records(hfile, where, data):
     for name in data.dtype.names:
         this_dtype = data[name].dtype
         if this_dtype == object or this_dtype.char == "U":
-            maxlen = np.amax(vlen(data[name]))
-            dtype.append((name, "|S{}".format(maxlen)))
+            dtype.append((name, "|S{}".format(maxlen(data[name]))))
             utf8_encoded.add(name)
         else:
             dtype.append((name, this_dtype))
@@ -59,8 +109,7 @@ def save_records(hfile, where, data):
                 # We have to change the dtype which requires copying the array.
                 # Maybe there is a better way to detect if something is JSON-
                 # encodable earlier on?
-                maxlen = np.amax(vlen(json_data))
-                dtype[i] = (name, "|S{}".format(maxlen))
+                dtype[i] = (name, "|S{}".format(maxlen(json_data)))
                 sanitized = sanitized.astype(dtype)
 
                 sanitized[name] = json_data
@@ -70,6 +119,7 @@ def save_records(hfile, where, data):
             sanitized[name] = data[name]
 
     hfile[where] = sanitized
+    hfile[where].attrs["tabular"] = True
     hfile[where].attrs["utf8_encoded_fields"] = json.dumps(list(utf8_encoded))
     hfile[where].attrs["json_encoded_fields"] = json.dumps(list(json_encoded))
     hfile[where].attrs["original_type"] = original_type
