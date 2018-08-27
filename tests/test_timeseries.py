@@ -99,6 +99,15 @@ def test_hdf(tempdir):
     assert loaded.name == "test"
 
 
+def test_load_hdf_base64():
+    """Test that we can still load the base64-encoded HDF5 format."""
+    filename = osp.join(osp.dirname(__file__), "data", "R1111M_base64.h5")
+    ts = TimeSeries.from_hdf(filename)
+
+    assert "event" in ts.coords
+    assert len(ts.coords["event"] == 10)
+
+
 @pytest.mark.parametrize("cls,kwargs", [
     (None, {}),
     (ResampleFilter, {"resamplerate": 1.}),
