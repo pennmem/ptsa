@@ -1,4 +1,5 @@
-from base64 import b64encode, b64decode
+from base64 import b64decode
+from collections import namedtuple
 from io import BytesIO
 import json
 import time
@@ -97,34 +98,33 @@ class TimeSeries(xr.DataArray):
         except ImportError:
             raise RuntimeError("You must install h5py to load from HDF5")
 
+        from ptsa.io import hdf5
+
         with h5py.File(filename, mode) as hfile:
             hfile.create_dataset("data", data=self.data, chunks=True)
 
             dims = [dim.encode() for dim in self.dims]
             hfile.create_dataset("dims", data=dims)
 
-            coords_group = hfile.create_group("coords")
-            coords = []
+            hfile.create_group("coords")
 
             for name, data in self.coords.items():
-                coords.append(name)
-                buffer = BytesIO()
-                np.save(buffer, data)
-                output = b64encode(buffer.getvalue())
-                coords_group.create_dataset(name, data=output)
-
-            names = json.dumps(coords).encode()
-            coords_group.attrs.update(names=names)
+                hdf5.save_array(hfile, "/".join(["coords", name]), data)
 
             root = hfile['/']
 
             if self.name is not None:
                 root.attrs['name'] = self.name.encode()
+
             if self.attrs is not None:
                 root.attrs['attrs'] = json.dumps(self.attrs).encode()
 
             root.attrs["created"] = time.time()
             root.attrs["ptsa_version"] = ptsa_version
+
+            # indicate that we're using the new "human readable" format for
+            # recarray-like coordinates
+            root.attrs["human_readable"] = True
 
     @staticmethod
     def _from_hdf_base64(hfile):
@@ -140,8 +140,6 @@ class TimeSeries(xr.DataArray):
         name, dims, coords, names, attrs
 
         """
-        from collections import namedtuple
-
         rtype = namedtuple("HDFBase64RType", "name,dims,coords,attrs")
 
         dims = hfile['dims'][:]
@@ -168,6 +166,39 @@ class TimeSeries(xr.DataArray):
 
         return rtype(name, dims, coords, attrs)
 
+    @staticmethod
+    def _from_hdf_human_readable(hfile):
+        """Load non-time series data from the newer, "human readable" HDF5
+        format.
+
+        Returns
+        -------
+        name, dims, coords, names, attrs
+
+        """
+        from ptsa.io import hdf5
+
+        rtype = namedtuple("HDFHumanRedableRType", "name,dims,coords,attrs")
+
+        root = hfile["/"]
+        dims = [dim.decode() for dim in hfile["dims"][:]]
+
+        name = root.attrs.get("name", None)
+        if name is not None:
+            name = name.decode()
+
+        attrs = root.attrs.get("attrs", None)
+        if attrs is not None:
+            attrs = json.loads(attrs.decode())
+
+        coords_group = hfile["coords"]
+        coords = {
+            key: hdf5.load_array(hfile, "/".join(["coords", key]))
+            for key in coords_group
+        }
+
+        return rtype(name, dims, coords, attrs)
+
     @classmethod
     def from_hdf(cls, filename):
         """Load a serialized time series from an HDF5 file.
@@ -184,7 +215,10 @@ class TimeSeries(xr.DataArray):
             raise RuntimeError("You must install h5py to load from HDF5")
 
         with h5py.File(filename, 'r') as hfile:
-            loaded = cls._from_hdf_base64(hfile)
+            if not hfile.attrs.get("human_readable", False):
+                loaded = cls._from_hdf_base64(hfile)
+            else:
+                loaded = cls._from_hdf_human_readable(hfile)
 
             array = cls.create(hfile['data'].value,
                                None,

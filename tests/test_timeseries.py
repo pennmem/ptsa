@@ -39,11 +39,11 @@ def test_init():
 
 
 def test_arithmetic_operations():
-    data = np.arange(1000).reshape(10,10,10)
+    data = np.arange(1000).reshape(10, 10, 10)
     rate = 1000
 
-    ts_1 =  TimeSeries.create(data, None, coords={'samplerate': 1})
-    ts_2 =  TimeSeries.create(data, None, coords={'samplerate': 1})
+    ts_1 = TimeSeries.create(data, None, coords={'samplerate': 1})
+    ts_2 = TimeSeries.create(data, None, coords={'samplerate': 1})
 
     ts_out = ts_1 + ts_2
 
