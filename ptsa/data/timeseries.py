@@ -93,18 +93,8 @@ class TimeSeries(xr.DataArray):
 
         Notes
         -----
-        Because recarrays can complicate things when unicode is involved, saving
-        coordinates is a multi-step process:
-
-        1. Save to a buffer using :func:`np.save`. This uses Numpy's own binary
-           format and should Just Work.
-        2. Base64-encode the buffer to eliminate NULL bytes which HDF5 can't
-           handle.
-        3. Write the bytes contained in the buffer to the HDF5 file.
-
-        When recarrays use the ``'O'`` dtype, pickling will occur. This means
-        that serialized data may not be readable in older versions of Python
-        than that used to save it.
+        recarrays/DataFrame fields with "O" dtypes will be assumed to be strings
+        and encoded accordingly.
 
         """
         if h5py is None:  # pragma: nocover

@@ -35,27 +35,43 @@ def save_records(hfile, where, data):
         data = np.rec.array(data)
 
     dtype = []
-    encoded = set()
+    utf8_encoded = set()
+    json_encoded = set()
 
     for name in data.dtype.names:
         this_dtype = data[name].dtype
         if this_dtype == object or this_dtype.char == "U":
             maxlen = np.amax(vlen(data[name]))
             dtype.append((name, "|S{}".format(maxlen)))
-            encoded.add(name)
+            utf8_encoded.add(name)
         else:
             dtype.append((name, this_dtype))
 
     sanitized = np.recarray(data.shape, dtype=dtype)
 
-    for name, _ in dtype:
-        if name in encoded:
-            sanitized[name] = vencode(data[name])
+    for i, (name, _) in enumerate(dtype):
+        if name in utf8_encoded:
+            try:
+                sanitized[name] = vencode(data[name])
+            except TypeError:  # try dumping with JSON (for list/dict types)
+                json_data = [json.dumps(col).encode() for col in data[name]]
+
+                # We have to change the dtype which requires copying the array.
+                # Maybe there is a better way to detect if something is JSON-
+                # encodable earlier on?
+                maxlen = np.amax(vlen(json_data))
+                dtype[i] = (name, "|S{}".format(maxlen))
+                sanitized = sanitized.astype(dtype)
+
+                sanitized[name] = json_data
+                utf8_encoded.remove(name)
+                json_encoded.add(name)
         else:
             sanitized[name] = data[name]
 
     hfile[where] = sanitized
-    hfile[where].attrs["utf8_encoded_fields"] = json.dumps(list(encoded))
+    hfile[where].attrs["utf8_encoded_fields"] = json.dumps(list(utf8_encoded))
+    hfile[where].attrs["json_encoded_fields"] = json.dumps(list(json_encoded))
     hfile[where].attrs["original_type"] = original_type
 
 
@@ -80,11 +96,15 @@ def load_records(hfile, where):
 
     """
     data = pd.DataFrame(hfile[where][:])
-    encoded = json.loads(hfile[where].attrs["utf8_encoded_fields"])
+    utf8_encoded = json.loads(hfile[where].attrs["utf8_encoded_fields"])
+    json_encoded = json.loads(hfile[where].attrs["json_encoded_fields"])
     columns = {key: value for key, value in data.items()}
 
-    for name in encoded:
+    for name in utf8_encoded:
         columns[name] = vdecode(columns[name])
+
+    for name in json_encoded:
+        columns[name] = [json.loads(col) for col in columns[name]]
 
     df = pd.DataFrame(columns)
 

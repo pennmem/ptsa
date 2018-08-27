@@ -12,11 +12,12 @@ class TestHDF5IO:
             "string": ["a", "string"],
             "integer": [1, 2],
             "float": [1., 2.],
+            "dict": [{"a": 1}, {"b": 2}],
         }),
         np.rec.array(
-            [("a", 1), ("longer string", 2)],
-            dtype=[("description", "<U32"), ("number", int)]
-        )
+            [("a", 1, {"a": 1}), ("longer string", 2, {"b": 2})],
+            dtype=[("description", "<U32"), ("number", int), ("dict", object)]
+        ),
     ])
     def test_save_load_records(self, data_in, tmpdir):
         filename = str(tmpdir.join("test.h5"))
