@@ -137,7 +137,6 @@ class TestCMLReaders:
         ts2 = TimeSeries.from_hdf(filename)
         assert_timeseries_equal(ts, ts2)
 
-    @pytest.mark.only
     def test_hdf(self, tmpdir):
         from cmlreaders.readers.readers import EventReader
         from unittest.mock import patch
