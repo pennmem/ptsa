@@ -1,6 +1,7 @@
 from tempfile import mkdtemp
 import os.path as osp
 import shutil
+import sys
 import warnings
 import pytest
 import numpy as np
@@ -99,6 +100,8 @@ def test_hdf(tempdir):
     assert loaded.name == "test"
 
 
+@pytest.mark.skipif(sys.version_info[0] < 3,
+                    reason="not loadable in legacy Python")
 def test_load_hdf_base64():
     """Test that we can still load the base64-encoded HDF5 format."""
     filename = osp.join(osp.dirname(__file__), "data", "R1111M_base64.h5")
