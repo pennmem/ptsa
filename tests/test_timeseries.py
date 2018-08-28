@@ -106,12 +106,17 @@ def test_hdf(tempdir):
 @pytest.mark.skipif(sys.version_info[0] < 3,
                     reason="cmlreaders doesn't support legacy Python")
 class TestCMLReaders:
-    def setup_method(self, method):
+    @property
+    def reader(self):
         from cmlreaders import CMLReader
         from ptsa.test.utils import get_rhino_root
 
-        self.rootdir = get_rhino_root()
-        self.reader = CMLReader("R1111M", "FR1", 0, rootdir=self.rootdir)
+        try:
+            rootdir = get_rhino_root()
+        except OSError:
+            rootdir = None
+
+        return CMLReader("R1111M", "FR1", 0, rootdir=rootdir)
 
     def make_eeg(self, events, rel_start, rel_stop):
         """Fake EEG data for testing without rhino."""
@@ -126,11 +131,17 @@ class TestCMLReaders:
 
     @pytest.mark.rhino
     def test_hdf_rhino(self, tmpdir):
-        filename = str(tmpdir.join("test.h5"))
-        events = self.reader.load("events")
-        ev = events[events.eegoffset > 0].sample(n=5)
+        from cmlreaders.warnings import MultiplePathsFoundWarning
 
-        eeg = self.reader.load_eeg(events=ev, rel_start=0, rel_stop=10)
+        filename = str(tmpdir.join("test.h5"))
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", MultiplePathsFoundWarning)
+
+            events = self.reader.load("events")
+            ev = events[events.eegoffset > 0].sample(n=5)
+            eeg = self.reader.load_eeg(events=ev, rel_start=0, rel_stop=10)
+
         ts = eeg.to_ptsa()
         ts.to_hdf(filename)
 
@@ -150,8 +161,10 @@ class TestCMLReaders:
         rel_start, rel_stop = 0, 10
         get_eeg = partial(self.make_eeg, ev, rel_start, rel_stop)
 
-        with patch.object(self.reader, "load_eeg", return_value=get_eeg()):
-            eeg = self.reader.load_eeg(events=ev, rel_start=0, rel_stop=10)
+        reader = self.reader
+
+        with patch.object(reader, "load_eeg", return_value=get_eeg()):
+            eeg = reader.load_eeg(events=ev, rel_start=0, rel_stop=10)
 
         ts = eeg.to_ptsa()
         ts.to_hdf(filename)
