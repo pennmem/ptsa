@@ -1,15 +1,19 @@
-from tempfile import mkdtemp
+from functools import partial
 import os.path as osp
+from tempfile import mkdtemp
 import shutil
+import sys
 import warnings
+
+import h5py
 import pytest
 import numpy as np
 import xarray as xr
-import h5py
 
 from ptsa import __version__
 from ptsa.data.filters import ResampleFilter
 from ptsa.data.timeseries import TimeSeries, ConcatenationError
+from ptsa.test.utils import assert_timeseries_equal, skip_without_rhino
 
 
 @pytest.fixture
@@ -39,11 +43,11 @@ def test_init():
 
 
 def test_arithmetic_operations():
-    data = np.arange(1000).reshape(10,10,10)
+    data = np.arange(1000).reshape(10, 10, 10)
     rate = 1000
 
-    ts_1 =  TimeSeries.create(data, None, coords={'samplerate': 1})
-    ts_2 =  TimeSeries.create(data, None, coords={'samplerate': 1})
+    ts_1 = TimeSeries.create(data, None, coords={'samplerate': 1})
+    ts_2 = TimeSeries.create(data, None, coords={'samplerate': 1})
 
     ts_out = ts_1 + ts_2
 
@@ -97,6 +101,87 @@ def test_hdf(tempdir):
         assert loaded.dims[n] == dim
 
     assert loaded.name == "test"
+
+
+@pytest.mark.skipif(sys.version_info[0] < 3,
+                    reason="cmlreaders doesn't support legacy Python")
+class TestCMLReaders:
+    @property
+    def reader(self):
+        from cmlreaders import CMLReader
+        from ptsa.test.utils import get_rhino_root
+
+        try:
+            rootdir = get_rhino_root()
+        except OSError:
+            rootdir = None
+
+        return CMLReader("R1111M", "FR1", 0, rootdir=rootdir)
+
+    def make_eeg(self, events, rel_start, rel_stop):
+        """Fake EEG data for testing without rhino."""
+        from cmlreaders.eeg_container import EEGContainer
+
+        channels = ["CH{}".format(n) for n in range(1, 10)]
+        data = np.random.random((len(events), len(channels), rel_stop - rel_start))
+
+        container = EEGContainer(data, 1000, events=events, channels=channels)
+
+        return container
+
+    @skip_without_rhino
+    def test_hdf_rhino(self, tmpdir):
+        from cmlreaders.warnings import MultiplePathsFoundWarning
+
+        filename = str(tmpdir.join("test.h5"))
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", MultiplePathsFoundWarning)
+
+            events = self.reader.load("events")
+            ev = events[events.eegoffset > 0].sample(n=5)
+            eeg = self.reader.load_eeg(events=ev, rel_start=0, rel_stop=10)
+
+        ts = eeg.to_ptsa()
+        ts.to_hdf(filename)
+
+        ts2 = TimeSeries.from_hdf(filename)
+        assert_timeseries_equal(ts, ts2)
+
+    def test_hdf(self, tmpdir):
+        from cmlreaders.readers.readers import EventReader
+        from unittest.mock import patch
+
+        efile = osp.join(osp.dirname(__file__), "data", "R1111M_FR1_0_events.json")
+        filename = str(tmpdir.join("test.h5"))
+
+        events = EventReader.fromfile(efile, subject="R1111M", experiment="FR1")
+        ev = events[events.eegoffset > 0].sample(n=5)
+
+        rel_start, rel_stop = 0, 10
+        get_eeg = partial(self.make_eeg, ev, rel_start, rel_stop)
+
+        reader = self.reader
+
+        with patch.object(reader, "load_eeg", return_value=get_eeg()):
+            eeg = reader.load_eeg(events=ev, rel_start=0, rel_stop=10)
+
+        ts = eeg.to_ptsa()
+        ts.to_hdf(filename)
+
+        ts2 = TimeSeries.from_hdf(filename)
+        assert_timeseries_equal(ts, ts2)
+
+
+@pytest.mark.skipif(sys.version_info[0] < 3,
+                    reason="not loadable in legacy Python")
+def test_load_hdf_base64():
+    """Test that we can still load the base64-encoded HDF5 format."""
+    filename = osp.join(osp.dirname(__file__), "data", "R1111M_base64.h5")
+    ts = TimeSeries.from_hdf(filename)
+
+    assert "event" in ts.coords
+    assert len(ts.coords["event"] == 10)
 
 
 @pytest.mark.parametrize("cls,kwargs", [

@@ -1,4 +1,5 @@
-from base64 import b64encode, b64decode
+from base64 import b64decode
+from collections import namedtuple
 from io import BytesIO
 import json
 import time
@@ -7,11 +8,6 @@ import warnings
 import xarray as xr
 import numpy as np
 from scipy.signal import resample
-
-try:
-    import h5py
-except ImportError:  # pragma: nocover
-    h5py = None
 
 from ptsa import __version__ as ptsa_version
 from ptsa.data.common import get_axis_index
@@ -93,22 +89,16 @@ class TimeSeries(xr.DataArray):
 
         Notes
         -----
-        Because recarrays can complicate things when unicode is involved, saving
-        coordinates is a multi-step process:
-
-        1. Save to a buffer using :func:`np.save`. This uses Numpy's own binary
-           format and should Just Work.
-        2. Base64-encode the buffer to eliminate NULL bytes which HDF5 can't
-           handle.
-        3. Write the bytes contained in the buffer to the HDF5 file.
-
-        When recarrays use the ``'O'`` dtype, pickling will occur. This means
-        that serialized data may not be readable in older versions of Python
-        than that used to save it.
+        recarrays/DataFrame fields with "O" dtypes will be assumed to be strings
+        and encoded accordingly.
 
         """
-        if h5py is None:  # pragma: nocover
-            raise RuntimeError("You must install h5py to save as HDF5")
+        try:  # pragma: nocover
+            import h5py
+        except ImportError:
+            raise RuntimeError("You must install h5py to load from HDF5")
+
+        from ptsa.io import hdf5
 
         with h5py.File(filename, mode) as hfile:
             hfile.create_dataset("data", data=self.data, chunks=True)
@@ -116,28 +106,100 @@ class TimeSeries(xr.DataArray):
             dims = [dim.encode() for dim in self.dims]
             hfile.create_dataset("dims", data=dims)
 
-            coords_group = hfile.create_group("coords")
-            coords = []
+            hfile.create_group("coords")
 
             for name, data in self.coords.items():
-                coords.append(name)
-                buffer = BytesIO()
-                np.save(buffer, data)
-                output = b64encode(buffer.getvalue())
-                coords_group.create_dataset(name, data=output)
-
-            names = json.dumps(coords).encode()
-            coords_group.attrs.update(names=names)
+                # if we don't do .data, we have a TimeSeries object because
+                # xarray is weird
+                hdf5.save_array(hfile, "/".join(["coords", name]), data.data)
 
             root = hfile['/']
 
             if self.name is not None:
                 root.attrs['name'] = self.name.encode()
+
             if self.attrs is not None:
                 root.attrs['attrs'] = json.dumps(self.attrs).encode()
 
             root.attrs["created"] = time.time()
             root.attrs["ptsa_version"] = ptsa_version
+
+            # indicate that we're using the new "human readable" format for
+            # recarray-like coordinates
+            root.attrs["human_readable"] = True
+
+    @staticmethod
+    def _from_hdf_base64(hfile):
+        """Load non-time series data from the legacy base64-encoded HDF5 format.
+
+        Parameters
+        ----------
+        hfile : h5py.File
+            Open HDF5 file.
+
+        Returns
+        -------
+        name, dims, coords, names, attrs
+
+        """
+        rtype = namedtuple("HDFBase64RType", "name,dims,coords,attrs")
+
+        dims = hfile['dims'][:]
+        root = hfile['/']
+
+        coords_group = hfile['coords']
+        names = json.loads(coords_group.attrs['names'].decode())
+        coords = {}
+
+        for name in names:
+            buffer = BytesIO(b64decode(coords_group[name].value))
+            coord = np.load(buffer)
+            coords[name] = coord
+
+        name = root.attrs.get('name', None)
+        if name is not None:
+            name = name.decode()
+
+        attrs = root.attrs.get('attrs', None)
+        if attrs is not None:
+            attrs = json.loads(attrs.decode())
+
+        dims = [dim.decode() for dim in dims]
+
+        return rtype(name, dims, coords, attrs)
+
+    @staticmethod
+    def _from_hdf_human_readable(hfile):
+        """Load non-time series data from the newer, "human readable" HDF5
+        format.
+
+        Returns
+        -------
+        name, dims, coords, names, attrs
+
+        """
+        from ptsa.io import hdf5
+
+        rtype = namedtuple("HDFHumanRedableRType", "name,dims,coords,attrs")
+
+        root = hfile["/"]
+        dims = [dim.decode() for dim in hfile["dims"][:]]
+
+        name = root.attrs.get("name", None)
+        if name is not None:
+            name = name.decode()
+
+        attrs = root.attrs.get("attrs", None)
+        if attrs is not None:
+            attrs = json.loads(attrs.decode())
+
+        coords_group = hfile["coords"]
+        coords = {
+            key: hdf5.load_array(hfile, "/".join(["coords", key]))
+            for key in coords_group
+        }
+
+        return rtype(name, dims, coords, attrs)
 
     @classmethod
     def from_hdf(cls, filename):
@@ -149,34 +211,23 @@ class TimeSeries(xr.DataArray):
             Path to HDF5 file.
 
         """
-        if h5py is None:  # pragma: nocover
+        try:  # pragma: nocover
+            import h5py
+        except ImportError:
             raise RuntimeError("You must install h5py to load from HDF5")
 
         with h5py.File(filename, 'r') as hfile:
-            dims = hfile['dims'][:]
+            if not hfile.attrs.get("human_readable", False):
+                loaded = cls._from_hdf_base64(hfile)
+            else:
+                loaded = cls._from_hdf_human_readable(hfile)
 
-            root = hfile['/']
-
-            coords_group = hfile['coords']
-            names = json.loads(coords_group.attrs['names'].decode())
-            coords = {}
-
-            for name in names:
-                buffer = BytesIO(b64decode(coords_group[name].value))
-                coord = np.load(buffer)
-                coords[name] = coord
-
-            name = root.attrs.get('name', None)
-            if name is not None:
-                name = name.decode()
-
-            attrs = root.attrs.get('attrs', None)
-            if attrs is not None:
-                attrs = json.loads(attrs.decode())
-
-            array = cls.create(hfile['data'].value, None, coords=coords,
-                               dims=[dim.decode() for dim in dims],
-                               name=name, attrs=attrs)
+            array = cls.create(hfile['data'].value,
+                               None,
+                               coords=loaded.coords,
+                               dims=loaded.dims,
+                               name=loaded.name,
+                               attrs=loaded.attrs)
 
             return array
 
