@@ -109,7 +109,9 @@ class TimeSeries(xr.DataArray):
             hfile.create_group("coords")
 
             for name, data in self.coords.items():
-                hdf5.save_array(hfile, "/".join(["coords", name]), data)
+                # if we don't do .data, we have a TimeSeries object because
+                # xarray is weird
+                hdf5.save_array(hfile, "/".join(["coords", name]), data.data)
 
             root = hfile['/']
 

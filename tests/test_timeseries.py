@@ -11,6 +11,7 @@ import h5py
 from ptsa import __version__
 from ptsa.data.filters import ResampleFilter
 from ptsa.data.timeseries import TimeSeries, ConcatenationError
+from ptsa.test.utils import assert_timeseries_equal
 
 
 @pytest.fixture
@@ -98,6 +99,26 @@ def test_hdf(tempdir):
         assert loaded.dims[n] == dim
 
     assert loaded.name == "test"
+
+
+@pytest.mark.skipif(sys.version_info[0] < 3,
+                    reason="cmlreaders doesn't support legacy Python")
+@pytest.mark.rhino
+def test_hdf_cmlreaders_rhino(tmpdir):
+    from cmlreaders import CMLReader
+    from ptsa.test.utils import get_rhino_root
+
+    filename = str(tmpdir.join("test.h5"))
+
+    reader = CMLReader("R1111M", "FR1", 0, rootdir=get_rhino_root())
+    events = reader.load("events")
+    ev = events[events.eegoffset > 0].sample(n=5)
+    eeg = reader.load_eeg(events=ev, rel_start=0, rel_stop=10)
+    ts = eeg.to_ptsa()
+    ts.to_hdf(filename)
+
+    ts2 = TimeSeries.from_hdf(filename)
+    assert_timeseries_equal(ts, ts2)
 
 
 @pytest.mark.skipif(sys.version_info[0] < 3,
