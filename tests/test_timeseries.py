@@ -1,12 +1,14 @@
-from tempfile import mkdtemp
+from functools import partial
 import os.path as osp
+from tempfile import mkdtemp
 import shutil
 import sys
 import warnings
+
+import h5py
 import pytest
 import numpy as np
 import xarray as xr
-import h5py
 
 from ptsa import __version__
 from ptsa.data.filters import ResampleFilter
@@ -103,22 +105,60 @@ def test_hdf(tempdir):
 
 @pytest.mark.skipif(sys.version_info[0] < 3,
                     reason="cmlreaders doesn't support legacy Python")
-@pytest.mark.rhino
-def test_hdf_cmlreaders_rhino(tmpdir):
-    from cmlreaders import CMLReader
-    from ptsa.test.utils import get_rhino_root
+class TestCMLReaders:
+    def setup_method(self, method):
+        from cmlreaders import CMLReader
+        from ptsa.test.utils import get_rhino_root
 
-    filename = str(tmpdir.join("test.h5"))
+        self.rootdir = get_rhino_root()
+        self.reader = CMLReader("R1111M", "FR1", 0, rootdir=self.rootdir)
 
-    reader = CMLReader("R1111M", "FR1", 0, rootdir=get_rhino_root())
-    events = reader.load("events")
-    ev = events[events.eegoffset > 0].sample(n=5)
-    eeg = reader.load_eeg(events=ev, rel_start=0, rel_stop=10)
-    ts = eeg.to_ptsa()
-    ts.to_hdf(filename)
+    def make_eeg(self, events, rel_start, rel_stop):
+        """Fake EEG data for testing without rhino."""
+        from cmlreaders.eeg_container import EEGContainer
 
-    ts2 = TimeSeries.from_hdf(filename)
-    assert_timeseries_equal(ts, ts2)
+        channels = ["CH{}".format(n) for n in range(1, 10)]
+        data = np.random.random((len(events), len(channels), rel_stop - rel_start))
+
+        container = EEGContainer(data, 1000, events=events, channels=channels)
+
+        return container
+
+    @pytest.mark.rhino
+    def test_hdf_rhino(self, tmpdir):
+        filename = str(tmpdir.join("test.h5"))
+        events = self.reader.load("events")
+        ev = events[events.eegoffset > 0].sample(n=5)
+
+        eeg = self.reader.load_eeg(events=ev, rel_start=0, rel_stop=10)
+        ts = eeg.to_ptsa()
+        ts.to_hdf(filename)
+
+        ts2 = TimeSeries.from_hdf(filename)
+        assert_timeseries_equal(ts, ts2)
+
+    @pytest.mark.only
+    def test_hdf(self, tmpdir):
+        from cmlreaders.readers.readers import EventReader
+        from unittest.mock import patch
+
+        efile = osp.join(osp.dirname(__file__), "data", "R1111M_FR1_0_events.json")
+        filename = str(tmpdir.join("test.h5"))
+
+        events = EventReader.fromfile(efile, subject="R1111M", experiment="FR1")
+        ev = events[events.eegoffset > 0].sample(n=5)
+
+        rel_start, rel_stop = 0, 10
+        get_eeg = partial(self.make_eeg, ev, rel_start, rel_stop)
+
+        with patch.object(self.reader, "load_eeg", return_value=get_eeg()):
+            eeg = self.reader.load_eeg(events=ev, rel_start=0, rel_stop=10)
+
+        ts = eeg.to_ptsa()
+        ts.to_hdf(filename)
+
+        ts2 = TimeSeries.from_hdf(filename)
+        assert_timeseries_equal(ts, ts2)
 
 
 @pytest.mark.skipif(sys.version_info[0] < 3,
