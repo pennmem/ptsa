@@ -13,7 +13,7 @@ import xarray as xr
 from ptsa import __version__
 from ptsa.data.filters import ResampleFilter
 from ptsa.data.timeseries import TimeSeries, ConcatenationError
-from ptsa.test.utils import assert_timeseries_equal
+from ptsa.test.utils import assert_timeseries_equal, skip_without_rhino
 
 
 @pytest.fixture
@@ -129,7 +129,7 @@ class TestCMLReaders:
 
         return container
 
-    @pytest.mark.rhino
+    @skip_without_rhino
     def test_hdf_rhino(self, tmpdir):
         from cmlreaders.warnings import MultiplePathsFoundWarning
 
