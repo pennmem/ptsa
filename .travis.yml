@@ -28,7 +28,7 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy xarray h5py swig traits
   - source activate test-environment
   - if [[ "$TRAVIS_PYTHON_VERSION" != "2.7" ]]; then
-      pip install git+https://github.com/pennmem/cmlreaders.git@v0.9.3#egg=cmlreaders
+      pip install git+https://github.com/pennmem/cmlreaders.git@v0.9.3#egg=cmlreaders;
     fi
   - conda install -y -c conda-forge pybind11 fftw
   - pip install pytest pytest-cov codecov
