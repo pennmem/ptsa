@@ -96,7 +96,7 @@ class TimeSeries(xr.DataArray):
         try:  # pragma: nocover
             import h5py
         except ImportError:
-            raise RuntimeError("You must install h5py to load from HDF5")
+            raise RuntimeError("You must install h5py to save to HDF5")
 
         from ptsa.io import hdf5
 
