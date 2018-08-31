@@ -23,7 +23,6 @@ requirements:
     - swig
     - xarray
     - fftw
-    - pybind11
 
   run:
     - python {{ python }}
