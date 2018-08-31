@@ -1,6 +1,13 @@
 Changes
 =======
 
+Version 2.0.4
+-------------
+**2018-08-31**
+
+* ``TimeSeries.to_hdf`` once again uses a human-readable output format
+
+
 Version 2.0.3
 -------------
 
