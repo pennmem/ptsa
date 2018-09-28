@@ -11,7 +11,12 @@ vdecode = np.vectorize(codecs.decode)
 
 
 def maxlen(a):
-    return np.amax(vlen(a))
+    """
+    HDF5 requires all datatypes to be at least 1 element long,
+    so maxlen always returns at least 1.
+    """
+    _max = np.amax(vlen(a))
+    return max(_max,1)
 
 
 def save_array(hfile, where, data):
@@ -91,6 +96,9 @@ def save_records(hfile, where, data):
 
     for name in data.dtype.names:
         this_dtype = data[name].dtype
+        if this_dtype.itemsize==0:
+            this_dtype = np.dtype('|{}1'.format(this_dtype.char))
+
         if this_dtype == object or this_dtype.char == "U":
             dtype.append((name, "|S{}".format(maxlen(data[name]))))
             utf8_encoded.add(name)

@@ -24,7 +24,8 @@ class TestHDF5IO:
         pd.DataFrame({
             "a": [1, 2, 3],
             "b": [3, 2, 1],
-        })
+        }),
+        np.array(["","",""], dtype='S'),
     ])
     def test_save_load_array(self, data, hfilename):
         with h5py.File(hfilename, "w") as hfile:
