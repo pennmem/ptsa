@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>PTSA - EEG Time Series Analysis in Python &mdash; PTSA 2.0.3 documentation</title>
+  <title>PTSA - EEG Time Series Analysis in Python &mdash; PTSA 2.0.4 documentation</title>
   
 
   
@@ -24,26 +24,18 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="PTSA 2.0.3 documentation" href="#"/>
-        <link rel="next" title="Examples" href="examples/index.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="examples/index.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -65,7 +57,7 @@
             
             
               <div class="version">
-                2.0.3
+                2.0.4
               </div>
             
           
@@ -106,7 +98,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="#">PTSA</a>
@@ -114,9 +106,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -173,21 +166,6 @@
     margin-top: -19px;
 }
 
-/* nice headers on first paragraph of info/warning boxes */
-.admonition .first {
-    margin: -12px;
-    padding: 6px 12px;
-    margin-bottom: 12px;
-    color: #fff;
-    line-height: 1;
-    display: block;
-}
-.admonition.warning .first {
-    background: #f0b37e;
-}
-.admonition.note .first {
-    background: #6ab0de;
-}
 .admonition > p:before {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
@@ -195,28 +173,28 @@
 <div class="section" id="ptsa-eeg-time-series-analysis-in-python">
 <h1>PTSA - EEG Time Series Analysis in Python<a class="headerlink" href="#ptsa-eeg-time-series-analysis-in-python" title="Permalink to this headline">¶</a></h1>
 <p><strong>PTSA</strong> is an open source Python package that facilitates time-series
-analysis of EEG signals. PTSA builds on <code class="xref py py-mod docutils literal"><span class="pre">xarray</span></code> functionality
+analysis of EEG signals. PTSA builds on <code class="xref py py-mod docutils literal notranslate"><span class="pre">xarray</span></code> functionality
 and provides several convenience tools that significantly simplify analysis of
 EEG data.</p>
 <p>The main object that you will be using in the new PTSA API is called
-<code class="docutils literal"><span class="pre">TimeSeries</span></code>. <code class="docutils literal"><span class="pre">TimeSeries</span></code> is built on top of <code class="xref py py-class docutils literal"><span class="pre">xarray.DataArray</span></code>.
-<code class="xref py py-class docutils literal"><span class="pre">xarray.DataArray</span></code>, defined in the <code class="xref py py-mod docutils literal"><span class="pre">xarray</span></code> Python package,
-represents N-D arrays. Because <code class="docutils literal"><span class="pre">TimeSeries</span></code> is a subclass of
-<code class="xref py py-class docutils literal"><span class="pre">xarray.DataArray</span></code> it has all the functionality of
-<code class="xref py py-class docutils literal"><span class="pre">xarray.DataArray</span></code> in addition to new functions it defines, used
+<code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code>. <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> is built on top of <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.DataArray</span></code>.
+<code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.DataArray</span></code>, defined in the <code class="xref py py-mod docutils literal notranslate"><span class="pre">xarray</span></code> Python package,
+represents N-D arrays. Because <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> is a subclass of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> it has all the functionality of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> in addition to new functions it defines, used
 specifically in EEG data analysis.</p>
-<p>Besides <code class="docutils literal"><span class="pre">TimeSeries</span></code>, PTSA has 2 main categories of objects: readers and
+<p>Besides <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code>, PTSA has 2 main categories of objects: readers and
 filters. Readers read various data formats (EEG files, event files, etc.) to
-make input operations as smooth as possible. Filters take a <code class="docutils literal"><span class="pre">TimeSeries</span></code>
-object as an input and output a modified <code class="docutils literal"><span class="pre">TimeSeries</span></code> object.</p>
+make input operations as smooth as possible. Filters take a <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code>
+object as an input and output a modified <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> object.</p>
 <p>If you’d like to learn Python via series of statistics tutorials look no further than
 <a class="reference external" href="http://people.duke.edu/~ccc14/sta-663-2016/">introduction to computational statistics in Python</a></p>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="installing-pre-built-binaries">
 <h3>Installing pre-built binaries<a class="headerlink" href="#installing-pre-built-binaries" title="Permalink to this headline">¶</a></h3>
-<p>The recommended way to install <code class="xref py py-mod docutils literal"><span class="pre">ptsa</span></code> is to install with conda:</p>
-<div class="highlight-shell-session"><div class="highlight"><pre><span></span><span class="go">conda install -c pennmem ptsa</span>
+<p>The recommended way to install <code class="xref py py-mod docutils literal notranslate"><span class="pre">ptsa</span></code> is to install with conda:</p>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="go">conda install -c pennmem ptsa</span>
 </pre></div>
 </div>
 </div>
@@ -225,15 +203,15 @@ object as an input and output a modified <code class="docutils literal"><span cl
 <p>If you’d rather install the latest development version, you’ll need to perform
 the following steps:</p>
 <p>Clone the git repository:</p>
-<div class="highlight-shell-session"><div class="highlight"><pre><span></span><span class="go">git clone https://github.com/pennmem/ptsa_new.git</span>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="go">git clone https://github.com/pennmem/ptsa_new.git</span>
 </pre></div>
 </div>
 <p>Install dependencies with conda:</p>
-<div class="highlight-shell-session"><div class="highlight"><pre><span></span><span class="go">conda install -y numpy scipy xarray swig</span>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="go">conda install -y numpy scipy xarray swig</span>
 </pre></div>
 </div>
 <p>Install PTSA:</p>
-<div class="highlight-shell-session"><div class="highlight"><pre><span></span><span class="go">python setup.py install</span>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="go">python setup.py install</span>
 </pre></div>
 </div>
 </div>
@@ -243,7 +221,7 @@ the following steps:</p>
 <h4>For netCDF and IO<a class="headerlink" href="#for-netcdf-and-io" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Unidata/netcdf4-python">netCDF4</a>: recommended if you
-want to use <code class="xref py py-mod docutils literal"><span class="pre">xarray</span></code> for reading or writing netCDF files</li>
+want to use <code class="xref py py-mod docutils literal notranslate"><span class="pre">xarray</span></code> for reading or writing netCDF files</li>
 <li><a class="reference external" href="https://github.com/shoyer/h5netcdf">h5netcdf</a>: an alternative library for
 reading and writing netCDF4 files that does not use the netCDF-C libraries</li>
 </ul>
@@ -266,9 +244,7 @@ reading and writing netCDF4 files that does not use the netCDF-C libraries</li>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -288,7 +264,7 @@ reading and writing netCDF4 files that does not use the netCDF-C libraries</li>
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -306,7 +282,8 @@ reading and writing netCDF4 files that does not use the netCDF-C libraries</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'2.0.3',
+            VERSION:'2.0.4',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -316,23 +293,17 @@ reading and writing netCDF4 files that does not use the netCDF-C libraries</li>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

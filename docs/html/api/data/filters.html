@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Filters &mdash; PTSA 2.0.3 documentation</title>
+  <title>Filters &mdash; PTSA 2.0.4 documentation</title>
   
 
   
@@ -24,28 +24,19 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="PTSA 2.0.3 documentation" href="../../index.html"/>
-        <link rel="up" title="ptsa.data" href="../data.html"/>
-        <link rel="next" title="Extension Modules" href="../extensions.html"/>
-        <link rel="prev" title="Readers" href="readers.html"/> 
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Extension Modules" href="../extensions.html" />
+    <link rel="prev" title="Readers" href="readers.html" /> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -67,7 +58,7 @@
             
             
               <div class="version">
-                2.0.3
+                2.0.4
               </div>
             
           
@@ -119,7 +110,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">PTSA</a>
@@ -127,9 +118,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -190,21 +182,6 @@
     margin-top: -19px;
 }
 
-/* nice headers on first paragraph of info/warning boxes */
-.admonition .first {
-    margin: -12px;
-    padding: 6px 12px;
-    margin-bottom: 12px;
-    color: #fff;
-    line-height: 1;
-    display: block;
-}
-.admonition.warning .first {
-    background: #f0b37e;
-}
-.admonition.note .first {
-    background: #6ab0de;
-}
 .admonition > p:before {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
@@ -213,11 +190,11 @@
 <h1>Filters<a class="headerlink" href="#filters" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="ptsa.data.filters.MorletWaveletFilter">
-<em class="property">class </em><code class="descclassname">ptsa.data.filters.</code><code class="descname">MorletWaveletFilter</code><span class="sig-paren">(</span><em>timeseries</em>, <em>freqs</em>, <em>width=5</em>, <em>output=(‘power’</em>, <em>’phase’)</em>, <em>verbose=True</em>, <em>cpus=1</em>, <em>output_dim=’output’</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.MorletWaveletFilter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ptsa.data.filters.</code><code class="descname">MorletWaveletFilter</code><span class="sig-paren">(</span><em>timeseries</em>, <em>freqs</em>, <em>width=5</em>, <em>output=('power'</em>, <em>'phase')</em>, <em>verbose=True</em>, <em>cpus=1</em>, <em>output_dim='output'</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.MorletWaveletFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies a Morlet wavelet transform to a time series, returning the power
 and phase spectra over time.</p>
 <div class="versionchanged">
-<p><span class="versionmodified">Changed in version 2.0: </span>Return type is now a <code class="xref py py-class docutils literal"><span class="pre">TimeSeries</span></code> to conform with other
+<p><span class="versionmodified">Changed in version 2.0: </span>Return type is now a <code class="xref py py-class docutils literal notranslate"><span class="pre">TimeSeries</span></code> to conform with other
 filter types.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
@@ -232,11 +209,11 @@ filter types.</p>
 <li><strong>freqs</strong> (<em>np.ndarray</em>) – The frequencies to use in the decomposition</li>
 <li><strong>width</strong> (<em>int</em>) – The width of the wavelet</li>
 <li><strong>output</strong> (<em>List</em><em>[</em><em>str</em><em>] or </em><em>str</em>) – A string or a list of strings containing power, phase, and/or
-complex (default: <code class="docutils literal"><span class="pre">['power',</span> <span class="pre">'phase']</span></code>)</li>
+complex (default: <code class="docutils literal notranslate"><span class="pre">['power',</span> <span class="pre">'phase']</span></code>)</li>
 <li><strong>verbose</strong> (<em>bool</em>) – Print out the wavelet parameters</li>
 <li><strong>cpus</strong> (<em>int</em>) – Number of threads to use when computing the transform (default: 1).</li>
 <li><strong>output_dim</strong> (<em>str</em>) – Name of the output dimension when returning both power and phase
-(default: <code class="docutils literal"><span class="pre">'output'</span></code>)</li>
+(default: <code class="docutils literal notranslate"><span class="pre">'output'</span></code>)</li>
 </ul>
 </td>
 </tr>
@@ -263,7 +240,7 @@ except it utilizes a C++ thread pool to parallelize the computations.</p>
 
 <dl class="class">
 <dt id="ptsa.data.filters.ButterworthFilter">
-<em class="property">class </em><code class="descclassname">ptsa.data.filters.</code><code class="descname">ButterworthFilter</code><span class="sig-paren">(</span><em>timeseries</em>, <em>freq_range</em>, <em>order=4</em>, <em>filt_type=’stop’</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ButterworthFilter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ptsa.data.filters.</code><code class="descname">ButterworthFilter</code><span class="sig-paren">(</span><em>timeseries</em>, <em>freq_range</em>, <em>order=4</em>, <em>filt_type='stop'</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ButterworthFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies Butterworth filter to a time series.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -300,7 +277,7 @@ except it utilizes a C++ thread pool to parallelize the computations.</p>
 
 <dl class="class">
 <dt id="ptsa.data.filters.ResampleFilter">
-<em class="property">class </em><code class="descclassname">ptsa.data.filters.</code><code class="descname">ResampleFilter</code><span class="sig-paren">(</span><em>timeseries</em>, <em>resamplerate</em>, <em>round_to_original_timepoints=False</em>, <em>time_axis_name=’time’</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ResampleFilter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ptsa.data.filters.</code><code class="descname">ResampleFilter</code><span class="sig-paren">(</span><em>timeseries</em>, <em>resamplerate</em>, <em>round_to_original_timepoints=False</em>, <em>time_axis_name='time'</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ResampleFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Upsample or downsample a time series to a new sample rate.</p>
 <div class="versionchanged">
 <p><span class="versionmodified">Changed in version 2.0: </span>Parameter “time_series” was renamed to “timeseries”. Parameter
@@ -345,9 +322,7 @@ should be reused after proper rounding. Defaults to False</li>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -369,7 +344,7 @@ should be reused after proper rounding. Defaults to False</li>
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -387,7 +362,8 @@ should be reused after proper rounding. Defaults to False</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'2.0.3',
+            VERSION:'2.0.4',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -397,23 +373,17 @@ should be reused after proper rounding. Defaults to False</li>
       <script type="text/javascript" src="../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

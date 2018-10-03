@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>TimeSeries &mdash; PTSA 2.0.3 documentation</title>
+  <title>TimeSeries &mdash; PTSA 2.0.4 documentation</title>
   
 
   
@@ -24,28 +24,19 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="PTSA 2.0.3 documentation" href="../../index.html"/>
-        <link rel="up" title="ptsa.data" href="../data.html"/>
-        <link rel="next" title="Readers" href="readers.html"/>
-        <link rel="prev" title="ptsa.data" href="../data.html"/> 
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Readers" href="readers.html" />
+    <link rel="prev" title="ptsa.data" href="../data.html" /> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -67,7 +58,7 @@
             
             
               <div class="version">
-                2.0.3
+                2.0.4
               </div>
             
           
@@ -119,7 +110,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">PTSA</a>
@@ -127,9 +118,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -190,21 +182,6 @@
     margin-top: -19px;
 }
 
-/* nice headers on first paragraph of info/warning boxes */
-.admonition .first {
-    margin: -12px;
-    padding: 6px 12px;
-    margin-bottom: 12px;
-    color: #fff;
-    line-height: 1;
-    display: block;
-}
-.admonition.warning .first {
-    background: #f0b37e;
-}
-.admonition.note .first {
-    background: #6ab0de;
-}
 .admonition > p:before {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
@@ -214,28 +191,28 @@
 <dl class="class">
 <dt id="ptsa.data.timeseries.TimeSeries">
 <em class="property">class </em><code class="descclassname">ptsa.data.timeseries.</code><code class="descname">TimeSeries</code><span class="sig-paren">(</span><em>data</em>, <em>coords</em>, <em>dims=None</em>, <em>name=None</em>, <em>attrs=None</em>, <em>encoding=None</em>, <em>fastpath=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries" title="Permalink to this definition">¶</a></dt>
-<dd><p>A thin wrapper around <code class="xref py py-class docutils literal"><span class="pre">xr.DataArray</span></code> for dealing with time series
+<dd><p>A thin wrapper around <code class="xref py py-class docutils literal notranslate"><span class="pre">xr.DataArray</span></code> for dealing with time series
 data.</p>
 <p>Note that xarray internals prevent us from overriding the constructor which
 leads to some awkwardness: you must pass coords as a dict with a
-<code class="docutils literal"><span class="pre">samplerate</span></code> entry.</p>
+<code class="docutils literal notranslate"><span class="pre">samplerate</span></code> entry.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<em>array-like</em>) – Time series data</li>
-<li><strong>coords</strong> (<em>dict-like</em>) – Coordinate arrays. This must contain at least a <code class="docutils literal"><span class="pre">samplerate</span></code>
+<li><strong>coords</strong> (<em>dict-like</em>) – Coordinate arrays. This must contain at least a <code class="docutils literal notranslate"><span class="pre">samplerate</span></code>
 coordinate.</li>
 <li><strong>dims</strong> (<em>array-like</em>) – Dimension labels</li>
 <li><strong>name</strong> (<em>str</em>) – Name of the time series</li>
 <li><strong>attrs</strong> (<em>dict</em>) – Dictionary of arbitrary metadata</li>
 <li><strong>encoding</strong> (<em>dict</em>) – </li>
-<li><strong>fastpath</strong> (<em>bool</em>) – Not used, but required when subclassing <code class="xref py py-class docutils literal"><span class="pre">xr.DataArray</span></code>.</li>
+<li><strong>fastpath</strong> (<em>bool</em>) – Not used, but required when subclassing <code class="xref py py-class docutils literal notranslate"><span class="pre">xr.DataArray</span></code>.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></code> – When <code class="docutils literal"><span class="pre">samplerate</span></code> is not present in <code class="docutils literal"><span class="pre">coords</span></code>.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">AssertionError</span></code> – When <code class="docutils literal notranslate"><span class="pre">samplerate</span></code> is not present in <code class="docutils literal notranslate"><span class="pre">coords</span></code>.</p>
 </td>
 </tr>
 </tbody>
@@ -243,7 +220,7 @@ coordinate.</li>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><code class="xref py py-class docutils literal"><span class="pre">xr.DataArray</span></code></dt>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">xr.DataArray</span></code></dt>
 <dd>Base class</dd>
 </dl>
 </div>
@@ -254,7 +231,7 @@ coordinate.</li>
 length/duration) and appends such buffers at both ends of the series.
 The new series total time duration is:</p>
 <blockquote>
-<div><code class="docutils literal"><span class="pre">original</span> <span class="pre">duration</span> <span class="pre">+</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">duration</span> <span class="pre">*</span> <span class="pre">samplerate</span></code></div></blockquote>
+<div><code class="docutils literal notranslate"><span class="pre">original</span> <span class="pre">duration</span> <span class="pre">+</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">duration</span> <span class="pre">*</span> <span class="pre">samplerate</span></code></div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -272,7 +249,7 @@ The new series total time duration is:</p>
 <dl class="method">
 <dt id="ptsa.data.timeseries.TimeSeries.append">
 <code class="descname">append</code><span class="sig-paren">(</span><em>other</em>, <em>dim=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.append" title="Permalink to this definition">¶</a></dt>
-<dd><p>Append another <code class="xref py py-class docutils literal"><span class="pre">TimeSeries</span></code> to this one.</p>
+<dd><p>Append another <a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeSeries</span></code></a> to this one.</p>
 <div class="versionchanged">
 <p><span class="versionmodified">Changed in version 2.0: </span>Appending along a dimension not present will cause that
 dimension to be created.</p>
@@ -284,7 +261,7 @@ dimension to be created.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>other</strong> (<a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries"><em>TimeSeries</em></a>) – </li>
 <li><strong>dim</strong> (<em>str</em><em> or </em><em>None</em>) – Dimension to concatenate on. If None, attempt to concatenate all
-data using <code class="xref py py-func docutils literal"><span class="pre">numpy.concatenate()</span></code>. If not present, a new
+data using <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.concatenate()</span></code>. If not present, a new
 dimension will be created with coords [0,1].</li>
 </ul>
 </td>
@@ -324,7 +301,7 @@ for the baseline.</td>
 <dt id="ptsa.data.timeseries.TimeSeries.create">
 <em class="property">classmethod </em><code class="descname">create</code><span class="sig-paren">(</span><em>data</em>, <em>samplerate</em>, <em>coords=None</em>, <em>dims=None</em>, <em>name=None</em>, <em>attrs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Factory function for creating a new timeseries object with passing
-the sample rate as a parameter. See <code class="xref py py-meth docutils literal"><span class="pre">__init__()</span></code> for parameters.</p>
+the sample rate as a parameter. See <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> for parameters.</p>
 </dd></dl>
 
 <dl class="method">
@@ -337,7 +314,7 @@ the sample rate as a parameter. See <code class="xref py py-meth docutils litera
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>filter_class</strong> (<em>type</em>) – The filter class to use.</li>
-<li><strong>kwargs</strong> – Keyword arguments to pass along to <code class="docutils literal"><span class="pre">filter_class</span></code>.</li>
+<li><strong>kwargs</strong> – Keyword arguments to pass along to <code class="docutils literal notranslate"><span class="pre">filter_class</span></code>.</li>
 </ul>
 </td>
 </tr>
@@ -347,7 +324,7 @@ the sample rate as a parameter. See <code class="xref py py-meth docutils litera
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> – When <code class="docutils literal"><span class="pre">filter_class</span></code> is not a valid filter class.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code> – When <code class="docutils literal notranslate"><span class="pre">filter_class</span></code> is not a valid filter class.</p>
 </td>
 </tr>
 </tbody>
@@ -356,7 +333,7 @@ the sample rate as a parameter. See <code class="xref py py-meth docutils litera
 
 <dl class="method">
 <dt id="ptsa.data.timeseries.TimeSeries.filtered">
-<code class="descname">filtered</code><span class="sig-paren">(</span><em>freq_range</em>, <em>filt_type=’stop’</em>, <em>order=4</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.filtered" title="Permalink to this definition">¶</a></dt>
+<code class="descname">filtered</code><span class="sig-paren">(</span><em>freq_range</em>, <em>filt_type='stop'</em>, <em>order=4</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.filtered" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter the data using a Butterworth filter and return a new
 TimeSeries instance.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -365,7 +342,7 @@ TimeSeries instance.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>freq_range</strong> (<em>array-like</em>) – The range of frequencies to filter.</li>
-<li><strong>filt_type</strong> (<em>str</em>) – Filter type (default: <code class="docutils literal"><span class="pre">'stop'</span></code>).</li>
+<li><strong>filt_type</strong> (<em>str</em>) – Filter type (default: <code class="docutils literal notranslate"><span class="pre">'stop'</span></code>).</li>
 <li><strong>order</strong> (<em>int</em>) – The order of the filter (default: 4).</li>
 </ul>
 </td>
@@ -448,7 +425,7 @@ beginning and/or end.</td>
 
 <dl class="method">
 <dt id="ptsa.data.timeseries.TimeSeries.to_hdf">
-<code class="descname">to_hdf</code><span class="sig-paren">(</span><em>filename</em>, <em>mode=’w’</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.to_hdf" title="Permalink to this definition">¶</a></dt>
+<code class="descname">to_hdf</code><span class="sig-paren">(</span><em>filename</em>, <em>mode='w'</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.to_hdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save to disk using HDF5.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -456,26 +433,16 @@ beginning and/or end.</td>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>filename</strong> (<em>str</em>) – Full path to the HDF5 file</li>
-<li><strong>mode</strong> (<em>str</em>) – File mode to use. See the <code class="xref py py-mod docutils literal"><span class="pre">h5py</span></code> documentation for details.
-Default: <code class="docutils literal"><span class="pre">'w'</span></code></li>
+<li><strong>mode</strong> (<em>str</em>) – File mode to use. See the <code class="xref py py-mod docutils literal notranslate"><span class="pre">h5py</span></code> documentation for details.
+Default: <code class="docutils literal notranslate"><span class="pre">'w'</span></code></li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p>Because recarrays can complicate things when unicode is involved, saving
-coordinates is a multi-step process:</p>
-<ol class="arabic simple">
-<li>Save to a buffer using <code class="xref py py-func docutils literal"><span class="pre">np.save()</span></code>. This uses Numpy’s own binary
-format and should Just Work.</li>
-<li>Base64-encode the buffer to eliminate NULL bytes which HDF5 can’t
-handle.</li>
-<li>Write the bytes contained in the buffer to the HDF5 file.</li>
-</ol>
-<p>When recarrays use the <code class="docutils literal"><span class="pre">'O'</span></code> dtype, pickling will occur. This means
-that serialized data may not be readable in older versions of Python
-than that used to save it.</p>
+<p>recarrays/DataFrame fields with “O” dtypes will be assumed to be strings
+and encoded accordingly.</p>
 </dd></dl>
 
 </dd></dl>
@@ -484,9 +451,7 @@ than that used to save it.</p>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -508,7 +473,7 @@ than that used to save it.</p>
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -526,7 +491,8 @@ than that used to save it.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'2.0.3',
+            VERSION:'2.0.4',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -536,23 +502,17 @@ than that used to save it.</p>
       <script type="text/javascript" src="../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>
