@@ -15,13 +15,17 @@ class TestHDF5IO:
         array = ["a", "bb", "ccc", "dddd"]
         assert hdf5.maxlen(array) == 4
 
+        array = ["", "", ""]
+        assert hdf5.maxlen(array) == 1
+
     @pytest.mark.parametrize("data", [
         np.linspace(0, 100, 100, dtype=int),
         np.array(["R1111M", "R1", "whatever", "another string"]),
         pd.DataFrame({
             "a": [1, 2, 3],
             "b": [3, 2, 1],
-        })
+        }),
+        np.array(["","",""], dtype='S'),
     ])
     def test_save_load_array(self, data, hfilename):
         with h5py.File(hfilename, "w") as hfile:
@@ -37,10 +41,11 @@ class TestHDF5IO:
             "integer": [1, 2],
             "float": [1., 2.],
             "dict": [{"a": 1}, {"b": 2}],
+            "zero_len_string": ["", ""],
         }),
         np.rec.array(
-            [("a", 1, {"a": 1}), ("longer string", 2, {"b": 2})],
-            dtype=[("description", "<U32"), ("number", int), ("dict", object)]
+            [("a", 1, {"a": 1}, ""), ("longer string", 2, {"b": 2}, "")],
+            dtype=[("description", "<U32"), ("number", int), ("dict", object), ("empty_string", "S")]
         ),
     ])
     def test_save_load_records(self, data_in, tmpdir):

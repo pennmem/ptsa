@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Interacting with RAM Data &mdash; PTSA 2.0.3 documentation</title>
+  <title>Interacting with RAM Data &mdash; PTSA 2.0.4 documentation</title>
   
 
   
@@ -24,27 +24,19 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="PTSA 2.0.3 documentation" href="index.html"/>
-        <link rel="next" title="Filtering Time Series" href="filters.html"/>
-        <link rel="prev" title="Reading EEG Data from events" href="examples/eeg.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Filtering Time Series" href="filters.html" />
+    <link rel="prev" title="Reading EEG Data from events" href="examples/eeg.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -66,7 +58,7 @@
             
             
               <div class="version">
-                2.0.3
+                2.0.4
               </div>
             
           
@@ -114,7 +106,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">PTSA</a>
@@ -122,9 +114,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -181,21 +174,6 @@
     margin-top: -19px;
 }
 
-/* nice headers on first paragraph of info/warning boxes */
-.admonition .first {
-    margin: -12px;
-    padding: 6px 12px;
-    margin-bottom: 12px;
-    color: #fff;
-    line-height: 1;
-    display: block;
-}
-.admonition.warning .first {
-    background: #f0b37e;
-}
-.admonition.note .first {
-    background: #6ab0de;
-}
 .admonition > p:before {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
@@ -214,19 +192,19 @@ modules that facilitate working with various formats of EEG data and associated 
 In this section we will see how to efficiently ready and process data store in formats used by the
 DARPA RAM project.</p>
 <p>Let’s start by looking at how to read experimental events stored in Matlab Format. The class we will use is called
-<code class="docutils literal"><span class="pre">BaseEventReader</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">BaseEventReader</span></code>.</p>
 <div class="section" id="reading-events-using-baseeventreader">
 <h2>Reading events using BaseEventReader<a class="headerlink" href="#reading-events-using-baseeventreader" title="Permalink to this headline">¶</a></h2>
 <p>To read events that RAM project uses  we need to mount RAM data directory on our computer. In my case I mounted it
-as <code class="docutils literal"><span class="pre">/Users/rhino_root/data</span></code>.  Now, to read the events we first need to import <code class="docutils literal"><span class="pre">BaseEventReader</span></code></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">BaseEventReader</span>
+as <code class="docutils literal notranslate"><span class="pre">/Users/rhino_root/data</span></code>.  Now, to read the events we first need to import <code class="docutils literal notranslate"><span class="pre">BaseEventReader</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">BaseEventReader</span>
 </pre></div>
 </div>
-<p>then we will specify path to the event file, create instance of the <code class="docutils literal"><span class="pre">BaseEventReader</span></code> called <code class="docutils literal"><span class="pre">base_e_reader</span></code> and
+<p>then we will specify path to the event file, create instance of the <code class="docutils literal notranslate"><span class="pre">BaseEventReader</span></code> called <code class="docutils literal notranslate"><span class="pre">base_e_reader</span></code> and
 pass two arguments to the constructor. The first argument specifies event file and the second one instructs the reader
-to remove all the event entries that do not have valid EEG file associated with it. Subsequently we call <code class="docutils literal"><span class="pre">read()</span></code>
-function and select only those events that are ot <code class="docutils literal"><span class="pre">type</span></code> “WORD”</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">e_path</span> <span class="o">=</span> <span class="s1">&#39;/Volumes/rhino_root/data/events/RAM_FR1/R1111M_events.mat&#39;</span>
+to remove all the event entries that do not have valid EEG file associated with it. Subsequently we call <code class="docutils literal notranslate"><span class="pre">read()</span></code>
+function and select only those events that are ot <code class="docutils literal notranslate"><span class="pre">type</span></code> “WORD”</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">e_path</span> <span class="o">=</span> <span class="s1">&#39;/Volumes/rhino_root/data/events/RAM_FR1/R1111M_events.mat&#39;</span>
 <span class="c1"># ------------------- READING EVENTS</span>
 <span class="n">base_e_reader</span> <span class="o">=</span> <span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">e_path</span><span class="p">,</span> <span class="n">eliminate_events_with_no_eeg</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">base_events</span> <span class="o">=</span> <span class="n">base_e_reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -234,7 +212,7 @@ function and select only those events that are ot <code class="docutils literal"
 </pre></div>
 </div>
 <p>when we print events to the screen we will get the following output:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">rec</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="p">(</span><span class="s1">&#39;R1111M&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;WORD&#39;</span><span class="p">,</span> <span class="s1">&#39;BEAR&#39;</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1453499295325.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5211</span><span class="p">,</span> <span class="o">-</span><span class="mi">999</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;v_1.05&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">999.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">999.0</span><span class="p">,</span> <span class="s1">&#39;[]&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">999.0</span><span class="p">,</span> <span class="s1">&#39;[]&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;/Volumes/rhino_root/data/eeg/R1111M/eeg.noreref/R1111M_FR1_0_22Jan16_1638&#39;</span><span class="p">,</span> <span class="mi">100521</span><span class="p">),</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rec</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="p">(</span><span class="s1">&#39;R1111M&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;WORD&#39;</span><span class="p">,</span> <span class="s1">&#39;BEAR&#39;</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1453499295325.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5211</span><span class="p">,</span> <span class="o">-</span><span class="mi">999</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;v_1.05&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">999.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">999.0</span><span class="p">,</span> <span class="s1">&#39;[]&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">999.0</span><span class="p">,</span> <span class="s1">&#39;[]&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;/Volumes/rhino_root/data/eeg/R1111M/eeg.noreref/R1111M_FR1_0_22Jan16_1638&#39;</span><span class="p">,</span> <span class="mi">100521</span><span class="p">),</span>
 <span class="p">(</span><span class="s1">&#39;R1111M&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;WORD&#39;</span><span class="p">,</span> <span class="s1">&#39;WING&#39;</span><span class="p">,</span> <span class="mi">294</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1453499297942.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5749</span><span class="p">,</span> <span class="o">-</span><span class="mi">999</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;v_1.05&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">999.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">999.0</span><span class="p">,</span> <span class="s1">&#39;[]&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">999.0</span><span class="p">,</span> <span class="s1">&#39;[]&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;/Volumes/rhino_root/data/eeg/R1111M/eeg.noreref/R1111M_FR1_0_22Jan16_1638&#39;</span><span class="p">,</span> <span class="mi">101829</span><span class="p">),</span>
 <span class="p">(</span><span class="s1">&#39;R1111M&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;WORD&#39;</span><span class="p">,</span> <span class="s1">&#39;DOOR&#39;</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1453499300510.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7882</span><span class="p">,</span> <span class="o">-</span><span class="mi">999</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;v_1.05&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">999.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">999.0</span><span class="p">,</span> <span class="s1">&#39;[]&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">999.0</span><span class="p">,</span> <span class="s1">&#39;[]&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;/Volumes/rhino_root/data/eeg/R1111M/eeg.noreref/R1111M_FR1_0_22Jan16_1638&#39;</span><span class="p">,</span> <span class="mi">103113</span><span class="p">),</span>
 <span class="o">...</span><span class="p">,</span>
@@ -247,15 +225,15 @@ function and select only those events that are ot <code class="docutils literal"
 <span class="p">(</span><span class="s1">&#39;stimCathodeTag&#39;</span><span class="p">,</span> <span class="s1">&#39;S256&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;stimList&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;i8&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;eegfile&#39;</span><span class="p">,</span> <span class="s1">&#39;S256&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;eegoffset&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;i8&#39;</span><span class="p">)])</span>
 </pre></div>
 </div>
-<p>Indicating that the event object is in fact <code class="docutils literal"><span class="pre">numpy.recarray</span></code></p>
+<p>Indicating that the event object is in fact <code class="docutils literal notranslate"><span class="pre">numpy.recarray</span></code></p>
 </div>
 <div class="section" id="reading-events-using-cmleventreader">
 <h2>Reading events using CMLEventReader<a class="headerlink" href="#reading-events-using-cmleventreader" title="Permalink to this headline">¶</a></h2>
 <p>CMLEventReader (CML stands for Computational Memory Lab) has the same functionality as BaseEventReader but in the
 most basic configuration it reads events “as-is” without any path manipulation. However, it will, by default, replace
-<code class="docutils literal"><span class="pre">NaN</span></code> with sentinel values and will eliminate events that do not reference eeg file. For example the most basic call
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> with sentinel values and will eliminate events that do not reference eeg file. For example the most basic call
 to CMLEventReader could look like:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">CMLEventReader</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">CMLEventReader</span>
 
 <span class="n">e_path</span> <span class="o">=</span> <span class="s1">&#39;/Volumes/rhino_root/data/events/RAM_FR1/R1111M_events.mat&#39;</span>
 <span class="c1"># ------------------- READING EVENTS</span>
@@ -264,11 +242,11 @@ to CMLEventReader could look like:</p>
 <span class="n">base_events</span> <span class="o">=</span> <span class="n">base_events</span><span class="p">[</span><span class="n">base_events</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;WORD&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>If you want to replace path segment in the eegfile field of the events’ <code class="docutils literal"><span class="pre">recarray</span></code> you could use
-<code class="docutils literal"><span class="pre">eeg_fname_search_pattern</span></code> and <code class="docutils literal"><span class="pre">eeg_fname_replace_pattern</span></code> to specify replace procedure of the path segment.
-For example if we want to replace <code class="docutils literal"><span class="pre">eeg.reref</span></code> path segment of the <code class="docutils literal"><span class="pre">eegfile</span></code> with <code class="docutils literal"><span class="pre">eeg.no_reref</span></code> and if we want
-want to “normalize” path (<em>i.e.</em> replace <code class="docutils literal"><span class="pre">data1</span></code>, <code class="docutils literal"><span class="pre">data2</span></code> <em>etc…</em> with <code class="docutils literal"><span class="pre">data</span></code>) we would use the following call:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">CMLEventReader</span>
+<p>If you want to replace path segment in the eegfile field of the events’ <code class="docutils literal notranslate"><span class="pre">recarray</span></code> you could use
+<code class="docutils literal notranslate"><span class="pre">eeg_fname_search_pattern</span></code> and <code class="docutils literal notranslate"><span class="pre">eeg_fname_replace_pattern</span></code> to specify replace procedure of the path segment.
+For example if we want to replace <code class="docutils literal notranslate"><span class="pre">eeg.reref</span></code> path segment of the <code class="docutils literal notranslate"><span class="pre">eegfile</span></code> with <code class="docutils literal notranslate"><span class="pre">eeg.no_reref</span></code> and if we want
+want to “normalize” path (<em>i.e.</em> replace <code class="docutils literal notranslate"><span class="pre">data1</span></code>, <code class="docutils literal notranslate"><span class="pre">data2</span></code> <em>etc…</em> with <code class="docutils literal notranslate"><span class="pre">data</span></code>) we would use the following call:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">CMLEventReader</span>
 
 <span class="n">e_path</span> <span class="o">=</span> <span class="s1">&#39;/Volumes/rhino_root/data/events/RAM_FR1/R1111M_events.mat&#39;</span>
 <span class="c1"># ------------------- READING EVENTS</span>
@@ -282,72 +260,72 @@ want to “normalize” path (<em>i.e.</em> replace <code class="docutils litera
 <span class="n">base_events</span> <span class="o">=</span> <span class="n">base_events</span><span class="p">[</span><span class="n">base_events</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;WORD&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Internally <code class="docutils literal"><span class="pre">CMLReader</span></code> uses code from <code class="docutils literal"><span class="pre">BaseEventReader</span></code></p>
+<p>Internally <code class="docutils literal notranslate"><span class="pre">CMLReader</span></code> uses code from <code class="docutils literal notranslate"><span class="pre">BaseEventReader</span></code></p>
 </div>
 <div class="section" id="finding-paths-using-jsonindexreader">
 <h2>Finding Paths using JsonIndexReader<a class="headerlink" href="#finding-paths-using-jsonindexreader" title="Permalink to this headline">¶</a></h2>
 <p>While one can always specify the path to the events structure by hand, PTSA has a class
-<code class="docutils literal"><span class="pre">JsonIndexReader</span></code> that tracks this information. The location of the various event files
-is kept in JSON format, in <cite>/protocols/r1.json</cite>, and <code class="docutils literal"><span class="pre">JsonIndexReader</span></code> allows one to
+<code class="docutils literal notranslate"><span class="pre">JsonIndexReader</span></code> that tracks this information. The location of the various event files
+is kept in JSON format, in <cite>/protocols/r1.json</cite>, and <code class="docutils literal notranslate"><span class="pre">JsonIndexReader</span></code> allows one to
 query the index by property.</p>
 <p>We build the reader with:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">JsonIndexReader</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">JsonIndexReader</span>
 <span class="n">jr</span> <span class="o">=</span> <span class="n">JsonIndexReader</span><span class="p">(</span><span class="s1">&#39;/protocols/r1.json&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>To get the location of the event files for subject R1111M from the FR1 experiment,
 we _____:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">event_paths</span> <span class="o">=</span> <span class="n">jr</span><span class="o">.</span><span class="n">aggregate_values</span><span class="p">(</span><span class="s1">&#39;all_events&#39;</span><span class="p">,</span><span class="n">subject</span><span class="o">=</span><span class="s1">&#39;R1111M&#39;</span><span class="p">,</span><span class="n">experiment</span><span class="o">=</span><span class="s1">&#39;FR1&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">event_paths</span> <span class="o">=</span> <span class="n">jr</span><span class="o">.</span><span class="n">aggregate_values</span><span class="p">(</span><span class="s1">&#39;all_events&#39;</span><span class="p">,</span><span class="n">subject</span><span class="o">=</span><span class="s1">&#39;R1111M&#39;</span><span class="p">,</span><span class="n">experiment</span><span class="o">=</span><span class="s1">&#39;FR1&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The <cite>aggregate_values</cite> method returns the set of all fields in the JSON index that match
 the keyword arguments. The most useful keyword arguments are ‘subject’, ‘experiment’, and ‘session’.</p>
 <p>Since With the paths in hand, we can load the events using the BaseEventReader discussed above:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">events</span> <span class="o">=</span> <span class="p">[</span><span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">event_paths</span><span class="p">)]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">events</span> <span class="o">=</span> <span class="p">[</span><span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">event_paths</span><span class="p">)]</span>
 </pre></div>
 </div>
-<p>which will return a list of event structures. The call to <code class="docutils literal"><span class="pre">sorted()</span></code> ensures that
+<p>which will return a list of event structures. The call to <code class="docutils literal notranslate"><span class="pre">sorted()</span></code> ensures that
 the events are read in order of session. To collapse the list into a single array,
-we call <code class="xref py py-func docutils literal"><span class="pre">numpy.concatenate()</span></code>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">events</span> <span class="o">=</span>  <span class="n">numpy</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+we call <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.concatenate()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">events</span> <span class="o">=</span>  <span class="n">numpy</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>To access the fields of the array as though they were attributes, we need to convert it
 to a record array:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">events</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">recarray</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">events</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">recarray</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>and now the events structure is exactly as described in the previous section.</p>
 </div>
 <div class="section" id="reading-electrode-information-using-talreader">
 <h2>Reading Electrode Information using TalReader<a class="headerlink" href="#reading-electrode-information-using-talreader" title="Permalink to this headline">¶</a></h2>
-<p>To read electrode information that is stored in the so called tal_structs we will use <code class="docutils literal"><span class="pre">TalReader</span></code> object.
+<p>To read electrode information that is stored in the so called tal_structs we will use <code class="docutils literal notranslate"><span class="pre">TalReader</span></code> object.
 We first import TalReader:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">TalReader</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">TalReader</span>
 </pre></div>
 </div>
-<p>Next we specify path to the actual <code class="docutils literal"><span class="pre">.mat</span></code> file containing information about electrodes ,
-construct a <code class="docutils literal"><span class="pre">tal_reader</span></code> object and call <code class="docutils literal"><span class="pre">read</span></code> function to initiate reading of the <code class="docutils literal"><span class="pre">tal_structs</span></code> file.
-The <code class="docutils literal"><span class="pre">struct_type</span></code> parameter indicates whether the structure we are reading is organized by bipolar pair or by
+<p>Next we specify path to the actual <code class="docutils literal notranslate"><span class="pre">.mat</span></code> file containing information about electrodes ,
+construct a <code class="docutils literal notranslate"><span class="pre">tal_reader</span></code> object and call <code class="docutils literal notranslate"><span class="pre">read</span></code> function to initiate reading of the <code class="docutils literal notranslate"><span class="pre">tal_structs</span></code> file.
+The <code class="docutils literal notranslate"><span class="pre">struct_type</span></code> parameter indicates whether the structure we are reading is organized by bipolar pair or by
 monopolar contact, using the values “bi” and “mono”; the default is “bi”, which can be ommitted.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">tal_path</span> <span class="o">=</span> <span class="s1">&#39;/Volumes/rhino_root/data/eeg/R1111M/tal/R1111M_talLocs_database_bipol.mat&#39;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tal_path</span> <span class="o">=</span> <span class="s1">&#39;/Volumes/rhino_root/data/eeg/R1111M/tal/R1111M_talLocs_database_bipol.mat&#39;</span>
 <span class="n">tal_reader</span> <span class="o">=</span> <span class="n">TalReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">tal_path</span><span class="p">,</span><span class="n">struct_type</span><span class="o">=</span><span class="s1">&#39;bi&#39;</span><span class="p">)</span>
 <span class="n">tal_structs</span> <span class="o">=</span> <span class="n">tal_reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal"><span class="pre">read</span></code> function returns <code class="docutils literal"><span class="pre">numpy.recarray</span></code>  populated with electrode information:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">Out</span><span class="p">[</span><span class="mi">77</span><span class="p">]:</span>
+<p>The <code class="docutils literal notranslate"><span class="pre">read</span></code> function returns <code class="docutils literal notranslate"><span class="pre">numpy.recarray</span></code>  populated with electrode information:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Out</span><span class="p">[</span><span class="mi">77</span><span class="p">]:</span>
 <span class="n">rec</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="p">(</span><span class="s1">&#39;R1111M&#39;</span><span class="p">,</span> <span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="s1">&#39;LPOG1-LPOG2&#39;</span><span class="p">,</span> <span class="s1">&#39;LPOG&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">67.6431</span><span class="p">,</span> <span class="o">-</span><span class="mf">19.84015</span><span class="p">,</span> <span class="o">-</span><span class="mf">17.08995</span><span class="p">,</span> <span class="s1">&#39;Left Cerebrum&#39;</span><span class="p">,</span>
 <span class="s1">&#39;Temporal Lobe&#39;</span><span class="p">,</span> <span class="s1">&#39;Middle Temporal Gyrus&#39;</span><span class="p">,</span> <span class="s1">&#39;Gray Matter&#39;</span><span class="p">,</span> <span class="s1">&#39;Brodmann area 21&#39;</span><span class="p">,</span> <span class="s1">&#39;[]&#39;</span><span class="p">,</span> <span class="s1">&#39;lsag&#39;</span><span class="p">,</span> <span class="s1">&#39;1-2&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="mf">8.22266263809965</span>
 <span class="o">...</span>
 </pre></div>
 </div>
-<p>This is not the most infromative output so it is best to first check what columns are available in the <code class="docutils literal"><span class="pre">tal_structs</span></code>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">print</span> <span class="n">tal_structs</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+<p>This is not the most infromative output so it is best to first check what columns are available in the <code class="docutils literal notranslate"><span class="pre">tal_structs</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span> <span class="n">tal_structs</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
 </pre></div>
 </div>
 <p>for which you get an output</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">(</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span>
  <span class="s1">&#39;channel&#39;</span><span class="p">,</span>
  <span class="s1">&#39;tagName&#39;</span><span class="p">,</span>
  <span class="s1">&#39;grpName&#39;</span><span class="p">,</span>
@@ -369,12 +347,12 @@ monopolar contact, using the values “bi” and “mono”; the default is “b
  <span class="s1">&#39;locTag&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>At this point we can print single columns e.g. <code class="docutils literal"><span class="pre">channel</span></code> and <code class="docutils literal"><span class="pre">tagName</span></code></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">print</span> <span class="n">tal_structs</span><span class="p">[[</span><span class="s1">&#39;channel&#39;</span><span class="p">,</span><span class="s1">&#39;tagName&#39;</span><span class="p">]]</span>
+<p>At this point we can print single columns e.g. <code class="docutils literal notranslate"><span class="pre">channel</span></code> and <code class="docutils literal notranslate"><span class="pre">tagName</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span> <span class="n">tal_structs</span><span class="p">[[</span><span class="s1">&#39;channel&#39;</span><span class="p">,</span><span class="s1">&#39;tagName&#39;</span><span class="p">]]</span>
 </pre></div>
 </div>
 <p>that outputs</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">rec</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="s1">&#39;LPOG1-LPOG2&#39;</span><span class="p">),</span> <span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">]),</span> <span class="s1">&#39;LPOG1-LPOG9&#39;</span><span class="p">),</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rec</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="s1">&#39;LPOG1-LPOG2&#39;</span><span class="p">),</span> <span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">]),</span> <span class="s1">&#39;LPOG1-LPOG9&#39;</span><span class="p">),</span>
 <span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="s1">&#39;LPOG2-LPOG3&#39;</span><span class="p">),</span> <span class="p">(</span><span class="n">array</span><span class="p">([</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">]),</span> <span class="s1">&#39;LPOG2-LPOG10&#39;</span><span class="p">),</span>
 <span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="s1">&#39;LPOG3-LPOG4&#39;</span><span class="p">),</span> <span class="p">(</span><span class="n">array</span><span class="p">([</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">11</span><span class="p">]),</span> <span class="s1">&#39;LPOG3-LPOG11&#39;</span><span class="p">),</span>
 <span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]),</span> <span class="s1">&#39;LPOG4-LPOG5&#39;</span><span class="p">),</span> <span class="p">(</span><span class="n">array</span><span class="p">([</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">12</span><span class="p">]),</span> <span class="s1">&#39;LPOG4-LPOG12&#39;</span><span class="p">),</span>
@@ -383,38 +361,38 @@ monopolar contact, using the values “bi” and “mono”; the default is “b
 <span class="o">...</span>
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">TalReader</span></code> also provides two convenience functions <code class="docutils literal"><span class="pre">get_monopolar_channels</span></code>  and “ get_bipolar_pairs“
+<p><code class="docutils literal notranslate"><span class="pre">TalReader</span></code> also provides two convenience functions <code class="docutils literal notranslate"><span class="pre">get_monopolar_channels</span></code>  and `` get_bipolar_pairs``
 that extract a list of individual channel numbers and a list of bipolar pairs.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">monopolar_channels</span> <span class="o">=</span> <span class="n">tal_reader</span><span class="o">.</span><span class="n">get_monopolar_channels</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monopolar_channels</span> <span class="o">=</span> <span class="n">tal_reader</span><span class="o">.</span><span class="n">get_monopolar_channels</span><span class="p">()</span>
 <span class="n">bipolar_pairs</span> <span class="o">=</span> <span class="n">tal_reader</span><span class="o">.</span><span class="n">get_bipolar_pairs</span><span class="p">()</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>You can also extract bipolar pairs by typing:</p>
-<div class="last highlight-python"><div class="highlight"><pre><span></span><span class="n">tal_structs</span><span class="p">[</span><span class="s1">&#39;channel&#39;</span><span class="p">]</span>
+<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tal_structs</span><span class="p">[</span><span class="s1">&#39;channel&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="reading-eeg-time-series-using-eegreader">
 <h2>Reading EEG time series using EEGReader<a class="headerlink" href="#reading-eeg-time-series-using-eegreader" title="Permalink to this headline">¶</a></h2>
-<p>To read EEG time series’ associated with events we typically use <code class="docutils literal"><span class="pre">EEGReader</span></code>. Here is the syntax:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">EEGReader</span>
+<p>To read EEG time series’ associated with events we typically use <code class="docutils literal notranslate"><span class="pre">EEGReader</span></code>. Here is the syntax:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">EEGReader</span>
 <span class="n">eeg_reader</span> <span class="o">=</span> <span class="n">EEGReader</span><span class="p">(</span><span class="n">events</span><span class="o">=</span><span class="n">base_events</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="n">monopolar_channels</span><span class="p">,</span>
                        <span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">buffer_time</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 
 <span class="n">base_eegs</span> <span class="o">=</span> <span class="n">eeg_reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>After importing <code class="docutils literal"><span class="pre">EEGReader</span></code> we pass the following objects to <code class="docutils literal"><span class="pre">EEGReader</span></code> constructor:
-- <code class="docutils literal"><span class="pre">events</span></code> - this is the array of events (read using <code class="docutils literal"><span class="pre">BaseEventReader</span></code>) for which we want to obtain eeg time series’
-- <code class="docutils literal"><span class="pre">channels</span></code> -  and array of monopolar channels (NOT bipolar pairs) for which we want eeg signals
-- <code class="docutils literal"><span class="pre">start_time</span></code> - offset in seconds relative the the onset of event at which we start reading EEG signal
-- <code class="docutils literal"><span class="pre">end_time</span></code> - offset in seconds relative the the onset of event at which we stop reading EEG signal
-- <code class="docutils literal"><span class="pre">buffer</span></code> - time interval in seconds which determines how much extra data will be added to each eeg signal segment</p>
+<p>After importing <code class="docutils literal notranslate"><span class="pre">EEGReader</span></code> we pass the following objects to <code class="docutils literal notranslate"><span class="pre">EEGReader</span></code> constructor:
+- <code class="docutils literal notranslate"><span class="pre">events</span></code> - this is the array of events (read using <code class="docutils literal notranslate"><span class="pre">BaseEventReader</span></code>) for which we want to obtain eeg time series’
+- <code class="docutils literal notranslate"><span class="pre">channels</span></code> -  and array of monopolar channels (NOT bipolar pairs) for which we want eeg signals
+- <code class="docutils literal notranslate"><span class="pre">start_time</span></code> - offset in seconds relative the the onset of event at which we start reading EEG signal
+- <code class="docutils literal notranslate"><span class="pre">end_time</span></code> - offset in seconds relative the the onset of event at which we stop reading EEG signal
+- <code class="docutils literal notranslate"><span class="pre">buffer</span></code> - time interval in seconds which determines how much extra data will be added to each eeg signal segment</p>
 <p>Here is the output:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">xray</span><span class="o">.</span><span class="n">TimeSeriesX</span> <span class="p">(</span><span class="n">channels</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="n">events</span><span class="p">:</span> <span class="mi">1020</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="mi">1800</span><span class="p">)</span><span class="o">&gt;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">xray</span><span class="o">.</span><span class="n">TimeSeriesX</span> <span class="p">(</span><span class="n">channels</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="n">events</span><span class="p">:</span> <span class="mi">1020</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="mi">1800</span><span class="p">)</span><span class="o">&gt;</span>
 <span class="n">array</span><span class="p">([[[</span> <span class="mf">3467.059196</span><span class="p">,</span>  <span class="mf">3471.312604</span><span class="p">,</span>  <span class="mf">3473.970984</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>  <span class="mf">3580.306184</span><span class="p">,</span>
           <span class="mf">3581.901212</span><span class="p">,</span>  <span class="mf">3588.813</span>   <span class="p">],</span>
         <span class="p">[</span> <span class="mf">3609.548364</span><span class="p">,</span>  <span class="mf">3609.548364</span><span class="p">,</span>  <span class="mf">3612.73842</span> <span class="p">,</span> <span class="o">...</span><span class="p">,</span>  <span class="mf">3368.16746</span> <span class="p">,</span>
@@ -435,9 +413,7 @@ that extract a list of individual channel numbers and a list of bipolar pairs.</
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -459,7 +435,7 @@ that extract a list of individual channel numbers and a list of bipolar pairs.</
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -477,7 +453,8 @@ that extract a list of individual channel numbers and a list of bipolar pairs.</
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'2.0.3',
+            VERSION:'2.0.4',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -487,23 +464,17 @@ that extract a list of individual channel numbers and a list of bipolar pairs.</
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>
