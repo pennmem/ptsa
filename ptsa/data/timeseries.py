@@ -76,7 +76,7 @@ class TimeSeries(xr.DataArray):
             coords['samplerate'] = float(samplerate)
         return cls(data, coords=coords, dims=dims, name=name, attrs=attrs)
 
-    def to_hdf(self, filename, mode='w', **kwargs):
+    def to_hdf(self, filename, mode='w', data_kwargs={'chunks': True}):
         """Save to disk using HDF5.
 
         Parameters
@@ -105,7 +105,7 @@ class TimeSeries(xr.DataArray):
         from ptsa.io import hdf5
 
         with h5py.File(filename, mode) as hfile:
-            hfile.create_dataset("data", data=self.data, chunks=True, **kwargs)
+            hfile.create_dataset("data", data=self.data, **data_kwargs)
 
             dims = [dim.encode() for dim in self.dims]
             hfile.create_dataset("dims", data=dims)
