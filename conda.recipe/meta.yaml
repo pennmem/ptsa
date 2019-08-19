@@ -2,7 +2,7 @@
 
 package:
   name: ptsa
-  version: {{ setup_data['version'] }}
+  version: {{ setup_data.get('version') }}
   channels: anaconda pennmem
 
 source:
