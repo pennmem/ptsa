@@ -27,7 +27,7 @@ size_t nextpow2(size_t v) {
 }
 
 
-size_t MorletWaveFFT::init(size_t width, double freq, size_t win_size, double sample_freq) {
+size_t MorletWaveFFT::init(size_t width, double freq, size_t win_size, double sample_freq, bool complete) {
     double dt = 1.0 / sample_freq;
     double sf = freq / width; //sigma_f;  width of Gaussian in the frequency domain
     double st = 1.0 / (2.0 * M_PI * sf); //sigma_t; width of Gaussian in the time domain.
@@ -43,11 +43,24 @@ size_t MorletWaveFFT::init(size_t width, double freq, size_t win_size, double sa
 
     double t = -3.5 * st;
     double scale = 2.0 * st * st;
+    double complete_offset = 0;
+
+    if (complete) {
+      complete_offset = exp(-width*width/2.0);
+      double freq_scale = (2/M_PI)*(acos(exp(-0.5*width*width)));
+      omega *= freq_scale;
+      scale /= freq_scale*freq_scale;
+      double inv_sq_a = (1.0 / freq_scale) * ( width/(4.0*freq*sqrt(M_PI)) +
+          3.0*width*exp(-(double)width*width) / (4.0*freq*sqrt(M_PI)) -
+          width*exp(-3*width*width/4.0) / (freq*sqrt(M_PI)) );
+      a = 1.0/sqrt(inv_sq_a);
+    }
+
     for (size_t i = 0; i < nt; ++i) {
         double c = a * exp(-t * t / scale);
         double omega_t = omega * t;
-        cur_wave[i][0] = c * cos(omega_t);
-        cur_wave[i][1] = c * sin(omega_t);
+        cur_wave[i][0] = c * cos(omega_t) - complete_offset;
+        cur_wave[i][1] = c * sin(omega_t) - complete_offset;
         t += dt;
     }
     for (size_t i = nt; i < len; ++i)
@@ -64,15 +77,15 @@ size_t MorletWaveFFT::init(size_t width, double freq, size_t win_size, double sa
 
 MorletWaveletTransform::MorletWaveletTransform(){}
 
-MorletWaveletTransform::MorletWaveletTransform(size_t width, double *freqs, size_t nf, double sample_freq, size_t signal_len){
-    init_flex(width, freqs, nf, sample_freq,signal_len);
+MorletWaveletTransform::MorletWaveletTransform(size_t width, double *freqs, size_t nf, double sample_freq, size_t signal_len, bool complete){
+    init_flex(width, freqs, nf, sample_freq,signal_len, complete);
 }
 
-MorletWaveletTransform::MorletWaveletTransform(size_t width, double low_freq, double high_freq, size_t nf, double sample_freq, size_t signal_len) {
+MorletWaveletTransform::MorletWaveletTransform(size_t width, double low_freq, double high_freq, size_t nf, double sample_freq, size_t signal_len, bool complete) {
 
     std::vector<double> freqs = logspace(log10(low_freq), log10(high_freq), nf);
 
-    init_flex(width, &freqs[0], nf, sample_freq, signal_len);
+    init_flex(width, &freqs[0], nf, sample_freq, signal_len, complete);
 
 
 }
@@ -98,14 +111,14 @@ MorletWaveletTransform::~MorletWaveletTransform() {
 
 
 void MorletWaveletTransform::init_flex(size_t width, double *freqs, size_t nf, double sample_freq,
-                                       size_t signal_len) {
+                                       size_t signal_len, bool complete) {
     signal_len_ = signal_len;
     n_freqs = nf;
     morlet_wave_ffts = new MorletWaveFFT[nf];
     n_plans = 0;
     size_t last_len = 0;
     for (size_t i = 0; i < nf; ++i) {
-        size_t len = morlet_wave_ffts[i].init(width, freqs[i], signal_len, sample_freq);
+        size_t len = morlet_wave_ffts[i].init(width, freqs[i], signal_len, sample_freq, complete);
         if (len != last_len) {
             last_len = len;
             ++n_plans;
@@ -140,12 +153,12 @@ void MorletWaveletTransform::init_flex(size_t width, double *freqs, size_t nf, d
 }
 
 void MorletWaveletTransform::init(size_t width, double low_freq, double high_freq, size_t nf, double sample_freq,
-                                  size_t signal_len) {
+                                  size_t signal_len, bool complete) {
 
 
     std::vector<double> freqs = logspace(log10(low_freq), log10(high_freq), nf);
 
-    init_flex(width, &freqs[0], nf, sample_freq, signal_len);
+    init_flex(width, &freqs[0], nf, sample_freq, signal_len, complete);
 }
 
 
