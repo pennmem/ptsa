@@ -1,6 +1,16 @@
 Changes
 =======
 
+Version 2.0.6
+-------------
+**2019-08-15**
+
+* MorletWaveletFilter now supports a ``complete`` parameter, defaulting to
+  True, which uses a complete Morlet wavelet with a zero mean, and with its
+  frequency corrected to be equivalent to a standard Morlet.  This
+  significantly improves power and phase accuracy for small wavelet widths.
+
+
 Version 2.0.4
 -------------
 **2018-08-31**
