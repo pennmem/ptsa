@@ -15,6 +15,14 @@ The following steps should be taken when making an "official" release:
 9. Merge.
 10. Commit changes and tag. For example, if releasing version 1.1.999: `git tag v1.1.999`.
     Don't forget to push tags! `git push --tags`
+
+## Dependencies to conda install
+
+* swig
+* conda > 4.6
+* fftw
+* pytest
+* pytest-cov
    
 ## TODO
 
