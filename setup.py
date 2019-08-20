@@ -209,9 +209,8 @@ try:
         )
     ]
 except ImportError as err:
-    print(err)
-    print("\n\nWARNING\n\n"
-          "pybind11 not found - you will be unable to read EDF files")
+    print("\n\nWARNING\n\n", err, "\n"
+          "pybind11 not found - you will be unable to read EDF files", sep='')
 
 
 check_dependencies()
