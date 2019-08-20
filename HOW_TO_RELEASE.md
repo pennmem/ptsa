@@ -19,10 +19,15 @@ The following steps should be taken when making an "official" release:
 ## Dependencies to conda install
 
 * swig
-* conda > 4.6
+* conda >= 4.6
 * fftw
 * pytest
 * pytest-cov
+
+## Dependencies to pip install
+
+* nbsphinx
+* sphinx_rtd_theme
    
 ## TODO
 
