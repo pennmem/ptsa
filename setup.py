@@ -196,6 +196,13 @@ ext_modules = [
     ),
 ]
 
+# Install pybind11 if missing
+try:
+  import pybind11
+except ImportError:
+  if subprocess.call([sys.executable, '-m', 'pip', 'install', 'pybind11']):
+    raise RuntimeError('ERROR, failed:  pip install pybind11')
+
 # Try to add edffile extension
 try:
     ext_modules += [
