@@ -219,9 +219,9 @@ check_dependencies()
 setup(
     name='ptsa',
     version=get_version_str(),
-    maintainer=['Per B. Sederberg', 'Maciek Swat'],
-    maintainer_email=['psederberg@gmail.com', 'maciekswat@gmail.com'],
-    url='https://github.com/maciekswat/ptsa_new',
+    maintainer=['Ryan A. Colyer'],
+    maintainer_email=['rcolyer@sas.upenn.edu', 'kahana-sysadmin@sas.upenn.edu'],
+    url='https://github.com/pennmem/ptsa_new',
     cmdclass={
         'build_py': CustomBuild,
         'install': CustomInstall,
