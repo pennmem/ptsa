@@ -23,6 +23,7 @@ requirements:
     - swig
     - xarray
     - fftw
+    - pybind11
 
   run:
     - python {{ python }}
@@ -33,6 +34,7 @@ requirements:
     - vs2015_runtime  [win]
     - xarray
     - traits
+    - pybind11
 
 test:
   # Test that we can import ptsa and its extension modules
