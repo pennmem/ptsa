@@ -51,10 +51,11 @@ class MorletWaveletFilter(BaseFilter):
 
     def __init__(self, timeseries, freqs, width=5,
                  output=('power', 'phase'), verbose=True, cpus=1,
-                 output_dim='output'):
+                 output_dim='output', complete=True):
         super(MorletWaveletFilter, self).__init__(timeseries)
         self.freqs = freqs
         self.width = width
+        self.complete = complete
 
         output_opts = ('power', 'phase', 'complex')
 
@@ -125,7 +126,7 @@ class MorletWaveletFilter(BaseFilter):
         mt.set_wavelet_complex_array(wavelets_complex_reshaped)
 
         mt.initialize_signal_props(float(self.timeseries['samplerate']))
-        mt.initialize_wavelet_props(self.width, self.freqs)
+        mt.initialize_wavelet_props(self.width, self.freqs, self.complete)
         mt.prepare_run()
 
         s = time.time()

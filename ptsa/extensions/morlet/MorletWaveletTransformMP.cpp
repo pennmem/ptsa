@@ -27,7 +27,8 @@ void MorletWaveletTransformMP ::prepare_run() {
         mwt_vec.push_back(shared_ptr<MorletWaveletTransform>(new MorletWaveletTransform));
         auto &mwt_ptr = mwt_vec[i];
 
-        mwt_ptr->init_flex(width, freqs, num_freq, sample_freq, signal_len);
+        mwt_ptr->init_flex(width, freqs, num_freq, sample_freq, signal_len,
+            complete);
         mwt_ptr->set_output_type(output_type);
 
     }
