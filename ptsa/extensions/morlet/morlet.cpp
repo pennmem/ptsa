@@ -35,25 +35,23 @@ size_t MorletWaveFFT::init(size_t width, double freq, size_t win_size, double sa
     double a_s = a_c;
     double omega = 2.0 * M_PI * freq;
 
-    nt = size_t(7.0 * st / dt) + 1;
-    len0 = win_size + nt - 1;
-    len = nextpow2(len0);
-    fft = (fftw_complex *) fftw_malloc(len * sizeof(fftw_complex));
+    double sample_factor = 10.0;
+    nt = size_t(sample_factor * st / dt) + 1;
 
-    fftw_complex *cur_wave = (fftw_complex *) fftw_malloc(len * sizeof(fftw_complex));
-
-    double t = -3.5 * st;
+    double t = -(sample_factor/2.0) * st;
     double scale = 2.0 * st * st;
     double complete_offset = 0;
     double freq_scale = 1;
 
     if (complete) {
-      complete_offset = exp(-width*width/2.0);
+      complete_offset = exp(-(double)width*width/2.0);
       freq_scale = (2/M_PI)*(acos(exp(-0.5*width*width)));
+      nt = size_t((nt-1)/freq_scale + 1.5);
+      t = t/freq_scale;
       scale /= freq_scale*freq_scale;
       double inv_sq_a_c = (1.0 / freq_scale) * ( width/(4.0*freq*sqrt(M_PI)) +
           3.0*width*exp(-(double)width*width) / (4.0*freq*sqrt(M_PI)) -
-          width*exp(-3*width*width/4.0) / (freq*sqrt(M_PI)) );
+          (double)width*exp(-3*(double)width*width/4.0) / (freq*sqrt(M_PI)) );
       double acos_term = acos(exp(-(double)width*width/2.0));
       double inv_sq_a_s = (width*sqrt(M_PI) / (8*freq *
           acos(exp(-(double)width*width/2.0)))) *
@@ -62,12 +60,18 @@ size_t MorletWaveFFT::init(size_t width, double freq, size_t win_size, double sa
       a_s = 1.0/sqrt(inv_sq_a_s);
     }
 
+    len0 = win_size + nt - 1;
+    len = nextpow2(len0);
+    fft = (fftw_complex *) fftw_malloc(len * sizeof(fftw_complex));
+
+    fftw_complex *cur_wave = (fftw_complex *) fftw_malloc(len * sizeof(fftw_complex));
+
     for (size_t i = 0; i < nt; ++i) {
         double coef_common = exp(-t * t / scale);
         double coef_c = a_c * coef_common;
         double coef_s = a_s * coef_common;
         double omega_t = omega * t;
-        cur_wave[i][0] = coef_c * cos(freq_scale*omega_t) - complete_offset;
+        cur_wave[i][0] = coef_c * (cos(freq_scale*omega_t) - complete_offset);
         cur_wave[i][1] = coef_s * sin(omega_t);
         t += dt;
     }
