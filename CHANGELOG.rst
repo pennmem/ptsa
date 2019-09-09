@@ -1,6 +1,13 @@
 Changes
 =======
 
+Version 2.0.7
+-------------
+**2019-09-09**
+
+* Identical to 2.0.6 but fixes a file upload error for the Python 3.7 version.
+
+
 Version 2.0.6
 -------------
 **2019-08-15**
