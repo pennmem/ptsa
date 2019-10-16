@@ -59,12 +59,16 @@ class TimeSeries(xr.DataArray):
     xr.DataArray : Base class
 
     """
+
+    __slots__ = ()
+    
     def __init__(self, data, coords, dims=None, name=None,
                  attrs=None, encoding=None, fastpath=False):
         assert 'samplerate' in coords
-        super(TimeSeries, self).__init__(data=data, coords=coords, dims=dims,
-                                         name=name, attrs=attrs, encoding=encoding,
-                                         fastpath=fastpath)
+        super(TimeSeries, self).__init__(
+            data=data, coords=coords, dims=dims,
+            name=name, attrs=attrs, encoding=encoding,
+            fastpath=fastpath)
 
     @classmethod
     def create(cls, data, samplerate, coords=None, dims=None, name=None,
@@ -263,7 +267,7 @@ class TimeSeries(xr.DataArray):
             if attrs is not None:
                 attrs = json.loads(attrs.decode(encoding))
 
-            array = cls(hfile['data'].value,
+            array = cls(hfile['data'][()],
                         coords=coords,
                         dims=[dim.decode(encoding) for dim in dims],
                         name=name,
@@ -304,7 +308,7 @@ class TimeSeries(xr.DataArray):
             names = json.loads(coords_group.attrs['names'].decode())
             coords = dict()
             for name in names:
-                buffer = BytesIO(b64decode(coords_group[name].value))
+                buffer = BytesIO(b64decode(coords_group[name][()]))
                 coord = np.load(buffer)
                 coords[name] = coord
 
@@ -315,7 +319,7 @@ class TimeSeries(xr.DataArray):
             if attrs is not None:
                 attrs = json.loads(attrs.decode())
 
-            array = cls.create(hfile['data'].value, None, coords=coords,
+            array = cls.create(hfile['data'][()], None, coords=coords,
                                dims=[dim.decode() for dim in dims],
                                name=name, attrs=attrs)
 
@@ -369,7 +373,8 @@ class TimeSeries(xr.DataArray):
             else:
                 if key != dim:
                     if (self[key] != other[key]).all():
-                        raise ConcatenationError("Dimension {:s} doesn't match".format(key))
+                        raise ConcatenationError(
+                            "Dimension {:s} doesn't match".format(key))
                     coords[key] = self[key]
                 else:
                     coords[key] = np.concatenate([self[key], other[key]])
@@ -418,7 +423,8 @@ class TimeSeries(xr.DataArray):
         warnings.warn("The filtered method is not very flexible. "
                       "Consider using filters in ptsa.data.filters instead.")
         time_axis_index = get_axis_index(self, axis_name='time')
-        filtered_array = buttfilt(self.values, freq_range, float(self['samplerate']), filt_type,
+        filtered_array = buttfilt(self.values, freq_range,
+                                  float(self['samplerate']), filt_type,
                                   order, axis=time_axis_index)
         new_ts = self.copy()
         new_ts.data = filtered_array
@@ -455,11 +461,12 @@ class TimeSeries(xr.DataArray):
         time_axis_index = self.get_axis_num('time')
 
         time_axis_length = np.squeeze(time_axis.shape)
-        new_length = int(np.round(time_axis_length * resampled_rate / float(samplerate)))
+        new_length = int(np.round(time_axis_length * resampled_rate /
+                                  float(samplerate)))
 
-        resampled_array, new_time_axis = resample(self.values,
-                                                  new_length, t=time_axis.values,
-                                                  axis=time_axis_index, window=window)
+        resampled_array, new_time_axis = resample(
+            self.values, new_length, t=time_axis.values,
+            axis=time_axis_index, window=window)
 
         # constructing axes
         coords = {}
@@ -477,7 +484,8 @@ class TimeSeries(xr.DataArray):
                 coords[coord_name] = new_time_axis
 
         resampled_time_series = TimeSeries.create(
-            resampled_array, resampled_rate, coords=coords, dims=[dim for dim in self.dims],
+            resampled_array, resampled_rate, coords=coords,
+            dims=[dim for dim in self.dims],
             name=self.name, attrs=self.attrs)
 
         return resampled_time_series
@@ -537,13 +545,15 @@ class TimeSeries(xr.DataArray):
         data = self.data
 
         mirrored_data = np.concatenate(
-            (data[..., 1:samples + 1][..., ::-1], data, data[..., -samples - 1:-1][..., ::-1]),
-            axis=-1)
+            (data[..., 1:samples + 1][..., ::-1], data,
+             data[..., -samples - 1:-1][..., ::-1]), axis=-1)
 
         start_time = self['time'].data[0] - duration
-        t_axis = (np.arange(mirrored_data.shape[-1]) * (1.0 / samplerate)) + start_time
+        t_axis = (np.arange(mirrored_data.shape[-1]) *
+                  (1.0 / samplerate)) + start_time
         # coords = [self.coords[dim_name] for dim_name in self.dims[:-1]] +[t_axis]
-        coords = {dim_name:self.coords[dim_name] for dim_name in self.dims[:-1]}
+        coords = {dim_name:self.coords[dim_name]
+                  for dim_name in self.dims[:-1]}
         coords['time'] = t_axis
         coords['samplerate'] = float(self['samplerate'])
 
@@ -567,7 +577,9 @@ class TimeSeries(xr.DataArray):
             A TimeSeries instance with the baseline corrected data.
 
         """
-        return self - self.isel(time=(self['time'] >= base_range[0]) & (self['time'] <= base_range[1])).mean(dim='time')
+        return self - self.isel(time=(self['time'] >= base_range[0]) &
+                                (self['time'] <= base_range[1])).mean(
+                                    dim='time')
 
 
 class TimeSeriesX(TimeSeries):
