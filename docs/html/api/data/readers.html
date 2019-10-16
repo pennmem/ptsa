@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Readers &mdash; PTSA 2.0.0 documentation</title>
+  <title>Readers &mdash; PTSA 2.0.4 documentation</title>
   
 
   
@@ -24,28 +24,19 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="PTSA 2.0.0 documentation" href="../../index.html"/>
-        <link rel="up" title="ptsa.data" href="../data.html"/>
-        <link rel="next" title="Filters" href="filters.html"/>
-        <link rel="prev" title="TimeSeries" href="timeseriesx.html"/> 
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Filters" href="filters.html" />
+    <link rel="prev" title="TimeSeries" href="timeseriesx.html" /> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -67,7 +58,7 @@
             
             
               <div class="version">
-                2.0.0
+                2.0.4
               </div>
             
           
@@ -119,7 +110,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">PTSA</a>
@@ -127,9 +118,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -190,29 +182,14 @@
     margin-top: -19px;
 }
 
-/* nice headers on first paragraph of info/warning boxes */
-.admonition .first {
-    margin: -12px;
-    padding: 6px 12px;
-    margin-bottom: 12px;
-    color: #fff;
-    line-height: 1;
-    display: block;
-}
-.admonition.warning .first {
-    background: #f0b37e;
-}
-.admonition.note .first {
-    background: #6ab0de;
-}
 .admonition > p:before {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
 </style>
 <div class="section" id="readers">
 <h1>Readers<a class="headerlink" href="#readers" title="Permalink to this headline">¶</a></h1>
-<p>Each class in <code class="docutils literal"><span class="pre">ptsa.data.readers</span></code> is constructed with a <code class="docutils literal"><span class="pre">filename</span></code> parameter, indicating the file to be read,
-and implements a <code class="docutils literal"><span class="pre">read()</span></code> method, which returns a data structure containing the data in the file.</p>
+<p>Each class in <code class="docutils literal notranslate"><span class="pre">ptsa.data.readers</span></code> is constructed with a <code class="docutils literal notranslate"><span class="pre">filename</span></code> parameter, indicating the file to be read,
+and implements a <code class="docutils literal notranslate"><span class="pre">read()</span></code> method, which returns a data structure containing the data in the file.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Keywords must be given explicitly</p>
@@ -266,7 +243,7 @@ indicating whether each offset was read successfully.</p>
 
 <dl class="class">
 <dt id="ptsa.data.readers.BaseEventReader">
-<em class="property">class </em><code class="descclassname">ptsa.data.readers.</code><code class="descname">BaseEventReader</code><span class="sig-paren">(</span><em>filename</em>, <em>common_root=’data/events’</em>, <em>eliminate_events_with_no_eeg=True</em>, <em>eliminate_nans=True</em>, <em>use_reref_eeg=False</em>, <em>normalize_eeg_path=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.BaseEventReader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ptsa.data.readers.</code><code class="descname">BaseEventReader</code><span class="sig-paren">(</span><em>filename</em>, <em>common_root='data/events'</em>, <em>eliminate_events_with_no_eeg=True</em>, <em>eliminate_nans=True</em>, <em>use_reref_eeg=False</em>, <em>normalize_eeg_path=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.BaseEventReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reader class that reads event file and returns them as np.recarray.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -295,12 +272,12 @@ should be ‘data/scalp_events’. Note that you do not include opening
 <dl class="method">
 <dt id="ptsa.data.readers.BaseEventReader.as_dataframe">
 <code class="descname">as_dataframe</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.BaseEventReader.as_dataframe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read events and return as a <code class="xref py py-class docutils literal"><span class="pre">pd.DataFrame</span></code>.</p>
+<dd><p>Read events and return as a <code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">This drops the <code class="docutils literal"><span class="pre">stim_params</span></code> field presently as it is not scalar
+<p class="last">This drops the <code class="docutils literal notranslate"><span class="pre">stim_params</span></code> field presently as it is not scalar
 in the current event structure scheme and causes issues when trying
-to convert to a <code class="xref py py-class docutils literal"><span class="pre">pd.DataFrame</span></code>.</p>
+to convert to a <code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>.</p>
 </div>
 </dd></dl>
 
@@ -361,7 +338,7 @@ w.r.t original Matlab code to account for the following:
 
 <dl class="class">
 <dt id="ptsa.data.readers.CMLEventReader">
-<em class="property">class </em><code class="descclassname">ptsa.data.readers.</code><code class="descname">CMLEventReader</code><span class="sig-paren">(</span><em>filename</em>, <em>eeg_fname_search_pattern=”</em>, <em>eeg_fname_replace_pattern=”</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.CMLEventReader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ptsa.data.readers.</code><code class="descname">CMLEventReader</code><span class="sig-paren">(</span><em>filename</em>, <em>eeg_fname_search_pattern=''</em>, <em>eeg_fname_replace_pattern=''</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.CMLEventReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Event reader that returns original PTSA Events object with attached
 rawbinwrappers – objects that know how to read eeg binary data</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -407,7 +384,7 @@ eegfile</td>
 
 <dl class="class">
 <dt id="ptsa.data.readers.EEGReader">
-<em class="property">class </em><code class="descclassname">ptsa.data.readers.</code><code class="descname">EEGReader</code><span class="sig-paren">(</span><em>events=None</em>, <em>channels=array([]</em>, <em>dtype=’|S3’)</em>, <em>start_time=0.0</em>, <em>end_time=0.0</em>, <em>buffer_time=0.0</em>, <em>session_dataroot=”</em>, <em>remove_bad_events=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.EEGReader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ptsa.data.readers.</code><code class="descname">EEGReader</code><span class="sig-paren">(</span><em>events=None</em>, <em>channels=array([]</em>, <em>dtype='|S3')</em>, <em>start_time=0.0</em>, <em>end_time=0.0</em>, <em>buffer_time=0.0</em>, <em>session_dataroot=''</em>, <em>remove_bad_events=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.EEGReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reader that knows how to read binary eeg files. It can read chunks of the eeg signal based on events input
 or can read entire session if session_dataroot is non empty.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -483,7 +460,7 @@ to start_offset, end_offset, buffer_offset expressed as integers indicating numb
 
 <dl class="class">
 <dt id="ptsa.data.readers.TalReader">
-<em class="property">class </em><code class="descclassname">ptsa.data.readers.</code><code class="descname">TalReader</code><span class="sig-paren">(</span><em>filename</em>, <em>struct_name=’bpTalStruct’</em>, <em>struct_type=’bi’</em>, <em>unpack=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.TalReader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ptsa.data.readers.</code><code class="descname">TalReader</code><span class="sig-paren">(</span><em>filename</em>, <em>struct_name='bpTalStruct'</em>, <em>struct_type='bi'</em>, <em>unpack=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.TalReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reader that reads tal structs Matlab file or pairs.json file and converts it to numpy recarray</p>
 <dl class="method">
 <dt id="ptsa.data.readers.TalReader.from_dict">
@@ -562,9 +539,7 @@ The returned DataFrame is indexed by tyep type of entry (‘contacts’ or ‘pa
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -586,7 +561,7 @@ The returned DataFrame is indexed by tyep type of entry (‘contacts’ or ‘pa
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -604,7 +579,8 @@ The returned DataFrame is indexed by tyep type of entry (‘contacts’ or ‘pa
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'2.0.0',
+            VERSION:'2.0.4',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -614,23 +590,17 @@ The returned DataFrame is indexed by tyep type of entry (‘contacts’ or ‘pa
       <script type="text/javascript" src="../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

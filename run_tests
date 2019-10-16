@@ -1,3 +1,6 @@
+# Note, fftw's include directories are required for these tests.
+# For example:  export CPLUS_INCLUDE_PATH=$HOME/src/fftw/include
+
 python setup.py develop
 pytest tests/ "$@"
 

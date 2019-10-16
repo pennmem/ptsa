@@ -78,6 +78,7 @@ class TestEDFReader:
                                   start_offsets=np.array([0]), read_size=500).read()
         return
 
+    @pytest.mark.slow
     @pytest.mark.parametrize('subject,session', [('LTP342', 22)])
     def test_full_session(self, subject, session):
         channels = np.array(['002', '004', '008', '016'])

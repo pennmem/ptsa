@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Extension Modules &mdash; PTSA 2.0.0 documentation</title>
+  <title>Extension Modules &mdash; PTSA 2.0.4 documentation</title>
   
 
   
@@ -24,28 +24,19 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="PTSA 2.0.0 documentation" href="../index.html"/>
-        <link rel="up" title="API Reference" href="index.html"/>
-        <link rel="next" title="Development guidelines" href="../development.html"/>
-        <link rel="prev" title="Filters" href="data/filters.html"/> 
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Development guidelines" href="../development.html" />
+    <link rel="prev" title="Filters" href="data/filters.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -67,7 +58,7 @@
             
             
               <div class="version">
-                2.0.0
+                2.0.4
               </div>
             
           
@@ -119,7 +110,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">PTSA</a>
@@ -127,9 +118,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -188,21 +180,6 @@
     margin-top: -19px;
 }
 
-/* nice headers on first paragraph of info/warning boxes */
-.admonition .first {
-    margin: -12px;
-    padding: 6px 12px;
-    margin-bottom: 12px;
-    color: #fff;
-    line-height: 1;
-    display: block;
-}
-.admonition.warning .first {
-    background: #f0b37e;
-}
-.admonition.note .first {
-    background: #6ab0de;
-}
 .admonition > p:before {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
@@ -230,7 +207,7 @@
 <dt id="ptsa.extensions.circular_stat.circ_diff_par">
 <code class="descclassname">ptsa.extensions.circular_stat.</code><code class="descname">circ_diff_par</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>Z</em>, <em>n_threads</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_diff_par" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the angular difference of the complex arrays X and Y, storing the value in Z.
-The computation is performed in parallel over <code class="docutils literal"><span class="pre">n_threads</span></code> threads</p>
+The computation is performed in parallel over <code class="docutils literal notranslate"><span class="pre">n_threads</span></code> threads</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -256,10 +233,10 @@ Thus, circ_mean([1+0j, 1+0j, 0+1j]) == circ_mean([2+0j, 0+1j])</p>
 <dl class="function">
 <dt id="ptsa.extensions.circular_stat.circ_diff_time_bins">
 <code class="descclassname">ptsa.extensions.circular_stat.</code><code class="descname">circ_diff_time_bins</code><span class="sig-paren">(</span><em>c1</em>, <em>c2</em>, <em>c_diff</em>, <em>cdiff_means</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_diff_time_bins" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the circular difference of <code class="docutils literal"><span class="pre">c1</span></code> and <code class="docutils literal"><span class="pre">c2</span></code>,
-stores the result in <code class="docutils literal"><span class="pre">c_diff</span></code>, then fills <code class="docutils literal"><span class="pre">cdiff_means</span></code> with the average
+<dd><p>Computes the circular difference of <code class="docutils literal notranslate"><span class="pre">c1</span></code> and <code class="docutils literal notranslate"><span class="pre">c2</span></code>,
+stores the result in <code class="docutils literal notranslate"><span class="pre">c_diff</span></code>, then fills <code class="docutils literal notranslate"><span class="pre">cdiff_means</span></code> with the average
 binned differences.</p>
-<p><code class="docutils literal"><span class="pre">len(cdiff_means)</span></code> must divide <code class="docutils literal"><span class="pre">len(c1)</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">len(cdiff_means)</span></code> must divide <code class="docutils literal notranslate"><span class="pre">len(c1)</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -273,7 +250,7 @@ binned differences.</p>
 <dl class="function">
 <dt id="ptsa.extensions.circular_stat.compute_f_stat">
 <code class="descclassname">ptsa.extensions.circular_stat.</code><code class="descname">compute_f_stat</code><span class="sig-paren">(</span><em>phase_diffs</em>, <em>classes</em>, <em>f_stat</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.compute_f_stat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs an F-test, i.e. a circular ANOVA, comparing the variance of <code class="docutils literal"><span class="pre">phase_diffs</span></code>
+<dd><p>Performs an F-test, i.e. a circular ANOVA, comparing the variance of <code class="docutils literal notranslate"><span class="pre">phase_diffs</span></code>
 when partitioned into two classes, and stores the results in fstat.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -281,8 +258,8 @@ when partitioned into two classes, and stores the results in fstat.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>phase_diffs</strong> – A matrix of phase differences</li>
-<li><strong>classes</strong> – A boolean vector indicating which observation belongs in which class Should be the same length as the first dimension of <code class="docutils literal"><span class="pre">phase_diffs</span></code></li>
-<li><strong>f_stat</strong> – An empty vector the same length as the second dimension of <code class="docutils literal"><span class="pre">phase_diffs</span></code></li>
+<li><strong>classes</strong> – A boolean vector indicating which observation belongs in which class Should be the same length as the first dimension of <code class="docutils literal notranslate"><span class="pre">phase_diffs</span></code></li>
+<li><strong>f_stat</strong> – An empty vector the same length as the second dimension of <code class="docutils literal notranslate"><span class="pre">phase_diffs</span></code></li>
 </ul>
 </td>
 </tr>
@@ -309,24 +286,24 @@ when partitioned into two classes, and stores the results in fstat.</p>
 <div class="section" id="module-ptsa.extensions.morlet">
 <span id="ptsa-extensions-morlet"></span><h2>ptsa.extensions.morlet<a class="headerlink" href="#module-ptsa.extensions.morlet" title="Permalink to this headline">¶</a></h2>
 <p>Low-level extension module for quickly computing Morlet wavelet decompositions.</p>
-<p>This module uses the following wavelet for frequency <span class="math">\(f\)</span> and Gaussian width <span class="math">\(w\)</span>:</p>
-<div class="math">
+<p>This module uses the following wavelet for frequency <span class="math notranslate nohighlight">\(f\)</span> and Gaussian width <span class="math notranslate nohighlight">\(w\)</span>:</p>
+<div class="math notranslate nohighlight">
 \[\Phi(t) =  \sigma^{-\frac{1}{2}} \pi^{-\frac{1}{4}}
 e^{\frac{-t^2}{{2 \sigma^2}}} e^{\frac{iwt}{\sigma}}\]</div>
 <p>where</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[\sigma = \frac{w}{2\pi f}\]</div>
-<p>The Gaussian envelope is only computed to a width of <span class="math">\(3.5\sigma\)</span>
+<p>The Gaussian envelope is only computed to a width of <span class="math notranslate nohighlight">\(3.5\sigma\)</span>
 on each side of the peak. Any points beyond that are rounded to 0.</p>
-<p>The convolution of a signal <span class="math">\(\Psi\)</span> with a wavelet <span class="math">\(\Phi\)</span>
+<p>The convolution of a signal <span class="math notranslate nohighlight">\(\Psi\)</span> with a wavelet <span class="math notranslate nohighlight">\(\Phi\)</span>
 is computed using the identity</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[\Psi * \Phi = N^{-1} \big(\widehat{\hat{\Psi} \cdot \hat \Phi }\big)\]</div>
-<p>where <span class="math">\(N\)</span> is the number of samples in the the signal <span class="math">\(\Psi\)</span>,
+<p>where <span class="math notranslate nohighlight">\(N\)</span> is the number of samples in the the signal <span class="math notranslate nohighlight">\(\Psi\)</span>,
 in order to take advantage of the speed provided by the FFTW library.</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">Example:</span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">signal</span> <span class="o">=</span> <span class="c1">#... A 1D array</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">signal</span> <span class="o">=</span> <span class="c1">#... A 1D array</span>
 <span class="n">n_freqs</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="n">pow_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">n_freqs</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">signal</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 <span class="n">transform</span> <span class="o">=</span> <span class="n">MorletWaveletTransform</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
@@ -342,20 +319,20 @@ in order to take advantage of the speed provided by the FFTW library.</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="data/filters.html#ptsa.data.filters.MorletWaveletFilterCpp" title="ptsa.data.filters.MorletWaveletFilterCpp"><code class="xref py py-mod docutils literal"><span class="pre">ptsa.data.filters.MorletWaveletFilterCpp</span></code></a></p>
+<p class="last"><a class="reference internal" href="data/filters.html#ptsa.data.filters.MorletWaveletFilterCpp" title="ptsa.data.filters.MorletWaveletFilterCpp"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ptsa.data.filters.MorletWaveletFilterCpp</span></code></a></p>
 </div>
 </div>
 <div class="section" id="ptsa-extensions-edf">
 <h2>ptsa.extensions.edf<a class="headerlink" href="#ptsa-extensions-edf" title="Permalink to this headline">¶</a></h2>
 <p>File-like wrapper around parts of <a class="reference external" href="https://www.teuniz.net/edflib/">EDFlib</a> to provide an interface
 for reading the EDF+ family of EEG formats.
-<code class="xref py py-mod docutils literal"><span class="pre">ptsa.data.readers.EDFRawReader</span></code> provides a
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">ptsa.data.readers.EDFRawReader</span></code> provides a
 slightly higher-level interface for doing the same thing.</p>
 <dl class="class">
 <dt id="ptsa.extensions.morlet.ChannelInfo">
 <em class="property">class </em><code class="descclassname">ptsa.extensions.morlet.</code><code class="descname">ChannelInfo</code><a class="headerlink" href="#ptsa.extensions.morlet.ChannelInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Channel data including label, number of samples, etc. These objects are
-returned by <a class="reference internal" href="#ptsa.extensions.morlet.EDFFile.get_channel_info" title="ptsa.extensions.morlet.EDFFile.get_channel_info"><code class="xref py py-meth docutils literal"><span class="pre">EDFFile.get_channel_info()</span></code></a>, and have the following
+returned by <a class="reference internal" href="#ptsa.extensions.morlet.EDFFile.get_channel_info" title="ptsa.extensions.morlet.EDFFile.get_channel_info"><code class="xref py py-meth docutils literal notranslate"><span class="pre">EDFFile.get_channel_info()</span></code></a>, and have the following
 read-only attributes:</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -435,9 +412,7 @@ can be specified by either a list of numbers or a list of labels.</p>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -459,7 +434,7 @@ can be specified by either a list of numbers or a list of labels.</p>
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -477,7 +452,8 @@ can be specified by either a list of numbers or a list of labels.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'2.0.0',
+            VERSION:'2.0.4',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -487,23 +463,17 @@ can be specified by either a list of numbers or a list of labels.</p>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  
-  
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

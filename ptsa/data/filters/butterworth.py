@@ -1,4 +1,3 @@
-from numpy import asarray
 from xarray import DataArray
 from ptsa.filt import buttfilt
 from ptsa.data.timeseries import TimeSeries
@@ -28,10 +27,10 @@ class ButterworthFilter(BaseFilter):
 
     """
     order = traits.api.Int
-    freq_range = traits.api.List(maxlen=2)
+    freq_range = traits.api.CList(maxlen=2)
     filt_type = traits.api.Str
 
-    def __init__(self, timeseries,freq_range,order=4,filt_type='stop'):
+    def __init__(self, timeseries, freq_range, order=4, filt_type='stop'):
         super(ButterworthFilter, self).__init__(timeseries)
 
         self.freq_range = freq_range

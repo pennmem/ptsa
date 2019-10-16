@@ -25,7 +25,7 @@ class MonopolarToBipolarMapper(BaseFilter):
         chan_names or a 2-D container where the first dimension must
         be length 2 corresponding to the two channels in the bipolar
         pair
-    
+
     Keyword Arguments
     -----------------
     channels_dim: str, optional

@@ -12,7 +12,7 @@ class MorletWaveletFilter(BaseFilter):
     """Applies a Morlet wavelet transform to a time series, returning the power
     and phase spectra over time.
 
-    .. versionchanged:: 2.0
+    .. versionchanged:: 2.0.6
 
         Return type is now a :class:`TimeSeries` to conform with other
         filter types.
@@ -33,11 +33,15 @@ class MorletWaveletFilter(BaseFilter):
         complex (default: ``['power', 'phase']``)
     verbose: bool
         Print out the wavelet parameters
-    cpus : int
+    cpus: int
         Number of threads to use when computing the transform (default: 1).
-    output_dim : str
+    output_dim: str
         Name of the output dimension when returning both power and phase
         (default: ``'output'``)
+    complete: bool
+        Use complete Morlet wavelets with a zero mean, which is required for
+        power and phase accuracy with small wavelet widths.  The frequency is
+        kept consistent with standard Morlet wavelets.  (default: True)
 
     """
     freqs = traits.api.CArray
@@ -47,10 +51,11 @@ class MorletWaveletFilter(BaseFilter):
 
     def __init__(self, timeseries, freqs, width=5,
                  output=('power', 'phase'), verbose=True, cpus=1,
-                 output_dim='output'):
+                 output_dim='output', complete=True):
         super(MorletWaveletFilter, self).__init__(timeseries)
         self.freqs = freqs
         self.width = width
+        self.complete = complete
 
         output_opts = ('power', 'phase', 'complex')
 
@@ -121,7 +126,7 @@ class MorletWaveletFilter(BaseFilter):
         mt.set_wavelet_complex_array(wavelets_complex_reshaped)
 
         mt.initialize_signal_props(float(self.timeseries['samplerate']))
-        mt.initialize_wavelet_props(self.width, self.freqs)
+        mt.initialize_wavelet_props(self.width, self.freqs, self.complete)
         mt.prepare_run()
 
         s = time.time()

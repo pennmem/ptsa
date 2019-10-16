@@ -1,13 +1,19 @@
-from tempfile import mkdtemp
+from functools import partial
 import os.path as osp
+from tempfile import mkdtemp
 import shutil
+import sys
 import warnings
+
+import h5py
 import pytest
 import numpy as np
 import xarray as xr
-import h5py
 
+from ptsa import __version__
+from ptsa.data.filters import ResampleFilter
 from ptsa.data.timeseries import TimeSeries, ConcatenationError
+from ptsa.test.utils import assert_timeseries_equal, skip_without_rhino
 
 
 @pytest.fixture
@@ -37,11 +43,11 @@ def test_init():
 
 
 def test_arithmetic_operations():
-    data = np.arange(1000).reshape(10,10,10)
+    data = np.arange(1000).reshape(10, 10, 10)
     rate = 1000
 
-    ts_1 =  TimeSeries.create(data, None, coords={'samplerate': 1})
-    ts_2 =  TimeSeries.create(data, None, coords={'samplerate': 1})
+    ts_1 = TimeSeries.create(data, None, coords={'samplerate': 1})
+    ts_2 = TimeSeries.create(data, None, coords={'samplerate': 1})
 
     ts_out = ts_1 + ts_2
 
@@ -66,12 +72,15 @@ def test_hdf(tempdir):
         assert "coords" in hfile
         assert "name" in list(hfile['/'].attrs.keys())
         assert "ptsa_version" in hfile.attrs
+        assert hfile.attrs["ptsa_version"] == __version__
         assert "created" in hfile.attrs
 
     loaded = TimeSeries.from_hdf(filename)
     assert np.all(loaded.data == data)
+
     for coord in loaded.coords:
         assert (loaded.coords[coord] == ts.coords[coord]).all()
+
     for n, dim in enumerate(dims):
         assert loaded.dims[n] == dim
     assert loaded.name == "test"
@@ -80,74 +89,126 @@ def test_hdf(tempdir):
                                       name="test", attrs=dict(a=1, b=[1, 2]))
     ts_with_attrs.to_hdf(filename)
     loaded = TimeSeries.from_hdf(filename)
+
     for key in ts_with_attrs.attrs:
         assert ts_with_attrs.attrs[key] == loaded.attrs[key]
     assert np.all(loaded.data == data)
+
     for coord in loaded.coords:
         assert (loaded.coords[coord] == ts_with_attrs.coords[coord]).all()
+
     for n, dim in enumerate(dims):
         assert loaded.dims[n] == dim
+
     assert loaded.name == "test"
 
-    # test compression:
-    ts_with_attrs.to_hdf(filename, compression='gzip', compression_opts=9)
-    loaded = TimeSeries.from_hdf(filename)
-    for key in ts_with_attrs.attrs:
-        assert ts_with_attrs.attrs[key] == loaded.attrs[key]
-    assert np.all(loaded.data == data)
-    for coord in loaded.coords:
-        assert (loaded.coords[coord] == ts_with_attrs.coords[coord]).all()
-    for n, dim in enumerate(dims):
-        assert loaded.dims[n] == dim
-    assert loaded.name == "test"
 
-    # test different containers as dims:
-    data = np.random.random((3, 7, 10, 4))
-    dims = ('time', 'recarray', 'list', 'recordarray')
-    coords = {'time': np.linspace(0, 1, 3),
-              'recarray': np.array(
-                  [(i, j, k) for i, j, k in zip(
-                      np.linspace(0, 1, 7), np.linspace(1000, 2000, 7),
-                      np.linspace(0, 1, 7))],
-                  dtype=[('field1', np.float), ('field2', np.int),
-                         ('field3', 'U20')]),
-              'list': list(np.linspace(100, 200, 10)),
-              'recordarray': np.array(
-                  [(i, j, k) for i, j, k in zip(
-                      np.linspace(0, 1, 4), np.linspace(1000, 2000, 4),
-                      np.linspace(0, 1, 4))],
-                  dtype=[('field1', np.float), ('field2', np.int),
-                         ('field3', 'U20')]).view(np.recarray)}
-    rate = 1
-    ts = TimeSeries.create(data, rate, coords=coords, dims=dims,
-                           name="container test")
-    ts.to_hdf(filename, compression='gzip', compression_opts=9)
-    with h5py.File(filename, 'r') as hfile:
-        assert "data" in hfile
-        assert "dims" in hfile
-        assert "coords" in hfile
-        assert "name" in list(hfile['/'].attrs.keys())
-        assert "ptsa_version" in hfile.attrs
-        assert "created" in hfile.attrs
-    loaded = TimeSeries.from_hdf(filename)
-    for key in ts.attrs:
-        assert ts.attrs[key] == loaded.attrs[key]
-    assert np.all(loaded.data == data)
-    for coord in loaded.coords:
-        # dtypes can be slightly differnt for recarrays:
-        assert (
-            np.array(
-                loaded.coords[coord], ts[coord].values.dtype) ==
-            ts.coords[coord]).all()
-    for coord in ts.coords:
-        # dtypes can be slightly differnt for recarrays:
-        assert (
-            np.array(
-                loaded.coords[coord], ts[coord].values.dtype) ==
-            ts.coords[coord]).all()
-    for n, dim in enumerate(dims):
-        assert loaded.dims[n] == dim
-    assert loaded.name == "container test"
+@pytest.mark.skipif(sys.version_info[0] < 3,
+                    reason="cmlreaders doesn't support legacy Python")
+class TestCMLReaders:
+    @property
+    def reader(self):
+        from cmlreaders import CMLReader
+        from ptsa.test.utils import get_rhino_root
+
+        try:
+            rootdir = get_rhino_root()
+        except OSError:
+            rootdir = None
+
+        return CMLReader("R1111M", "FR1", 0, rootdir=rootdir)
+
+    def make_eeg(self, events, rel_start, rel_stop):
+        """Fake EEG data for testing without rhino."""
+        from cmlreaders.eeg_container import EEGContainer
+
+        channels = ["CH{}".format(n) for n in range(1, 10)]
+        data = np.random.random((len(events), len(channels), rel_stop - rel_start))
+
+        container = EEGContainer(data, 1000, events=events, channels=channels)
+
+        return container
+
+    @skip_without_rhino
+    def test_hdf_rhino(self, tmpdir):
+        from cmlreaders.warnings import MultiplePathsFoundWarning
+
+        filename = str(tmpdir.join("test.h5"))
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", MultiplePathsFoundWarning)
+
+            events = self.reader.load("events")
+            ev = events[events.eegoffset > 0].sample(n=5)
+            eeg = self.reader.load_eeg(events=ev, rel_start=0, rel_stop=10)
+
+        ts = eeg.to_ptsa()
+        ts.to_hdf(filename)
+
+        ts2 = TimeSeries.from_hdf(filename)
+        assert_timeseries_equal(ts, ts2)
+
+    def test_hdf(self, tmpdir):
+        from cmlreaders.readers.readers import EventReader
+        from unittest.mock import patch
+
+        efile = osp.join(osp.dirname(__file__), "data", "R1111M_FR1_0_events.json")
+        filename = str(tmpdir.join("test.h5"))
+
+        events = EventReader.fromfile(efile, subject="R1111M", experiment="FR1")
+        ev = events[events.eegoffset > 0].sample(n=5)
+
+        rel_start, rel_stop = 0, 10
+        get_eeg = partial(self.make_eeg, ev, rel_start, rel_stop)
+
+        reader = self.reader
+
+        with patch.object(reader, "load_eeg", return_value=get_eeg()):
+            eeg = reader.load_eeg(events=ev, rel_start=0, rel_stop=10)
+
+        ts = eeg.to_ptsa()
+        ts.to_hdf(filename)
+
+        ts2 = TimeSeries.from_hdf(filename)
+        assert_timeseries_equal(ts, ts2)
+
+
+@pytest.mark.skipif(sys.version_info[0] < 3,
+                    reason="not loadable in legacy Python")
+def test_load_hdf_base64():
+    """Test that we can still load the base64-encoded HDF5 format."""
+    filename = osp.join(osp.dirname(__file__), "data", "R1111M_base64.h5")
+    ts = TimeSeries.from_hdf(filename)
+
+    assert "event" in ts.coords
+    assert len(ts.coords["event"] == 10)
+
+
+@pytest.mark.parametrize("cls,kwargs", [
+    (None, {}),
+    (ResampleFilter, {"resamplerate": 1.}),
+])
+def test_filter_with(cls, kwargs):
+    ts = TimeSeries.create(
+        np.random.random((2, 100)),
+        samplerate=10,
+        dims=("x", "time"),
+        coords={
+            "x": range(2),
+            "time": range(100),
+        }
+    )
+
+    if cls is None:
+        class MyClass(object):
+            pass
+
+        with pytest.raises(TypeError):
+            ts.filter_with(MyClass)
+    else:
+        tsf = ts.filter_with(cls, **kwargs)
+        assert isinstance(tsf, TimeSeries)
+        assert tsf.data.shape != ts.data.shape
 
 
 def test_filtered():

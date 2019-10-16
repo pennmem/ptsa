@@ -33,6 +33,7 @@ private:
     double *freqs = nullptr;
     double sample_freq = -1.0;
     size_t width = -1;
+    bool complete = true;
 
     OutputType output_type = OutputType::POWER;
 
@@ -73,10 +74,12 @@ public:
         this->sample_freq = sample_freq;
     }
 
-    void initialize_wavelet_props(size_t width, double *freqs, size_t nf) {
+    void initialize_wavelet_props(size_t width, double *freqs, size_t nf,
+          bool complete=true) {
         this->freqs = freqs;
         this->num_freq = nf;
         this->width = width;
+        this->complete = complete;
     }
 
 
