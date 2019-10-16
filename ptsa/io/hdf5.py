@@ -58,7 +58,7 @@ def load_array(hfile, where):
     if hfile[where].attrs["tabular"]:
         return load_records(hfile, where)
 
-    data = hfile[where].value
+    data = hfile[where][()]
 
     if hfile[where].attrs["string"]:
         return vdecode(data)
