@@ -10,7 +10,7 @@ from ptsa.test.utils import skip_without_rhino, get_rhino_root
 class TestTalEEG:
     def _test_eeg_with_tal_struct(self, subject, experiment, session,
                                   struct_type='mono'):
-        from ptsa.data.readers import JsonIndexReader, TalReader,
+        from ptsa.data.readers import JsonIndexReader, TalReader
         from ptsa.data.readers import EEGReader,BaseEventReader
         import os
         tal_file = 'contacts' if struct_type=='mono' else 'pairs'
