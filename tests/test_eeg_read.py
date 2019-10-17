@@ -30,7 +30,7 @@ class TestTalEEG:
         for col in tal_struct.dtype.names:
             if col != 'atlases':
                 # Because I don't want to deal with NaNs at the moment
-                if (col == 'channel') & (struct_type='bi'):
+                if (col == 'channel') & (struct_type == 'bi'):
                     assert_array_equal(np.c_[eeg[channel_name].data['channel_1'],
                                              eeg[channel_name].data['channel_2']],
                                        tal_struct[:10][col])
