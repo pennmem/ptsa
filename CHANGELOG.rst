@@ -1,6 +1,12 @@
 Changes
 =======
 
+Version 2.0.8
+-------------
+**2019-10-17**
+
+* Resolved several warnings and a test failure in EEGReader.
+
 Version 2.0.7
 -------------
 **2019-09-09**
