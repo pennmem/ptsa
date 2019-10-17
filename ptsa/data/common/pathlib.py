@@ -12,7 +12,8 @@ try:
 except ImportError:
     import dummy_threading as threading
 
-from collections import Sequence, defaultdict
+from collections.abc import Sequence
+from collections import defaultdict
 from contextlib import contextmanager
 from errno import EINVAL, ENOENT, EEXIST
 from itertools import chain, count
