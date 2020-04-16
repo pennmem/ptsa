@@ -313,7 +313,7 @@ class TimeSeries(xr.DataArray):
         return int(np.ceil(float(self['samplerate']) * duration))
 
     def filter_with(self, filter_class, **kwargs):
-        """Filter the time series data using the specified filter class.
+        """Returns a filtered time series using the specified filter class.
 
         Parameters
         ----------
@@ -373,7 +373,11 @@ class TimeSeries(xr.DataArray):
 
     def resampled(self, resampled_rate, window=None,
                   loop_axis=None, num_mp_procs=0, pad_to_pow2=False):
-        """Resamples the time series.
+        """Returns a time series Fourier resampled at resampled_rate.
+        
+        Note that Fourier resampling assumes periodicity, so edge effects can
+        arise.  Keeping a buffer of at least 1/f for the lowest frequency of
+        interest guards against this.
 
         Parameters
         ----------
@@ -433,8 +437,8 @@ class TimeSeries(xr.DataArray):
 
     def remove_buffer(self, duration):
         """
-        Remove the desired buffer duration (in seconds) and reset the
-        time range.
+        Return a timeseries with the desired buffer duration (in seconds)
+        removed and the time range reset.
 
         Parameters
         ----------
@@ -462,8 +466,9 @@ class TimeSeries(xr.DataArray):
 
     def add_mirror_buffer(self, duration):
         """
-        Adds mirrors data at both ends of the time series (up to specified
-        length/duration) and appends such buffers at both ends of the series.
+        Return a time series with mirrored data added to both ends of this
+        time series (up to specified length/duration).
+
         The new series total time duration is:
 
             ``original duration + 2 * duration * samplerate``
