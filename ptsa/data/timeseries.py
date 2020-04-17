@@ -42,7 +42,6 @@ class TimeSeries(xr.DataArray):
         Name of the time series
     attrs : dict
         Dictionary of arbitrary metadata
-    encoding : dict
     fastpath : bool
         Not used, but required when subclassing :class:`xr.DataArray`.
 
@@ -60,7 +59,7 @@ class TimeSeries(xr.DataArray):
     __slots__ = ()
     
     def __init__(self, data, coords, dims=None, name=None,
-                 attrs=None, encoding=None, fastpath=False, **kwargs):
+                 attrs=None, fastpath=False, **kwargs):
         assert 'samplerate' in coords
         super(TimeSeries, self).__init__(
             data=data, coords=coords, dims=dims,
