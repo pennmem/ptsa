@@ -58,12 +58,11 @@ class TimeSeries(xr.DataArray):
 
     __slots__ = ()
     
-    def __init__(self, data, coords, dims=None, name=None,
-                 attrs=None, fastpath=False, **kwargs):
+    def __init__(self, data, coords, dims=None, name=None, attrs=None,
+            fastpath=False, **kwargs):
         assert 'samplerate' in coords
         super(TimeSeries, self).__init__(
-            data=data, coords=coords, dims=dims,
-            name=name, attrs=attrs, encoding=encoding,
+            data=data, coords=coords, dims=dims, name=name, attrs=attrs,
             fastpath=fastpath, **kwargs)
 
     @classmethod
