@@ -1,11 +1,19 @@
 Changes
 =======
 
+Version 2.0.9
+-------------
+**2020-05-07**
+
+* Updates to conform with new xarray API.
+
+
 Version 2.0.8
 -------------
 **2019-10-17**
 
 * Resolved several warnings and a test failure in EEGReader.
+
 
 Version 2.0.7
 -------------
