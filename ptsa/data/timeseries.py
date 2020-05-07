@@ -527,6 +527,9 @@ class TimeSeries(xr.DataArray):
 
 
 class TimeSeriesX(TimeSeries):
+    
+    __slots__ = ()
+    
     def __init__(self, data, coords, dims=None, name=None,
                  attrs=None, encoding=None, fastpath=False):
         with warnings.catch_warnings():
