@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; PTSA 2.0.4 documentation</title>
+  <title>API Reference &mdash; PTSA 2.0.8 documentation</title>
   
 
   
@@ -17,34 +17,39 @@
   
 
   
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="ptsa.data" href="data.html" />
     <link rel="prev" title="Filtering Time Series" href="../filters.html" /> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -58,7 +63,7 @@
             
             
               <div class="version">
-                2.0.4
+                2.0.8
               </div>
             
           
@@ -163,18 +168,23 @@
 /* CSS overrides for sphinx_rtd_theme */
 
 /* 24px margin */
-.nbinput.nblast,
-.nboutput.nblast {
+.nbinput.nblast.container,
+.nboutput.nblast.container {
     margin-bottom: 19px;  /* padding has already 5px */
 }
 
 /* ... except between code cells! */
-.nblast + .nbinput {
+.nblast.container + .nbinput.container {
     margin-top: -19px;
 }
 
 .admonition > p:before {
     margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
 }
 </style>
 <div class="section" id="api-reference">
@@ -197,18 +207,18 @@
 </div>
 <div class="section" id="module-ptsa.filt">
 <span id="filtering"></span><h2>Filtering<a class="headerlink" href="#module-ptsa.filt" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<dl class="py function">
 <dt id="ptsa.filt.buttfilt">
-<code class="descclassname">ptsa.filt.</code><code class="descname">buttfilt</code><span class="sig-paren">(</span><em>dat</em>, <em>freq_range</em>, <em>sample_rate</em>, <em>filt_type</em>, <em>order</em>, <em>axis=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.filt.buttfilt" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">ptsa.filt.</code><code class="sig-name descname">buttfilt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dat</span></em>, <em class="sig-param"><span class="n">freq_range</span></em>, <em class="sig-param"><span class="n">sample_rate</span></em>, <em class="sig-param"><span class="n">filt_type</span></em>, <em class="sig-param"><span class="n">order</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.filt.buttfilt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper for a Butterworth filter.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="module-ptsa.helper">
 <span id="helpers"></span><h2>Helpers<a class="headerlink" href="#module-ptsa.helper" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<dl class="py function">
 <dt id="ptsa.helper.cart2pol">
-<code class="descclassname">ptsa.helper.</code><code class="descname">cart2pol</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>z=None</em>, <em>radians=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.cart2pol" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">ptsa.helper.</code><code class="sig-name descname">cart2pol</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">z</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">radians</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.cart2pol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts corresponding Cartesian coordinates x, y, and (optional) z
 to polar (or, when z is given, cylindrical) coordinates
 angle (theta), radius, and z.
@@ -216,59 +226,55 @@ By default theta is returned in radians, but will be converted
 to degrees if radians==False.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="ptsa.helper.centered">
-<code class="descclassname">ptsa.helper.</code><code class="descname">centered</code><span class="sig-paren">(</span><em>arr</em>, <em>newsize</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.centered" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">ptsa.helper.</code><code class="sig-name descname">centered</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span></em>, <em class="sig-param"><span class="n">newsize</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.centered" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the center newsize portion of the input array.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>arr</strong> (<em>{array}</em>) – Input array</li>
-<li><strong>newsize</strong> (<em>{tuple of ints}</em>) – A tuple specifing the size of the new array.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>{array}</em>) – Input array</p></li>
+<li><p><strong>newsize</strong> (<em>{tuple of ints}</em>) – A tuple specifing the size of the new array.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">A center slice into the input array</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>A center slice into the input array</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Adapted from scipy.signal.signaltools._centered</p>
+<p class="admonition-title">Note</p>
+<p>Adapted from scipy.signal.signaltools._centered</p>
 </div>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="ptsa.helper.deg2rad">
-<code class="descclassname">ptsa.helper.</code><code class="descname">deg2rad</code><span class="sig-paren">(</span><em>degrees</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.deg2rad" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">ptsa.helper.</code><code class="sig-name descname">deg2rad</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">degrees</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.deg2rad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert degrees to radians.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="ptsa.helper.getargspec">
-<code class="descclassname">ptsa.helper.</code><code class="descname">getargspec</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.getargspec" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Get the names and default values of a callable’s</dt>
-<dd>arguments</dd>
+<code class="sig-prename descclassname">ptsa.helper.</code><code class="sig-name descname">getargspec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.getargspec" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Get the names and default values of a callable’s</dt><dd><p>arguments</p>
+</dd>
 </dl>
 <p>A tuple of four things is returned: (args, varargs,
 varkw, defaults).</p>
 <blockquote>
 <div><ul class="simple">
-<li>args is a list of the argument names (it may
-contain nested lists).</li>
-<li>varargs and varkw are the names of the * and
-** arguments or None.</li>
-<li>defaults is a tuple of default argument values
+<li><p>args is a list of the argument names (it may
+contain nested lists).</p></li>
+<li><p>varargs and varkw are the names of the * and
+** arguments or None.</p></li>
+<li><p>defaults is a tuple of default argument values
 or None if there are no default arguments; if
 this tuple has n elements, they correspond to
-the last n elements listed in args.</li>
+the last n elements listed in args.</p></li>
 </ul>
 </div></blockquote>
 <p>Unlike inspect.getargspec(), can return argument
@@ -278,24 +284,24 @@ functions or methods.</p>
 <p>See <a class="reference external" href="http://kbyanc.blogspot.com/2007/07/python-more-generic-getargspec.html">http://kbyanc.blogspot.com/2007/07/python-more-generic-getargspec.html</a></p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="ptsa.helper.next_pow2">
-<code class="descclassname">ptsa.helper.</code><code class="descname">next_pow2</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.next_pow2" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">ptsa.helper.</code><code class="sig-name descname">next_pow2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.next_pow2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns p such that 2 ** p &gt;= n</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="ptsa.helper.pad_to_next_pow2">
-<code class="descclassname">ptsa.helper.</code><code class="descname">pad_to_next_pow2</code><span class="sig-paren">(</span><em>x</em>, <em>axis=0</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.pad_to_next_pow2" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">ptsa.helper.</code><code class="sig-name descname">pad_to_next_pow2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.pad_to_next_pow2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pad an array with zeros to the next power of two along the
 specified axis.</p>
 <p>Note: This is much easier with numpy version 1.7.0, which has a
 new pad method.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="ptsa.helper.pol2cart">
-<code class="descclassname">ptsa.helper.</code><code class="descname">pol2cart</code><span class="sig-paren">(</span><em>theta</em>, <em>radius</em>, <em>z=None</em>, <em>radians=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.pol2cart" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">ptsa.helper.</code><code class="sig-name descname">pol2cart</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">theta</span></em>, <em class="sig-param"><span class="n">radius</span></em>, <em class="sig-param"><span class="n">z</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">radians</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.pol2cart" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts corresponding angles (theta), radii, and (optional) height (z)
 from polar (or, when height is given, cylindrical) coordinates
 to Cartesian coordinates x, y, and z.
@@ -303,21 +309,21 @@ Theta is assumed to be in radians, but will be converted
 from degrees if radians==False.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="ptsa.helper.rad2deg">
-<code class="descclassname">ptsa.helper.</code><code class="descname">rad2deg</code><span class="sig-paren">(</span><em>radians</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.rad2deg" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">ptsa.helper.</code><code class="sig-name descname">rad2deg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">radians</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.rad2deg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert radians to degrees.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="ptsa.helper.reshape_from_2d">
-<code class="descclassname">ptsa.helper.</code><code class="descname">reshape_from_2d</code><span class="sig-paren">(</span><em>data</em>, <em>axis</em>, <em>dshape</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.reshape_from_2d" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">ptsa.helper.</code><code class="sig-name descname">reshape_from_2d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">axis</span></em>, <em class="sig-param"><span class="n">dshape</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.reshape_from_2d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reshape data from 2D back to specified dshape.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="ptsa.helper.reshape_to_2d">
-<code class="descclassname">ptsa.helper.</code><code class="descname">reshape_to_2d</code><span class="sig-paren">(</span><em>data</em>, <em>axis</em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.reshape_to_2d" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">ptsa.helper.</code><code class="sig-name descname">reshape_to_2d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">axis</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.helper.reshape_to_2d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reshape data to 2D with specified axis as the 2nd dimension.</p>
 </dd></dl>
 
@@ -335,7 +341,7 @@ from degrees if radians==False.</p>
         <a href="data.html" class="btn btn-neutral float-right" title="ptsa.data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../filters.html" class="btn btn-neutral" title="Filtering Time Series" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../filters.html" class="btn btn-neutral float-left" title="Filtering Time Series" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -344,7 +350,7 @@ from degrees if radians==False.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018.
+        &copy; Copyright 2020
 
     </p>
   </div>
@@ -361,33 +367,16 @@ from degrees if radians==False.</p>
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'2.0.4',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

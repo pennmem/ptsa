@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Interacting with RAM Data &mdash; PTSA 2.0.4 documentation</title>
+  <title>Interacting with RAM Data &mdash; PTSA 2.0.8 documentation</title>
   
 
   
@@ -17,34 +17,39 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Filtering Time Series" href="filters.html" />
     <link rel="prev" title="Reading EEG Data from events" href="examples/eeg.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -58,7 +63,7 @@
             
             
               <div class="version">
-                2.0.4
+                2.0.8
               </div>
             
           
@@ -164,25 +169,30 @@
 /* CSS overrides for sphinx_rtd_theme */
 
 /* 24px margin */
-.nbinput.nblast,
-.nboutput.nblast {
+.nbinput.nblast.container,
+.nboutput.nblast.container {
     margin-bottom: 19px;  /* padding has already 5px */
 }
 
 /* ... except between code cells! */
-.nblast + .nbinput {
+.nblast.container + .nbinput.container {
     margin-top: -19px;
 }
 
 .admonition > p:before {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
 </style>
 <div class="section" id="interacting-with-ram-data">
 <span id="ramdata"></span><h1>Interacting with RAM Data<a class="headerlink" href="#interacting-with-ram-data" title="Permalink to this headline">¶</a></h1>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This section utilizes many deprecated ways of using PTSA so may not work as
+<p class="admonition-title">Warning</p>
+<p>This section utilizes many deprecated ways of using PTSA so may not work as
 expected. Future versions of PTSA will not know how to load data specific to
 a particular experiment, instead outsourcing that functionality to other
 tools.</p>
@@ -206,7 +216,7 @@ to remove all the event entries that do not have valid EEG file associated with 
 function and select only those events that are ot <code class="docutils literal notranslate"><span class="pre">type</span></code> “WORD”</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">e_path</span> <span class="o">=</span> <span class="s1">&#39;/Volumes/rhino_root/data/events/RAM_FR1/R1111M_events.mat&#39;</span>
 <span class="c1"># ------------------- READING EVENTS</span>
-<span class="n">base_e_reader</span> <span class="o">=</span> <span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">e_path</span><span class="p">,</span> <span class="n">eliminate_events_with_no_eeg</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">base_e_reader</span> <span class="o">=</span> <span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">e_path</span><span class="p">,</span> <span class="n">eliminate_events_with_no_eeg</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">base_events</span> <span class="o">=</span> <span class="n">base_e_reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 <span class="n">base_events</span> <span class="o">=</span> <span class="n">base_events</span><span class="p">[</span><span class="n">base_events</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;WORD&#39;</span><span class="p">]</span>
 </pre></div>
@@ -251,7 +261,7 @@ want to “normalize” path (<em>i.e.</em> replace <code class="docutils litera
 <span class="n">e_path</span> <span class="o">=</span> <span class="s1">&#39;/Volumes/rhino_root/data/events/RAM_FR1/R1111M_events.mat&#39;</span>
 <span class="c1"># ------------------- READING EVENTS</span>
 <span class="n">base_e_reader</span> <span class="o">=</span> <span class="n">CMLEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">e_path</span><span class="p">,</span>
-                              <span class="n">normalize_eeg_path</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                              <span class="n">normalize_eeg_path</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                               <span class="n">eeg_fname_search_pattern</span><span class="o">=</span><span class="s1">&#39;eeg.reref&#39;</span><span class="p">,</span>
                               <span class="n">eeg_fname_replace_pattern</span><span class="o">=</span><span class="s1">&#39;eeg.noreref&#39;</span>
 <span class="p">)</span>
@@ -321,7 +331,7 @@ monopolar contact, using the values “bi” and “mono”; the default is “b
 </pre></div>
 </div>
 <p>This is not the most infromative output so it is best to first check what columns are available in the <code class="docutils literal notranslate"><span class="pre">tal_structs</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span> <span class="n">tal_structs</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span> <span class="n">tal_structs</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
 </pre></div>
 </div>
 <p>for which you get an output</p>
@@ -348,7 +358,7 @@ monopolar contact, using the values “bi” and “mono”; the default is “b
 </pre></div>
 </div>
 <p>At this point we can print single columns e.g. <code class="docutils literal notranslate"><span class="pre">channel</span></code> and <code class="docutils literal notranslate"><span class="pre">tagName</span></code></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span> <span class="n">tal_structs</span><span class="p">[[</span><span class="s1">&#39;channel&#39;</span><span class="p">,</span><span class="s1">&#39;tagName&#39;</span><span class="p">]]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span> <span class="n">tal_structs</span><span class="p">[[</span><span class="s1">&#39;channel&#39;</span><span class="p">,</span><span class="s1">&#39;tagName&#39;</span><span class="p">]]</span>
 </pre></div>
 </div>
 <p>that outputs</p>
@@ -368,9 +378,9 @@ that extract a list of individual channel numbers and a list of bipolar pairs.</
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
+<p class="admonition-title">Note</p>
 <p>You can also extract bipolar pairs by typing:</p>
-<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tal_structs</span><span class="p">[</span><span class="s1">&#39;channel&#39;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tal_structs</span><span class="p">[</span><span class="s1">&#39;channel&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -422,7 +432,7 @@ that extract a list of individual channel numbers and a list of bipolar pairs.</
         <a href="filters.html" class="btn btn-neutral float-right" title="Filtering Time Series" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="examples/eeg.html" class="btn btn-neutral" title="Reading EEG Data from events" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="examples/eeg.html" class="btn btn-neutral float-left" title="Reading EEG Data from events" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -431,7 +441,7 @@ that extract a list of individual channel numbers and a list of bipolar pairs.</
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018.
+        &copy; Copyright 2020
 
     </p>
   </div>
@@ -448,33 +458,16 @@ that extract a list of individual channel numbers and a list of bipolar pairs.</
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'2.0.4',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
