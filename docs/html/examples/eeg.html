@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Reading EEG Data from events &mdash; PTSA 2.0.4 documentation</title>
+  <title>Reading EEG Data from events &mdash; PTSA 2.0.8 documentation</title>
   
 
   
@@ -17,34 +17,39 @@
   
 
   
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Interacting with RAM Data" href="../ramdata.html" />
     <link rel="prev" title="Getting started with timeseries" href="getting_started.html" /> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -58,7 +63,7 @@
             
             
               <div class="version">
-                2.0.4
+                2.0.8
               </div>
             
           
@@ -168,16 +173,16 @@
 /* CSS for nbsphinx extension */
 
 /* remove conflicting styling from Sphinx themes */
-div.nbinput,
-div.nbinput div.prompt,
-div.nbinput div.input_area,
-div.nbinput div[class*=highlight],
-div.nbinput div[class*=highlight] pre,
-div.nboutput,
-div.nbinput div.prompt,
-div.nbinput div.output_area,
-div.nboutput div[class*=highlight],
-div.nboutput div[class*=highlight] pre {
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
     background: none;
     border: none;
     padding: 0 0;
@@ -186,13 +191,13 @@ div.nboutput div[class*=highlight] pre {
 }
 
 /* avoid gaps between output lines */
-div.nboutput div[class*=highlight] pre {
+div.nboutput.container div[class*=highlight] pre {
     line-height: normal;
 }
 
 /* input/output containers */
-div.nbinput,
-div.nboutput {
+div.nbinput.container,
+div.nboutput.container {
     display: -webkit-flex;
     display: flex;
     align-items: flex-start;
@@ -200,92 +205,91 @@ div.nboutput {
     width: 100%;
 }
 @media (max-width: 540px) {
-    div.nbinput,
-    div.nboutput {
+    div.nbinput.container,
+    div.nboutput.container {
         flex-direction: column;
     }
 }
 
 /* input container */
-div.nbinput {
+div.nbinput.container {
     padding-top: 5px;
 }
 
 /* last container */
-div.nblast {
+div.nblast.container {
     padding-bottom: 5px;
 }
 
 /* input prompt */
-div.nbinput div.prompt pre {
-    color: #303F9F;
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
 }
 
 /* output prompt */
-div.nboutput div.prompt pre {
-    color: #D84315;
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
 }
 
 /* all prompts */
-div.nbinput div.prompt,
-div.nboutput div.prompt {
-    min-width: 8ex;
-    padding-top: 0.4em;
-    padding-right: 0.4em;
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
     text-align: right;
     flex: 0;
 }
 @media (max-width: 540px) {
-    div.nbinput div.prompt,
-    div.nboutput div.prompt {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
         text-align: left;
         padding: 0.4em;
     }
-    div.nboutput div.prompt.empty {
+    div.nboutput.container div.prompt.empty {
         padding: 0;
     }
 }
 
 /* disable scrollbars on prompts */
-div.nbinput div.prompt pre,
-div.nboutput div.prompt pre {
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
     overflow: hidden;
 }
 
 /* input/output area */
-div.nbinput div.input_area,
-div.nboutput div.output_area {
-    padding: 0.4em;
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
     -webkit-flex: 1;
     flex: 1;
     overflow: auto;
 }
 @media (max-width: 540px) {
-    div.nbinput div.input_area,
-    div.nboutput div.output_area {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
         width: 100%;
     }
 }
 
 /* input area */
-div.nbinput div.input_area {
-    border: 1px solid #cfcfcf;
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f7f7f7;
+    background: #f5f5f5;
 }
 
 /* override MathJax center alignment in output cells */
-div.nboutput div[class*=MathJax] {
+div.nboutput.container div[class*=MathJax] {
     text-align: left !important;
 }
 
-/* override sphinx.ext.pngmath center alignment in output cells */
-div.nboutput div.math p {
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
     text-align: left;
 }
 
 /* standard error */
-div.nboutput div.output_area.stderr {
+div.nboutput.container div.output_area.stderr {
     background: #fdd;
 }
 
@@ -329,37 +333,90 @@ div.nboutput div.output_area.stderr {
 .ansi-bold { font-weight: bold; }
 .ansi-underline { text-decoration: underline; }
 
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
 /* CSS overrides for sphinx_rtd_theme */
 
 /* 24px margin */
-.nbinput.nblast,
-.nboutput.nblast {
+.nbinput.nblast.container,
+.nboutput.nblast.container {
     margin-bottom: 19px;  /* padding has already 5px */
 }
 
 /* ... except between code cells! */
-.nblast + .nbinput {
+.nblast.container + .nbinput.container {
     margin-top: -19px;
 }
 
 .admonition > p:before {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
 </style>
 <div class="section" id="Reading-EEG-Data-from-events">
 <h1>Reading EEG Data from events<a class="headerlink" href="#Reading-EEG-Data-from-events" title="Permalink to this headline">¶</a></h1>
-<p>Each events array has an <code class="docutils literal notranslate"><span class="pre">eegfile</span></code> field, which points to the
-directory that contains the associated EEG files. To read this data, you
-use the EEGReader class.</p>
-<p>Two other important classes for loading EEG data are the TalReader
-class, which loads information about the electrodes in ECoG subjects,
-and the MonopolarToBipolarMapper, which performs a bipolar rereferencing
-on ECoG data.</p>
-<p>This notebook will go over loading EEG data from the three different CML
-formats.</p>
+<p>Each events array has an <code class="docutils literal notranslate"><span class="pre">eegfile</span></code> field, which points to the directory that contains the associated EEG files. To read this data, you use the EEGReader class.</p>
+<p>Two other important classes for loading EEG data are the TalReader class, which loads information about the electrodes in ECoG subjects, and the MonopolarToBipolarMapper, which performs a bipolar rereferencing on ECoG data.</p>
+<p>This notebook will go over loading EEG data from the three different CML formats.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
@@ -368,38 +425,28 @@ formats.</p>
 <span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">TalReader</span>
 <span class="kn">from</span> <span class="nn">ptsa.data.filters</span> <span class="kn">import</span> <span class="n">MonopolarToBipolarMapper</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="n">rhino_root</span><span class="o">=</span><span class="s1">&#39;/Volumes/rhino_root&#39;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="1.-pyFR-data-(and-old-RAM-data)">
 <h2>1. pyFR data (and old RAM data)<a class="headerlink" href="#1.-pyFR-data-(and-old-RAM-data)" title="Permalink to this headline">¶</a></h2>
-<p>First, we load the events, which are found on rhino in
-<code class="docutils literal notranslate"><span class="pre">/data/events/pyFR</span></code>:</p>
+<p>First, we load the events, which are found on rhino in <code class="docutils literal notranslate"><span class="pre">/data/events/pyFR</span></code>:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">events</span> <span class="o">=</span> <span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">rhino_root</span><span class="o">+</span><span class="s1">&#39;/data/events/pyFR/BW001_events.mat&#39;</span><span class="p">,</span><span class="n">use_reref_eeg</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span></span><span class="n">events</span> <span class="o">=</span> <span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">rhino_root</span><span class="o">+</span><span class="s1">&#39;/data/events/pyFR/BW001_events.mat&#39;</span><span class="p">,</span><span class="n">use_reref_eeg</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 <span class="n">words</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="o">.</span><span class="n">type</span><span class="o">==</span><span class="s1">&#39;WORD&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
-<p>Next, we use the TalReader class to get information about the subject’s
-electrodes.</p>
-<p>Like the other readers, the TalReader class has a <code class="docutils literal notranslate"><span class="pre">read()</span></code> method that
-will return a record array; this one contains information about the
-location of each electrode. However, we’re really only interested in two
-things: each electrode’s number, and which electrodes are adjacent to
-each other. Therefore, TalReader has two convenience methods,
-<code class="docutils literal notranslate"><span class="pre">get_monopolar_channels</span></code> and <code class="docutils literal notranslate"><span class="pre">get_bipolar_pairs</span></code>, specifically for
-this purpose.</p>
+<p>Next, we use the TalReader class to get information about the subject’s electrodes.</p>
+<p>Like the other readers, the TalReader class has a <code class="docutils literal notranslate"><span class="pre">read()</span></code> method that will return a record array; this one contains information about the location of each electrode. However, we’re really only interested in two things: each electrode’s number, and which electrodes are adjacent to each other. Therefore, TalReader has two convenience methods, <code class="docutils literal notranslate"><span class="pre">get_monopolar_channels</span></code> and <code class="docutils literal notranslate"><span class="pre">get_bipolar_pairs</span></code>, specifically for this purpose.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
@@ -419,12 +466,12 @@ bpTalStruct
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>array([&#39;001&#39;, &#39;002&#39;, &#39;003&#39;, &#39;004&#39;, &#39;005&#39;, &#39;006&#39;, &#39;007&#39;, &#39;008&#39;, &#39;009&#39;,
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([&#39;001&#39;, &#39;002&#39;, &#39;003&#39;, &#39;004&#39;, &#39;005&#39;, &#39;006&#39;, &#39;007&#39;, &#39;008&#39;, &#39;009&#39;,
        &#39;010&#39;, &#39;011&#39;, &#39;012&#39;, &#39;013&#39;, &#39;014&#39;, &#39;015&#39;, &#39;016&#39;, &#39;017&#39;, &#39;018&#39;,
        &#39;019&#39;, &#39;020&#39;, &#39;021&#39;, &#39;022&#39;, &#39;023&#39;, &#39;024&#39;, &#39;025&#39;, &#39;026&#39;, &#39;027&#39;,
        &#39;028&#39;, &#39;029&#39;, &#39;030&#39;, &#39;031&#39;, &#39;032&#39;, &#39;033&#39;, &#39;034&#39;, &#39;035&#39;, &#39;036&#39;,
@@ -432,34 +479,25 @@ bpTalStruct
        &#39;046&#39;, &#39;047&#39;, &#39;048&#39;, &#39;049&#39;, &#39;050&#39;, &#39;051&#39;, &#39;052&#39;, &#39;053&#39;, &#39;054&#39;,
        &#39;055&#39;, &#39;056&#39;, &#39;057&#39;, &#39;058&#39;, &#39;059&#39;, &#39;060&#39;, &#39;061&#39;, &#39;062&#39;, &#39;063&#39;, &#39;064&#39;],
       dtype=&#39;|S3&#39;)
-</pre></div>
+</pre></div></div>
 </div>
-</div>
-<p>Note the format of the channel array: a numpy array of 3-character
-strings. These are literally the suffixes of binary files, telling the
-EEGReader which files to load.</p>
-<p>To load the EEG data into memory, we give the EEGReader the events and
-channels we want to load, and the time around each event that we are
-interested in. There is also a <code class="docutils literal notranslate"><span class="pre">buffer_time</span></code> parameter, that will add
-a buffer period to the timeseries we load at the beginning and the end.
-If you add a buffer period, you should remove it afterwards with
-<code class="docutils literal notranslate"><span class="pre">remove_buffer()</span></code>.</p>
+<p>Note the format of the channel array: a numpy array of 3-character strings. These are literally the suffixes of binary files, telling the EEGReader which files to load.</p>
+<p>To load the EEG data into memory, we give the EEGReader the events and channels we want to load, and the time around each event that we are interested in. There is also a <code class="docutils literal notranslate"><span class="pre">buffer_time</span></code> parameter, that will add a buffer period to the timeseries we load at the beginning and the end. If you add a buffer period, you should remove it afterwards with <code class="docutils literal notranslate"><span class="pre">remove_buffer()</span></code>.</p>
 <p>All of these use time in seconds as their unit.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">eeg</span> <span class="o">=</span> <span class="n">EEGReader</span><span class="p">(</span><span class="n">events</span><span class="o">=</span><span class="n">events</span><span class="p">,</span><span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">,</span><span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">end_time</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="n">eeg</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">eeg</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="stderr output_area docutils container">
+<div class="output_area stderr docutils container">
 <div class="highlight"><pre>
 /Users/leond/miniconda2/envs/ptsa/lib/python2.7/site-packages/ptsa/data/readers/ParamsReader.py:112: RuntimeWarning: Did not find &#34;gain&#34; in the params.txt file. Assuming gain=1.0
   warnings.warn(&#39;Did not find &#34;gain&#34; in the params.txt file. Assuming gain=1.0&#39;, RuntimeWarning)
@@ -531,15 +569,10 @@ Attributes:
     gain: 1.0
 </pre></div></div>
 </div>
-<p>The EEGReader returns a TimeSeriesX object, which is a subclass of
-xarray.DataArray. The DataArray class provides an interface for
-multi-dimensional arrays with labelled axes; the TimeSeriesX object adds
-some additional convenience methods.</p>
-<p>As an example of one might use a DataArray, let’s plot the average
-voltage across all channels and events.</p>
+<p>The EEGReader returns a TimeSeriesX object, which is a subclass of xarray.DataArray. The DataArray class provides an interface for multi-dimensional arrays with labelled axes; the TimeSeriesX object adds some additional convenience methods.</p>
+<p>As an example of one might use a DataArray, let’s plot the average voltage across all channels and events.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
@@ -548,14 +581,13 @@ voltage across all channels and events.</p>
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>[&lt;matplotlib.lines.Line2D at 0x1162bfad0&gt;]
-</pre></div>
-</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&lt;matplotlib.lines.Line2D at 0x1162bfad0&gt;]
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
@@ -565,15 +597,14 @@ voltage across all channels and events.</p>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">print</span><span class="p">(</span><span class="n">eeg</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
-<span class="k">print</span>
-<span class="k">print</span>
-<span class="k">print</span><span class="p">(</span><span class="n">eeg</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">eeg</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+<span class="nb">print</span>
+<span class="nb">print</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">eeg</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -592,17 +623,10 @@ Coordinates:
 OrderedDict([(&#39;samplerate&#39;, 200.0), (&#39;gain&#39;, 1.0)])
 </pre></div></div>
 </div>
-<p>“Data Coordinates” are marked with a star, and correspond to axes of our
-array. Other coordinates are not aligned to the data, but do persist
-under certain transformations.</p>
-<p>With ECoG data, it is usually more informative to look not at the
-voltage at each electrode, but at the difference across adjacent
-electrodes. The MonopolarToBipolarMapper class takes a list of which
-pairs are adjacent to each other, and returns a TimeSeriesX with the
-‘channels’ dimension replaced by ‘bipolar_pairs’.</p>
+<p>“Data Coordinates” are marked with a star, and correspond to axes of our array. Other coordinates are not aligned to the data, but do persist under certain transformations.</p>
+<p>With ECoG data, it is usually more informative to look not at the voltage at each electrode, but at the difference across adjacent electrodes. The MonopolarToBipolarMapper class takes a list of which pairs are adjacent to each other, and returns a TimeSeriesX with the ‘channels’ dimension replaced by ‘bipolar_pairs’.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
@@ -613,12 +637,12 @@ pairs are adjacent to each other, and returns a TimeSeriesX with the
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>&lt;xarray.TimeSeriesX (bipolar_pairs: 72, events: 444, time: 200)&gt;
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;xarray.TimeSeriesX (bipolar_pairs: 72, events: 444, time: 200)&gt;
 array([[[ -91.,  -93.,  -97., ...,   17.,   33.,   10.],
         [-199., -189., -183., ...,  -59.,   -7.,   68.],
         [ -54.,  -55., -121., ...,  246.,  232.,  215.],
@@ -675,12 +699,10 @@ Coordinates:
 Attributes:
     samplerate: 200.0
     gain: 1.0
-</pre></div>
-</div>
+</pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
@@ -689,14 +711,13 @@ Attributes:
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>[&lt;matplotlib.lines.Line2D at 0x11596a7d0&gt;]
-</pre></div>
-</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&lt;matplotlib.lines.Line2D at 0x11596a7d0&gt;]
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
@@ -705,12 +726,9 @@ Attributes:
 <img alt="../_images/examples_eeg_13_1.png" src="../_images/examples_eeg_13_1.png" />
 </div>
 </div>
-<p>We can use the <code class="docutils literal notranslate"><span class="pre">sel</span></code> method of DataArrays to filter the timeseries
-under consideration; for example, we can only look at the events of type
-“WORD”:</p>
+<p>We can use the <code class="docutils literal notranslate"><span class="pre">sel</span></code> method of DataArrays to filter the timeseries under consideration; for example, we can only look at the events of type “WORD”:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
@@ -719,14 +737,13 @@ under consideration; for example, we can only look at the events of type
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>[&lt;matplotlib.lines.Line2D at 0x1162587d0&gt;]
-</pre></div>
-</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&lt;matplotlib.lines.Line2D at 0x1162587d0&gt;]
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
@@ -735,12 +752,9 @@ under consideration; for example, we can only look at the events of type
 <img alt="../_images/examples_eeg_15_1.png" src="../_images/examples_eeg_15_1.png" />
 </div>
 </div>
-<p>This data seems like it’s heavily contaminated by 60 Hz line noise. We
-can use the <code class="docutils literal notranslate"><span class="pre">filtered</span></code> method to filter out the 60 Hz component of the
-signal:</p>
+<p>This data seems like it’s heavily contaminated by 60 Hz line noise. We can use the <code class="docutils literal notranslate"><span class="pre">filtered</span></code> method to filter out the 60 Hz component of the signal:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
@@ -749,14 +763,13 @@ signal:</p>
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>[&lt;matplotlib.lines.Line2D at 0x116b1cbd0&gt;]
-</pre></div>
-</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&lt;matplotlib.lines.Line2D at 0x116b1cbd0&gt;]
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
@@ -768,12 +781,9 @@ signal:</p>
 </div>
 <div class="section" id="2.-RAM-data-(new)">
 <h2>2. RAM data (new)<a class="headerlink" href="#2.-RAM-data-(new)" title="Permalink to this headline">¶</a></h2>
-<p>The new system for storing the RAM data stores the information about
-each subject’s electrode montage in a file <code class="docutils literal notranslate"><span class="pre">pairs.json</span></code>, which we can
-find using a JsonIndexReader</p>
+<p>The new system for storing the RAM data stores the information about each subject’s electrode montage in a file <code class="docutils literal notranslate"><span class="pre">pairs.json</span></code>, which we can find using a JsonIndexReader</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
@@ -787,11 +797,9 @@ find using a JsonIndexReader</p>
 </pre></div>
 </div>
 </div>
-<p>Once we have this path, we can create a TalReader object with it, and
-use that to load the list of channels and the list of bipolar pairs</p>
+<p>Once we have this path, we can create a TalReader object with it, and use that to load the list of channels and the list of bipolar pairs</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
@@ -803,27 +811,25 @@ use that to load the list of channels and the list of bipolar pairs</p>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Coordinates:
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Coordinates:
   * channels    (channels) |S3 &#39;001&#39; &#39;002&#39; &#39;003&#39; &#39;004&#39; &#39;005&#39; &#39;006&#39; &#39;007&#39; ...
     samplerate  float64 500.0
   * events      (events) (numpy.record, [(&#39;session&#39;, &#39;&lt;i8&#39;), (&#39;eegoffset&#39;, &#39;&lt;i8&#39;), (&#39;protocol&#39;, &#39;S256&#39;), (&#39;intrusion&#39;, &#39;&lt;i8&#39;), (&#39;item_name&#39;, &#39;S256&#39;), (&#39;serialpos&#39;, &#39;&lt;i8&#39;), (&#39;rectime&#39;, &#39;&lt;i8&#39;), (&#39;stim_params&#39;, &#39;&lt;f8&#39;, (0,)), (&#39;list&#39;, &#39;&lt;i8&#39;), (&#39;subject&#39;, &#39;S256&#39;), (&#39;eegfile&#39;, &#39;S256&#39;), (&#39;montage&#39;, &#39;S256&#39;), (&#39;experiment&#39;, &#39;S256&#39;), (&#39;recalled&#39;, &#39;&lt;i8&#39;), (&#39;msoffset&#39;, &#39;&lt;i8&#39;), (&#39;stim_list&#39;, &#39;&lt;i8&#39;), (&#39;item_num&#39;, &#39;&lt;i8&#39;), (&#39;mstime&#39;, &#39;&lt;i8&#39;), (&#39;is_stim&#39;, &#39;&lt;i8&#39;), (&#39;type&#39;, &#39;S256&#39;), (&#39;exp_version&#39;, &#39;S256&#39;)]) (2, 183362, &#39;r1&#39;, -999, &#39;JUICE&#39;, 1, -999, array([], dtype=float64), 1, &#39;R1111M&#39;, &#39;/Volumes/rhino_root/protocols/r1/subjects/R1111M/experiments/FR1/sessions/2/ephys/current_processed/noreref/R1111M_FR1_2_26Jan16_1408&#39;, &#39;0.0&#39;, &#39;FR1&#39;, 0, 1, 0, 138, 1453836066458, 0, &#39;WORD&#39;, &#39;1.05&#39;) ...
   * time        (time) float64 0.0 0.002 0.004 0.006 0.008 0.01 0.012 0.014 ...
-</pre></div>
-</div>
+</pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">bipolar_eeg</span><span class="o">=</span> <span class="n">MonopolarToBipolarMapper</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">eeg</span><span class="p">,</span><span class="n">bipolar_pairs</span><span class="o">=</span><span class="n">tal_reader</span><span class="o">.</span><span class="n">get_bipolar_pairs</span><span class="p">())</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;bipolar_pairs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -841,14 +847,13 @@ Coordinates:
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>[&lt;matplotlib.lines.Line2D at 0x1167ecd10&gt;]
-</pre></div>
-</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&lt;matplotlib.lines.Line2D at 0x1167ecd10&gt;]
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
@@ -860,37 +865,26 @@ Coordinates:
 </div>
 <div class="section" id="3.-LTPFR/LTPFR2">
 <h2>3. LTPFR/LTPFR2<a class="headerlink" href="#3.-LTPFR/LTPFR2" title="Permalink to this headline">¶</a></h2>
-<p>There are two main differences between reading scalp data and reading
-ECoG data. The first is that scalp data are usually rereferenced so that
-the data are relative to the average over all electrodes. This helps to
-eliminate artifacts due to muscle movement. To load the referenced data,
-we pass set the parameter <code class="docutils literal notranslate"><span class="pre">use_reref_eeg</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> when reading the
-events.</p>
+<p>There are two main differences between reading scalp data and reading ECoG data. The first is that scalp data are usually rereferenced so that the data are relative to the average over all electrodes. This helps to eliminate artifacts due to muscle movement. To load the referenced data, we pass set the parameter <code class="docutils literal notranslate"><span class="pre">use_reref_eeg</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> when reading the events.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">events</span> <span class="o">=</span> <span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">rhino_root</span><span class="o">+</span><span class="s1">&#39;/data/eeg/scalp/ltp/ltpFR2/behavioral/events/events_all_LTP093.mat&#39;</span><span class="p">,</span>
-                         <span class="n">use_reref_eeg</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">common_root</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                         <span class="n">use_reref_eeg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">common_root</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 <span class="n">words</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="o">.</span><span class="n">type</span><span class="o">==</span><span class="s1">&#39;WORD&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
-<p>The second difference between reading scalp EEG data and ECoG data is
-that the scalp experiments have a fixed set of electrodes. We therefore
-construct the array of channel labels ourselves, rather than reading it
-with a TalReader.</p>
-<p>The scalp EEG in the CML lab has 128 channels, but for purposes of speed
-we’ll only load a few of them.</p>
+<p>The second difference between reading scalp EEG data and ECoG data is that the scalp experiments have a fixed set of electrodes. We therefore construct the array of channel labels ourselves, rather than reading it with a TalReader.</p>
+<p>The scalp EEG in the CML lab has 128 channels, but for purposes of speed we’ll only load a few of them.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">channels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;{:03}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">)])</span>
+<span></span><span class="n">channels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{:03}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">)])</span>
 <span class="n">channels</span>
 </pre></div>
 </div>
@@ -898,15 +892,14 @@ we’ll only load a few of them.</p>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>array([&#39;020&#39;, &#39;021&#39;, &#39;022&#39;, &#39;023&#39;, &#39;024&#39;, &#39;025&#39;, &#39;026&#39;, &#39;027&#39;, &#39;028&#39;, &#39;029&#39;],
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([&#39;020&#39;, &#39;021&#39;, &#39;022&#39;, &#39;023&#39;, &#39;024&#39;, &#39;025&#39;, &#39;026&#39;, &#39;027&#39;, &#39;028&#39;, &#39;029&#39;],
       dtype=&#39;|S3&#39;)
-</pre></div>
-</div>
+</pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
@@ -929,7 +922,7 @@ we’ll only load a few of them.</p>
         <a href="../ramdata.html" class="btn btn-neutral float-right" title="Interacting with RAM Data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="getting_started.html" class="btn btn-neutral" title="Getting started with timeseries" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting started with timeseries" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -938,7 +931,7 @@ we’ll only load a few of them.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018.
+        &copy; Copyright 2020
 
     </p>
   </div>
@@ -955,33 +948,16 @@ we’ll only load a few of them.</p>
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'2.0.4',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

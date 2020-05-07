@@ -115,53 +115,8 @@ directory is guessed based on common mount points.
 Building conda packages
 -----------------------
 
-If you don't already have it installed, you'll need to install the conda build
-tool:
+See separte HOW_TO_RELEASE.md document!
 
-.. code-block:: shell-session
-
-    conda install conda-build
-
-Update the version number in ``conda.recipe/meta.yaml``.
-
-Build packages with:
-
-.. code-block:: shell-session
-
-   conda build conda.recipe
-
-To allow uploads you need to install anaconda-client:
-
-.. code-block:: shell-session
-
-    conda install anaconda-client
-
-After that installing ``anaconda-client`` you need to to provide your anaconda.io login credentials:
-
-.. code-block:: shell-session
-
-    anaconda login
-
-At this point you will be ready to upload newly built conda PTSA packages.
-After the build is successfully completed you go to the directory where package tarballs have been generated
-and type:
-
-.. code-block:: shell-session
-
-    anaconda upload --user pennmem ./ptsa-*.tar.bz2
-
-**Hint:**  conda packages will be most likely generated in ``<conda installation dir>/conda-bld/<architecture_folder>``
-where ``<architecture folder>`` denotes name of the arget architecture for which conda package was build. e.g. on 64-bit
-Windows the architecture folder will be called ``win-64`` (hence conda packages will be generated in
-``<conda installation dir>/conda-bld/win-64``
-
-Hints for Windows
-^^^^^^^^^^^^^^^^^
-
-You'll want to install Microsoft Visual Studio 2015 (or newer) community edition
-in order to compile extensions. For environment variables to be setup correctly,
-use the "Developer Command Prompt for VS20xy" which can be found for example
-in ``Start->All Programs->Visual Studio 2015->Visual Studio Tools``.
 
 License
 -------
