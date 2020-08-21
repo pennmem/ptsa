@@ -18,7 +18,7 @@ parser.add_argument("--no-build", action="store_true",
                     help="don't build conda packages")
 parser.add_argument("--no-convert", action="store_true",
                     help="don't run conda convert")
-parser.add_argument("--python", "-p", nargs="+", default=['3.6','3.7'],
+parser.add_argument("--python", "-p", nargs="+", default=['3.6','3.7','3.8'],
                     help="python versions to build for (otherwise build all)")
 parser.add_argument("--upload", action="store_true")
 
