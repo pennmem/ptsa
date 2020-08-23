@@ -6,7 +6,6 @@ Version 2.0.10
 **2020-08-21**
 
 * Drop extra conda dependencies.
-* Add Python 3.8 support.
 
 Version 2.0.9
 -------------
