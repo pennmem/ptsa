@@ -7,6 +7,13 @@ The following steps should be taken when making an "official" release:
 2. Run tests, make sure they pass.
 3. Increment the version number in `ptsa/__init__.py` and push & commit `staging' branch.
 5. Build conda packages on Mac, Linux, Windows: `python maint/build.py`
+   - Note:  There is a problem with current (2020-08) conda versions where
+     python_abi is automatically added as a dependency at build, and this is
+     breaking upgrades in many environments.  This can be resolved by opening
+     the tar.bz2 files, and removing the python_abi lines from info/index.json
+     and info/recipe/meta.yaml (2 of them).  Then recompress it into a tar.bz2
+     of the same name and upload.  Delete this note when this problem is
+     resolved.
 6. Upload to Anaconda Cloud: `anaconda upload --user pennmem ./ptsa-*.tar.bz2`.
    This needs to be done from the directory where the tarballs are emitted.
 7. Rebuild documentation: `python maint/build_docs.py`, commit and push.
