@@ -122,7 +122,7 @@ class TimeSeries(xr.DataArray):
             root = hfile['/']
 
             if self.name is not None:
-                root.attrs['name'] = self.name.encode()
+                root.attrs['name'] = self.name
 
             if self.attrs is not None:
                 root.attrs['attrs'] = json.dumps(self.attrs).encode()
@@ -163,8 +163,8 @@ class TimeSeries(xr.DataArray):
             coords[name] = coord
 
         name = root.attrs.get('name', None)
-        if name is not None:
-            name = name.decode()
+        #if name is not None:
+        #    name = name.decode()
 
         attrs = root.attrs.get('attrs', None)
         if attrs is not None:
@@ -191,8 +191,8 @@ class TimeSeries(xr.DataArray):
         dims = [dim.decode() for dim in hfile["dims"][:]]
 
         name = root.attrs.get("name", None)
-        if name is not None:
-            name = name.decode()
+        #if name is not None:
+        #    name = name.decode()
 
         attrs = root.attrs.get("attrs", None)
         if attrs is not None:
