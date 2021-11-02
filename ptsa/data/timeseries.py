@@ -109,7 +109,7 @@ class TimeSeries(xr.DataArray):
         with h5py.File(filename, mode) as hfile:
             hfile.create_dataset("data", data=self.data, **data_kwargs)
 
-            dims = [dim.encode() for dim in self.dims]
+            dims = [dim for dim in self.dims]
             hfile.create_dataset("dims", data=dims)
 
             hfile.create_group("coords")
@@ -122,10 +122,10 @@ class TimeSeries(xr.DataArray):
             root = hfile['/']
 
             if self.name is not None:
-                root.attrs['name'] = self.name.encode()
+                root.attrs['name'] = self.name
 
             if self.attrs is not None:
-                root.attrs['attrs'] = json.dumps(self.attrs).encode()
+                root.attrs['attrs'] = json.dumps(self.attrs)
 
             root.attrs["created"] = time.time()
             root.attrs["ptsa_version"] = ptsa_version
@@ -154,23 +154,22 @@ class TimeSeries(xr.DataArray):
         root = hfile['/']
 
         coords_group = hfile['coords']
-        names = json.loads(coords_group.attrs['names'].decode())
+        names = json.loads(coords_group.attrs['names'])
         coords = {}
 
         for name in names:
-            buffer = BytesIO(b64decode(coords_group[name][()]))
-            coord = np.load(buffer, allow_pickle=True)
+            #buffer = BytesIO(b64decode(coords_group[name][()]))
+            #coord = np.load(buffer, allow_pickle=True)
+            coord = coords_group[name][()]
             coords[name] = coord
 
         name = root.attrs.get('name', None)
-        if name is not None:
-            name = name.decode()
 
         attrs = root.attrs.get('attrs', None)
         if attrs is not None:
-            attrs = json.loads(attrs.decode())
+            attrs = json.loads(attrs)
 
-        dims = [dim.decode() for dim in dims]
+        dims = [dim for dim in dims]
 
         return rtype(name, dims, coords, attrs)
 
@@ -188,15 +187,13 @@ class TimeSeries(xr.DataArray):
         rtype = namedtuple("HDFHumanRedableRType", "name,dims,coords,attrs")
 
         root = hfile["/"]
-        dims = [dim.decode() for dim in hfile["dims"][:]]
+        dims = [dim for dim in hfile["dims"][:]]
 
         name = root.attrs.get("name", None)
-        if name is not None:
-            name = name.decode()
 
         attrs = root.attrs.get("attrs", None)
         if attrs is not None:
-            attrs = json.loads(attrs.decode())
+            attrs = json.loads(attrs)
 
         coords_group = hfile["coords"]
         coords = {
