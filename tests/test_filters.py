@@ -418,6 +418,7 @@ class TestBaseFilter:
 
         """
         ts = self.dummy_ts.astype(dtype)
+        ts = timeseries.TimeSeries(ts.data, ts.coords, ts.dims)
         filt = BaseFilter(ts, None)
         assert filt.timeseries.data.dtype == dtype
 
