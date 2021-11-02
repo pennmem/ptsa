@@ -34,7 +34,7 @@ install:
       pip install git+https://github.com/pennmem/cmlreaders.git@v0.9.3#egg=cmlreaders;
     fi
   - conda install -y -c conda-forge pybind11 fftw
-  - pip install pytest pytest-cov codecov
+  - pip install pytest pytest-cov codecov --ignore-installed certifi
 
 addons:
   apt:
