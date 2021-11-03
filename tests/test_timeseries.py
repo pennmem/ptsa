@@ -16,7 +16,7 @@ import xarray as xr
 from ptsa import __version__
 from ptsa.data.filters import ResampleFilter
 from ptsa.data.timeseries import TimeSeries, ConcatenationError
-from ptsa.test.utils import assert_timeseries_equal, skip_without_rhino
+from tests.utils import assert_timeseries_equal, skip_without_rhino
 
 
 @pytest.fixture
@@ -134,7 +134,7 @@ class TestCMLReaders:
     @property
     def reader(self):
         from cmlreaders import CMLReader
-        from ptsa.test.utils import get_rhino_root
+        from tests.utils import get_rhino_root
 
         try:
             rootdir = get_rhino_root()

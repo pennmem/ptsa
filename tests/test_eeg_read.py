@@ -1,7 +1,7 @@
 from numpy.testing import assert_array_equal
 import pytest
 import numpy as np
-from ptsa.test.utils import skip_without_rhino, get_rhino_root
+from tests.utils import skip_without_rhino, get_rhino_root
 
 
 
