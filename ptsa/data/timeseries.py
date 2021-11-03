@@ -161,7 +161,7 @@ class TimeSeries(xr.DataArray):
             buffer = BytesIO(b64decode(coords_group[name][()]))
             coord = np.load(buffer, allow_pickle=True)
             coord = coords_group[name][()]
-            coords[name] = coord
+            coords[name] = coord.decode()
 
         name = root.attrs.get('name', None)
         #if name is not None:
