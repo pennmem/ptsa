@@ -30,12 +30,12 @@ METHODS = ['astype', 'query', 'reduce']
 def convert_method_return_types(cls):
     # define decorator that wraps methods and converts dtype to TimeSeries
     def return_type_ts(f):
-        f = getattr(xarray.DataArray, f)
+        f = getattr(xr.DataArray, f)
         def wrap_xarray(*args, **kwargs):
             xarr = f(*args, **kwargs)
             return TimeSeries(xarr, coords=xarr.coords, dims=xarr.dims, attrs=xarr.attrs, name=xarr.name)
         wrap_xarray.__doc__ = f'Wraps the following, returning as a TimeSeries:\
-                                \n{getattr(xarray.DataArray, f.__name__).__doc__}'
+                                \n{getattr(xr.DataArray, f.__name__).__doc__}'
         return wrap_xarray
     # iterate over desired methods and decorate them
     for method in METHODS:
