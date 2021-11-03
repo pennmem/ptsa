@@ -2,13 +2,11 @@ dist: xenial
 language: python
 python:
   # We don't actually use the Travis Python, but this keeps it organized.
-  #- "2.7"
-  #- "3.5"
   #- "3.6"
   - "3.7"
   - "3.8"
   - "3.9"
-  - "3.10"
+  #- "3.10" # not yet supported by xenial
 notifications:
   email: false
 env:
