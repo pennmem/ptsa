@@ -19,15 +19,13 @@ class MorletWaveletFilter(BaseFilter):
 
     Parameters
     ----------
-    timeseries: TimeSeries
-        The time series to filter
-
-    Keyword Arguments
-    -----------------
     freqs: np.ndarray
         The frequencies to use in the decomposition
+    
+    Keyword Arguments
+    -----------------
     width: int
-        The width of the wavelet
+        The width of the wavelet (default: 5)
     output: Union[Iterable[str], str]
         A string or a list of strings containing power, phase, and/or
         complex (default: ``['power', 'phase']``)
@@ -51,10 +49,8 @@ class MorletWaveletFilter(BaseFilter):
     output = []
     output_dim = traits.api.Str
 
-    def __init__(self, timeseries, freqs, width=5,
-                 output=('power', 'phase'), verbose=True, cpus=1,
-                 output_dim='output', complete=True):
-        super(MorletWaveletFilter, self).__init__(timeseries)
+    def __init__(self, freqs, width=5, output=('power', 'phase'), 
+                 verbose=True, cpus=1, output_dim='output', complete=True):
         self.freqs = freqs
         self.width = width
         self.complete = complete

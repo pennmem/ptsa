@@ -86,9 +86,7 @@ class TimeSeries(xr.DataArray):
         if dtype is not None:
             self.data = self.data.astype(dtype)
 
-    def to_hdf(self, filename, mode='w', compression=None,
-               compression_opts=None, encode_string_arrays=True,
-               encoding='utf8'):
+    def to_hdf(self, filename, mode='w', data_kwargs={'chunks': True}):
         """Save to disk using HDF5.
 
         Parameters

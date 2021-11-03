@@ -320,10 +320,10 @@ def time_series():
 @pytest.mark.filters
 class TestFiltersExecute:
     @classmethod
-    def setup_class(cls):
+    def setup_class(self):
         times = np.linspace(0, 1, 1000)
         ts = np.sin(8*times) + np.sin(16*times) + np.sin(32*times)
-        cls.timeseries = timeseries.TimeSeries(
+        self.timeseries = timeseries.TimeSeries(
             data=ts, dims=('time'),
             coords={
                 'time': times,
