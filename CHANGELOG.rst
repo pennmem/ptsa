@@ -3,9 +3,14 @@ Changes
 
 Version 3.0.0
 -------------
-
+**2021.11.03**
 Version 3.0 of PTSA is largely a cleanup release. Several deprecated features
 have been removed and things have been reorganized.
+
+What's New
+^^^^^^^^^^
+* Filter objects no longer accept a ``TimeSeries`` object as a positional argument. Rather, these are passed to the object's .filter method instead. This allows for reusing filters on multiple time series as well as adding filter pipeline capabilities. 
+* Added a class decorator to ``TimeSeries`` that coerces the return type of xarray methods to be ``TimeSeries`` rather than ``xarray.DataArray``. 
 
 Removals
 ^^^^^^^^
