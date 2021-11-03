@@ -1,4 +1,4 @@
-h5py>=2.7.1
+h5py>=3.0
 traits>=4.6.0
 numpy>=1.7.0
 scipy>=1.0.0

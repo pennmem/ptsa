@@ -171,7 +171,7 @@ class TimeSeries(xr.DataArray):
         if attrs is not None:
             attrs = json.loads(attrs)
 
-        dims = [dim for dim in dims]
+        dims = [dim.decode() for dim in dims]
 
         return rtype(name, dims, coords, attrs)
 
@@ -189,7 +189,7 @@ class TimeSeries(xr.DataArray):
         rtype = namedtuple("HDFHumanRedableRType", "name,dims,coords,attrs")
 
         root = hfile["/"]
-        dims = [dim for dim in hfile["dims"][:]]
+        dims = [dim.decode() for dim in hfile["dims"][:]]
 
         name = root.attrs.get("name", None)
         #if name is not None:
