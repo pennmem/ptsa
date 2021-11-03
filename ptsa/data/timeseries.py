@@ -110,7 +110,9 @@ class TimeSeries(xr.DataArray):
             hfile.create_dataset("data", data=self.data, **data_kwargs)
 
             dims = [dim for dim in self.dims]
-            hfile.create_dataset("dims", data=dims)
+            # hdf5 is picky about string dtypes
+            dt = h5py.string_dtype()
+            hfile.create_dataset("dims", data=dims, dtype=dt)
 
             hfile.create_group("coords")
 
