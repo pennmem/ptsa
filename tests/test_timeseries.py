@@ -1,3 +1,5 @@
+from copy import copy
+from tempfile import mkdtemp
 from functools import partial
 import os.path as osp
 from tempfile import mkdtemp
@@ -6,14 +8,15 @@ import sys
 import warnings
 
 import h5py
-import pytest
 import numpy as np
+from numpy.testing import assert_equal, assert_allclose
+import pytest
 import xarray as xr
 
 from ptsa import __version__
 from ptsa.data.filters import ResampleFilter
 from ptsa.data.timeseries import TimeSeries, ConcatenationError
-from ptsa.test.utils import assert_timeseries_equal, skip_without_rhino
+from tests.utils import assert_timeseries_equal, skip_without_rhino
 
 
 @pytest.fixture
@@ -52,6 +55,28 @@ def test_arithmetic_operations():
     ts_out = ts_1 + ts_2
 
     print('ts_out=', ts_out)
+
+
+@pytest.mark.parametrize("dtype", [np.int, None, np.float32, np.float64])
+def test_coerce_to(dtype):
+    shape = (1, 10, 100)
+
+    ts = TimeSeries.create(
+        np.random.random(shape),
+        samplerate=1,
+        dims=("a", "b", "c"),
+        coords={
+            "a": np.linspace(0, 1, shape[0]),
+            "b": np.linspace(0, 1, shape[1]),
+            "c": np.linspace(0, 1, shape[2])
+        }
+    )
+
+    orig_dtype = copy(ts.data.dtype)
+    ts.coerce_to(dtype)
+    assert ts.data.dtype == dtype
+    if orig_dtype != dtype:
+        assert ts.data.dtype != orig_dtype
 
 
 def test_hdf(tempdir):
@@ -110,7 +135,7 @@ class TestCMLReaders:
     @property
     def reader(self):
         from cmlreaders import CMLReader
-        from ptsa.test.utils import get_rhino_root
+        from tests.utils import get_rhino_root
 
         try:
             rootdir = get_rhino_root()
@@ -185,31 +210,63 @@ def test_load_hdf_base64():
     assert len(ts.coords["event"] == 10)
 
 
-@pytest.mark.parametrize("cls,kwargs", [
-    (None, {}),
-    (ResampleFilter, {"resamplerate": 1.}),
-])
-def test_filter_with(cls, kwargs):
-    ts = TimeSeries.create(
-        np.random.random((2, 100)),
-        samplerate=10,
-        dims=("x", "time"),
-        coords={
-            "x": range(2),
-            "time": range(100),
-        }
-    )
+class TestFilterWith:
+    @pytest.mark.parametrize("cls,kwargs", [
+        (ResampleFilter, {"resamplerate": 1.}),
+    ])
+    def test_single_filter(self, cls, kwargs):
+        ts = TimeSeries.create(
+            np.random.random((2, 100)),
+            samplerate=10,
+            dims=("x", "time"),
+            coords={
+                "x": range(2),
+                "time": range(100),
+            }
+        )
 
-    if cls is None:
-        class MyClass(object):
-            pass
-
-        with pytest.raises(TypeError):
-            ts.filter_with(MyClass)
-    else:
-        tsf = ts.filter_with(cls, **kwargs)
+        filt = cls(**kwargs)
+        tsf = ts.filter_with(filt)
         assert isinstance(tsf, TimeSeries)
         assert tsf.data.shape != ts.data.shape
+
+    def test_multi_filter(self):
+        from ptsa.data.filters.base import BaseFilter
+
+        class NegationFilter(BaseFilter):
+            def filter(self, timeseries: TimeSeries) -> TimeSeries:
+                return timeseries * -1
+
+        class DoubleFilter(BaseFilter):
+            def filter(self, timeseries: TimeSeries) -> TimeSeries:
+                return timeseries * 2
+
+        filters = [
+            NegationFilter(),
+            DoubleFilter()
+        ]
+
+        init_data = np.random.random((10, 10, 10))
+
+        ts = TimeSeries.create(
+            init_data, 1,
+            coords={
+                "events": np.linspace(0, init_data.shape[0], init_data.shape[0]),
+                "channels": np.linspace(0, init_data.shape[1], init_data.shape[1]),
+                "time": np.linspace(0, init_data.shape[2], init_data.shape[2]),
+            },
+            dims=["events", "channels", "time"]
+        )
+
+        new_ts = ts.filter_with(filters)
+        assert_equal((-ts * 2).data, new_ts.data)
+        assert_equal(ts["time"].data, new_ts["time"].data)
+        assert_equal(ts.coords.keys(), new_ts.coords.keys())
+        assert_equal(ts.dims, new_ts.dims)
+
+
+def test_remove_line_noise():
+    ts = None
 
 
 def test_filtered():

@@ -100,6 +100,14 @@ class TimeSeries(xr.DataArray):
             coords['samplerate'] = float(samplerate)
         return cls(data, coords=coords, dims=dims, name=name, attrs=attrs)
 
+    def coerce_to(self, dtype=np.float64):
+        """Coerce the data to the specified dtype in place. If dtype is None,
+        this method does nothing. Default: coerce to ``np.float64``.
+
+        """
+        if dtype is not None:
+            self.data = self.data.astype(dtype)
+
     def to_hdf(self, filename, mode='w', data_kwargs={'chunks': True}):
         """Save to disk using HDF5.
 
@@ -334,15 +342,13 @@ class TimeSeries(xr.DataArray):
         """
         return int(np.ceil(float(self['samplerate']) * duration))
 
-    def filter_with(self, filter_class, **kwargs):
-        """Returns a filtered time series using the specified filter class.
+    def filter_with(self, filters):
+        """Filter the time series data using the specified filters in order.
 
         Parameters
         ----------
-        filter_class : type
-            The filter class to use.
-        kwargs
-            Keyword arguments to pass along to ``filter_class``.
+        filters : BaseFilter or Iterable[BaseFilter]
+            The filter(s) to use.
 
         Returns
         -------
@@ -355,12 +361,14 @@ class TimeSeries(xr.DataArray):
             When ``filter_class`` is not a valid filter class.
 
         """
-        from ptsa.data.filters.base import BaseFilter
+        if not isinstance(filters, (list, tuple)):
+            filters = [filters]
 
-        if not issubclass(filter_class, BaseFilter):
-            raise TypeError("filter_class must be a child of BaseFilter")
+        filtered = self
 
-        filtered = filter_class(self, **kwargs).filter()
+        for filter_ in filters:
+            filtered = filter_.filter(filtered)
+
         return filtered
 
     def filtered(self, freq_range, filt_type='stop', order=4):
@@ -545,20 +553,4 @@ class TimeSeries(xr.DataArray):
             A TimeSeries instance with the baseline corrected data.
 
         """
-        return self - self.isel(time=(self['time'] >= base_range[0]) &
-                                (self['time'] <= base_range[1])).mean(
-                                    dim='time')
-
-
-class TimeSeriesX(TimeSeries):
-    
-    __slots__ = ()
-    
-    def __init__(self, data, coords, dims=None, name=None,
-                 attrs=None, encoding=None, fastpath=False):
-        with warnings.catch_warnings():
-            warnings.simplefilter('always')
-            warnings.warn("TimeSeriesX has been renamed TimeSeries",
-                          DeprecationWarning)
-            super(TimeSeriesX, self).__init__(data, coords, dims, name, attrs,
-                                              encoding, fastpath)
+        return self - self.isel(time=(self['time'] >= base_range[0]) & (self['time'] <= base_range[1])).mean(dim='time')
