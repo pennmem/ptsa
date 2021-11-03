@@ -56,8 +56,9 @@ def test_arithmetic_operations():
 
 def test_hdf(tempdir):
     """Test saving/loading with HDF5."""
-    data = np.random.random((10, 10, 10, 10), dtype=np.float64)
-    dims = ('time', 'x', 'y', 'z')
+    data = np.random.random((10, 10, 10, 10))
+    data = data.astype(float)
+    dims = (u'time', u'x', u'y', u'z')
     coords = {label: np.linspace(0, 1, 10) for label in dims}
     rate = 1
 
