@@ -1,16 +1,16 @@
 PTSA
 ====
 
-.. image:: https://travis-ci.org/pennmem/ptsa_new.svg?branch=master
-    :target: https://travis-ci.org/pennmem/ptsa_new
+.. image:: https://travis-ci.org/pennmem/ptsa.svg?branch=master
+    :target: https://travis-ci.org/pennmem/ptsa
 
-.. image:: https://codecov.io/gh/pennmem/ptsa_new/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/pennmem/ptsa_new
+.. image:: https://codecov.io/gh/pennmem/ptsa/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/pennmem/ptsa
 
 .. image:: https://img.shields.io/conda/v/pennmem/ptsa.svg
     :target: https://anaconda.org/pennmem/ptsa
 
-For documentation and tutorials, please see https://pennmem.github.io/ptsa_new/
+For documentation and tutorials, please see https://pennmem.github.io/ptsa/
 
 
 Install via conda
@@ -26,7 +26,7 @@ Available on Linux, Mac, and Windows 64 bit:
 Report bug or feature request
 -----------------------------
 
-To report a bug or a feature request please use  https://github.com/pennmem/ptsa_new/issues.
+To report a bug or a feature request please use  https://github.com/pennmem/ptsa/issues.
 
 Build from source
 -----------------
