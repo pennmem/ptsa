@@ -107,7 +107,7 @@ class TimeSeries(xr.DataArray):
         from ptsa.io import hdf5
 
         with h5py.File(filename, mode) as hfile:
-            hfile.create_dataset("data", data=self.data, **data_kwargs)
+            hfile.create_dataset("data", data=self.data.astype(float), **data_kwargs)
 
             dims = [dim for dim in self.dims]
             # hdf5 is picky about string dtypes
@@ -162,7 +162,6 @@ class TimeSeries(xr.DataArray):
         for name in names:
             buffer = BytesIO(b64decode(coords_group[name][()]))
             coord = np.load(buffer, allow_pickle=True)
-            #coord = coords_group[name][()]
             coords[name] = coord
 
         name = root.attrs.get('name', None)
