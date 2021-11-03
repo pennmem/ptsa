@@ -25,7 +25,7 @@ public:
 
     ~MorletWaveFFT() { if (fft) fftw_free(fft); }
 
-    size_t init(size_t width, double freq, size_t win_size, double sample_freq);
+    size_t init(size_t width, double freq, size_t win_size, double sample_freq, bool complete=true);
 };
 
 class MorletWaveletTransform {
@@ -53,10 +53,10 @@ public:
 
     MorletWaveletTransform();
 
-    MorletWaveletTransform(size_t width, double *freqs, size_t nf, double sample_freq, size_t signal_len);
+    MorletWaveletTransform(size_t width, double *freqs, size_t nf, double sample_freq, size_t signal_len, bool complete=true);
 
     MorletWaveletTransform(size_t width, double low_freq, double high_freq, size_t nf, double sample_freq,
-                           size_t signal_len);
+                           size_t signal_len, bool complete=true);
 
     ~MorletWaveletTransform();
 
@@ -65,9 +65,9 @@ public:
             phase_and_pow_fcn = &MorletWaveletTransform::wv_pow;
 
 
-    void init(size_t width, double low_freq, double high_freq, size_t nf, double sample_freq, size_t signal_len);
+    void init(size_t width, double low_freq, double high_freq, size_t nf, double sample_freq, size_t signal_len, bool complete=true);
 
-    void init_flex(size_t width, double *freqs, size_t nf, double sample_freq, size_t signal_len);
+    void init_flex(size_t width, double *freqs, size_t nf, double sample_freq, size_t signal_len, bool complete=true);
 
     void multiphasevec_powers(double *signal,
                               double *powers);  // input: signal, output: n_freqs*signal_len_ 1d array of powers

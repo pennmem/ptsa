@@ -7,6 +7,4 @@ if [[ "$UNAME" == 'Darwin' ]]; then
    export LIBRARY_PATH=/usr/local/lib;
 fi
 
-# FIXME: figure out how to depend on conda-forge package of this only
-pip install pybind11
 $PYTHON setup.py install

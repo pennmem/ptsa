@@ -1,16 +1,13 @@
+from base64 import b64decode
+from collections import namedtuple
+from io import BytesIO
 import json
 import time
 import warnings
-from io import BytesIO
-from base64 import b64decode
+
 import xarray as xr
 import numpy as np
 from scipy.signal import resample
-
-try:
-    import h5py
-except ImportError:  # pragma: nocover
-    h5py = None
 
 from ptsa import __version__ as ptsa_version
 from ptsa.data.common import get_axis_index
@@ -45,7 +42,6 @@ class TimeSeries(xr.DataArray):
         Name of the time series
     attrs : dict
         Dictionary of arbitrary metadata
-    encoding : dict
     fastpath : bool
         Not used, but required when subclassing :class:`xr.DataArray`.
 
@@ -59,12 +55,15 @@ class TimeSeries(xr.DataArray):
     xr.DataArray : Base class
 
     """
-    def __init__(self, data, coords, dims=None, name=None,
-                 attrs=None, encoding=None, fastpath=False):
+
+    __slots__ = ()
+    
+    def __init__(self, data, coords, dims=None, name=None, attrs=None,
+            fastpath=False, **kwargs):
         assert 'samplerate' in coords
-        super(TimeSeries, self).__init__(data=data, coords=coords, dims=dims,
-                                         name=name, attrs=attrs, encoding=encoding,
-                                         fastpath=fastpath)
+        super(TimeSeries, self).__init__(
+            data=data, coords=coords, dims=dims, name=name, attrs=attrs,
+            fastpath=fastpath, **kwargs)
 
     @classmethod
     def create(cls, data, samplerate, coords=None, dims=None, name=None,
@@ -94,199 +93,132 @@ class TimeSeries(xr.DataArray):
 
         Parameters
         ----------
-        filename : str or :mod:`h5py.h5f.FileID` instance
-            Path to or identifier for the HDF5 file. See the
-            :class:`h5py.File` documentation.
-        mode : str, optional
-            File mode to use. See the :class:`h5py.File` documentation
-            for details.
+        filename : str
+            Full path to the HDF5 file
+        mode : str
+            File mode to use. See the :mod:`h5py` documentation for details.
             Default: ``'w'``
-        compression : str or None
-            Compression to use with arrays (see
-            :meth:`h5py.Group.create_dataset` documentation for valid
-            choices).
-        compression_opts : int or None
-            Compression options, generally a number specifying compression level
-            (see :meth:`h5py.Group.create_dataset` documentation for details).
-        encode_string_arrays : bool
-            When True, force encoding of arrays of unicode strings using the
-            ``encoding`` keyword argument. Not setting this will result in
-            errors if using arrays of unicode strings. Default: True.
-        encoding : str
-            Encoding to use when forcing encoding of unicode string arrays.
-            Default: ``'utf8'``.
+        kwargs: dict
+            Keyword arguments to be passed on to the create_dataset call for
+            the main data array (e.g., to specify compression; see the :mod:`h5py`
+            documentation for details).
 
         Notes
         -----
-        The root node also has attributes:
-        * ``classname`` - the class name of the instance being serialized
-        * ``python_module`` - the Python module in which the class is defined
+        recarrays/DataFrame fields with "O" dtypes will be assumed to be strings
+        and encoded accordingly.
 
         """
-        if h5py is None:  # pragma: nocover
-            raise RuntimeError("You must install h5py to save as HDF5")
+        try:  # pragma: nocover
+            import h5py
+        except ImportError:
+            raise RuntimeError("You must install h5py to save to HDF5")
+
+        from ptsa.io import hdf5
 
         with h5py.File(filename, mode) as hfile:
-            hfile.attrs['ptsa_version'] = ptsa_version
-            hfile.attrs['created'] = time.time()
+            hfile.create_dataset("data", data=self.data, **data_kwargs)
 
-            hfile.create_dataset("data", data=self.data, chunks=True,
-                                 compression=compression,
-                                 compression_opts=compression_opts)
+            dims = [dim.encode() for dim in self.dims]
+            hfile.create_dataset("dims", data=dims)
 
-            dims = [dim.encode(encoding) for dim in self.dims]
-            hfile.create_dataset("dims", data=dims, chunks=True,
-                                 compression=compression,
-                                 compression_opts=compression_opts)
+            hfile.create_group("coords")
 
-            coords_group = hfile.create_group("coords")
-            coords = []
             for name, data in self.coords.items():
-                coords.append(name)
-                data_has_fields = len(data.values.dtype) > 0
-                # Encode each element of an array containing unicode
-                # elements
-                if ~data_has_fields and data.dtype.char == 'U':
-                    data = [s.encode(encoding) for s in np.atleast_1d(data)]
-                elif data_has_fields:
-                    # Determine what the final dtypes will be
-                    final_dtypes = []
-                    unicode_fields = []
-                    for i, field in enumerate(data.values.dtype.names):
-                        if data.values[field].dtype.kind != 'U':
-                            final_dtypes.append((field,
-                                                 data.values[
-                                                     field].dtype.str))
-                        else:
-                            final_dtypes.append((field, 'S256'))
-                            unicode_fields.append(field)
+                # if we don't do .data, we have a TimeSeries object because
+                # xarray is weird
+                hdf5.save_array(hfile, "/".join(["coords", name]), data.data)
 
-                    # Update dtypes of the data. This will coerce the
-                    # unicode fields to bytes automatically
-                    data = data.astype(final_dtypes)
-                chunks = True if hasattr(data, '__len__') else False
-                compression_kwargs = {}
-                if chunks:
-                    if compression is not None:
-                        compression_kwargs['compression'] = compression
-                        if compression_opts is not None:
-                            compression_kwargs[
-                                'compression_opts'] = compression_opts
-                try:
-                    dset = coords_group.create_dataset(
-                        name, data=data, chunks=chunks,
-                        **compression_kwargs)
-                except TypeError as e:
-                    if chunks is not False:
-                        dset = coords_group.create_dataset(
-                            name, data=data, chunks=False)
-                    else:
-                        raise e
-                # Store the data type as an attribute to make it easier to
-                # reconstruct with correct data types
-                dset.attrs['type'] = str(type(data))
-
-            names = json.dumps(coords).encode(encoding)
-            coords_group.attrs.update(names=names)
-            hfile.attrs['classname'] = self.__class__.__name__
-            hfile.attrs['python_module'] = self.__class__.__module__
             root = hfile['/']
-            if self.name is not None:
-                root.attrs['name'] = self.name.encode(encoding)
-            if self.attrs is not None:
-                root.attrs['attrs'] = json.dumps(self.attrs).encode(encoding)
 
-    @classmethod
-    def from_hdf(cls, filename, decode_string_arrays=True,
-                 encoding='utf-8'):
-        """Deserialize from HDF5 using :mod:`h5py`.
+            if self.name is not None:
+                root.attrs['name'] = self.name.encode()
+
+            if self.attrs is not None:
+                root.attrs['attrs'] = json.dumps(self.attrs).encode()
+
+            root.attrs["created"] = time.time()
+            root.attrs["ptsa_version"] = ptsa_version
+
+            # indicate that we're using the new "human readable" format for
+            # recarray-like coordinates
+            root.attrs["human_readable"] = True
+
+    @staticmethod
+    def _from_hdf_base64(hfile):
+        """Load non-time series data from the legacy base64-encoded HDF5 format.
 
         Parameters
         ----------
-        filename : str
-        decode_string_arrays: bool
-            Arrays of bytes should be decoded into strings
-        encoding: str
-            Encoding scheme to use for decoding. To read files saved
-            with earlier PTSA versions use 'legacy' (but note that
-            support for reading legacy files is deprecated, so do save
-            them out with to_hdf5 to update their format).
+        hfile : h5py.File
+            Open HDF5 file.
 
         Returns
         -------
-        Deserialized instance
+        name, dims, coords, names, attrs
 
         """
-        if encoding.upper() == 'LEGACY':
-            return cls._from_hdf_legacy(filename)
-        if h5py is None:  # pragma: nocover
-            raise RuntimeError("You must install h5py to load from HDF5")
+        rtype = namedtuple("HDFBase64RType", "name,dims,coords,attrs")
 
-        with h5py.File(filename, 'r') as hfile:
-            dims = hfile['dims'][:]
+        dims = hfile['dims'][:]
+        root = hfile['/']
 
-            root = hfile['/']
-            version = root.attrs.get('ptsa_version', None)
-            if version is not None:
-                # if ptsa_version <= 1.1.5, run legacy code:
-                version_thresh = [5, 1, 1]
-                version_nums = [np.int(v) for v in version.split('.')][::-1]
-                new_version = False
-                while (len(version_nums) > 0) and (len(version_thresh) > 0):
-                    if version_nums.pop() > version_thresh.pop():
-                        new_version = True
-                if len(version_nums) > 0:
-                    new_version = True
-                if not new_version:
-                    return cls._from_hdf_legacy(filename)
-            coords_group = hfile['coords']
-            names = json.loads(coords_group.attrs['names'].decode(encoding))
-            coords = dict()
-            for name in names:
-                data = coords_group[name]
-                data_has_fields = len(data.dtype) > 0
-                if ~data_has_fields and data.dtype.char == 'S':
-                    data = [s.decode(encoding) for s in np.atleast_1d(data)]
-                elif data_has_fields:
-                    # Determine what the final dtypes will be
-                    final_dtypes = []
-                    bytes_fields = []
-                    for i, field in enumerate(data.dtype.names):
-                        if data[field].dtype.kind != 'S':
-                            final_dtypes.append((field,
-                                                 data[field].dtype.str))
-                        else:
-                            final_dtypes.append((field, 'U256'))
-                            bytes_fields.append(field)
+        coords_group = hfile['coords']
+        names = json.loads(coords_group.attrs['names'].decode())
+        coords = {}
 
-                    # Update dtypes of the data. This will coerce the
-                    # bytes fields to unicode automatically
-                    data = np.array(data).astype(final_dtypes).view(
-                        np.recarray)
-                coords[name] = data
-            name = root.attrs.get('name', None)
-            if name is not None:
-                name = name.decode(encoding)
-            attrs = root.attrs.get('attrs', None)
-            if attrs is not None:
-                attrs = json.loads(attrs.decode(encoding))
+        for name in names:
+            buffer = BytesIO(b64decode(coords_group[name][()]))
+            coord = np.load(buffer, allow_pickle=True)
+            coords[name] = coord
 
-            array = cls(hfile['data'].value,
-                        coords=coords,
-                        dims=[dim.decode(encoding) for dim in dims],
-                        name=name,
-                        attrs=attrs)
-            return array
+        name = root.attrs.get('name', None)
+        if name is not None:
+            name = name.decode()
+
+        attrs = root.attrs.get('attrs', None)
+        if attrs is not None:
+            attrs = json.loads(attrs.decode())
+
+        dims = [dim.decode() for dim in dims]
+
+        return rtype(name, dims, coords, attrs)
+
+    @staticmethod
+    def _from_hdf_human_readable(hfile):
+        """Load non-time series data from the newer, "human readable" HDF5
+        format.
+
+        Returns
+        -------
+        name, dims, coords, names, attrs
+        """
+        from ptsa.io import hdf5
+
+        rtype = namedtuple("HDFHumanRedableRType", "name,dims,coords,attrs")
+
+        root = hfile["/"]
+        dims = [dim.decode() for dim in hfile["dims"][:]]
+
+        name = root.attrs.get("name", None)
+        if name is not None:
+            name = name.decode()
+
+        attrs = root.attrs.get("attrs", None)
+        if attrs is not None:
+            attrs = json.loads(attrs.decode())
+
+        coords_group = hfile["coords"]
+        coords = {
+            key: hdf5.load_array(hfile, "/".join(["coords", key]))
+            for key in coords_group
+        }
+
+        return rtype(name, dims, coords, attrs)
 
     @classmethod
-    def _from_hdf_legacy(cls, filename):
-        """
-        Legacy function to support loading in old files created with
-        the to_hdf5 method in previous versions of PTSA.
-        This method is DEPRECATED: old hdf5 files should be converted
-        by reading them in with this function and saving the resulting
-        :class:`TimeSeries` object with the current to_hdf5 method to maintain
-        accessibility.
+    def from_hdf(cls, filename):
+        """Load a serialized time series from an HDF5 file.
 
         Parameters
         ----------
@@ -294,39 +226,23 @@ class TimeSeries(xr.DataArray):
             Path to HDF5 file.
 
         """
-        import warnings
-        warnings.warn(
-            'This method is DEPRECATED: old hdf5 files should be converted by' +
-            'reading them in with this function and saving the resulting' +
-            'TimeSeries object with the current to_hdf5 method to maintain' +
-            'accessibility.')
-        if h5py is None:  # pragma: nocover
+        try:  # pragma: nocover
+            import h5py
+        except ImportError:
             raise RuntimeError("You must install h5py to load from HDF5")
 
         with h5py.File(filename, 'r') as hfile:
-            dims = hfile['dims'][:]
+            if not hfile.attrs.get("human_readable", False):
+                loaded = cls._from_hdf_base64(hfile)
+            else:
+                loaded = cls._from_hdf_human_readable(hfile)
 
-            root = hfile['/']
-
-            coords_group = hfile['coords']
-            names = json.loads(coords_group.attrs['names'].decode())
-            coords = dict()
-            for name in names:
-                buffer = BytesIO(b64decode(coords_group[name].value))
-                coord = np.load(buffer)
-                coords[name] = coord
-
-            name = root.attrs.get('name', None)
-            if name is not None:
-                name = name.decode()
-            attrs = root.attrs.get('attrs', None)
-            if attrs is not None:
-                attrs = json.loads(attrs.decode())
-
-            array = cls.create(hfile['data'].value, None, coords=coords,
-                               dims=[dim.decode() for dim in dims],
-                               name=name, attrs=attrs)
-
+            array = cls.create(hfile['data'][()],
+                               None,
+                               coords=loaded.coords,
+                               dims=loaded.dims,
+                               name=loaded.name,
+                               attrs=loaded.attrs)
             return array
 
     def append(self, other, dim=None):
@@ -377,7 +293,8 @@ class TimeSeries(xr.DataArray):
             else:
                 if key != dim:
                     if (self[key] != other[key]).all():
-                        raise ConcatenationError("Dimension {:s} doesn't match".format(key))
+                        raise ConcatenationError(
+                            "Dimension {:s} doesn't match".format(key))
                     coords[key] = self[key]
                 else:
                     coords[key] = np.concatenate([self[key], other[key]])
@@ -455,7 +372,8 @@ class TimeSeries(xr.DataArray):
         warnings.warn("The filtered method is not very flexible. "
                       "Consider using filters in ptsa.data.filters instead.")
         time_axis_index = get_axis_index(self, axis_name='time')
-        filtered_array = buttfilt(self.values, freq_range, float(self['samplerate']), filt_type,
+        filtered_array = buttfilt(self.values, freq_range,
+                                  float(self['samplerate']), filt_type,
                                   order, axis=time_axis_index)
         new_ts = self.copy()
         new_ts.data = filtered_array
@@ -463,7 +381,11 @@ class TimeSeries(xr.DataArray):
 
     def resampled(self, resampled_rate, window=None,
                   loop_axis=None, num_mp_procs=0, pad_to_pow2=False):
-        """Resamples the time series.
+        """Returns a time series Fourier resampled at resampled_rate.
+        
+        Note that Fourier resampling assumes periodicity, so edge effects can
+        arise.  Keeping a buffer of at least 1/f for the lowest frequency of
+        interest guards against this.
 
         Parameters
         ----------
@@ -492,11 +414,12 @@ class TimeSeries(xr.DataArray):
         time_axis_index = self.get_axis_num('time')
 
         time_axis_length = np.squeeze(time_axis.shape)
-        new_length = int(np.round(time_axis_length * resampled_rate / float(samplerate)))
+        new_length = int(np.round(time_axis_length * resampled_rate /
+                                  float(samplerate)))
 
-        resampled_array, new_time_axis = resample(self.values,
-                                                  new_length, t=time_axis.values,
-                                                  axis=time_axis_index, window=window)
+        resampled_array, new_time_axis = resample(
+            self.values, new_length, t=time_axis.values,
+            axis=time_axis_index, window=window)
 
         # constructing axes
         coords = {}
@@ -514,15 +437,16 @@ class TimeSeries(xr.DataArray):
                 coords[coord_name] = new_time_axis
 
         resampled_time_series = TimeSeries.create(
-            resampled_array, resampled_rate, coords=coords, dims=[dim for dim in self.dims],
+            resampled_array, resampled_rate, coords=coords,
+            dims=[dim for dim in self.dims],
             name=self.name, attrs=self.attrs)
 
         return resampled_time_series
 
     def remove_buffer(self, duration):
         """
-        Remove the desired buffer duration (in seconds) and reset the
-        time range.
+        Return a timeseries with the desired buffer duration (in seconds)
+        removed and the time range reset.
 
         Parameters
         ----------
@@ -550,8 +474,9 @@ class TimeSeries(xr.DataArray):
 
     def add_mirror_buffer(self, duration):
         """
-        Adds mirrors data at both ends of the time series (up to specified
-        length/duration) and appends such buffers at both ends of the series.
+        Return a time series with mirrored data added to both ends of this
+        time series (up to specified length/duration).
+
         The new series total time duration is:
 
             ``original duration + 2 * duration * samplerate``
@@ -574,13 +499,15 @@ class TimeSeries(xr.DataArray):
         data = self.data
 
         mirrored_data = np.concatenate(
-            (data[..., 1:samples + 1][..., ::-1], data, data[..., -samples - 1:-1][..., ::-1]),
-            axis=-1)
+            (data[..., 1:samples + 1][..., ::-1], data,
+             data[..., -samples - 1:-1][..., ::-1]), axis=-1)
 
         start_time = self['time'].data[0] - duration
-        t_axis = (np.arange(mirrored_data.shape[-1]) * (1.0 / samplerate)) + start_time
+        t_axis = (np.arange(mirrored_data.shape[-1]) *
+                  (1.0 / samplerate)) + start_time
         # coords = [self.coords[dim_name] for dim_name in self.dims[:-1]] +[t_axis]
-        coords = {dim_name:self.coords[dim_name] for dim_name in self.dims[:-1]}
+        coords = {dim_name:self.coords[dim_name]
+                  for dim_name in self.dims[:-1]}
         coords['time'] = t_axis
         coords['samplerate'] = float(self['samplerate'])
 

@@ -1,10 +1,13 @@
-dist: trusty
-sudo: false
+dist: xenial
 language: python
 python:
   # We don't actually use the Travis Python, but this keeps it organized.
-  - "3.5"
+  #- "2.7"
+  #- "3.5"
   - "3.6"
+  - "3.7"
+  - "3.8"
+  - "3.9"
 notifications:
   email: false
 env:
@@ -22,8 +25,11 @@ install:
   - conda info -a
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy xarray h5py swig traits
   - source activate test-environment
+  - if [[ "$TRAVIS_PYTHON_VERSION" != "2.7" ]]; then
+      pip install git+https://github.com/pennmem/cmlreaders.git@v0.9.3#egg=cmlreaders;
+    fi
   - conda install -y -c conda-forge pybind11 fftw
-  - pip install pytest pytest-cov codecov
+  - pip install pytest pytest-cov codecov --ignore-installed certifi
 
 addons:
   apt:

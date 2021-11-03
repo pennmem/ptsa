@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; PTSA 2.0.1 documentation</title>
+  <title>Index &mdash; PTSA 2.0.8 documentation</title>
   
 
   
@@ -18,40 +18,37 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="#"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="PTSA 2.0.1 documentation" href="index.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +62,7 @@
             
             
               <div class="version">
-                2.0.1
+                2.0.8
               </div>
             
           
@@ -106,7 +103,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">PTSA</a>
@@ -114,9 +111,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -280,10 +278,12 @@
         <li><a href="api/data/filters.html#ptsa.data.filters.ResampleFilter.filter">(ptsa.data.filters.ResampleFilter method)</a>
 </li>
       </ul></li>
-      <li><a href="api/data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.filtered">filtered() (ptsa.data.timeseries.TimeSeries method)</a>
+      <li><a href="api/data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.filter_with">filter_with() (ptsa.data.timeseries.TimeSeries method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.filtered">filtered() (ptsa.data.timeseries.TimeSeries method)</a>
+</li>
       <li><a href="api/data/readers.html#ptsa.data.readers.BaseEventReader.find_data_dir_prefix">find_data_dir_prefix() (ptsa.data.readers.BaseEventReader method)</a>
 </li>
       <li><a href="api/data/readers.html#ptsa.data.readers.TalReader.from_dict">from_dict() (ptsa.data.readers.TalReader method)</a>
@@ -334,6 +334,21 @@
         <li><a href="api/data/readers.html#ptsa.data.readers.CMLEventReader.modify_eeg_path">(ptsa.data.readers.CMLEventReader method)</a>
 </li>
       </ul></li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="api/data/readers.html#module-ptsa.data.readers.edf.edf">ptsa.data.readers.edf.edf</a>
+</li>
+        <li><a href="api/extensions.html#module-ptsa.extensions.circular_stat">ptsa.extensions.circular_stat</a>
+</li>
+        <li><a href="api/extensions.html#module-ptsa.extensions.morlet">ptsa.extensions.morlet</a>
+</li>
+        <li><a href="api/index.html#module-ptsa.filt">ptsa.filt</a>
+</li>
+        <li><a href="api/index.html#module-ptsa.helper">ptsa.helper</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data/filters.html#ptsa.data.filters.MorletWaveletFilter">MorletWaveletFilter (class in ptsa.data.filters)</a>
@@ -362,18 +377,43 @@
 </li>
       <li><a href="api/data/filters.html#ptsa.data.filters.MorletWaveletFilterCpp">ptsa.data.filters.MorletWaveletFilterCpp (built-in class)</a>
 </li>
-      <li><a href="api/data/readers.html#module-ptsa.data.readers.edf.edf">ptsa.data.readers.edf.edf (module)</a>
+      <li>
+    ptsa.data.readers.edf.edf
+
+      <ul>
+        <li><a href="api/data/readers.html#module-ptsa.data.readers.edf.edf">module</a>
 </li>
+      </ul></li>
+      <li>
+    ptsa.extensions.circular_stat
+
+      <ul>
+        <li><a href="api/extensions.html#module-ptsa.extensions.circular_stat">module</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/extensions.html#module-ptsa.extensions.circular_stat">ptsa.extensions.circular_stat (module)</a>
+      <li>
+    ptsa.extensions.morlet
+
+      <ul>
+        <li><a href="api/extensions.html#module-ptsa.extensions.morlet">module</a>
 </li>
-      <li><a href="api/extensions.html#module-ptsa.extensions.morlet">ptsa.extensions.morlet (module)</a>
+      </ul></li>
+      <li>
+    ptsa.filt
+
+      <ul>
+        <li><a href="api/index.html#module-ptsa.filt">module</a>
 </li>
-      <li><a href="api/index.html#module-ptsa.filt">ptsa.filt (module)</a>
+      </ul></li>
+      <li>
+    ptsa.helper
+
+      <ul>
+        <li><a href="api/index.html#module-ptsa.helper">module</a>
 </li>
-      <li><a href="api/index.html#module-ptsa.helper">ptsa.helper (module)</a>
-</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -410,7 +450,7 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/extensions.html#ptsa.extensions.circular_stat.single_trial_ppc_all_features">single_trial_ppc_all_features() (in module ptsa.extensions.circular_stat)</a>, <a href="api/extensions.html#ptsa.extensions.circular_stat.single_trial_ppc_all_features">[1]</a>
+      <li><a href="api/extensions.html#id0">single_trial_ppc_all_features() (in module ptsa.extensions.circular_stat)</a>, <a href="api/extensions.html#ptsa.extensions.circular_stat.single_trial_ppc_all_features">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -432,9 +472,7 @@
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -443,11 +481,11 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018.
+        &copy; Copyright 2020
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -460,37 +498,15 @@
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'2.0.1',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

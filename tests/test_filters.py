@@ -412,6 +412,28 @@ class TestBaseFilter:
             }
         )
 
+    @pytest.mark.parametrize("dtype,expected_dtype", [
+        (None, np.float64),
+        (np.float64, np.float64),
+        ("double", np.float64),
+        ("float32", np.float32),
+        ("int", np.int),
+    ])
+    def test_dtypes(self, dtype, expected_dtype):
+        filt = BaseFilter(self.dummy_ts, dtype)
+        assert filt.timeseries.data.dtype == expected_dtype
+
+    @pytest.mark.parametrize("dtype", [np.int8, np.uint16, np.float32])
+    def test_unchanged_dtype(self, dtype):
+        """Special case test where we use a weird input dtype. The previous
+        test works with None since by default Numpy uses float64.
+
+        """
+        ts = self.dummy_ts.astype(dtype)
+        ts = timeseries.TimeSeries(ts.data, ts.coords, ts.dims)
+        filt = BaseFilter(ts, None)
+        assert filt.timeseries.data.dtype == dtype
+
     def test_filter(self):
         with pytest.raises(NotImplementedError):
             filt = BaseFilter()

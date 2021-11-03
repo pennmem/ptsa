@@ -1,3 +1,16 @@
+# Note, fftw's include directories are required for these tests.
+# For example:  export CPLUS_INCLUDE_PATH=$HOME/src/fftw/include
+
+# So the tests use the current python files
+if [ ! -e tests ]
+then
+  echo "Run this from the base directory of the repository"
+  exit -1
+fi
+cd tests &&
+ln -s ../ptsa 2>/dev/null
+cd -
+
 python setup.py develop
 pytest tests/ "$@"
 

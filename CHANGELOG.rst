@@ -14,6 +14,83 @@ Removals
   instead.
 
 
+Version 2.0.10
+--------------
+**2020-08-21**
+
+* Drop extra conda dependencies.
+
+Version 2.0.9
+-------------
+**2020-05-07**
+
+* Updates to conform with new xarray API.
+
+
+Version 2.0.8
+-------------
+**2019-10-17**
+
+* Resolved several warnings and a test failure in EEGReader.
+
+
+Version 2.0.7
+-------------
+**2019-09-09**
+
+* Identical to 2.0.6 but fixes a file upload error for the Python 3.7 version.
+
+
+Version 2.0.6
+-------------
+**2019-08-15**
+
+* MorletWaveletFilter now supports a ``complete`` parameter, defaulting to
+  True, which uses a complete Morlet wavelet with a zero mean, and with its
+  frequency corrected to be equivalent to a standard Morlet.  This
+  significantly improves power and phase accuracy for small wavelet widths.
+
+
+Version 2.0.4
+-------------
+**2018-08-31**
+
+* ``TimeSeries.to_hdf`` once again uses a human-readable output format
+
+
+Version 2.0.3
+-------------
+
+**2018-08-17**
+
+* ``TimeSeries.to_hdf`` and ``from_hdf`` have been reverted to the previous
+  behavior of base 64-encoding Numpy recarrays before writing to disk. This
+  makes the stored files less human-readable, but offers the advantage of being
+  much more robust.
+
+
+Version 2.0.2
+-------------
+
+**2018-08-08**
+
+New features:
+
+* ``TimeSeries`` now has a ``filter_with`` method to make applying filters
+  slightly easier (#211)
+
+Fixes:
+
+* Resource warnings were resolved by ensuring files get closed (#212)
+* ``ButterworthFilter``'s ``freq_range`` argument is now coerced to a list (#214)
+
+Other:
+
+* Filter modules have been renamed to conform with PEP8 (#213). This should not
+  affect normal usage since all filters are imported to the top-level filter
+  namespace by default.
+
+
 Version 2.0.1
 -------------
 

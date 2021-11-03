@@ -1,10 +1,13 @@
+{% set setup_data = load_setup_py_data() %}
+
 package:
   name: ptsa
-  version: 2.0.1
-  channels: anaconda conda-forge
+  version: {{ setup_data.get('version') }}
+  channels: anaconda pennmem
 
 source:
   git_url: ../
+  git_tag: staging
 
 build:
   # If this is a new build for the same version, increment the build
@@ -21,15 +24,18 @@ requirements:
     - swig
     - xarray
     - fftw
+    - pybind11
 
   run:
     - python {{ python }}
     - h5py
+    - fftw
     - numpy
     - scipy
     - vs2015_runtime  [win]
     - xarray
     - traits
+    - pybind11
 
 test:
   # Test that we can import ptsa and its extension modules

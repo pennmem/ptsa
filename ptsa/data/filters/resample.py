@@ -16,7 +16,7 @@ class ResampleFilter(BaseFilter):
     round_to_original_timepoints: bool
         Flag indicating if timepoints from original time axis
         should be reused after proper rounding. Defaults to False
-    time_axis: str
+    time_axis_name: str
         Name of the time axis.
 
     .. versionchanged:: 2.0

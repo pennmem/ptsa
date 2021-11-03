@@ -81,7 +81,7 @@ def get_include_dirs():
     return dirs
 
 
-def get_libs():
+def get_fftw_libs():
     if sys.platform.startswith("win"):
         return ['libfftw3-3']
     else:
@@ -181,7 +181,7 @@ ext_modules = [
         swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
         extra_compile_args=get_compiler_args(),
-        libraries=get_libs(),
+        libraries=get_fftw_libs(),
     ),
 
     Extension(
@@ -193,9 +193,15 @@ ext_modules = [
         swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
         extra_compile_args=get_compiler_args(),
-        libraries=get_libs(),
     ),
 ]
+
+# Install pybind11 if missing
+try:
+  import pybind11
+except ImportError:
+  if subprocess.call([sys.executable, '-m', 'pip', 'install', 'pybind11']):
+    raise RuntimeError('ERROR, failed:  pip install pybind11')
 
 # Try to add edffile extension
 try:
@@ -209,18 +215,19 @@ try:
             ],
         )
     ]
-except ImportError:
-    print("\n\nWARNING\n\n"
-          "pybind11 not found - you will be unable to read EDF files")
+except ImportError as err:
+    print("\n\nWARNING\n\n", err, "\n"
+          "pybind11 not found - you will be unable to read EDF files", sep='')
+
 
 check_dependencies()
 
 setup(
     name='ptsa',
     version=get_version_str(),
-    maintainer=['Per B. Sederberg', 'Maciek Swat'],
-    maintainer_email=['psederberg@gmail.com', 'maciekswat@gmail.com'],
-    url='https://github.com/maciekswat/ptsa_new',
+    maintainer=['Ryan A. Colyer'],
+    maintainer_email=['rcolyer@sas.upenn.edu', 'kahana-sysadmin@sas.upenn.edu'],
+    url='https://github.com/pennmem/ptsa_new',
     cmdclass={
         'build_py': CustomBuild,
         'install': CustomInstall,

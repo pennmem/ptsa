@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+from numpy.testing import assert_equal
 import pytest
 
 
@@ -28,6 +29,25 @@ def get_rhino_root():
             except:
                 continue
     raise OSError("Rhino root not found!")
+
+
+def assert_timeseries_equal(ts1, ts2):
+    """Checks that two :class:`TimeSeries` objects contain the same data."""
+    assert ts1.dims == ts2.dims
+
+    # ordering of keys can be different, so we use sets instead of lists
+    keys = set(ts1.coords.keys())
+    keys2 = set(ts2.coords.keys())
+    assert keys == keys2
+
+    for key in keys:
+        try:
+            assert all(ts1[key].data == ts2[key].data)
+        except TypeError:
+            # samplerate is scalar so the comparison is not iterable
+            assert ts1[key].data == ts2[key].data
+
+    assert_equal(ts1.data, ts2.data)
 
 
 # Decorator to skip tests that require data on rhino
