@@ -121,7 +121,7 @@ class MorletWaveletFilter(BaseFilter):
         mt.set_wavelet_phase_array(phases_reshaped)
         mt.set_wavelet_complex_array(wavelets_complex_reshaped)
 
-        mt.initialize_signal_props(float(self.timeseries['samplerate']))
+        mt.initialize_signal_props(float(timeseries['samplerate']))
         mt.initialize_wavelet_props(self.width, self.freqs, self.complete)
         mt.prepare_run()
 
