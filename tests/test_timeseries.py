@@ -17,6 +17,7 @@ from ptsa import __version__
 from ptsa.data.filters import ResampleFilter
 from ptsa.data.timeseries import TimeSeries, ConcatenationError
 from tests.utils import assert_timeseries_equal, skip_without_rhino
+from ptsa.data.concat import concat
 
 
 @pytest.fixture
@@ -442,14 +443,11 @@ combination of axes"""
     assert grand_mean == 49.5
 
 
-@pytest.mark.skipif(int(xr.__version__.split('.')[1]) > 7,
-                    reason="dtype lost on xarray >= 0.8")
+# @pytest.mark.skipif(int(xr.__version__.split('.')[1]) > 7,
+#                     reason="dtype lost on xarray >= 0.8")
 def test_concatenate():
     """make sure we can concatenate easily time series x - test it with rec
     array as one of the coords.
-
-    This fails for xarray > 0.7. See
-    https://github.com/pydata/xarray/issues/1434 for details.
 
     """
     p1 = np.array([('John', 180), ('Stacy', 150), ('Dick',200)],
@@ -474,7 +472,7 @@ def test_concatenate():
                                  'samplerate': 1
                              })
 
-    combined = xr.concat((ts1, ts2), dim='participant')
+    combined = concat((ts1, ts2), dim='participant')
 
     assert isinstance(combined, TimeSeries)
     assert (combined.participant.data['height'] ==
