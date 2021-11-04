@@ -1,4 +1,4 @@
-from timeseries import TimeSeries
+from ptsa.data.timeseries import TimeSeries
 import xarray
 import numpy as np
 
