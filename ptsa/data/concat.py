@@ -1,5 +1,6 @@
 from ptsa.data.timeseries import TimeSeries
 import xarray
+from xarray.core import dtypes
 import numpy as np
 
 def concat(
@@ -8,7 +9,7 @@ def concat(
     coords="different",
     compat="equals",
     positions=None,
-    fill_value=xarray.dtypes.NA,
+    fill_value=dtypes.NA,
     join="outer",
     combine_attrs="override"
 ):
