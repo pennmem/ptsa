@@ -137,7 +137,7 @@ class TimeSeries(xr.DataArray):
         from ptsa.io import hdf5
 
         with h5py.File(filename, mode) as hfile:
-            hfile.create_dataset("data", data=self.data.astype(float), **data_kwargs)
+            hfile.create_dataset("data", data=self.data, **data_kwargs)
 
             dims = [dim for dim in self.dims]
             # hdf5 is picky about string dtypes
