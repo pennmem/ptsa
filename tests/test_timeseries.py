@@ -58,7 +58,7 @@ def test_arithmetic_operations():
     print('ts_out=', ts_out)
 
 
-@pytest.mark.parametrize("dtype", [np.int, None, np.float32, np.float64])
+@pytest.mark.parametrize("dtype", [int, None, np.float32, np.float64])
 def test_coerce_to(dtype):
     shape = (1, 10, 100)
 
@@ -419,17 +419,17 @@ combination of axes"""
     assert grand_mean == 49.5
 
     x_mean  = ts_1.mean(dim='x')
-    assert (x_mean == np.arange(45,55,1, dtype=np.float)).all()
+    assert (x_mean == np.arange(45,55,1, dtype=float)).all()
     # checking axes
     assert(ts_1.y == x_mean.y).all()
 
     y_mean = ts_1.mean(dim='y')
-    assert (y_mean == np.arange(4.5,95,10, dtype=np.float)).all()
+    assert (y_mean == np.arange(4.5,95,10, dtype=float)).all()
     # checking axes
     assert (y_mean.x == ts_1.x).all()
 
     # test mean NaN
-    data_2 = np.arange(100, dtype=np.float).reshape(10,10)
+    data_2 = np.arange(100, dtype=float).reshape(10,10)
     np.fill_diagonal(data_2,np.NaN)
     # data_2[9,9] = 99
 
@@ -443,8 +443,8 @@ combination of axes"""
     assert grand_mean == 49.5
 
 
-# @pytest.mark.skipif(int(xr.__version__.split('.')[1]) > 7,
-#                     reason="dtype lost on xarray >= 0.8")
+@pytest.mark.skipif(int(xr.__version__.split('.')[1]) > 7,
+                    reason="dtype lost on xarray >= 0.8")
 def test_concatenate():
     """make sure we can concatenate easily time series x - test it with rec
     array as one of the coords.
@@ -455,7 +455,7 @@ def test_concatenate():
     p2 = np.array([('Bernie', 170), ('Donald', 250), ('Hillary',150)],
                   dtype=[('name', '|S256'), ('height', int)])
 
-    data = np.arange(50, 80, 1, dtype=np.float)
+    data = np.arange(50, 80, 1, dtype=int)
     dims = ['measurement', 'participant']
 
     ts1 = TimeSeries.create(data.reshape(10, 3), None, dims=dims,
@@ -475,6 +475,7 @@ def test_concatenate():
     combined = concat((ts1, ts2), dim='participant')
 
     assert isinstance(combined, TimeSeries)
+    import pdb; pdb.set_trace()
     assert (combined.participant.data['height'] ==
             np.array([180, 150, 200, 170, 250, 150])).all()
     assert (combined.participant.data['name'] ==
@@ -522,7 +523,7 @@ def test_append_recarray():
     p2 = np.array([('Bernie', 170), ('Donald', 250), ('Hillary',150)],
                   dtype=[('name', '|S256'), ('height', int)])
 
-    data = np.arange(50, 80, 1, dtype=np.float)
+    data = np.arange(50, 80, 1, dtype=float)
     dims = ['measurement', 'participant']
 
     ts1 = TimeSeries.create(data.reshape(10, 3), None, dims=dims,

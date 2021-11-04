@@ -81,18 +81,18 @@ class MorletWaveletFilter(BaseFilter):
 
         wavelet_dims = nontime_sizes + (self.freqs.shape[0],)
 
-        powers_reshaped = np.array([[]], dtype=np.float)
-        phases_reshaped = np.array([[]], dtype=np.float)
+        powers_reshaped = np.array([[]], dtype=float)
+        phases_reshaped = np.array([[]], dtype=float)
         wavelets_complex_reshaped = np.array([[]], dtype=np.complex)
 
         if 'power' in self.output:
             powers_reshaped = np.empty(
                 shape=(np.prod(wavelet_dims),
-                       len(timeseries['time'])), dtype=np.float)
+                       len(timeseries['time'])), dtype=float)
         if 'phase' in self.output:
             phases_reshaped = np.empty(
                 shape=(np.prod(wavelet_dims),
-                       len(timeseries['time'])), dtype=np.float)
+                       len(timeseries['time'])), dtype=float)
         if 'complex' in self.output:
             wavelets_complex_reshaped = np.empty(
                 shape=(np.prod(wavelet_dims), len(timeseries['time'])),
