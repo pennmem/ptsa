@@ -83,7 +83,7 @@ class MorletWaveletFilter(BaseFilter):
 
         powers_reshaped = np.array([[]], dtype=float)
         phases_reshaped = np.array([[]], dtype=float)
-        wavelets_complex_reshaped = np.array([[]], dtype=np.complex)
+        wavelets_complex_reshaped = np.array([[]], dtype=complex)
 
         if 'power' in self.output:
             powers_reshaped = np.empty(
