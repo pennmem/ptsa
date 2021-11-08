@@ -364,7 +364,7 @@ class TimeSeries(xr.DataArray):
             A TimeSeries instance with the filtered data.
 
         """
-        warnings.warn("The filtered method is not very flexible. "
+        warnings.warn("The filtered method is not very flexible and will be deprecated in an upcoming release."
                       "Consider using filters in ptsa.data.filters instead.")
         time_axis_index = get_axis_index(self, axis_name='time')
         filtered_array = buttfilt(self.values, freq_range,

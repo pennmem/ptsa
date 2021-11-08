@@ -3,7 +3,7 @@ Changes
 
 Version 3.0.0
 -------------
-**2021.11.03**
+**2021.11.08**
 Version 3.0 of PTSA is largely a cleanup release. Several deprecated features
 have been removed and things have been reorganized.
 
@@ -11,12 +11,14 @@ What's New
 ^^^^^^^^^^
 * Filter objects no longer accept a ``TimeSeries`` object as a positional argument. Rather, these are passed to the object's .filter method instead. This allows for reusing filters on multiple time series as well as adding filter pipeline capabilities. 
 * Added a class decorator to ``TimeSeries`` that coerces the return type of xarray methods to be ``TimeSeries`` rather than ``xarray.DataArray``. 
-
+* to_hdf and from_hdf now use xarray's recommended file saving method, netCDF. We use xarray built-ins to do I/O rather than in-house code via h5py.
+* to_hdf and from_hdf now support pandas MultiIndexes as coordinates
 Removals
 ^^^^^^^^
 
 * ``TimeSeriesX`` backwards compatibility has been removed. Use ``TimeSeries``
   instead.
+* the .filtered method has been removed. Initialize a ButterworthFilter and use .filter_with() instead
 
 
 Version 2.0.10
