@@ -61,7 +61,7 @@ after_success:
 
 deploy:
   - provider: script
-    script: maint/deploy.sh 
+    script: bash maint/deploy.sh 
     on:
       tags: true
     skip_cleanup: true
