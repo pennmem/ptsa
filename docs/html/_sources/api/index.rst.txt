@@ -6,15 +6,5 @@ API Reference
     data
     extensions
 
-Filtering
----------
-
-.. automodule:: ptsa.filt
+.. automodule:: concat
     :members:
-
-Helpers
--------
-
-.. automodule:: ptsa.helper
-    :members:
-

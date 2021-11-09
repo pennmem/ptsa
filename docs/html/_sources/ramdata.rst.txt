@@ -273,7 +273,7 @@ Here is the output:
 
 .. code-block:: python
 
-    <xray.TimeSeriesX (channels: 100, events: 1020, time: 1800)>
+    <xray.TimeSeries (channels: 100, events: 1020, time: 1800)>
     array([[[ 3467.059196,  3471.312604,  3473.970984, ...,  3580.306184,
               3581.901212,  3588.813   ],
             [ 3609.548364,  3609.548364,  3612.73842 , ...,  3368.16746 ,

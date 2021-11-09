@@ -210,7 +210,7 @@ containing pairwise differences for electrode pairs specified in <code class="do
 <p>We import <code class="docutils literal notranslate"><span class="pre">MonopolarToBipolarMapper</span></code> from <code class="docutils literal notranslate"><span class="pre">ptsa.data.filters</span></code> PTSA package , crteate an instance of
 MonopolarToBipolarMapper with appropriate parameters and then call <code class="docutils literal notranslate"><span class="pre">filter</span></code> function to compute pairwise
 signal differences. Here is the output:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">xray</span><span class="o">.</span><span class="n">TimeSeriesX</span> <span class="p">(</span><span class="n">bipolar_pairs</span><span class="p">:</span> <span class="mi">141</span><span class="p">,</span> <span class="n">events</span><span class="p">:</span> <span class="mi">1020</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="mi">1800</span><span class="p">)</span><span class="o">&gt;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">xray</span><span class="o">.</span><span class="n">TimeSeries</span> <span class="p">(</span><span class="n">bipolar_pairs</span><span class="p">:</span> <span class="mi">141</span><span class="p">,</span> <span class="n">events</span><span class="p">:</span> <span class="mi">1020</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="mi">1800</span><span class="p">)</span><span class="o">&gt;</span>
 <span class="n">array</span><span class="p">([[[</span>  <span class="mf">7119.14164</span> <span class="p">,</span>   <span class="mf">7119.673316</span><span class="p">,</span>   <span class="mf">7119.14164</span> <span class="p">,</span> <span class="o">...</span><span class="p">,</span>   <span class="mf">7156.35896</span> <span class="p">,</span>
            <span class="mf">7159.549016</span><span class="p">,</span>   <span class="mf">7164.3341</span>  <span class="p">],</span>
         <span class="p">[</span>  <span class="mf">7175.499296</span><span class="p">,</span>   <span class="mf">7178.157676</span><span class="p">,</span>   <span class="mf">7186.132816</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>   <span class="mf">7022.376608</span><span class="p">,</span>
@@ -221,7 +221,7 @@ signal differences. Here is the output:</p>
 <span class="o">...</span>
 </pre></div>
 </div>
-<p>Notice that this <code class="docutils literal notranslate"><span class="pre">TimeSeriesX</span></code> object is indexed by bipolar_pairs. As a matter of fact if you type:</p>
+<p>Notice that this <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> object is indexed by bipolar_pairs. As a matter of fact if you type:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bp_eegs</span><span class="o">.</span><span class="n">bipolar_pairs</span>
 </pre></div>
 </div>
@@ -235,7 +235,7 @@ signal differences. Here is the output:</p>
 <section id="butterworthfilter">
 <h2>ButterworthFilter<a class="headerlink" href="#butterworthfilter" title="Permalink to this headline">¶</a></h2>
 <p>To use Butterworth filtering inside PTSA you have two choices: use <code class="docutils literal notranslate"><span class="pre">ButterworthFilter</span></code> object and passing
-<code class="docutils literal notranslate"><span class="pre">TimeSeriesX</span></code> object to it or use a convenience function inside <code class="docutils literal notranslate"><span class="pre">TimeSeriesX</span></code> object.</p>
+<code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> object to its <code class="docutils literal notranslate"><span class="pre">.filter</span></code> method or use a convenience function inside <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> object.</p>
 <p>Let’s us start by showing first <code class="docutils literal notranslate"><span class="pre">ButterworthFilter</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.filters</span> <span class="kn">import</span> <span class="n">ButterworthFilter</span>
 <span class="n">b_filter</span> <span class="o">=</span> <span class="n">ButterworthFilter</span><span class="p">(</span><span class="n">freq_range</span><span class="o">=</span><span class="p">[</span><span class="mf">58.</span><span class="p">,</span> <span class="mf">62.</span><span class="p">],</span> <span class="n">filt_type</span><span class="o">=</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
@@ -246,9 +246,9 @@ signal differences. Here is the output:</p>
 filter parameters: we specify frequency range that we want to filter out
 (to remove frequencies we set <code class="docutils literal notranslate"><span class="pre">filt_type</span></code> to <code class="docutils literal notranslate"><span class="pre">'stop'</span></code>) and specify filter order (here it is 4)</p>
 <p>As before, once the filter object is initialized we call <code class="docutils literal notranslate"><span class="pre">filter</span></code> function to get the result
-(filtered <code class="docutils literal notranslate"><span class="pre">TimeSeriesX</span></code>).</p>
-<p>If you prefer you may use alternative way of running Butterworth filter on a <code class="docutils literal notranslate"><span class="pre">TimeSeriesX</span></code> by calling <code class="docutils literal notranslate"><span class="pre">filtered</span></code>
-function on a <code class="docutils literal notranslate"><span class="pre">TimeseriesX</span></code> object</p>
+(filtered <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code>).</p>
+<p>If you prefer you may use alternative way of running Butterworth filter on a <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> by calling <code class="docutils literal notranslate"><span class="pre">filtered</span></code>
+function on a <code class="docutils literal notranslate"><span class="pre">Timeseries</span></code> object</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bp_eegs_filtered_1</span> <span class="o">=</span> <span class="n">bp_eegs</span><span class="o">.</span><span class="n">filtered</span><span class="p">(</span><span class="n">freq_range</span><span class="o">=</span><span class="p">[</span><span class="mf">58.</span><span class="p">,</span> <span class="mf">62.</span><span class="p">],</span> <span class="n">filt_type</span><span class="o">=</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>

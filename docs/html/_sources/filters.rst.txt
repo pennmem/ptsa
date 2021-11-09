@@ -35,7 +35,7 @@ signal differences. Here is the output:
 
 .. code-block:: python
 
-    <xray.TimeSeriesX (bipolar_pairs: 141, events: 1020, time: 1800)>
+    <xray.TimeSeries (bipolar_pairs: 141, events: 1020, time: 1800)>
     array([[[  7119.14164 ,   7119.673316,   7119.14164 , ...,   7156.35896 ,
                7159.549016,   7164.3341  ],
             [  7175.499296,   7178.157676,   7186.132816, ...,   7022.376608,
@@ -46,7 +46,7 @@ signal differences. Here is the output:
     ...
 
 
-Notice that this ``TimeSeriesX`` object is indexed by bipolar_pairs. As a matter of fact if you type:
+Notice that this ``TimeSeries`` object is indexed by bipolar_pairs. As a matter of fact if you type:
 
 .. code-block:: python
 
@@ -65,7 +65,7 @@ ButterworthFilter
 ~~~~~~~~~~~~~~~~~
 
 To use Butterworth filtering inside PTSA you have two choices: use ``ButterworthFilter`` object and passing
-``TimeSeriesX`` object to it or use a convenience function inside ``TimeSeriesX`` object.
+``TimeSeries`` object to its ``.filter`` method or use a convenience function inside ``TimeSeries`` object.
 
 Let's us start by showing first ``ButterworthFilter``:
 
@@ -82,10 +82,10 @@ filter parameters: we specify frequency range that we want to filter out
 (to remove frequencies we set ``filt_type`` to ``'stop'``) and specify filter order (here it is 4)
 
 As before, once the filter object is initialized we call ``filter`` function to get the result
-(filtered ``TimeSeriesX``).
+(filtered ``TimeSeries``).
 
-If you prefer you may use alternative way of running Butterworth filter on a ``TimeSeriesX`` by calling ``filtered``
-function on a ``TimeseriesX`` object
+If you prefer you may use alternative way of running Butterworth filter on a ``TimeSeries`` by calling ``filtered``
+function on a ``Timeseries`` object
 
 .. code-block:: python
 
