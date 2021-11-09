@@ -1,24 +1,16 @@
 import numpy as np
 from scipy.signal import resample
+import traits.api
 
 from ptsa.data.timeseries import TimeSeries
 from ptsa.data.filters import BaseFilter
-import traits.api
 
 
 class ResampleFilter(BaseFilter):
-    """Upsample or downsample a time series to a new sample rate.
+    """Resample a time series to a new sample rate.
 
-    .. versionchanged:: 2.0
-
-        Parameter "time_series" was renamed to "timeseries". Parameter
-        "time_axis_index" was removed; the time axis is assumed to be named
-        "time"
-
-    Keyword Arguments
-    -----------------
-    timeseries
-        TimeSeries object
+    Parameters
+    ----------
     resamplerate: float
         new sampling frequency
     round_to_original_timepoints: bool
@@ -27,20 +19,28 @@ class ResampleFilter(BaseFilter):
     time_axis_name: str
         Name of the time axis.
 
+    .. versionchanged:: 2.0
+
+        Parameter "time_series" was renamed to "timeseries". Parameter
+        "time_axis_index" was removed; the time axis is assumed to be named
+        "time"
+
     """
 
     resamplerate = traits.api.CFloat
     round_to_original_timepoints = traits.api.Bool
+    time_axis_name = traits.api.Str
+    time_axis_index = traits.api.Int
 
-    def __init__(self, timeseries, resamplerate,
-                 round_to_original_timepoints=False, time_axis_name='time'):
-        super(ResampleFilter, self).__init__(timeseries=timeseries)
+    def __init__(self, resamplerate, round_to_original_timepoints=False,
+                 time_axis_name="time"):
+        super(ResampleFilter, self).__init__()
         self.resamplerate = resamplerate
         self.round_to_original_timepoints = round_to_original_timepoints
         self.time_axis_name = time_axis_name
 
-    def filter(self):
-        """resamples time series
+    def filter(self, timeseries):
+        """Resample a time series.
 
         Returns
         -------
@@ -48,13 +48,14 @@ class ResampleFilter(BaseFilter):
             resampled time series with sampling frequency set to resamplerate
 
         """
-        samplerate = float(self.timeseries['samplerate'])
+        timeseries.coerce_to(np.float64)
+        samplerate = float(timeseries['samplerate'])
 
-        self.time_axis_index = self.timeseries.get_axis_num(
+        self.time_axis_index = timeseries.get_axis_num(
             self.time_axis_name)
 
-        time_axis = self.timeseries.coords[
-            self.timeseries.dims[self.time_axis_index]]
+        time_axis = timeseries.coords[
+            timeseries.dims[self.time_axis_index]]
 
         time_axis_length = len(time_axis)
         new_length = int(np.round(
@@ -71,7 +72,7 @@ class ResampleFilter(BaseFilter):
 
         if self.round_to_original_timepoints:
             filtered_array, new_time_idx_array = resample(
-                self.timeseries.data, new_length, t=time_idx_array,
+                timeseries.data, new_length, t=time_idx_array,
                 axis=self.time_axis_index)
 
             # print new_time_axis
@@ -82,19 +83,19 @@ class ResampleFilter(BaseFilter):
 
         else:
             filtered_array, new_time_axis = \
-                resample(self.timeseries.data,
+                resample(timeseries.data,
                          new_length,
                          t=time_axis_data,
                          axis=self.time_axis_index)
 
         coords = {}
-        for i, dim_name in enumerate(self.timeseries.dims):
+        for i, dim_name in enumerate(timeseries.dims):
             if i != self.time_axis_index:
-                coords[dim_name] = self.timeseries.coords[dim_name].copy()
+                coords[dim_name] = timeseries.coords[dim_name].copy()
             else:
                 coords[dim_name] = new_time_axis
         coords['samplerate'] = self.resamplerate
 
         filtered_timeseries = TimeSeries(filtered_array, coords=coords,
-                                         dims=self.timeseries.dims)
+                                         dims=timeseries.dims)
         return filtered_timeseries

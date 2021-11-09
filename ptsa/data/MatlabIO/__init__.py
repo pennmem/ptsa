@@ -22,8 +22,8 @@ if sys.platform.startswith('win'):
 else:
     numpy_type_dict = {
         type(int()): '<i8',
-        type(np.float128()): '<f16',
-        type(np.complex256()): '<c32',
+        #type(np.float128()): '<f16',
+        #type(np.complex256()): '<c32',
         type(complex()): '<c16',
         # type(str()): '|S1',  # added below depending on version
         type(bool()): '|b1',

@@ -12,6 +12,9 @@ from scipy.signal import resample
 from ptsa import __version__ as ptsa_version
 from ptsa.data.common import get_axis_index
 from ptsa.filt import buttfilt
+from pandas import MultiIndex
+import os
+os.environ['HDF5_USE_FILE_LOCKING'] = 'FALSE'
 
 
 class ConcatenationError(Exception):
@@ -20,7 +23,29 @@ class ConcatenationError(Exception):
 
     """
 
+# JHR: by default, inheriting many xarray methods works,
+# but returns an xarray object instead of a timeseries object.
+# include in the list below methods of xarray.DataArray that should
+# return type TimeSeries (required for most ptsa functions and to use
+# the built-in hdf5 file-saving
+ 
+METHODS = ['astype', 'query', 'reduce']
+def convert_method_return_types(cls):
+    # define decorator that wraps methods and converts dtype to TimeSeries
+    def return_type_ts(f):
+        f = getattr(xr.DataArray, f)
+        def wrap_xarray(*args, **kwargs):
+            xarr = f(*args, **kwargs)
+            return TimeSeries(xarr, coords=xarr.coords, dims=xarr.dims, attrs=xarr.attrs, name=xarr.name)
+        wrap_xarray.__doc__ = f'Wraps the following, returning as a TimeSeries:\
+                                \n{getattr(xr.DataArray, f.__name__).__doc__}'
+        return wrap_xarray
+    # iterate over desired methods and decorate them
+    for method in METHODS:
+        setattr(cls, method, return_type_ts(method))
+    return cls
 
+@convert_method_return_types
 class TimeSeries(xr.DataArray):
     """A thin wrapper around :class:`xr.DataArray` for dealing with time series
     data.
@@ -78,7 +103,15 @@ class TimeSeries(xr.DataArray):
             coords['samplerate'] = float(samplerate)
         return cls(data, coords=coords, dims=dims, name=name, attrs=attrs)
 
-    def to_hdf(self, filename, mode='w', data_kwargs={'chunks': True}):
+    def coerce_to(self, dtype=np.float64):
+        """Coerce the data to the specified dtype in place. If dtype is None,
+        this method does nothing. Default: coerce to ``np.float64``.
+
+        """
+        if dtype is not None:
+            self.data = self.data.astype(dtype)
+
+    def to_hdf(self, filename, mode='w', **kwargs):
         """Save to disk using HDF5.
 
         Parameters
@@ -89,9 +122,7 @@ class TimeSeries(xr.DataArray):
             File mode to use. See the :mod:`h5py` documentation for details.
             Default: ``'w'``
         kwargs: dict
-            Keyword arguments to be passed on to the create_dataset call for
-            the main data array (e.g., to specify compression; see the :mod:`h5py`
-            documentation for details).
+            Keyword arguments to be passed on to to_netcdf() call. 
 
         Notes
         -----
@@ -104,35 +135,19 @@ class TimeSeries(xr.DataArray):
         except ImportError:
             raise RuntimeError("You must install h5py to save to HDF5")
 
-        from ptsa.io import hdf5
+        # from ptsa.io import hdf5
 
-        with h5py.File(filename, mode) as hfile:
-            hfile.create_dataset("data", data=self.data, **data_kwargs)
+        for idx in self.indexes:
+            if isinstance(self.indexes[idx], MultiIndex):
+                self = self.reset_index(idx)
+        array_name = self.name or 'data'
+        dataset = self.to_dataset(name = array_name)
+        dataset.attrs['created'] = time.time()
+        dataset.attrs['ptsa_version'] = ptsa_version
+        dataset.attrs['human_readable'] = 1
+        dataset.attrs['array_name'] = array_name
 
-            dims = [dim.encode() for dim in self.dims]
-            hfile.create_dataset("dims", data=dims)
-
-            hfile.create_group("coords")
-
-            for name, data in self.coords.items():
-                # if we don't do .data, we have a TimeSeries object because
-                # xarray is weird
-                hdf5.save_array(hfile, "/".join(["coords", name]), data.data)
-
-            root = hfile['/']
-
-            if self.name is not None:
-                root.attrs['name'] = self.name.encode()
-
-            if self.attrs is not None:
-                root.attrs['attrs'] = json.dumps(self.attrs).encode()
-
-            root.attrs["created"] = time.time()
-            root.attrs["ptsa_version"] = ptsa_version
-
-            # indicate that we're using the new "human readable" format for
-            # recarray-like coordinates
-            root.attrs["human_readable"] = True
+        dataset.to_netcdf(filename, mode=mode, format='NETCDF4', **kwargs)
 
     @staticmethod
     def _from_hdf_base64(hfile):
@@ -154,7 +169,7 @@ class TimeSeries(xr.DataArray):
         root = hfile['/']
 
         coords_group = hfile['coords']
-        names = json.loads(coords_group.attrs['names'].decode())
+        names = json.loads(coords_group.attrs['names'])
         coords = {}
 
         for name in names:
@@ -163,52 +178,19 @@ class TimeSeries(xr.DataArray):
             coords[name] = coord
 
         name = root.attrs.get('name', None)
-        if name is not None:
-            name = name.decode()
 
         attrs = root.attrs.get('attrs', None)
         if attrs is not None:
-            attrs = json.loads(attrs.decode())
+            attrs = json.loads(attrs)
 
         dims = [dim.decode() for dim in dims]
-
-        return rtype(name, dims, coords, attrs)
-
-    @staticmethod
-    def _from_hdf_human_readable(hfile):
-        """Load non-time series data from the newer, "human readable" HDF5
-        format.
-
-        Returns
-        -------
-        name, dims, coords, names, attrs
-        """
-        from ptsa.io import hdf5
-
-        rtype = namedtuple("HDFHumanRedableRType", "name,dims,coords,attrs")
-
-        root = hfile["/"]
-        dims = [dim.decode() for dim in hfile["dims"][:]]
-
-        name = root.attrs.get("name", None)
-        if name is not None:
-            name = name.decode()
-
-        attrs = root.attrs.get("attrs", None)
-        if attrs is not None:
-            attrs = json.loads(attrs.decode())
-
-        coords_group = hfile["coords"]
-        coords = {
-            key: hdf5.load_array(hfile, "/".join(["coords", key]))
-            for key in coords_group
-        }
 
         return rtype(name, dims, coords, attrs)
 
     @classmethod
     def from_hdf(cls, filename):
         """Load a serialized time series from an HDF5 file.
+        Uses 
 
         Parameters
         ----------
@@ -220,20 +202,43 @@ class TimeSeries(xr.DataArray):
             import h5py
         except ImportError:
             raise RuntimeError("You must install h5py to load from HDF5")
+        
+        xarr = xr.open_dataset(filename, engine='netcdf4')
+        
+        # legacy base64 reading using h5py
+        if not xarr.attrs.get("human_readable"):
+            xarr.close()
+            del xarr
+            warnings.warn("Legacy base 64 encoded hdf5 is deprecated. "
+            "It is recommended to reload and save your data anew in the human readable format")
 
-        with h5py.File(filename, 'r') as hfile:
-            if not hfile.attrs.get("human_readable", False):
+            with h5py.File(filename, 'r') as hfile:
                 loaded = cls._from_hdf_base64(hfile)
-            else:
-                loaded = cls._from_hdf_human_readable(hfile)
+                array = cls.create(hfile['data'][()],
+                        None,
+                        coords=loaded.coords,
+                        dims=loaded.dims,
+                        name=loaded.name,
+                        attrs=loaded.attrs)
+                return array
+        
+        xarr = xarr.load()
 
-            array = cls.create(hfile['data'][()],
-                               None,
-                               coords=loaded.coords,
-                               dims=loaded.dims,
-                               name=loaded.name,
-                               attrs=loaded.attrs)
-            return array
+        # initialize timeseries object
+        array_name = xarr.attrs['array_name']
+        ts = TimeSeries(
+            xarr[array_name].data,
+            coords= xarr[array_name].coords,
+            dims= xarr[array_name].dims,
+            attrs= xarr[array_name].attrs,
+            name= xarr[array_name].name
+        )
+
+        # restore flattened MultiIndexes
+        reset_dims = [dim for dim in ts.dims if dim not in ts.indexes.keys()]
+        for dim in reset_dims:
+            ts = ts.set_index({dim: [coord for coord in ts[dim].coords if coord!= 'samplerate']})
+        return ts
 
     def append(self, other, dim=None):
         """Append another :class:`TimeSeries` to this one.
@@ -310,15 +315,13 @@ class TimeSeries(xr.DataArray):
         """
         return int(np.ceil(float(self['samplerate']) * duration))
 
-    def filter_with(self, filter_class, **kwargs):
-        """Returns a filtered time series using the specified filter class.
+    def filter_with(self, filters):
+        """Filter the time series data using the specified filters in order.
 
         Parameters
         ----------
-        filter_class : type
-            The filter class to use.
-        kwargs
-            Keyword arguments to pass along to ``filter_class``.
+        filters : BaseFilter or Iterable[BaseFilter]
+            The filter(s) to use.
 
         Returns
         -------
@@ -331,12 +334,14 @@ class TimeSeries(xr.DataArray):
             When ``filter_class`` is not a valid filter class.
 
         """
-        from ptsa.data.filters.base import BaseFilter
+        if not isinstance(filters, (list, tuple)):
+            filters = [filters]
 
-        if not issubclass(filter_class, BaseFilter):
-            raise TypeError("filter_class must be a child of BaseFilter")
+        filtered = self
 
-        filtered = filter_class(self, **kwargs).filter()
+        for filter_ in filters:
+            filtered = filter_.filter(filtered)
+
         return filtered
 
     def filtered(self, freq_range, filt_type='stop', order=4):
@@ -359,7 +364,7 @@ class TimeSeries(xr.DataArray):
             A TimeSeries instance with the filtered data.
 
         """
-        warnings.warn("The filtered method is not very flexible. "
+        warnings.warn("The filtered method is not very flexible and will be deprecated in an upcoming release."
                       "Consider using filters in ptsa.data.filters instead.")
         time_axis_index = get_axis_index(self, axis_name='time')
         filtered_array = buttfilt(self.values, freq_range,
@@ -521,20 +526,4 @@ class TimeSeries(xr.DataArray):
             A TimeSeries instance with the baseline corrected data.
 
         """
-        return self - self.isel(time=(self['time'] >= base_range[0]) &
-                                (self['time'] <= base_range[1])).mean(
-                                    dim='time')
-
-
-class TimeSeriesX(TimeSeries):
-    
-    __slots__ = ()
-    
-    def __init__(self, data, coords, dims=None, name=None,
-                 attrs=None, encoding=None, fastpath=False):
-        with warnings.catch_warnings():
-            warnings.simplefilter('always')
-            warnings.warn("TimeSeriesX has been renamed TimeSeries",
-                          DeprecationWarning)
-            super(TimeSeriesX, self).__init__(data, coords, dims, name, attrs,
-                                              encoding, fastpath)
+        return self - self.isel(time=(self['time'] >= base_range[0]) & (self['time'] <= base_range[1])).mean(dim='time')
