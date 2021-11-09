@@ -136,10 +136,16 @@ class TimeSeries(xr.DataArray):
             raise RuntimeError("You must install h5py to save to HDF5")
 
         # from ptsa.io import hdf5
+        
 
         for idx in self.indexes:
             if isinstance(self.indexes[idx], MultiIndex):
                 self = self.reset_index(idx)
+        # cast booleans to integers for netcdf4
+        needs_casting = [coord for coord in self.coords if coord != 'samplerate' and type(self[coord].values[0]) is bool]
+        coords_casting = {coord: (self[coord].dims[0], self[coord].astype(int).data) for coord in needs_casting}
+        self = self.assign_coords(coords_casting)
+
         array_name = self.name or 'data'
         dataset = self.to_dataset(name = array_name)
         dataset.attrs['created'] = time.time()
@@ -147,7 +153,7 @@ class TimeSeries(xr.DataArray):
         dataset.attrs['human_readable'] = 1
         dataset.attrs['array_name'] = array_name
 
-        dataset.to_netcdf(filename, mode=mode, format='NETCDF4', **kwargs)
+        dataset.to_netcdf(filename, mode=mode, **kwargs)
 
     @staticmethod
     def _from_hdf_base64(hfile):
@@ -188,7 +194,7 @@ class TimeSeries(xr.DataArray):
         return rtype(name, dims, coords, attrs)
 
     @classmethod
-    def from_hdf(cls, filename):
+    def from_hdf(cls, filename, engine='netcdf4', **kwargs):
         """Load a serialized time series from an HDF5 file.
         Uses 
 
@@ -203,7 +209,7 @@ class TimeSeries(xr.DataArray):
         except ImportError:
             raise RuntimeError("You must install h5py to load from HDF5")
         
-        xarr = xr.open_dataset(filename, engine='netcdf4')
+        xarr = xr.open_dataset(filename, engine=engine, **kwargs)
         
         # legacy base64 reading using h5py
         if not xarr.attrs.get("human_readable"):
