@@ -48,18 +48,9 @@ class ButterworthFilter(BaseFilter):
 
         """
         time_axis_index = get_axis_index(timeseries, axis_name='time')
-        filtered_array = buttfilt(timeseries,
+        filtered_array = buttfilt(timeseries.data,
                                   self.freq_range, float(timeseries['samplerate']), self.filt_type,
                                   self.order, axis=time_axis_index)
 
-        coords_dict = {coord_name: DataArray(coord.copy()) for coord_name, coord in list(timeseries.coords.items())}
-        coords_dict['samplerate'] = timeseries['samplerate']
-        dims = [dim_name for dim_name in timeseries.dims]
-        filtered_timeseries = TimeSeries(
-            filtered_array,
-            dims=dims,
-            coords=coords_dict
-        )
-
-        filtered_timeseries.attrs = timeseries.attrs.copy()
-        return filtered_timeseries
+        timeseries.data = filtered_array
+        return timeseries
