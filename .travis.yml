@@ -1,16 +1,28 @@
 dist: xenial
 language: python
-python:
-  # We don't actually use the Travis Python, but this keeps it organized.
-  #- "3.6"
-  - "3.7"
-  - "3.8"
-  - "3.9"
-  #- "3.10" # not yet supported by xenial
+# python:
+#   # We don't actually use the Travis Python, but this keeps it organized.
+#   #- "3.6"
+#   - "3.7"
+#   - "3.8"
+#   - "3.9"
+#   #- "3.10" # not yet supported by xenial
 notifications:
   email: false
 env:
-  - CC=gcc-6 CXX=g++-6 NO_RHINO=1
+  global:
+    - CC=gcc-6
+    - CXX=g++-6
+    - NO_RHINO=1
+    - PKG_NAME=ptsa
+    - PY_IGNORE_IMPORTMISMATCH=1
+  matrix:
+    - PYTHON_VERSION=3.7
+    - PYTHON_VERSION=3.8
+    - PYTHON_VERSION=3.9
+
+before_install:
+  - conda install -q python=$PYTHON_VERSION conda-build anaconda-client
 install:
   # We do this conditionally because it saves us some downloading if the
   # version is the same.
@@ -22,9 +34,9 @@ install:
   - conda update -q conda
   # Useful for debugging any issues with conda
   - conda info -a
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy xarray h5py netcdf4 swig traits
+  - conda create -q -n test-environment python=$PYTHON_VERSION numpy scipy xarray h5py netcdf4 swig traits
   - source activate test-environment
-  - if [[ "$TRAVIS_PYTHON_VERSION" != "2.7" ]]; then
+  - if [[ "$PYTHON_VERSION" != "2.7" ]]; then
       pip install git+https://github.com/pennmem/cmlreaders.git@v0.9.3#egg=cmlreaders;
     fi
   - conda install -y -c conda-forge pybind11 fftw
@@ -46,3 +58,10 @@ script:
 
 after_success:
   - codecov
+
+deploy:
+  - provider: script
+    script: maint/deploy.sh 
+    on:
+      tags: true
+    skip_cleanup: true
