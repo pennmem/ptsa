@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Reading EEG Data from events &mdash; PTSA 2.0.8 documentation</title>
+  <title>Reading EEG Data from events &mdash; PTSA 3.0.0 documentation</title>
   
 
   
@@ -21,13 +22,13 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -36,6 +37,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Interacting with RAM Data" href="../ramdata.html" />
@@ -63,7 +66,7 @@
             
             
               <div class="version">
-                2.0.8
+                3.0.0
               </div>
             
           
@@ -173,21 +176,35 @@
 /* CSS for nbsphinx extension */
 
 /* remove conflicting styling from Sphinx themes */
-div.nbinput.container,
-div.nbinput.container div.prompt,
-div.nbinput.container div.input_area,
-div.nbinput.container div[class*=highlight],
-div.nbinput.container div[class*=highlight] pre,
-div.nboutput.container,
-div.nboutput.container div.prompt,
-div.nboutput.container div.output_area,
-div.nboutput.container div[class*=highlight],
-div.nboutput.container div[class*=highlight] pre {
-    background: none;
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
     border: none;
-    padding: 0 0;
+    padding: 0;
     margin: 0;
     box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
 }
 
 /* avoid gaps between output lines */
@@ -234,20 +251,33 @@ div.nboutput.container div.prompt pre {
 /* all prompts */
 div.nbinput.container div.prompt,
 div.nboutput.container div.prompt {
-    min-width: 5ex;
-    padding-top: 0.3rem;
-    padding-right: 0.3rem;
-    text-align: right;
-    flex: 0;
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
 }
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
 @media (max-width: 540px) {
     div.nbinput.container div.prompt,
     div.nboutput.container div.prompt {
+        width: unset;
         text-align: left;
         padding: 0.4em;
     }
     div.nboutput.container div.prompt.empty {
         padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
     }
 }
 
@@ -275,7 +305,7 @@ div.nboutput.container div.output_area {
 div.nbinput.container div.input_area {
     border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f5f5f5;
+    /*background: #f5f5f5;*/
 }
 
 /* override MathJax center alignment in output cells */
@@ -340,7 +370,8 @@ div.nboutput.container div.output_area div[class*=highlight].math,
 div.nboutput.container div.output_area.rendered_html,
 div.nboutput.container div.output_area > div.output_javascript,
 div.nboutput.container div.output_area:not(.rendered_html) > img{
-    padding: 0.3rem;
+    padding: 5px;
+    margin: 0;
 }
 
 /* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
@@ -410,7 +441,7 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Reading-EEG-Data-from-events">
+<section id="Reading-EEG-Data-from-events">
 <h1>Reading EEG Data from events<a class="headerlink" href="#Reading-EEG-Data-from-events" title="Permalink to this headline">¶</a></h1>
 <p>Each events array has an <code class="docutils literal notranslate"><span class="pre">eegfile</span></code> field, which points to the directory that contains the associated EEG files. To read this data, you use the EEGReader class.</p>
 <p>Two other important classes for loading EEG data are the TalReader class, which loads information about the electrodes in ECoG subjects, and the MonopolarToBipolarMapper, which performs a bipolar rereferencing on ECoG data.</p>
@@ -420,17 +451,17 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">BaseEventReader</span><span class="p">,</span><span class="n">EEGReader</span><span class="p">,</span><span class="n">CMLEventReader</span>
-<span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">TalReader</span>
-<span class="kn">from</span> <span class="nn">ptsa.data.filters</span> <span class="kn">import</span> <span class="n">MonopolarToBipolarMapper</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="n">rhino_root</span><span class="o">=</span><span class="s1">&#39;/Volumes/rhino_root&#39;</span>
+<span></span>%matplotlib inline
+from ptsa.data.readers import BaseEventReader,EEGReader,CMLEventReader
+from ptsa.data.readers import TalReader
+from ptsa.data.filters import MonopolarToBipolarMapper
+from matplotlib import pyplot as plt
+import numpy as np
+rhino_root=&#39;/Volumes/rhino_root&#39;
 </pre></div>
 </div>
 </div>
-<div class="section" id="1.-pyFR-data-(and-old-RAM-data)">
+<section id="1.-pyFR-data-(and-old-RAM-data)">
 <h2>1. pyFR data (and old RAM data)<a class="headerlink" href="#1.-pyFR-data-(and-old-RAM-data)" title="Permalink to this headline">¶</a></h2>
 <p>First, we load the events, which are found on rhino in <code class="docutils literal notranslate"><span class="pre">/data/events/pyFR</span></code>:</p>
 <div class="nbinput nblast docutils container">
@@ -438,8 +469,8 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">events</span> <span class="o">=</span> <span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">rhino_root</span><span class="o">+</span><span class="s1">&#39;/data/events/pyFR/BW001_events.mat&#39;</span><span class="p">,</span><span class="n">use_reref_eeg</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">words</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="o">.</span><span class="n">type</span><span class="o">==</span><span class="s1">&#39;WORD&#39;</span><span class="p">]</span>
+<span></span>events = BaseEventReader(filename=rhino_root+&#39;/data/events/pyFR/BW001_events.mat&#39;,use_reref_eeg=False).read()
+words = events[events.type==&#39;WORD&#39;]
 </pre></div>
 </div>
 </div>
@@ -450,9 +481,9 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">tal_reader</span> <span class="o">=</span> <span class="n">TalReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">rhino_root</span><span class="o">+</span><span class="s1">&#39;/data/eeg/BW001/tal/BW001_talLocs_database_bipol.mat&#39;</span><span class="p">)</span>
-<span class="n">channels</span> <span class="o">=</span> <span class="n">tal_reader</span><span class="o">.</span><span class="n">get_monopolar_channels</span><span class="p">()</span>
-<span class="n">channels</span>
+<span></span>tal_reader = TalReader(filename=rhino_root+&#39;/data/eeg/BW001/tal/BW001_talLocs_database_bipol.mat&#39;)
+channels = tal_reader.get_monopolar_channels()
+channels
 </pre></div>
 </div>
 </div>
@@ -489,8 +520,8 @@ array([&#39;001&#39;, &#39;002&#39;, &#39;003&#39;, &#39;004&#39;, &#39;005&#39;
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">eeg</span> <span class="o">=</span> <span class="n">EEGReader</span><span class="p">(</span><span class="n">events</span><span class="o">=</span><span class="n">events</span><span class="p">,</span><span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">,</span><span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">end_time</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">eeg</span><span class="p">)</span>
+<span></span>eeg = EEGReader(events=events,channels=channels,start_time=0.0,end_time=1.0).read()
+print(eeg)
 </pre></div>
 </div>
 </div>
@@ -576,7 +607,7 @@ Attributes:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">eeg</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">eeg</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;channels&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">))</span>
+<span></span>plt.plot(eeg.time,eeg.mean(&#39;channels&#39;).mean(&#39;events&#39;))
 </pre></div>
 </div>
 </div>
@@ -601,10 +632,10 @@ Attributes:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">print</span><span class="p">(</span><span class="n">eeg</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
-<span class="nb">print</span>
-<span class="nb">print</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">eeg</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+<span></span>print(eeg.coords)
+print
+print
+print(eeg.attrs)
 </pre></div>
 </div>
 </div>
@@ -630,9 +661,9 @@ OrderedDict([(&#39;samplerate&#39;, 200.0), (&#39;gain&#39;, 1.0)])
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">bipolar_pairs</span> <span class="o">=</span> <span class="n">tal_reader</span><span class="o">.</span><span class="n">get_bipolar_pairs</span><span class="p">()</span>
-<span class="n">bipolar_eeg</span><span class="o">=</span> <span class="n">MonopolarToBipolarMapper</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">eeg</span><span class="p">,</span><span class="n">bipolar_pairs</span><span class="o">=</span><span class="n">bipolar_pairs</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span>
-<span class="n">bipolar_eeg</span>
+<span></span>bipolar_pairs = tal_reader.get_bipolar_pairs()
+bipolar_eeg= MonopolarToBipolarMapper(time_series=eeg,bipolar_pairs=bipolar_pairs).filter()
+bipolar_eeg
 </pre></div>
 </div>
 </div>
@@ -706,7 +737,7 @@ Attributes:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;bipolar_pairs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">))</span>
+<span></span>plt.plot(bipolar_eeg.time,bipolar_eeg.mean(&#39;bipolar_pairs&#39;).mean(&#39;events&#39;))
 </pre></div>
 </div>
 </div>
@@ -732,7 +763,7 @@ Attributes:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">events</span><span class="o">=</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;WORD&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;bipolar_pairs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">))</span>
+<span></span>plt.plot(bipolar_eeg.time,bipolar_eeg.sel(events=bipolar_eeg.events.data[&#39;type&#39;]==&#39;WORD&#39;).mean(&#39;bipolar_pairs&#39;).mean(&#39;events&#39;))
 </pre></div>
 </div>
 </div>
@@ -758,7 +789,7 @@ Attributes:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">filtered</span><span class="p">([</span><span class="mf">58.</span><span class="p">,</span><span class="mf">62.</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;bipolar_pairs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">))</span>
+<span></span>plt.plot(bipolar_eeg.time,bipolar_eeg.filtered([58.,62.]).mean(&#39;bipolar_pairs&#39;).mean(&#39;events&#39;))
 </pre></div>
 </div>
 </div>
@@ -778,8 +809,8 @@ Attributes:
 <img alt="../_images/examples_eeg_17_1.png" src="../_images/examples_eeg_17_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="2.-RAM-data-(new)">
+</section>
+<section id="2.-RAM-data-(new)">
 <h2>2. RAM data (new)<a class="headerlink" href="#2.-RAM-data-(new)" title="Permalink to this headline">¶</a></h2>
 <p>The new system for storing the RAM data stores the information about each subject’s electrode montage in a file <code class="docutils literal notranslate"><span class="pre">pairs.json</span></code>, which we can find using a JsonIndexReader</p>
 <div class="nbinput nblast docutils container">
@@ -787,13 +818,13 @@ Attributes:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers.IndexReader</span> <span class="kn">import</span> <span class="n">JsonIndexReader</span>
-<span class="n">jr</span> <span class="o">=</span> <span class="n">JsonIndexReader</span><span class="p">(</span><span class="n">rhino_root</span><span class="o">+</span><span class="s1">&#39;/protocols/r1.json&#39;</span><span class="p">)</span>
-<span class="n">events</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
-    <span class="p">[</span><span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">jr</span><span class="o">.</span><span class="n">aggregate_values</span><span class="p">(</span><span class="s1">&#39;task_events&#39;</span><span class="p">,</span><span class="n">subject</span><span class="o">=</span><span class="s1">&#39;R1111M&#39;</span><span class="p">,</span><span class="n">experiment</span><span class="o">=</span><span class="s1">&#39;FR1&#39;</span><span class="p">)]</span>
-<span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">recarray</span><span class="p">)</span>
-<span class="n">words</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="o">.</span><span class="n">type</span><span class="o">==</span><span class="s1">&#39;WORD&#39;</span><span class="p">]</span>
-<span class="n">pairs_path</span> <span class="o">=</span> <span class="n">jr</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s1">&#39;pairs&#39;</span><span class="p">,</span><span class="n">subject</span><span class="o">=</span><span class="s1">&#39;R1111M&#39;</span><span class="p">,</span><span class="n">experiment</span><span class="o">=</span><span class="s1">&#39;FR1&#39;</span><span class="p">)</span>
+<span></span>from ptsa.data.readers.IndexReader import JsonIndexReader
+jr = JsonIndexReader(rhino_root+&#39;/protocols/r1.json&#39;)
+events = np.concatenate(
+    [BaseEventReader(filename=f).read() for f in jr.aggregate_values(&#39;task_events&#39;,subject=&#39;R1111M&#39;,experiment=&#39;FR1&#39;)]
+).view(np.recarray)
+words = events[events.type==&#39;WORD&#39;]
+pairs_path = jr.get_value(&#39;pairs&#39;,subject=&#39;R1111M&#39;,experiment=&#39;FR1&#39;)
 </pre></div>
 </div>
 </div>
@@ -803,10 +834,10 @@ Attributes:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">tal_reader</span> <span class="o">=</span> <span class="n">TalReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">pairs_path</span><span class="p">)</span>
-<span class="n">channels</span> <span class="o">=</span> <span class="n">tal_reader</span><span class="o">.</span><span class="n">get_monopolar_channels</span><span class="p">()</span>
-<span class="n">eeg</span> <span class="o">=</span> <span class="n">EEGReader</span><span class="p">(</span><span class="n">events</span><span class="o">=</span><span class="n">words</span><span class="p">,</span><span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">,</span><span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">end_time</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">eeg</span><span class="o">.</span><span class="n">coords</span>
+<span></span>tal_reader = TalReader(filename=pairs_path)
+channels = tal_reader.get_monopolar_channels()
+eeg = EEGReader(events=words,channels=channels,start_time=0.0,end_time=1.0).read()
+eeg.coords
 </pre></div>
 </div>
 </div>
@@ -828,9 +859,9 @@ Coordinates:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">bipolar_eeg</span><span class="o">=</span> <span class="n">MonopolarToBipolarMapper</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">eeg</span><span class="p">,</span><span class="n">bipolar_pairs</span><span class="o">=</span><span class="n">tal_reader</span><span class="o">.</span><span class="n">get_bipolar_pairs</span><span class="p">())</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">bipolar_eeg</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;bipolar_pairs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">))</span>
+<span></span>bipolar_eeg= MonopolarToBipolarMapper(time_series=eeg,bipolar_pairs=tal_reader.get_bipolar_pairs()).filter()
+print(bipolar_eeg.coords)
+plt.plot(bipolar_eeg.time,bipolar_eeg.mean(&#39;bipolar_pairs&#39;).mean(&#39;events&#39;))
 </pre></div>
 </div>
 </div>
@@ -862,8 +893,8 @@ Coordinates:
 <img alt="../_images/examples_eeg_22_2.png" src="../_images/examples_eeg_22_2.png" />
 </div>
 </div>
-</div>
-<div class="section" id="3.-LTPFR/LTPFR2">
+</section>
+<section id="3.-LTPFR/LTPFR2">
 <h2>3. LTPFR/LTPFR2<a class="headerlink" href="#3.-LTPFR/LTPFR2" title="Permalink to this headline">¶</a></h2>
 <p>There are two main differences between reading scalp data and reading ECoG data. The first is that scalp data are usually rereferenced so that the data are relative to the average over all electrodes. This helps to eliminate artifacts due to muscle movement. To load the referenced data, we pass set the parameter <code class="docutils literal notranslate"><span class="pre">use_reref_eeg</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> when reading the events.</p>
 <div class="nbinput nblast docutils container">
@@ -871,9 +902,9 @@ Coordinates:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">events</span> <span class="o">=</span> <span class="n">BaseEventReader</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">rhino_root</span><span class="o">+</span><span class="s1">&#39;/data/eeg/scalp/ltp/ltpFR2/behavioral/events/events_all_LTP093.mat&#39;</span><span class="p">,</span>
-                         <span class="n">use_reref_eeg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">common_root</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">words</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">events</span><span class="o">.</span><span class="n">type</span><span class="o">==</span><span class="s1">&#39;WORD&#39;</span><span class="p">]</span>
+<span></span>events = BaseEventReader(filename=rhino_root+&#39;/data/eeg/scalp/ltp/ltpFR2/behavioral/events/events_all_LTP093.mat&#39;,
+                         use_reref_eeg=True,common_root=&#39;data&#39;).read()
+words = events[events.type==&#39;WORD&#39;]
 </pre></div>
 </div>
 </div>
@@ -884,8 +915,8 @@ Coordinates:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">channels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{:03}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">)])</span>
-<span class="n">channels</span>
+<span></span>channels = np.array([&#39;{:03}&#39;.format(x) for x in range(20,30)])
+channels
 </pre></div>
 </div>
 </div>
@@ -903,13 +934,13 @@ array([&#39;020&#39;, &#39;021&#39;, &#39;022&#39;, &#39;023&#39;, &#39;024&#39;
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">eeg</span> <span class="o">=</span> <span class="n">EEGReader</span><span class="p">(</span><span class="n">events</span><span class="o">=</span><span class="n">words</span><span class="p">,</span><span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">,</span><span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">end_time</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">eeg</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;channels&#39;</span><span class="p">))</span>
+<span></span>eeg = EEGReader(events=words,channels=channels,start_time=0.0,end_time=1.0).read()
+plt.plot(eeg.mean(&#39;events&#39;).mean(&#39;channels&#39;))
 </pre></div>
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
@@ -931,7 +962,7 @@ array([&#39;020&#39;, &#39;021&#39;, &#39;022&#39;, &#39;023&#39;, &#39;024&#39;
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020
+        &copy; Copyright 2021
 
     </p>
   </div>

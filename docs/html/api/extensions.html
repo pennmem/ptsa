@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Extension Modules &mdash; PTSA 2.0.8 documentation</title>
+  <title>Extension Modules &mdash; PTSA 3.0.0 documentation</title>
   
 
   
@@ -21,13 +22,13 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -36,6 +37,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Development guidelines" href="../development.html" />
@@ -63,7 +66,7 @@
             
             
               <div class="version">
-                2.0.8
+                3.0.0
               </div>
             
           
@@ -100,7 +103,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#module-ptsa.filt">Filtering</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#module-ptsa.helper">Helpers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#helpers">Helpers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../development.html">Development guidelines</a></li>
@@ -194,14 +197,14 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="extension-modules">
+<section id="extension-modules">
 <h1>Extension Modules<a class="headerlink" href="#extension-modules" title="Permalink to this headline">¶</a></h1>
 <p>C/C++ extension modules, for accelerated calculations.</p>
-<div class="section" id="module-ptsa.extensions.circular_stat">
+<section id="module-ptsa.extensions.circular_stat">
 <span id="ptsa-extensions-circular-stat"></span><h2>ptsa.extensions.circular_stat<a class="headerlink" href="#module-ptsa.extensions.circular_stat" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="ptsa.extensions.circular_stat.circ_diff">
-<code class="sig-prename descclassname">ptsa.extensions.circular_stat.</code><code class="sig-name descname">circ_diff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">Y</span></em>, <em class="sig-param"><span class="n">Z</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_diff" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.extensions.circular_stat.circ_diff">
+<span class="sig-prename descclassname"><span class="pre">ptsa.extensions.circular_stat.</span></span><span class="sig-name descname"><span class="pre">circ_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_diff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the angular difference of the complex arrays X and Y, storing the value in Z</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -211,8 +214,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="ptsa.extensions.circular_stat.circ_diff_par">
-<code class="sig-prename descclassname">ptsa.extensions.circular_stat.</code><code class="sig-name descname">circ_diff_par</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">Y</span></em>, <em class="sig-param"><span class="n">Z</span></em>, <em class="sig-param"><span class="n">n_threads</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_diff_par" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.extensions.circular_stat.circ_diff_par">
+<span class="sig-prename descclassname"><span class="pre">ptsa.extensions.circular_stat.</span></span><span class="sig-name descname"><span class="pre">circ_diff_par</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_threads</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_diff_par" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the angular difference of the complex arrays X and Y, storing the value in Z.
 The computation is performed in parallel over <code class="docutils literal notranslate"><span class="pre">n_threads</span></code> threads</p>
 <dl class="field-list simple">
@@ -226,16 +229,16 @@ The computation is performed in parallel over <code class="docutils literal notr
 </dd></dl>
 
 <dl class="py function">
-<dt id="ptsa.extensions.circular_stat.circ_mean">
-<code class="sig-prename descclassname">ptsa.extensions.circular_stat.</code><code class="sig-name descname">circ_mean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Z</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_mean" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.extensions.circular_stat.circ_mean">
+<span class="sig-prename descclassname"><span class="pre">ptsa.extensions.circular_stat.</span></span><span class="sig-name descname"><span class="pre">circ_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the average angle of a vector of complex numbers,
 weighted by the magnitude of each number.
 Thus, circ_mean([1+0j, 1+0j, 0+1j]) == circ_mean([2+0j, 0+1j])</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="ptsa.extensions.circular_stat.circ_diff_time_bins">
-<code class="sig-prename descclassname">ptsa.extensions.circular_stat.</code><code class="sig-name descname">circ_diff_time_bins</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">c1</span></em>, <em class="sig-param"><span class="n">c2</span></em>, <em class="sig-param"><span class="n">c_diff</span></em>, <em class="sig-param"><span class="n">cdiff_means</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_diff_time_bins" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.extensions.circular_stat.circ_diff_time_bins">
+<span class="sig-prename descclassname"><span class="pre">ptsa.extensions.circular_stat.</span></span><span class="sig-name descname"><span class="pre">circ_diff_time_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_diff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cdiff_means</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_diff_time_bins" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the circular difference of <code class="docutils literal notranslate"><span class="pre">c1</span></code> and <code class="docutils literal notranslate"><span class="pre">c2</span></code>,
 stores the result in <code class="docutils literal notranslate"><span class="pre">c_diff</span></code>, then fills <code class="docutils literal notranslate"><span class="pre">cdiff_means</span></code> with the average
 binned differences.</p>
@@ -248,8 +251,8 @@ binned differences.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="ptsa.extensions.circular_stat.compute_f_stat">
-<code class="sig-prename descclassname">ptsa.extensions.circular_stat.</code><code class="sig-name descname">compute_f_stat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase_diffs</span></em>, <em class="sig-param"><span class="n">classes</span></em>, <em class="sig-param"><span class="n">f_stat</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.compute_f_stat" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.extensions.circular_stat.compute_f_stat">
+<span class="sig-prename descclassname"><span class="pre">ptsa.extensions.circular_stat.</span></span><span class="sig-name descname"><span class="pre">compute_f_stat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase_diffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_stat</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.compute_f_stat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs an F-test, i.e. a circular ANOVA, comparing the variance of <code class="docutils literal notranslate"><span class="pre">phase_diffs</span></code>
 when partitioned into two classes, and stores the results in fstat.</p>
 <dl class="field-list simple">
@@ -264,22 +267,22 @@ when partitioned into two classes, and stores the results in fstat.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="ptsa.extensions.circular_stat.compute_z_scores">
-<code class="sig-prename descclassname">ptsa.extensions.circular_stat.</code><code class="sig-name descname">compute_z_scores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">m</span></em>, <em class="sig-param"><span class="n">n_perms</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.compute_z_scores" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.extensions.circular_stat.compute_z_scores">
+<span class="sig-prename descclassname"><span class="pre">ptsa.extensions.circular_stat.</span></span><span class="sig-name descname"><span class="pre">compute_z_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_perms</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.compute_z_scores" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="ptsa.extensions.circular_stat.single_trial_ppc_all_features">
-<code class="sig-prename descclassname">ptsa.extensions.circular_stat.</code><code class="sig-name descname">single_trial_ppc_all_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recalls</span></em>, <em class="sig-param"><span class="n">wavelets</span></em>, <em class="sig-param"><span class="n">ppc_output</span></em>, <em class="sig-param"><span class="n">theta_sum_recalls</span></em>, <em class="sig-param"><span class="n">theta_sum_non_recalls</span></em>, <em class="sig-param"><span class="n">n_freqs</span></em>, <em class="sig-param"><span class="n">n_bps</span></em>, <em class="sig-param"><span class="n">n_threads</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.single_trial_ppc_all_features" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.extensions.circular_stat.single_trial_ppc_all_features">
+<span class="sig-prename descclassname"><span class="pre">ptsa.extensions.circular_stat.</span></span><span class="sig-name descname"><span class="pre">single_trial_ppc_all_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recalls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ppc_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta_sum_recalls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta_sum_non_recalls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_threads</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.single_trial_ppc_all_features" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="id0">
-<code class="sig-prename descclassname">ptsa.extensions.circular_stat.</code><code class="sig-name descname">single_trial_ppc_all_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wavelets</span></em>, <em class="sig-param"><span class="n">theta_avg_recalls</span></em>, <em class="sig-param"><span class="n">theta_avg_non_recalls</span></em>, <em class="sig-param"><span class="n">outsample_features</span></em>, <em class="sig-param"><span class="n">n_freqs</span></em>, <em class="sig-param"><span class="n">n_bps</span></em>, <em class="sig-param"><span class="n">n_threads</span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id0">
+<span class="sig-prename descclassname"><span class="pre">ptsa.extensions.circular_stat.</span></span><span class="sig-name descname"><span class="pre">single_trial_ppc_all_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta_avg_recalls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta_avg_non_recalls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outsample_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_threads</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="module-ptsa.extensions.morlet">
+</section>
+<section id="module-ptsa.extensions.morlet">
 <span id="ptsa-extensions-morlet"></span><h2>ptsa.extensions.morlet<a class="headerlink" href="#module-ptsa.extensions.morlet" title="Permalink to this headline">¶</a></h2>
 <p>Low-level extension module for quickly computing Morlet wavelet decompositions.</p>
 <p>This module uses the following wavelet for frequency <span class="math notranslate nohighlight">\(f\)</span> and Gaussian width <span class="math notranslate nohighlight">\(w\)</span>:</p>
@@ -317,16 +320,16 @@ in order to take advantage of the speed provided by the FFTW library.</p>
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="data/filters.html#ptsa.data.filters.MorletWaveletFilterCpp" title="ptsa.data.filters.MorletWaveletFilterCpp"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ptsa.data.filters.MorletWaveletFilterCpp</span></code></a></p>
 </div>
-</div>
-<div class="section" id="ptsa-extensions-edf">
+</section>
+<section id="ptsa-extensions-edf">
 <h2>ptsa.extensions.edf<a class="headerlink" href="#ptsa-extensions-edf" title="Permalink to this headline">¶</a></h2>
 <p>File-like wrapper around parts of <a class="reference external" href="https://www.teuniz.net/edflib/">EDFlib</a> to provide an interface
 for reading the EDF+ family of EEG formats.
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">ptsa.data.readers.EDFRawReader</span></code> provides a
 slightly higher-level interface for doing the same thing.</p>
 <dl class="py class">
-<dt id="ptsa.extensions.morlet.ChannelInfo">
-<em class="property">class </em><code class="sig-prename descclassname">ptsa.extensions.morlet.</code><code class="sig-name descname">ChannelInfo</code><a class="headerlink" href="#ptsa.extensions.morlet.ChannelInfo" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.extensions.morlet.ChannelInfo">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ptsa.extensions.morlet.</span></span><span class="sig-name descname"><span class="pre">ChannelInfo</span></span><a class="headerlink" href="#ptsa.extensions.morlet.ChannelInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Channel data including label, number of samples, etc. These objects are
 returned by <a class="reference internal" href="#ptsa.extensions.morlet.EDFFile.get_channel_info" title="ptsa.extensions.morlet.EDFFile.get_channel_info"><code class="xref py py-meth docutils literal notranslate"><span class="pre">EDFFile.get_channel_info()</span></code></a>, and have the following
 read-only attributes:</p>
@@ -349,13 +352,13 @@ read-only attributes:</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="ptsa.extensions.morlet.EDFFile">
-<em class="property">class </em><code class="sig-prename descclassname">ptsa.extensions.morlet.</code><code class="sig-name descname">EDFFile</code><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.extensions.morlet.EDFFile">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ptsa.extensions.morlet.</span></span><span class="sig-name descname"><span class="pre">EDFFile</span></span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the EDF family of files.</p>
 <p>This class utilizes <a class="reference external" href="https://www.teuniz.net/edflib/">EDFlib</a> to read EDF/BDF/EDF+/BDF+ files.</p>
 <dl class="py method">
-<dt id="ptsa.extensions.morlet.EDFFile.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.extensions.morlet.EDFFile.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – </p>
@@ -364,8 +367,8 @@ read-only attributes:</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="ptsa.extensions.morlet.EDFFile.get_channel_info">
-<code class="sig-name descname">get_channel_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">channel</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.get_channel_info" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.extensions.morlet.EDFFile.get_channel_info">
+<span class="sig-name descname"><span class="pre">get_channel_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.get_channel_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the information on a given channel</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -375,26 +378,26 @@ read-only attributes:</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="ptsa.extensions.morlet.EDFFile.get_channel_numbers">
-<code class="sig-name descname">get_channel_numbers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">channel_names</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.get_channel_numbers" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.extensions.morlet.EDFFile.get_channel_numbers">
+<span class="sig-name descname"><span class="pre">get_channel_numbers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel_names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.get_channel_numbers" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="ptsa.extensions.morlet.EDFFile.get_samplerate">
-<code class="sig-name descname">get_samplerate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">channel</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.get_samplerate" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.extensions.morlet.EDFFile.get_samplerate">
+<span class="sig-name descname"><span class="pre">get_samplerate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.get_samplerate" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="ptsa.extensions.morlet.EDFFile.read_samples">
-<code class="sig-name descname">read_samples</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">channels</span></em>, <em class="sig-param"><span class="n">samples</span></em>, <em class="sig-param"><span class="n">offset</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.read_samples" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.extensions.morlet.EDFFile.read_samples">
+<span class="sig-name descname"><span class="pre">read_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.read_samples" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read samples from a list of channels. Channels
 can be specified by either a list of numbers or a list of labels.</p>
 </dd></dl>
 
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
@@ -416,7 +419,7 @@ can be specified by either a list of numbers or a list of labels.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020
+        &copy; Copyright 2021
 
     </p>
   </div>

@@ -46,7 +46,7 @@ Clone the git repository:
 
 .. code-block:: shell-session
 
-    git clone https://github.com/pennmem/ptsa_new.git
+    git clone https://github.com/pennmem/ptsa.git
 
 Install dependencies with conda:
 

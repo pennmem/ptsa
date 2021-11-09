@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Filtering Time Series &mdash; PTSA 2.0.8 documentation</title>
+  <title>Filtering Time Series &mdash; PTSA 3.0.0 documentation</title>
   
 
   
@@ -21,13 +22,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -36,6 +35,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="API Reference" href="api/index.html" />
@@ -63,7 +64,7 @@
             
             
               <div class="version">
-                2.0.8
+                3.0.0
               </div>
             
           
@@ -185,7 +186,7 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="filtering-time-series">
+<section id="filtering-time-series">
 <span id="ramdata"></span><h1>Filtering Time Series<a class="headerlink" href="#filtering-time-series" title="Permalink to this headline">¶</a></h1>
 <p>Filtering is a type of operation that takes as an input one time series and outputs another. For example Butterworth
 band-pass filter may remove unwanted frequencies from your signal. Computing Wavelets is also a form of filtering
@@ -195,15 +196,15 @@ operation that takes one time series and outputs another one with signal that is
 <p>All filter objects define function <code class="docutils literal notranslate"><span class="pre">filter</span></code>. This is the function you call to make filter do its job</p>
 </div>
 <p>Let us start with something simple - <code class="docutils literal notranslate"><span class="pre">MonopolarToBipolarMapper</span></code>.</p>
-<div class="section" id="monopolartobipolarmapper">
+<section id="monopolartobipolarmapper">
 <h2>MonopolartoBipolarMapper<a class="headerlink" href="#monopolartobipolarmapper" title="Permalink to this headline">¶</a></h2>
-<p>This filter takes as inputs an array of monopolar eeg data  - <code class="docutils literal notranslate"><span class="pre">time_series</span></code> parameter below
+<p>This filter takes as inputs an array of monopolar eeg data  - <code class="docutils literal notranslate"><span class="pre">timeseries</span></code> parameter below
 and the array of bipolar pairs (<code class="docutils literal notranslate"><span class="pre">bipolar_pairs</span></code>) and outputs another time series
 containing pairwise differences for electrode pairs specified in <code class="docutils literal notranslate"><span class="pre">bipolar_pairs</span></code></p>
 <p>Here is the syntax:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.filters</span> <span class="kn">import</span> <span class="n">MonopolarToBipolarMapper</span>
-<span class="n">m2b</span> <span class="o">=</span> <span class="n">MonopolarToBipolarMapper</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">base_eegs</span><span class="p">,</span> <span class="n">bipolar_pairs</span><span class="o">=</span><span class="n">bipolar_pairs</span><span class="p">)</span>
-<span class="n">bp_eegs</span> <span class="o">=</span> <span class="n">m2b</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span>
+<span class="n">m2b</span> <span class="o">=</span> <span class="n">MonopolarToBipolarMapper</span><span class="p">(</span><span class="n">bipolar_pairs</span><span class="o">=</span><span class="n">bipolar_pairs</span><span class="p">)</span>
+<span class="n">bp_eegs</span> <span class="o">=</span> <span class="n">m2b</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">timeseries</span><span class="o">=</span><span class="n">base_eegs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We import <code class="docutils literal notranslate"><span class="pre">MonopolarToBipolarMapper</span></code> from <code class="docutils literal notranslate"><span class="pre">ptsa.data.filters</span></code> PTSA package , crteate an instance of
@@ -230,15 +231,15 @@ signal differences. Here is the output:</p>
        <span class="p">(</span><span class="s1">&#39;003&#39;</span><span class="p">,</span> <span class="s1">&#39;004&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;003&#39;</span><span class="p">,</span> <span class="s1">&#39;011&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;004&#39;</span><span class="p">,</span> <span class="s1">&#39;005&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;004&#39;</span><span class="p">,</span> <span class="s1">&#39;012&#39;</span><span class="p">),</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="butterworthfilter">
+</section>
+<section id="butterworthfilter">
 <h2>ButterworthFilter<a class="headerlink" href="#butterworthfilter" title="Permalink to this headline">¶</a></h2>
 <p>To use Butterworth filtering inside PTSA you have two choices: use <code class="docutils literal notranslate"><span class="pre">ButterworthFilter</span></code> object and passing
 <code class="docutils literal notranslate"><span class="pre">TimeSeriesX</span></code> object to it or use a convenience function inside <code class="docutils literal notranslate"><span class="pre">TimeSeriesX</span></code> object.</p>
 <p>Let’s us start by showing first <code class="docutils literal notranslate"><span class="pre">ButterworthFilter</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.filters</span> <span class="kn">import</span> <span class="n">ButterworthFilter</span>
-<span class="n">b_filter</span> <span class="o">=</span> <span class="n">ButterworthFilter</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="n">bp_eegs</span><span class="p">,</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">[</span><span class="mf">58.</span><span class="p">,</span> <span class="mf">62.</span><span class="p">],</span> <span class="n">filt_type</span><span class="o">=</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-<span class="n">bp_eegs_filtered</span> <span class="o">=</span> <span class="n">b_filter</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span>
+<span class="n">b_filter</span> <span class="o">=</span> <span class="n">ButterworthFilter</span><span class="p">(</span><span class="n">freq_range</span><span class="o">=</span><span class="p">[</span><span class="mf">58.</span><span class="p">,</span> <span class="mf">62.</span><span class="p">],</span> <span class="n">filt_type</span><span class="o">=</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">bp_eegs_filtered</span> <span class="o">=</span> <span class="n">b_filter</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">timeseries</span><span class="o">=</span><span class="n">bp_eegs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Here we create ButterworthFilter object (after importing it from PTSA’s <code class="docutils literal notranslate"><span class="pre">filters</span></code> package) and specify
@@ -251,8 +252,8 @@ function on a <code class="docutils literal notranslate"><span class="pre">Times
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bp_eegs_filtered_1</span> <span class="o">=</span> <span class="n">bp_eegs</span><span class="o">.</span><span class="n">filtered</span><span class="p">(</span><span class="n">freq_range</span><span class="o">=</span><span class="p">[</span><span class="mf">58.</span><span class="p">,</span> <span class="mf">62.</span><span class="p">],</span> <span class="n">filt_type</span><span class="o">=</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
@@ -274,7 +275,7 @@ function on a <code class="docutils literal notranslate"><span class="pre">Times
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020
+        &copy; Copyright 2021
 
     </p>
   </div>

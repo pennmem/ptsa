@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Filters &mdash; PTSA 2.0.8 documentation</title>
+  <title>Filters &mdash; PTSA 3.0.0 documentation</title>
   
 
   
@@ -21,13 +22,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -36,6 +35,8 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Extension Modules" href="../extensions.html" />
@@ -63,7 +64,7 @@
             
             
               <div class="version">
-                2.0.8
+                3.0.0
               </div>
             
           
@@ -100,7 +101,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../extensions.html">Extension Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#module-ptsa.filt">Filtering</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../index.html#module-ptsa.helper">Helpers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#helpers">Helpers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../development.html">Development guidelines</a></li>
@@ -196,11 +197,11 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="filters">
+<section id="filters">
 <h1>Filters<a class="headerlink" href="#filters" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="ptsa.data.filters.MorletWaveletFilter">
-<em class="property">class </em><code class="sig-prename descclassname">ptsa.data.filters.</code><code class="sig-name descname">MorletWaveletFilter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeseries</span></em>, <em class="sig-param"><span class="n">freqs</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">output</span><span class="o">=</span><span class="default_value">'power', 'phase'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cpus</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">output_dim</span><span class="o">=</span><span class="default_value">'output'</span></em>, <em class="sig-param"><span class="n">complete</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.MorletWaveletFilter" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.data.filters.MorletWaveletFilter">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ptsa.data.filters.</span></span><span class="sig-name descname"><span class="pre">MorletWaveletFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('power',</span> <span class="pre">'phase')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'output'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.MorletWaveletFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies a Morlet wavelet transform to a time series, returning the power
 and phase spectra over time.</p>
 <div class="versionchanged">
@@ -209,15 +210,14 @@ filter types.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>timeseries</strong> (<a class="reference internal" href="timeseriesx.html#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries"><em>TimeSeries</em></a>) – The time series to filter</p>
+<dd class="field-odd"><p><strong>freqs</strong> (<em>np.ndarray</em>) – The frequencies to use in the decomposition</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>freqs</strong> (<em>np.ndarray</em>) – The frequencies to use in the decomposition</p></li>
-<li><p><strong>width</strong> (<em>int</em>) – The width of the wavelet</p></li>
-<li><p><strong>output</strong> (<em>List</em><em>[</em><em>str</em><em>] or </em><em>str</em>) – A string or a list of strings containing power, phase, and/or
+<li><p><strong>width</strong> (<em>int</em>) – The width of the wavelet (default: 5)</p></li>
+<li><p><strong>output</strong> (<em>Union</em><em>[</em><em>Iterable</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em>) – A string or a list of strings containing power, phase, and/or
 complex (default: <code class="docutils literal notranslate"><span class="pre">['power',</span> <span class="pre">'phase']</span></code>)</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – Print out the wavelet parameters</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Print out the wavelet parameters (default: False)</p></li>
 <li><p><strong>cpus</strong> (<em>int</em>) – Number of threads to use when computing the transform (default: 1).</p></li>
 <li><p><strong>output_dim</strong> (<em>str</em>) – Name of the output dimension when returning both power and phase
 (default: <code class="docutils literal notranslate"><span class="pre">'output'</span></code>)</p></li>
@@ -228,16 +228,16 @@ kept consistent with standard Morlet wavelets.  (default: True)</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="ptsa.data.filters.MorletWaveletFilter.filter">
-<code class="sig-name descname">filter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.MorletWaveletFilter.filter" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.data.filters.MorletWaveletFilter.filter">
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeseries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.MorletWaveletFilter.filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply the constructed filter.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="ptsa.data.filters.MorletWaveletFilterCpp">
-<em class="property">class </em><code class="sig-prename descclassname">ptsa.data.filters.</code><code class="sig-name descname">MorletWaveletFilterCpp</code><a class="headerlink" href="#ptsa.data.filters.MorletWaveletFilterCpp" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.data.filters.MorletWaveletFilterCpp">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ptsa.data.filters.</span></span><span class="sig-name descname"><span class="pre">MorletWaveletFilterCpp</span></span><a class="headerlink" href="#ptsa.data.filters.MorletWaveletFilterCpp" title="Permalink to this definition">¶</a></dt>
 <dd><p>The same as ptsa.data.filters.MorletWaveletFilter,
 except it utilizes a C++ thread pool to parallelize the computations.</p>
 <p>Additional keyword arguments:</p>
@@ -247,8 +247,8 @@ except it utilizes a C++ thread pool to parallelize the computations.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="ptsa.data.filters.ButterworthFilter">
-<em class="property">class </em><code class="sig-prename descclassname">ptsa.data.filters.</code><code class="sig-name descname">ButterworthFilter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeseries</span></em>, <em class="sig-param"><span class="n">freq_range</span></em>, <em class="sig-param"><span class="n">order</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">filt_type</span><span class="o">=</span><span class="default_value">'stop'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ButterworthFilter" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ptsa.data.filters.ButterworthFilter">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ptsa.data.filters.</span></span><span class="sig-name descname"><span class="pre">ButterworthFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filt_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stop'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ButterworthFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies Butterworth filter to a time series.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
@@ -261,9 +261,10 @@ except it utilizes a C++ thread pool to parallelize the computations.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="ptsa.data.filters.ButterworthFilter.filter">
-<code class="sig-name descname">filter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ButterworthFilter.filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Applies Butterwoth filter to input time series and returns filtered TimeSeriesX object</p>
+<dt class="sig sig-object py" id="ptsa.data.filters.ButterworthFilter.filter">
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeseries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ButterworthFilter.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies Butterwoth filter to input time series and returns filtered
+<code class="xref py py-class docutils literal notranslate"><span class="pre">TimeSeries</span></code> object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><strong>filtered</strong> – The filtered time series</p>
@@ -277,29 +278,26 @@ except it utilizes a C++ thread pool to parallelize the computations.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="ptsa.data.filters.ResampleFilter">
-<em class="property">class </em><code class="sig-prename descclassname">ptsa.data.filters.</code><code class="sig-name descname">ResampleFilter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeseries</span></em>, <em class="sig-param"><span class="n">resamplerate</span></em>, <em class="sig-param"><span class="n">round_to_original_timepoints</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">time_axis_name</span><span class="o">=</span><span class="default_value">'time'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ResampleFilter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Upsample or downsample a time series to a new sample rate.</p>
-<div class="versionchanged">
-<p><span class="versionmodified changed">Changed in version 2.0: </span>Parameter “time_series” was renamed to “timeseries”. Parameter
-“time_axis_index” was removed; the time axis is assumed to be named
-“time”</p>
-</div>
+<dt class="sig sig-object py" id="ptsa.data.filters.ResampleFilter">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ptsa.data.filters.</span></span><span class="sig-name descname"><span class="pre">ResampleFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resamplerate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">round_to_original_timepoints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_axis_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'time'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ResampleFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resample a time series to a new sample rate.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Keyword Arguments</dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>timeseries</strong> – TimeSeries object</p></li>
 <li><p><strong>resamplerate</strong> (<em>float</em>) – new sampling frequency</p></li>
 <li><p><strong>round_to_original_timepoints</strong> (<em>bool</em>) – Flag indicating if timepoints from original time axis
 should be reused after proper rounding. Defaults to False</p></li>
-<li><p><strong>time_axis</strong> (<em>str</em>) – Name of the time axis.</p></li>
+<li><p><strong>time_axis_name</strong> (<em>str</em>) – Name of the time axis.</p></li>
+<li><p><strong>versionchanged:</strong> (<em>.</em>) – 2.0: Parameter “time_series” was renamed to “timeseries”. Parameter
+“time_axis_index” was removed; the time axis is assumed to be named
+“time”</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="ptsa.data.filters.ResampleFilter.filter">
-<code class="sig-name descname">filter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ResampleFilter.filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>resamples time series</p>
+<dt class="sig sig-object py" id="ptsa.data.filters.ResampleFilter.filter">
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeseries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ResampleFilter.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resample a time series.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><strong>resampled</strong> – resampled time series with sampling frequency set to resamplerate</p>
@@ -312,7 +310,7 @@ should be reused after proper rounding. Defaults to False</p></li>
 
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>
@@ -334,7 +332,7 @@ should be reused after proper rounding. Defaults to False</p></li>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020
+        &copy; Copyright 2021
 
     </p>
   </div>

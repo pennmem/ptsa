@@ -16,7 +16,7 @@ Let us start with something simple - ``MonopolarToBipolarMapper``.
 MonopolartoBipolarMapper
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This filter takes as inputs an array of monopolar eeg data  - ``time_series`` parameter below
+This filter takes as inputs an array of monopolar eeg data  - ``timeseries`` parameter below
 and the array of bipolar pairs (``bipolar_pairs``) and outputs another time series
 containing pairwise differences for electrode pairs specified in ``bipolar_pairs``
 
@@ -25,8 +25,8 @@ Here is the syntax:
 .. code-block:: python
 
     from ptsa.data.filters import MonopolarToBipolarMapper
-    m2b = MonopolarToBipolarMapper(time_series=base_eegs, bipolar_pairs=bipolar_pairs)
-    bp_eegs = m2b.filter()
+    m2b = MonopolarToBipolarMapper(bipolar_pairs=bipolar_pairs)
+    bp_eegs = m2b.filter(timeseries=base_eegs)
 
 
 We import ``MonopolarToBipolarMapper`` from ``ptsa.data.filters`` PTSA package , crteate an instance of
@@ -73,8 +73,8 @@ Let's us start by showing first ``ButterworthFilter``:
 .. code-block:: python
 
     from ptsa.data.filters import ButterworthFilter
-    b_filter = ButterworthFilter(time_series=bp_eegs, freq_range=[58., 62.], filt_type='stop', order=4)
-    bp_eegs_filtered = b_filter.filter()
+    b_filter = ButterworthFilter(freq_range=[58., 62.], filt_type='stop', order=4)
+    bp_eegs_filtered = b_filter.filter(timeseries=bp_eegs)
 
 
 Here we create ButterworthFilter object (after importing it from PTSA's ``filters`` package) and specify

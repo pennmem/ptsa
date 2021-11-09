@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>PTSA - EEG Time Series Analysis in Python &mdash; PTSA 2.0.8 documentation</title>
+  <title>PTSA - EEG Time Series Analysis in Python &mdash; PTSA 3.0.0 documentation</title>
   
 
   
@@ -21,13 +22,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -36,6 +35,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Examples" href="examples/index.html" /> 
@@ -62,7 +63,7 @@
             
             
               <div class="version">
-                2.0.8
+                3.0.0
               </div>
             
           
@@ -180,7 +181,7 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="ptsa-eeg-time-series-analysis-in-python">
+<section id="ptsa-eeg-time-series-analysis-in-python">
 <h1>PTSA - EEG Time Series Analysis in Python<a class="headerlink" href="#ptsa-eeg-time-series-analysis-in-python" title="Permalink to this headline">¶</a></h1>
 <p><strong>PTSA</strong> is an open source Python package that facilitates time-series
 analysis of EEG signals. PTSA builds on <code class="xref py py-mod docutils literal notranslate"><span class="pre">xarray</span></code> functionality
@@ -199,21 +200,21 @@ make input operations as smooth as possible. Filters take a <code class="docutil
 object as an input and output a modified <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> object.</p>
 <p>If you’d like to learn Python via series of statistics tutorials look no further than
 <a class="reference external" href="http://people.duke.edu/~ccc14/sta-663-2016/">introduction to computational statistics in Python</a></p>
-<div class="section" id="installation">
+<section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="installing-pre-built-binaries">
+<section id="installing-pre-built-binaries">
 <h3>Installing pre-built binaries<a class="headerlink" href="#installing-pre-built-binaries" title="Permalink to this headline">¶</a></h3>
 <p>The recommended way to install <code class="xref py py-mod docutils literal notranslate"><span class="pre">ptsa</span></code> is to install with conda:</p>
 <div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="go">conda install -c pennmem ptsa</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="installing-with-conda-from-source">
+</section>
+<section id="installing-with-conda-from-source">
 <h3>Installing with conda from source<a class="headerlink" href="#installing-with-conda-from-source" title="Permalink to this headline">¶</a></h3>
 <p>If you’d rather install the latest development version, you’ll need to perform
 the following steps:</p>
 <p>Clone the git repository:</p>
-<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="go">git clone https://github.com/pennmem/ptsa_new.git</span>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="go">git clone https://github.com/pennmem/ptsa.git</span>
 </pre></div>
 </div>
 <p>Install dependencies with conda:</p>
@@ -224,10 +225,10 @@ the following steps:</p>
 <div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="go">python setup.py install</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="optional-dependencies">
+</section>
+<section id="optional-dependencies">
 <h3>Optional dependencies<a class="headerlink" href="#optional-dependencies" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="for-netcdf-and-io">
+<section id="for-netcdf-and-io">
 <h4>For netCDF and IO<a class="headerlink" href="#for-netcdf-and-io" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/Unidata/netcdf4-python">netCDF4</a>: recommended if you
@@ -235,10 +236,10 @@ want to use <code class="xref py py-mod docutils literal notranslate"><span clas
 <li><p><a class="reference external" href="https://github.com/shoyer/h5netcdf">h5netcdf</a>: an alternative library for
 reading and writing netCDF4 files that does not use the netCDF-C libraries</p></li>
 </ul>
-</div>
-</div>
-</div>
-<div class="section" id="contents">
+</section>
+</section>
+</section>
+<section id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
@@ -249,8 +250,8 @@ reading and writing netCDF4 files that does not use the netCDF-C libraries</p></
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development guidelines</a></li>
 </ul>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
@@ -270,7 +271,7 @@ reading and writing netCDF4 files that does not use the netCDF-C libraries</p></
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020
+        &copy; Copyright 2021
 
     </p>
   </div>
