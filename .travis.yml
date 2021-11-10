@@ -62,7 +62,7 @@ after_success:
 
 deploy:
   - provider: script
-    script: bash maint/deploy.sh 
+    script: maint/deploy.sh 
     on:
       branch: master
       # tags: true
