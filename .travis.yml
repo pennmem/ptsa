@@ -41,6 +41,7 @@ install:
     fi
   - conda install -y -c conda-forge pybind11 fftw
   - pip install pytest pytest-cov codecov --ignore-installed certifi
+  - invoke build --no-convert --no-use-local-build-dir
 
 addons:
   apt:
@@ -63,5 +64,6 @@ deploy:
   - provider: script
     script: bash maint/deploy.sh 
     on:
-      tags: true
+      branch: master
+      # tags: true
     skip_cleanup: true
