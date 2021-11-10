@@ -62,7 +62,7 @@ after_success:
 
 deploy:
   - provider: script
-    script: maint/deploy.sh 
+    script: python maint/build.py -p $PYTHON_VERSION
     on:
       branch: master
       # tags: true
