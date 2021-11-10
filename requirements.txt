@@ -5,3 +5,4 @@ traits>=4.6.0
 numpy>=1.19.0
 scipy>=1.0.0
 xarray>=0.18
+invoke
