@@ -7,7 +7,7 @@ package:
 
 source:
   git_url: ../
-  git_tag: staging
+  # git_tag: staging
 
 build:
   # If this is a new build for the same version, increment the build
@@ -45,7 +45,7 @@ test:
     - ptsa.extensions.circular_stat
 
 about:
-  home: https://github.com/pennmem/ptsa_new
+  home: https://github.com/pennmem/ptsa
   license: GPLv3
   license_file: LICENSE
   summary: Python Time Series Analysis toolbox
