@@ -77,7 +77,7 @@ def build(c, pyver=None, convert=True, use_local_build_dir=True):
         files = glob.glob("build/{}/*.tar.bz2".format(dirname))
 
         for filename in files:
-            cmd = "conda convert {} -p all -o build/".format(filename)
+            cmd = "conda convert {} -f -p all -o build/".format(filename)
             c.run(cmd)
 
 
