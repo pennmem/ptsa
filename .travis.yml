@@ -17,9 +17,9 @@ env:
     - PKG_NAME=ptsa
     - PY_IGNORE_IMPORTMISMATCH=1
   matrix:
-#     - PYTHON_VERSION=3.7
+    - PYTHON_VERSION=3.7
     - PYTHON_VERSION=3.8
-#     - PYTHON_VERSION=3.9
+    - PYTHON_VERSION=3.9
 
 before_install:
   # We do this conditionally because it saves us some downloading if the
@@ -68,6 +68,6 @@ deploy:
 #     script: python maint/build.py -p $PYTHON_VERSION
     script: maint/deploy.sh
     on:
-      branch: master
-      # tags: true
+#       branch: master
+      tags: true
     skip_cleanup: true
