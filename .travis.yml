@@ -17,9 +17,9 @@ env:
     - PKG_NAME=ptsa
     - PY_IGNORE_IMPORTMISMATCH=1
   matrix:
-    - PYTHON_VERSION=3.7
+#     - PYTHON_VERSION=3.7
     - PYTHON_VERSION=3.8
-    - PYTHON_VERSION=3.9
+#     - PYTHON_VERSION=3.9
 
 before_install:
   # We do this conditionally because it saves us some downloading if the
@@ -58,6 +58,7 @@ script:
   - python setup.py install
   - cd tests
   - python run.py --import-mode=append
+  - cd ..
 
 after_success:
   - codecov
