@@ -20,7 +20,7 @@ Available on Linux, Mac, and Windows 64 bit:
 
 .. code-block:: shell-session
 
-    conda install -c pennmem ptsa
+    conda install -c pennmem -c conda-forge ptsa
 
 
 Report bug or feature request
@@ -115,7 +115,7 @@ directory is guessed based on common mount points.
 Building conda packages
 -----------------------
 
-See separte HOW_TO_RELEASE.md document!
+See separte HOW_TO_RELEASE.md document! Alternatively, this repository is now set up to deploy automatically on tagged commits.
 
 
 License
