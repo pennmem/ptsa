@@ -1,5 +1,10 @@
 Changes
 =======
+Version 3.0.1
+-------------
+**2021.11.08**
+Bug fixes, automated conda deployment
+
 
 Version 3.0.0
 -------------
