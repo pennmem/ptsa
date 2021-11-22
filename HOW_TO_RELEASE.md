@@ -1,5 +1,10 @@
 # How to release
 
+As of November 2021 / the release of PTSA 3.0.0, the ptsa repository is configured for automated deployment on tagged commits via TravisCI through
+pennmem's open source account. The script at maint/deploy.sh is run automatically and builds the package, converts to all platforms, and upload to anaconda. 
+
+Old Instructions:
+
 The following steps should be taken when making an "official" release:
 
 0. Update CHANGELOG.rst
