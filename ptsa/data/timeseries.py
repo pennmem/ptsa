@@ -473,7 +473,7 @@ class TimeSeries(xr.DataArray):
         if samples > 0:
             return self[..., samples:-samples]
 
-    def add_mirror_buffer(self, duration):
+    def add_mirror_buffer(self, duration, two_sided=True):
         """
         Return a time series with mirrored data added to both ends of this
         time series (up to specified length/duration).
@@ -486,6 +486,9 @@ class TimeSeries(xr.DataArray):
         ----------
         duration : float
             Buffer duration in seconds.
+        two-sided: bool
+            If True, mirror on both sides of the epoch. Otherwise, only 
+            mirror on the right side of the epoch
 
         Returns
         -------
@@ -498,15 +501,20 @@ class TimeSeries(xr.DataArray):
             raise ValueError("Requested buffer time is longer than the data")
 
         data = self.data
-
-        mirrored_data = np.concatenate(
-            (data[..., 1:samples + 1][..., ::-1], data,
-             data[..., -samples - 1:-1][..., ::-1]), axis=-1)
-
-        start_time = self['time'].data[0] - duration
+        
+        if two_sided: # mirror both sides outwards
+            mirrored_data = np.concatenate(
+                (data[..., 1:samples + 1][..., ::-1], data,
+                data[..., -samples - 1:-1][..., ::-1]), axis=-1)
+            start_time = self['time'].data[0] - duration
+        else: # one-sided, mirror only 
+            mirrored_data = np.concatenate(
+                (data, data[..., -samples - 1:-1][..., ::-1]), axis=-1)
+            start_time = self['time'].data[0]
+        
         t_axis = (np.arange(mirrored_data.shape[-1]) *
-                  (1.0 / samplerate)) + start_time
-        # coords = [self.coords[dim_name] for dim_name in self.dims[:-1]] +[t_axis]
+                (1.0 / samplerate)) + start_time
+
         coords = {dim_name:self.coords[dim_name]
                   for dim_name in self.dims[:-1]}
         coords['time'] = t_axis
