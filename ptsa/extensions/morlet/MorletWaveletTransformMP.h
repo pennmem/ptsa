@@ -52,16 +52,15 @@ public:
         this->signal_array = signal_array;
     }
 
-    void set_wavelet_pow_array(double *wavelet_pow_array, size_t num_wavelets, size_t signal_len) {
+    void set_wavelet_pow_array(double *wavelet_pow_array, size_t /*num_wavelets*/, size_t /*signal_len*/) {
         this->wavelet_pow_array = wavelet_pow_array;
     }
 
-    void set_wavelet_phase_array(double *wavelet_phase_array, size_t num_wavelets, size_t signal_len) {
+    void set_wavelet_phase_array(double *wavelet_phase_array, size_t /*num_wavelets*/, size_t /*signal_len*/) {
         this->wavelet_phase_array = wavelet_phase_array;
     }
 
-    void set_wavelet_complex_array(std::complex<double> *wavelet_complex_array, size_t num_wavelets,
-                                   size_t signal_len) {
+    void set_wavelet_complex_array(std::complex<double> *wavelet_complex_array, size_t /*num_wavelets*/, size_t /*signal_len*/) {
         this->wavelet_complex_array = wavelet_complex_array;
     }
 

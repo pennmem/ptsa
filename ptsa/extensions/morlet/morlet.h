@@ -87,11 +87,11 @@ public:
         }
     }
 
-    void wv_pow(double r, double i, double *&powers, double *&phase, std::complex<double> *&wavelets) {
+    void wv_pow(double r, double i, double *&powers, double *&/*phase*/, std::complex<double> *&/*wavelets*/) {
         *(powers++) = r * r + i * i;
     }
 
-    void wv_phase(double r, double i, double *&powers, double *&phase, std::complex<double> *&wavelets) {
+    void wv_phase(double r, double i, double *&/*powers*/, double *&phase, std::complex<double> *&/*wavelets*/) {
 
         *(phase++) = atan2(i, r);
 
@@ -102,7 +102,7 @@ public:
         wv_phase(r, i, powers, phase, wavelets);
     }
 
-    void wv_complex(double r, double i, double *&powers, double *&phase, std::complex<double> *&wavelet_complex) {
+    void wv_complex(double r, double i, double *&/*powers*/, double *&/*phase*/, std::complex<double> *&wavelet_complex) {
         *(wavelet_complex++) = std::complex<double>(r, i);
     }
 
