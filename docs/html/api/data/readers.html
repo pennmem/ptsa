@@ -1,0 +1,549 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Readers &mdash; PTSA 3.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Filters" href="filters.html" />
+    <link rel="prev" title="TimeSeries" href="timeseriesx.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> PTSA
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ramdata.html">Interacting with RAM Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../filters.html">Filtering Time Series</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../data.html">ptsa.data</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="timeseriesx.html">TimeSeries</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Readers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="filters.html">Filters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../extensions.html">Extension Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../development.html">Development guidelines</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PTSA</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="../data.html">ptsa.data</a> &raquo;</li>
+        
+      <li>Readers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/api/data/readers.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="readers">
+<h1>Readers<a class="headerlink" href="#readers" title="Permalink to this headline">¶</a></h1>
+<p>Each class in <code class="docutils literal notranslate"><span class="pre">ptsa.data.readers</span></code> is constructed with a <code class="docutils literal notranslate"><span class="pre">filename</span></code> parameter, indicating the file to be read,
+and implements a <code class="docutils literal notranslate"><span class="pre">read()</span></code> method, which returns a data structure containing the data in the file.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Keywords must be given explicitly</p>
+</div>
+<span class="target" id="module-ptsa.data.readers.edf.edf"></span><dl class="py class">
+<dt class="sig sig-object py" id="ptsa.data.readers.edf.edf.EDFRawReader">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ptsa.data.readers.edf.edf.</span></span><span class="sig-name descname"><span class="pre">EDFRawReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.edf.edf.EDFRawReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads EEG data stored in the European Data Format (EDF/BDF, EDF+/BDF+
+formats).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataroot</strong> (<em>str</em>) – Full path to EDF/BDF/EDF+/BDF+ file (including extension).</p></li>
+<li><p><strong>channels</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em><em>]</em>) – List of channels to read.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ptsa.data.readers.edf.edf.EDFRawReader.read_file">
+<span class="sig-name descname"><span class="pre">read_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_offsets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.edf.edf.EDFRawReader.read_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read an EDF/BDF/EDF+/BDF+ file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – Path to file to read.</p></li>
+<li><p><strong>channels</strong> (<em>Union</em><em>(</em><em>List</em><em>[</em><em>int</em><em>]</em><em>,</em><em>List</em><em>[</em><em>str</em><em>]</em><em>)</em>) – Channel names or numbers to read from. If names, leading If False-like, use all channels.</p></li>
+<li><p><strong>start_offsets</strong> (<em>np.ndarray</em>) – Indices to start reading at (<em>not</em> the actual offset times).</p></li>
+<li><p><strong>read_size</strong> (<em>int</em>) – Number of samples to read at each offset.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A tuple containing the array of EEG data and a boolean index mask
+indicating whether each offset was read successfully.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[np.ndarray, np.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ptsa.data.readers.BaseEventReader">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ptsa.data.readers.</span></span><span class="sig-name descname"><span class="pre">BaseEventReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data/events'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eliminate_events_with_no_eeg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eliminate_nans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_reref_eeg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_eeg_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.BaseEventReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reader class that reads event file and returns them as np.recarray.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – path to event file</p></li>
+<li><p><strong>eliminate_events_with_no_eeg</strong> (<em>bool</em>) – flag to automatically remove events with no eegfile (default True)</p></li>
+<li><p><strong>eliminate_nans</strong> (<em>bool</em>) – flag to automatically replace nans in the event structs with -999 (default True)</p></li>
+<li><p><strong>use_reref_eeg</strong> (<em>bool</em>) – flag that changes eegfiles to point reref eegs. Default is False
+and eegs read are nonreref ones</p></li>
+<li><p><strong>normalize_eeg_path</strong> (<em>bool</em>) – flag that determines if ‘data1’, ‘data2’, etc… in eeg path will
+get converted to ‘data’. The flag is True by default meaning all
+‘data1’, ‘data2’, etc… are converted to ‘data’</p></li>
+<li><p><strong>common_root</strong> (<em>str</em>) – partial path to root events folder e.g. if you events are placed in
+/data/events/RAM_FR1 the path should be ‘data/events’. If your
+events are placed in the ‘/data/scalp_events/catFR’ the common root
+should be ‘data/scalp_events’. Note that you do not include opening
+‘/’ in the common_root</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ptsa.data.readers.BaseEventReader.as_dataframe">
+<span class="sig-name descname"><span class="pre">as_dataframe</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.BaseEventReader.as_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read events and return as a <code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This drops the <code class="docutils literal notranslate"><span class="pre">stim_params</span></code> field presently as it is not scalar
+in the current event structure scheme and causes issues when trying
+to convert to a <code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ptsa.data.readers.BaseEventReader.find_data_dir_prefix">
+<span class="sig-name descname"><span class="pre">find_data_dir_prefix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.BaseEventReader.find_data_dir_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>determining dir_prefix</p>
+<p>data on rhino database is mounted as /data
+copying rhino /data structure to another directory will cause all files in data have new prefix
+example:
+self._filename=’/Users/m/data/events/R1060M_events.mat’
+prefix is ‘/Users/m’
+we use find_dir_prefix to determine prefix based on common_root in path with and without prefix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>data directory prefix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ptsa.data.readers.BaseEventReader.modify_eeg_path">
+<span class="sig-name descname"><span class="pre">modify_eeg_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.BaseEventReader.modify_eeg_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replaces ‘eeg.reref’ with ‘eeg.noreref’ in eegfile path
+:param events: np.recarray representing events. One of hte field of this array should be eegfile
+:return:None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ptsa.data.readers.BaseEventReader.normalize_paths">
+<span class="sig-name descname"><span class="pre">normalize_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.BaseEventReader.normalize_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replaces data1, data2 etc… in the eegfile column of the events with data
+:param events: np.recarray representing events. One of hte field of this array should be eegfile
+:return: None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ptsa.data.readers.BaseEventReader.read_matlab">
+<span class="sig-name descname"><span class="pre">read_matlab</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.BaseEventReader.read_matlab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads Matlab event file and returns corresponging np.recarray. Path to the eegfile is changed
+w.r.t original Matlab code to account for the following:
+1. /data dir of the database might have been mounted under different mount point e.g. /Users/m/data
+2. use_reref_eeg is set to True in which case we replaces ‘eeg.reref’ with ‘eeg.noreref’ in eegfile path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>np.recarray representing events</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ptsa.data.readers.CMLEventReader">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ptsa.data.readers.</span></span><span class="sig-name descname"><span class="pre">CMLEventReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eeg_fname_search_pattern</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eeg_fname_replace_pattern</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.CMLEventReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event reader that returns original PTSA Events object with attached
+rawbinwrappers – objects that know how to read eeg binary data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – path to event file</p></li>
+<li><p><strong>eliminate_events_with_no_eeg</strong> (<em>bool</em>) – flag to automatically remove events with no eegfile (default True)</p></li>
+<li><p><strong>eliminate_nans</strong> (<em>bool</em>) – flag to automatically replace nans in the event structs with -999
+(default True)</p></li>
+<li><p><strong>eeg_fname_search_pattern</strong> (<em>str</em>) – pattern in the eeg filename to search for in order to repalce it with
+eeg_fname_replace_pattern</p></li>
+<li><p><strong>eeg_fname_replace_pattern</strong> (<em>str</em>) – replace pattern for eeg filename. It will replace all occurrences
+specified by “eeg_fname_replace_pattern”</p></li>
+<li><p><strong>normalize_eeg_path</strong> (<em>bool</em>) – flag that determines if ‘data1’, ‘data2’, etc… in eeg path will get
+converted to ‘data’. The flag is False by default meaning all ‘data1’,
+‘data2’, etc… are converted to ‘data’</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ptsa.data.readers.CMLEventReader.modify_eeg_path">
+<span class="sig-name descname"><span class="pre">modify_eeg_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.CMLEventReader.modify_eeg_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replaces search pattern (self.eeg_fname_search_patter’) with replace
+pattern (self.eeg_fname_replace_pattern) in every eegfile entry in the
+events recarray</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>events</strong> (<em>np.recarray</em>) – representing events. One of the field of this array should be
+eegfile</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ptsa.data.readers.EEGReader">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ptsa.data.readers.</span></span><span class="sig-name descname"><span class="pre">EEGReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([],</span> <span class="pre">dtype='|S3')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_dataroot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_bad_events</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.EEGReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reader that knows how to read binary eeg files. It can read chunks of the eeg signal based on events input
+or can read entire session if session_dataroot is non empty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channels</strong> (<em>np.ndarray</em>) – numpy array of channel labels, or a structured array with a ‘channels’ field</p></li>
+<li><p><strong>start_time</strong> (<em>float</em>) – read start offset in seconds w.r.t to the eegeffset specified in the events recarray</p></li>
+<li><p><strong>end_time</strong> – read end offset in seconds w.r.t to the eegeffset specified in the
+events recarray</p></li>
+<li><p><strong>buffer_time</strong> (<em>float</em>) – extra buffer in seconds (subtracted from start read and added to end
+read)</p></li>
+<li><p><strong>events</strong> (<em>np.recarray</em>) – numpy recarray representing Events</p></li>
+<li><p><strong>session_dataroot</strong> (<em>str</em>) – path to session dataroot. When set the reader will read the entire
+session</p></li>
+<li><p><strong>remove_bad_events</strong> (<em>bool</em>) – Remove “bad” events. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>An EEGReader must be constructed using either :py:arg:events or :py:arg:session_dataroot.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ptsa.data.readers.EEGReader.compute_read_offsets">
+<span class="sig-name descname"><span class="pre">compute_read_offsets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reader</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.EEGReader.compute_read_offsets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads Parameter file and exracts sampling rate that is used to convert from start_time, end_time, buffer_time
+(expressed in seconds)
+to start_offset, end_offset, buffer_offset expressed as integers indicating number of time series data points (not bytes!)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataroot</strong> – core name of the eeg datafile</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple of 3 {int} - start_offset, end_offset, buffer_offset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ptsa.data.readers.EEGReader.read_events_data">
+<span class="sig-name descname"><span class="pre">read_events_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.EEGReader.read_events_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads eeg data for individual event</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>TimeSeries  object (channels x events x time) with data for individual events</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ptsa.data.readers.EEGReader.read_session_data">
+<span class="sig-name descname"><span class="pre">read_session_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.EEGReader.read_session_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads entire session worth of data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>TimeSeries object (channels x events x time) with data for entire session the events dimension has length 1</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ptsa.data.readers.TalReader">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ptsa.data.readers.</span></span><span class="sig-name descname"><span class="pre">TalReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">struct_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bpTalStruct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">struct_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.TalReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reader that reads tal structs Matlab file or pairs.json file and converts it to numpy recarray</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ptsa.data.readers.TalReader.from_dict">
+<span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.TalReader.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a JSON localization file into a record array.
+:param json_dict: A dictionary of localization information, with one entry for each contact or pair.
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ptsa.data.readers.TalReader.from_records">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contact_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.TalReader.from_records" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper method for :meth:from_dict.
+Takes a list of records (dictionaries with semi-consistent fields)
+and returns a structured array whose fields are the keys of each record.
+Nested records are handled by recursion.</p>
+<p>Missing entries should be represented by either None, NaN, or an empty dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>contact_dict</strong> – {List[Union(Dict,None,NaN)]}</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{np.array} A structured array with the same indexing structure as :arg:contact_dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ptsa.data.readers.TalReader.get_bipolar_pairs">
+<span class="sig-name descname"><span class="pre">get_bipolar_pairs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.TalReader.get_bipolar_pairs" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>numpy recarray where each record has two fields ‘ch0’ and ‘ch1’ storing  channel labels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ptsa.data.readers.TalReader.get_monopolar_channels">
+<span class="sig-name descname"><span class="pre">get_monopolar_channels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.TalReader.get_monopolar_channels" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>numpy array of monopolar channel labels</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ptsa.data.readers.TalReader.mkdtype">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">mkdtype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flat_df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.TalReader.mkdtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invariant: there are no subfields of flat_df whose elements are dictionaries
+:param flat_df: {pandas.DataFrame}
+:return: {np.dtype}</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ptsa.data.readers.LocReader">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ptsa.data.readers.</span></span><span class="sig-name descname"><span class="pre">LocReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.readers.LocReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a localization file (“localization.json”) and returns the data it contains as a flat DataFrame.
+Nested fields in the JSON file have their full paths joined by periods.
+The returned DataFrame is indexed by tyep type of entry (‘contacts’ or ‘pairs’) and by the name of the entry
+(either the name of the contact, or a tuple with the names of each half of the pair).</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="filters.html" class="btn btn-neutral float-right" title="Filters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="timeseriesx.html" class="btn btn-neutral float-left" title="TimeSeries" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
