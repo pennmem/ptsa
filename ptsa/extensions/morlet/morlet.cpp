@@ -267,11 +267,15 @@ void MorletWaveletTransform::multiphasevec_powers(double *signal, double *powers
     }
 }
 
-void MorletWaveletTransform::wavelet_pow_phase_py(double *signal, size_t /*signal_len*/,
-                          double *powers, size_t /*power_len*/,
-                          double *phases , size_t /*phase_len*/,
+void MorletWaveletTransform::wavelet_pow_phase_py(double *signal, size_t signal_len,
+                          double *powers, size_t power_len,
+                          double *phases , size_t phase_len,
                           std::complex<double> * wavelets,
-                          size_t /*wavelet_len*/){
+                          size_t wavelet_len){
+    UnusedParam(signal_len);
+    UnusedParam(power_len);
+    UnusedParam(phase_len);
+    UnusedParam(wavelet_len);
 
     this->wavelet_pow_phase(signal,powers,phases,wavelets);
 }
@@ -365,13 +369,20 @@ void MorletWaveletTransform::multiphasevec_c(double *signal, std::complex<double
     }
 }
 
-void MorletWaveletTransform::multiphasevec(double *signal, size_t /*signal_len*/, double *powers, size_t /*power_len*/, double* phases, size_t /*phase_len*/) {
+void MorletWaveletTransform::multiphasevec(double *signal, size_t signal_len, double *powers, size_t power_len, double* phases, size_t phase_len) {
+    UnusedParam(signal_len);
+    UnusedParam(power_len);
+    UnusedParam(phase_len);
+
     if (phases==NULL)
         multiphasevec_powers(signal, powers);
     else
         multiphasevec_powers_and_phases(signal, powers, phases);
 }
 
-void MorletWaveletTransform::multiphasevec_complex(double *signal, size_t /*signal_len*/, std::complex<double> *wavelets, size_t /*wavelet_len*/) {
+void MorletWaveletTransform::multiphasevec_complex(double *signal, size_t signal_len, std::complex<double> *wavelets, size_t wavelet_len) {
+    UnusedParam(signal_len);
+    UnusedParam(wavelet_len);
+
     multiphasevec_c(signal, wavelets);
 }

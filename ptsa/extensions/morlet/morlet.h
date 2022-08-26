@@ -8,6 +8,7 @@
 #include <cmath>
 #include <complex>
 #include "enums.h"
+#include "unusedparam.h"
 #include <functional>
 #include <map>
 
@@ -87,11 +88,16 @@ public:
         }
     }
 
-    void wv_pow(double r, double i, double *&powers, double *&/*phase*/, std::complex<double> *&/*wavelets*/) {
+    void wv_pow(double r, double i, double *&powers, double *&phase, std::complex<double> *&wavelets) {
+        UnusedParam(phase);
+        UnusedParam(wavelets);
+
         *(powers++) = r * r + i * i;
     }
 
-    void wv_phase(double r, double i, double *&/*powers*/, double *&phase, std::complex<double> *&/*wavelets*/) {
+    void wv_phase(double r, double i, double *&powers, double *&phase, std::complex<double> *&wavelets) {
+        UnusedParam(powers);
+        UnusedParam(wavelets);
 
         *(phase++) = atan2(i, r);
 
@@ -102,7 +108,10 @@ public:
         wv_phase(r, i, powers, phase, wavelets);
     }
 
-    void wv_complex(double r, double i, double *&/*powers*/, double *&/*phase*/, std::complex<double> *&wavelet_complex) {
+    void wv_complex(double r, double i, double *&powers, double *&phase, std::complex<double> *&wavelet_complex) {
+        UnusedParam(powers);
+        UnusedParam(phase);
+
         *(wavelet_complex++) = std::complex<double>(r, i);
     }
 
