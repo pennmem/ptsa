@@ -25,6 +25,7 @@ requirements:
     - xarray
     - fftw
     - pybind11
+    - importlib-metadata==4.13.0
 
   run:
     - python {{ python }}
@@ -36,6 +37,7 @@ requirements:
     - xarray
     - traits
     - pybind11
+    - importlib-metadata==4.13.0
 
 test:
   # Test that we can import ptsa and its extension modules
