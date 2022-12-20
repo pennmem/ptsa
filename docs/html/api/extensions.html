@@ -5,11 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Extension Modules &mdash; PTSA 3.0.0 documentation</title>
+  <title>Extension Modules &mdash; PTSA 3.0.2 documentation</title>
   
 
   
@@ -25,10 +25,11 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                3.0.0
+                3.0.2
               </div>
             
           
@@ -196,16 +197,16 @@
 }
 </style>
 <section id="extension-modules">
-<h1>Extension Modules<a class="headerlink" href="#extension-modules" title="Permalink to this headline">¶</a></h1>
+<h1>Extension Modules<a class="headerlink" href="#extension-modules" title="Permalink to this heading">¶</a></h1>
 <p>C/C++ extension modules, for accelerated calculations.</p>
 <section id="module-ptsa.extensions.circular_stat">
-<span id="ptsa-extensions-circular-stat"></span><h2>ptsa.extensions.circular_stat<a class="headerlink" href="#module-ptsa.extensions.circular_stat" title="Permalink to this headline">¶</a></h2>
+<span id="ptsa-extensions-circular-stat"></span><h2>ptsa.extensions.circular_stat<a class="headerlink" href="#module-ptsa.extensions.circular_stat" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="ptsa.extensions.circular_stat.circ_diff">
 <span class="sig-prename descclassname"><span class="pre">ptsa.extensions.circular_stat.</span></span><span class="sig-name descname"><span class="pre">circ_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.circular_stat.circ_diff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the angular difference of the complex arrays X and Y, storing the value in Z</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>X</strong><strong>,</strong><strong>Y</strong><strong>,</strong><strong>Z</strong> – np.array[np.complex]</p>
 </dd>
 </dl>
@@ -217,7 +218,7 @@
 <dd><p>Computes the angular difference of the complex arrays X and Y, storing the value in Z.
 The computation is performed in parallel over <code class="docutils literal notranslate"><span class="pre">n_threads</span></code> threads</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>X</strong><strong>,</strong><strong>Y</strong><strong>,</strong><strong>Z</strong> – np.array[np.complex]</p></li>
 <li><p><strong>n_threads</strong> – int</p></li>
@@ -242,7 +243,7 @@ stores the result in <code class="docutils literal notranslate"><span class="pre
 binned differences.</p>
 <p><code class="docutils literal notranslate"><span class="pre">len(cdiff_means)</span></code> must divide <code class="docutils literal notranslate"><span class="pre">len(c1)</span></code></p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None</p>
 </dd>
 </dl>
@@ -254,7 +255,7 @@ binned differences.</p>
 <dd><p>Performs an F-test, i.e. a circular ANOVA, comparing the variance of <code class="docutils literal notranslate"><span class="pre">phase_diffs</span></code>
 when partitioned into two classes, and stores the results in fstat.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>phase_diffs</strong> – A matrix of phase differences</p></li>
 <li><p><strong>classes</strong> – A boolean vector indicating which observation belongs in which class Should be the same length as the first dimension of <code class="docutils literal notranslate"><span class="pre">phase_diffs</span></code></p></li>
@@ -281,7 +282,7 @@ when partitioned into two classes, and stores the results in fstat.</p>
 
 </section>
 <section id="module-ptsa.extensions.morlet">
-<span id="ptsa-extensions-morlet"></span><h2>ptsa.extensions.morlet<a class="headerlink" href="#module-ptsa.extensions.morlet" title="Permalink to this headline">¶</a></h2>
+<span id="ptsa-extensions-morlet"></span><h2>ptsa.extensions.morlet<a class="headerlink" href="#module-ptsa.extensions.morlet" title="Permalink to this heading">¶</a></h2>
 <p>Low-level extension module for quickly computing Morlet wavelet decompositions.</p>
 <p>This module uses the following wavelet for frequency <span class="math notranslate nohighlight">\(f\)</span> and Gaussian width <span class="math notranslate nohighlight">\(w\)</span>:</p>
 <div class="math notranslate nohighlight">
@@ -320,19 +321,19 @@ in order to take advantage of the speed provided by the FFTW library.</p>
 </div>
 </section>
 <section id="ptsa-extensions-edf">
-<h2>ptsa.extensions.edf<a class="headerlink" href="#ptsa-extensions-edf" title="Permalink to this headline">¶</a></h2>
+<h2>ptsa.extensions.edf<a class="headerlink" href="#ptsa-extensions-edf" title="Permalink to this heading">¶</a></h2>
 <p>File-like wrapper around parts of <a class="reference external" href="https://www.teuniz.net/edflib/">EDFlib</a> to provide an interface
 for reading the EDF+ family of EEG formats.
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">ptsa.data.readers.EDFRawReader</span></code> provides a
 slightly higher-level interface for doing the same thing.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="ptsa.extensions.morlet.ChannelInfo">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ptsa.extensions.morlet.</span></span><span class="sig-name descname"><span class="pre">ChannelInfo</span></span><a class="headerlink" href="#ptsa.extensions.morlet.ChannelInfo" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ptsa.extensions.morlet.</span></span><span class="sig-name descname"><span class="pre">ChannelInfo</span></span><a class="headerlink" href="#ptsa.extensions.morlet.ChannelInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Channel data including label, number of samples, etc. These objects are
 returned by <a class="reference internal" href="#ptsa.extensions.morlet.EDFFile.get_channel_info" title="ptsa.extensions.morlet.EDFFile.get_channel_info"><code class="xref py py-meth docutils literal notranslate"><span class="pre">EDFFile.get_channel_info()</span></code></a>, and have the following
 read-only attributes:</p>
 <dl class="field-list simple">
-<dt class="field-odd">Variables</dt>
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>label</strong> (<em>str</em>) – The name of the channel</p></li>
 <li><p><strong>smp_in_file</strong> (<em>int</em>) – Number of samples in file</p></li>
@@ -351,14 +352,14 @@ read-only attributes:</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ptsa.extensions.morlet.EDFFile">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ptsa.extensions.morlet.</span></span><span class="sig-name descname"><span class="pre">EDFFile</span></span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ptsa.extensions.morlet.</span></span><span class="sig-name descname"><span class="pre">EDFFile</span></span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the EDF family of files.</p>
 <p>This class utilizes <a class="reference external" href="https://www.teuniz.net/edflib/">EDFlib</a> to read EDF/BDF/EDF+/BDF+ files.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ptsa.extensions.morlet.EDFFile.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – </p>
 </dd>
 </dl>
@@ -369,7 +370,7 @@ read-only attributes:</p>
 <span class="sig-name descname"><span class="pre">get_channel_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.extensions.morlet.EDFFile.get_channel_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the information on a given channel</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>channel</strong> – int</p>
 </dd>
 </dl>

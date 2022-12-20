@@ -5,11 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Interacting with RAM Data &mdash; PTSA 3.0.0 documentation</title>
+  <title>Interacting with RAM Data &mdash; PTSA 3.0.2 documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
@@ -64,7 +65,7 @@
             
             
               <div class="version">
-                3.0.0
+                3.0.2
               </div>
             
           
@@ -190,7 +191,7 @@
 }
 </style>
 <section id="interacting-with-ram-data">
-<span id="ramdata"></span><h1>Interacting with RAM Data<a class="headerlink" href="#interacting-with-ram-data" title="Permalink to this headline">¶</a></h1>
+<span id="ramdata"></span><h1>Interacting with RAM Data<a class="headerlink" href="#interacting-with-ram-data" title="Permalink to this heading">¶</a></h1>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>This section utilizes many deprecated ways of using PTSA so may not work as
@@ -205,7 +206,7 @@ DARPA RAM project.</p>
 <p>Let’s start by looking at how to read experimental events stored in Matlab Format. The class we will use is called
 <code class="docutils literal notranslate"><span class="pre">BaseEventReader</span></code>.</p>
 <section id="reading-events-using-baseeventreader">
-<h2>Reading events using BaseEventReader<a class="headerlink" href="#reading-events-using-baseeventreader" title="Permalink to this headline">¶</a></h2>
+<h2>Reading events using BaseEventReader<a class="headerlink" href="#reading-events-using-baseeventreader" title="Permalink to this heading">¶</a></h2>
 <p>To read events that RAM project uses  we need to mount RAM data directory on our computer. In my case I mounted it
 as <code class="docutils literal notranslate"><span class="pre">/Users/rhino_root/data</span></code>.  Now, to read the events we first need to import <code class="docutils literal notranslate"><span class="pre">BaseEventReader</span></code></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">BaseEventReader</span>
@@ -239,7 +240,7 @@ function and select only those events that are ot <code class="docutils literal 
 <p>Indicating that the event object is in fact <code class="docutils literal notranslate"><span class="pre">numpy.recarray</span></code></p>
 </section>
 <section id="reading-events-using-cmleventreader">
-<h2>Reading events using CMLEventReader<a class="headerlink" href="#reading-events-using-cmleventreader" title="Permalink to this headline">¶</a></h2>
+<h2>Reading events using CMLEventReader<a class="headerlink" href="#reading-events-using-cmleventreader" title="Permalink to this heading">¶</a></h2>
 <p>CMLEventReader (CML stands for Computational Memory Lab) has the same functionality as BaseEventReader but in the
 most basic configuration it reads events “as-is” without any path manipulation. However, it will, by default, replace
 <code class="docutils literal notranslate"><span class="pre">NaN</span></code> with sentinel values and will eliminate events that do not reference eeg file. For example the most basic call
@@ -274,7 +275,7 @@ want to “normalize” path (<em>i.e.</em> replace <code class="docutils litera
 <p>Internally <code class="docutils literal notranslate"><span class="pre">CMLReader</span></code> uses code from <code class="docutils literal notranslate"><span class="pre">BaseEventReader</span></code></p>
 </section>
 <section id="finding-paths-using-jsonindexreader">
-<h2>Finding Paths using JsonIndexReader<a class="headerlink" href="#finding-paths-using-jsonindexreader" title="Permalink to this headline">¶</a></h2>
+<h2>Finding Paths using JsonIndexReader<a class="headerlink" href="#finding-paths-using-jsonindexreader" title="Permalink to this heading">¶</a></h2>
 <p>While one can always specify the path to the events structure by hand, PTSA has a class
 <code class="docutils literal notranslate"><span class="pre">JsonIndexReader</span></code> that tracks this information. The location of the various event files
 is kept in JSON format, in <cite>/protocols/r1.json</cite>, and <code class="docutils literal notranslate"><span class="pre">JsonIndexReader</span></code> allows one to
@@ -309,7 +310,7 @@ to a record array:</p>
 <p>and now the events structure is exactly as described in the previous section.</p>
 </section>
 <section id="reading-electrode-information-using-talreader">
-<h2>Reading Electrode Information using TalReader<a class="headerlink" href="#reading-electrode-information-using-talreader" title="Permalink to this headline">¶</a></h2>
+<h2>Reading Electrode Information using TalReader<a class="headerlink" href="#reading-electrode-information-using-talreader" title="Permalink to this heading">¶</a></h2>
 <p>To read electrode information that is stored in the so called tal_structs we will use <code class="docutils literal notranslate"><span class="pre">TalReader</span></code> object.
 We first import TalReader:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">TalReader</span>
@@ -387,7 +388,7 @@ that extract a list of individual channel numbers and a list of bipolar pairs.</
 </div>
 </section>
 <section id="reading-eeg-time-series-using-eegreader">
-<h2>Reading EEG time series using EEGReader<a class="headerlink" href="#reading-eeg-time-series-using-eegreader" title="Permalink to this headline">¶</a></h2>
+<h2>Reading EEG time series using EEGReader<a class="headerlink" href="#reading-eeg-time-series-using-eegreader" title="Permalink to this heading">¶</a></h2>
 <p>To read EEG time series’ associated with events we typically use <code class="docutils literal notranslate"><span class="pre">EEGReader</span></code>. Here is the syntax:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">EEGReader</span>
 <span class="n">eeg_reader</span> <span class="o">=</span> <span class="n">EEGReader</span><span class="p">(</span><span class="n">events</span><span class="o">=</span><span class="n">base_events</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="n">monopolar_channels</span><span class="p">,</span>

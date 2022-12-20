@@ -5,11 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>TimeSeries &mdash; PTSA 3.0.0 documentation</title>
+  <title>TimeSeries &mdash; PTSA 3.0.2 documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
@@ -64,7 +65,7 @@
             
             
               <div class="version">
-                3.0.0
+                3.0.2
               </div>
             
           
@@ -196,17 +197,17 @@
 }
 </style>
 <section id="timeseries">
-<h1>TimeSeries<a class="headerlink" href="#timeseries" title="Permalink to this headline">¶</a></h1>
+<h1>TimeSeries<a class="headerlink" href="#timeseries" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="ptsa.data.timeseries.TimeSeries">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ptsa.data.timeseries.</span></span><span class="sig-name descname"><span class="pre">TimeSeries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fastpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ptsa.data.timeseries.</span></span><span class="sig-name descname"><span class="pre">TimeSeries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fastpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries" title="Permalink to this definition">¶</a></dt>
 <dd><p>A thin wrapper around <code class="xref py py-class docutils literal notranslate"><span class="pre">xr.DataArray</span></code> for dealing with time series
 data.</p>
 <p>Note that xarray internals prevent us from overriding the constructor which
 leads to some awkwardness: you must pass coords as a dict with a
 <code class="docutils literal notranslate"><span class="pre">samplerate</span></code> entry.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<em>array-like</em>) – Time series data</p></li>
 <li><p><strong>coords</strong> (<em>dict-like</em>) – Coordinate arrays. This must contain at least a <code class="docutils literal notranslate"><span class="pre">samplerate</span></code>
@@ -217,7 +218,7 @@ coordinate.</p></li>
 <li><p><strong>fastpath</strong> (<em>bool</em>) – Not used, but required when subclassing <code class="xref py py-class docutils literal notranslate"><span class="pre">xr.DataArray</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>AssertionError</strong> – When <code class="docutils literal notranslate"><span class="pre">samplerate</span></code> is not present in <code class="docutils literal notranslate"><span class="pre">coords</span></code>.</p>
 </dd>
 </dl>
@@ -230,7 +231,7 @@ coordinate.</p></li>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="ptsa.data.timeseries.TimeSeries.add_mirror_buffer">
-<span class="sig-name descname"><span class="pre">add_mirror_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.add_mirror_buffer" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_mirror_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">two_sided</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.add_mirror_buffer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a time series with mirrored data added to both ends of this
 time series (up to specified length/duration).</p>
 <p>The new series total time duration is:</p>
@@ -238,14 +239,15 @@ time series (up to specified length/duration).</p>
 <div><p><code class="docutils literal notranslate"><span class="pre">original</span> <span class="pre">duration</span> <span class="pre">+</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">duration</span> <span class="pre">*</span> <span class="pre">samplerate</span></code></p>
 </div></blockquote>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>duration</strong> (<em>float</em>) – Buffer duration in seconds.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>duration</strong> (<em>float</em>) – Buffer duration in seconds.</p></li>
+<li><p><strong>two-sided</strong> (<em>bool</em>) – If True, mirror on both sides of the epoch. Otherwise, only
+mirror on the right side of the epoch</p></li>
+</ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>New time series with added mirrored buffer.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>New time series with added mirrored buffer.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -255,7 +257,7 @@ time series (up to specified length/duration).</p>
 <span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reduce this TimeSeries’s data by applying <cite>all</cite> along some dimension(s).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dim</strong> (<em>str</em><em> or </em><em>sequence of str</em><em>, </em><em>optional</em>) – Dimension(s) over which to apply <cite>all</cite>.</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em> or </em><em>sequence of int</em><em>, </em><em>optional</em>) – Axis(es) over which to apply <cite>all</cite>. Only one of the ‘dim’
@@ -268,11 +270,11 @@ returned without attributes.</p></li>
 function for calculating <cite>all</cite> on this object’s data.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>reduced</strong> – New TimeSeries object with <cite>all</cite> applied to its data and the
 indicated dimension(s) removed.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
 </dl>
@@ -283,7 +285,7 @@ indicated dimension(s) removed.</p>
 <span class="sig-name descname"><span class="pre">any</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.any" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reduce this TimeSeries’s data by applying <cite>any</cite> along some dimension(s).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dim</strong> (<em>str</em><em> or </em><em>sequence of str</em><em>, </em><em>optional</em>) – Dimension(s) over which to apply <cite>any</cite>.</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em> or </em><em>sequence of int</em><em>, </em><em>optional</em>) – Axis(es) over which to apply <cite>any</cite>. Only one of the ‘dim’
@@ -296,11 +298,11 @@ returned without attributes.</p></li>
 function for calculating <cite>any</cite> on this object’s data.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>reduced</strong> – New TimeSeries object with <cite>any</cite> applied to its data and the
 indicated dimension(s) removed.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
 </dl>
@@ -315,7 +317,7 @@ indicated dimension(s) removed.</p>
 dimension to be created.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>other</strong> (<a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries"><em>TimeSeries</em></a>) – </p></li>
 <li><p><strong>dim</strong> (<em>str</em><em> or </em><em>None</em>) – Dimension to concatenate on. If None, attempt to concatenate all
@@ -323,11 +325,8 @@ data using <code class="xref py py-func docutils literal notranslate"><span clas
 dimension will be created with coords [0,1].</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Appended TimeSeries</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Appended TimeSeries</p>
 </dd>
 </dl>
 </dd></dl>
@@ -339,7 +338,7 @@ dimension will be created with coords [0,1].</p></li>
 <p>Copy of the xarray object, with data cast to a specified type.
 Leaves coordinate dtype unchanged.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dtype</strong> (<em>str</em><em> or </em><em>dtype</em>) – Typecode or data-type to which the array is cast.</p></li>
 <li><p><strong>order</strong> (<em>{'C'</em><em>, </em><em>'F'</em><em>, </em><em>'A'</em><em>, </em><em>'K'}</em><em>, </em><em>optional</em>) – Controls the memory layout order of the result. ‘C’ means C order,
@@ -365,10 +364,10 @@ array is returned instead of a copy.</p></li>
 attributes in the returned object.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>out</strong> – New object with data cast to the specified type.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>same as object</p>
 </dd>
 </dl>
@@ -391,14 +390,14 @@ supports them.</p>
 average value in the baseline range from all other time points
 for each dimension.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>base_range</strong> (<em>{tuple}</em>) – Tuple specifying the start and end time range (inclusive)
 for the baseline.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ts</strong> – A TimeSeries instance with the baseline corrected data.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>{TimeSeries}</p>
 </dd>
 </dl>
@@ -406,7 +405,7 @@ for the baseline.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ptsa.data.timeseries.TimeSeries.coerce_to">
-<span class="sig-name descname"><span class="pre">coerce_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">dtype=&lt;class</span> <span class="pre">'numpy.float64'&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.coerce_to" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">coerce_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'numpy.float64'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.coerce_to" title="Permalink to this definition">¶</a></dt>
 <dd><p>Coerce the data to the specified dtype in place. If dtype is None,
 this method does nothing. Default: coerce to <code class="docutils literal notranslate"><span class="pre">np.float64</span></code>.</p>
 </dd></dl>
@@ -416,7 +415,7 @@ this method does nothing. Default: coerce to <code class="docutils literal notra
 <span class="sig-name descname"><span class="pre">count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reduce this TimeSeries’s data by applying <cite>count</cite> along some dimension(s).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dim</strong> (<em>str</em><em> or </em><em>sequence of str</em><em>, </em><em>optional</em>) – Dimension(s) over which to apply <cite>count</cite>.</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em> or </em><em>sequence of int</em><em>, </em><em>optional</em>) – Axis(es) over which to apply <cite>count</cite>. Only one of the ‘dim’
@@ -429,11 +428,11 @@ returned without attributes.</p></li>
 function for calculating <cite>count</cite> on this object’s data.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>reduced</strong> – New TimeSeries object with <cite>count</cite> applied to its data and the
 indicated dimension(s) removed.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
 </dl>
@@ -441,7 +440,7 @@ indicated dimension(s) removed.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ptsa.data.timeseries.TimeSeries.create">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samplerate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.create" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samplerate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Factory function for creating a new timeseries object with passing
 the sample rate as a parameter. See <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> for parameters.</p>
 </dd></dl>
@@ -451,7 +450,7 @@ the sample rate as a parameter. See <code class="xref py py-meth docutils litera
 <span class="sig-name descname"><span class="pre">cumprod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.cumprod" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply <cite>cumprod</cite> along some dimension of TimeSeries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dim</strong> (<em>str</em><em> or </em><em>sequence of str</em><em>, </em><em>optional</em>) – Dimension over which to apply <cite>cumprod</cite>.</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em> or </em><em>sequence of int</em><em>, </em><em>optional</em>) – Axis over which to apply <cite>cumprod</cite>. Only one of the ‘dim’
@@ -466,11 +465,11 @@ returned without attributes.</p></li>
 <li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments passed on to <cite>cumprod</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>cumvalue</strong> – New TimeSeries object with <cite>cumprod</cite> applied to its data along the
 indicated dimension.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
 </dl>
@@ -481,7 +480,7 @@ indicated dimension.</p>
 <span class="sig-name descname"><span class="pre">cumsum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.cumsum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply <cite>cumsum</cite> along some dimension of TimeSeries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dim</strong> (<em>str</em><em> or </em><em>sequence of str</em><em>, </em><em>optional</em>) – Dimension over which to apply <cite>cumsum</cite>.</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em> or </em><em>sequence of int</em><em>, </em><em>optional</em>) – Axis over which to apply <cite>cumsum</cite>. Only one of the ‘dim’
@@ -496,11 +495,11 @@ returned without attributes.</p></li>
 <li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments passed on to <cite>cumsum</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>cumvalue</strong> – New TimeSeries object with <cite>cumsum</cite> applied to its data along the
 indicated dimension.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
 </dl>
@@ -511,16 +510,16 @@ indicated dimension.</p>
 <span class="sig-name descname"><span class="pre">filter_with</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.filter_with" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter the time series data using the specified filters in order.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filters</strong> (<em>BaseFilter</em><em> or </em><em>Iterable</em><em>[</em><em>BaseFilter</em><em>]</em>) – The filter(s) to use.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>filtered</strong> – The resulting data from the filter.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>TypeError</strong> – When <code class="docutils literal notranslate"><span class="pre">filter_class</span></code> is not a valid filter class.</p>
 </dd>
 </dl>
@@ -532,17 +531,17 @@ indicated dimension.</p>
 <dd><p>Filter the data using a Butterworth filter and return a new
 TimeSeries instance.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>freq_range</strong> (<em>array-like</em>) – The range of frequencies to filter.</p></li>
 <li><p><strong>filt_type</strong> (<em>str</em>) – Filter type (default: <code class="docutils literal notranslate"><span class="pre">'stop'</span></code>).</p></li>
 <li><p><strong>order</strong> (<em>int</em>) – The order of the filter (default: 4).</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ts</strong> – A TimeSeries instance with the filtered data.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
 </dl>
@@ -550,11 +549,11 @@ TimeSeries instance.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ptsa.data.timeseries.TimeSeries.from_hdf">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_hdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.from_hdf" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_hdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'netcdf4'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.from_hdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a serialized time series from an HDF5 file.
 Uses</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Path to HDF5 file.</p>
 </dd>
 </dl>
@@ -565,7 +564,7 @@ Uses</p>
 <span class="sig-name descname"><span class="pre">item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.item" title="Permalink to this definition">¶</a></dt>
 <dd><p>Copy an element of an array to a standard Python scalar and return it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>*args</strong> (<em>Arguments</em><em> (</em><em>variable number and type</em><em>)</em>) – <ul class="simple">
 <li><p>none: in this case, the method only works for arrays
 with one element (<cite>a.size == 1</cite>), which element is
@@ -578,11 +577,11 @@ array.</p></li>
 </ul>
 </p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>z</strong> – A copy of the specified element of the array as a suitable
 Python scalar</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Standard Python scalar object</p>
 </dd>
 </dl>
@@ -619,7 +618,7 @@ array using Python’s optimized math.</p>
 <span class="sig-name descname"><span class="pre">max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.max" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reduce this TimeSeries’s data by applying <cite>max</cite> along some dimension(s).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dim</strong> (<em>str</em><em> or </em><em>sequence of str</em><em>, </em><em>optional</em>) – Dimension(s) over which to apply <cite>max</cite>.</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em> or </em><em>sequence of int</em><em>, </em><em>optional</em>) – Axis(es) over which to apply <cite>max</cite>. Only one of the ‘dim’
@@ -636,11 +635,11 @@ returned without attributes.</p></li>
 function for calculating <cite>max</cite> on this object’s data.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>reduced</strong> – New TimeSeries object with <cite>max</cite> applied to its data and the
 indicated dimension(s) removed.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
 </dl>
@@ -651,7 +650,7 @@ indicated dimension(s) removed.</p>
 <span class="sig-name descname"><span class="pre">mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reduce this TimeSeries’s data by applying <cite>mean</cite> along some dimension(s).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dim</strong> (<em>str</em><em> or </em><em>sequence of str</em><em>, </em><em>optional</em>) – Dimension(s) over which to apply <cite>mean</cite>.</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em> or </em><em>sequence of int</em><em>, </em><em>optional</em>) – Axis(es) over which to apply <cite>mean</cite>. Only one of the ‘dim’
@@ -668,11 +667,11 @@ returned without attributes.</p></li>
 function for calculating <cite>mean</cite> on this object’s data.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>reduced</strong> – New TimeSeries object with <cite>mean</cite> applied to its data and the
 indicated dimension(s) removed.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
 </dl>
@@ -683,7 +682,7 @@ indicated dimension(s) removed.</p>
 <span class="sig-name descname"><span class="pre">median</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.median" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reduce this TimeSeries’s data by applying <cite>median</cite> along some dimension(s).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dim</strong> (<em>str</em><em> or </em><em>sequence of str</em><em>, </em><em>optional</em>) – Dimension(s) over which to apply <cite>median</cite>.</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em> or </em><em>sequence of int</em><em>, </em><em>optional</em>) – Axis(es) over which to apply <cite>median</cite>. Only one of the ‘dim’
@@ -700,11 +699,11 @@ returned without attributes.</p></li>
 function for calculating <cite>median</cite> on this object’s data.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>reduced</strong> – New TimeSeries object with <cite>median</cite> applied to its data and the
 indicated dimension(s) removed.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
 </dl>
@@ -715,7 +714,7 @@ indicated dimension(s) removed.</p>
 <span class="sig-name descname"><span class="pre">min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.min" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reduce this TimeSeries’s data by applying <cite>min</cite> along some dimension(s).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dim</strong> (<em>str</em><em> or </em><em>sequence of str</em><em>, </em><em>optional</em>) – Dimension(s) over which to apply <cite>min</cite>.</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em> or </em><em>sequence of int</em><em>, </em><em>optional</em>) – Axis(es) over which to apply <cite>min</cite>. Only one of the ‘dim’
@@ -732,11 +731,11 @@ returned without attributes.</p></li>
 function for calculating <cite>min</cite> on this object’s data.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>reduced</strong> – New TimeSeries object with <cite>min</cite> applied to its data and the
 indicated dimension(s) removed.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
 </dl>
@@ -747,7 +746,7 @@ indicated dimension(s) removed.</p>
 <span class="sig-name descname"><span class="pre">prod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.prod" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reduce this TimeSeries’s data by applying <cite>prod</cite> along some dimension(s).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dim</strong> (<em>str</em><em> or </em><em>sequence of str</em><em>, </em><em>optional</em>) – Dimension(s) over which to apply <cite>prod</cite>.</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em> or </em><em>sequence of int</em><em>, </em><em>optional</em>) – Axis(es) over which to apply <cite>prod</cite>. Only one of the ‘dim’
@@ -770,11 +769,11 @@ returned without attributes.</p></li>
 function for calculating <cite>prod</cite> on this object’s data.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>reduced</strong> – New TimeSeries object with <cite>prod</cite> applied to its data and the
 indicated dimension(s) removed.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
 </dl>
@@ -880,7 +879,7 @@ summarized data and the indicated dimension(s) removed.</p>
 <dd><p>Return a timeseries with the desired buffer duration (in seconds)
 removed and the time range reset.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>duration</strong> (<em>float</em>) – The duration to be removed. The units depend on the samplerate:
 E.g., if samplerate is specified in Hz (i.e., samples per second),
 the duration needs to be specified in seconds and if samplerate is
@@ -888,11 +887,11 @@ specified in kHz (i.e., samples per millisecond), the duration needs
 to be specified in milliseconds. The specified duration is removed
 from the beginning and end.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ts</strong> – A TimeSeries instance with the requested durations removed from the
 beginning and/or end.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
 </dl>
@@ -906,7 +905,7 @@ beginning and/or end.</p>
 arise.  Keeping a buffer of at least 1/f for the lowest frequency of
 interest guards against this.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>resampled_rate</strong> (<em>float</em>) – New sample rate</p></li>
 <li><p><strong>window</strong> – ignored for now - added for legacy reasons</p></li>
@@ -915,11 +914,8 @@ interest guards against this.</p>
 <li><p><strong>pad_to_pow2</strong> – ignored for now - added for legacy reasons</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Resampled time series</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resampled time series</p>
 </dd>
 </dl>
 </dd></dl>
@@ -943,7 +939,7 @@ interest guards against this.</p>
 <span class="sig-name descname"><span class="pre">std</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.std" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reduce this TimeSeries’s data by applying <cite>std</cite> along some dimension(s).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dim</strong> (<em>str</em><em> or </em><em>sequence of str</em><em>, </em><em>optional</em>) – Dimension(s) over which to apply <cite>std</cite>.</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em> or </em><em>sequence of int</em><em>, </em><em>optional</em>) – Axis(es) over which to apply <cite>std</cite>. Only one of the ‘dim’
@@ -960,11 +956,11 @@ returned without attributes.</p></li>
 function for calculating <cite>std</cite> on this object’s data.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>reduced</strong> – New TimeSeries object with <cite>std</cite> applied to its data and the
 indicated dimension(s) removed.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
 </dl>
@@ -975,7 +971,7 @@ indicated dimension(s) removed.</p>
 <span class="sig-name descname"><span class="pre">sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.sum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reduce this TimeSeries’s data by applying <cite>sum</cite> along some dimension(s).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dim</strong> (<em>str</em><em> or </em><em>sequence of str</em><em>, </em><em>optional</em>) – Dimension(s) over which to apply <cite>sum</cite>.</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em> or </em><em>sequence of int</em><em>, </em><em>optional</em>) – Axis(es) over which to apply <cite>sum</cite>. Only one of the ‘dim’
@@ -998,11 +994,11 @@ returned without attributes.</p></li>
 function for calculating <cite>sum</cite> on this object’s data.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>reduced</strong> – New TimeSeries object with <cite>sum</cite> applied to its data and the
 indicated dimension(s) removed.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
 </dl>
@@ -1013,7 +1009,7 @@ indicated dimension(s) removed.</p>
 <span class="sig-name descname"><span class="pre">to_hdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'w'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.to_hdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save to disk using HDF5.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<em>str</em>) – Full path to the HDF5 file</p></li>
 <li><p><strong>mode</strong> (<em>str</em>) – File mode to use. See the <code class="xref py py-mod docutils literal notranslate"><span class="pre">h5py</span></code> documentation for details.
@@ -1032,7 +1028,7 @@ and encoded accordingly.</p>
 <span class="sig-name descname"><span class="pre">var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.timeseries.TimeSeries.var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reduce this TimeSeries’s data by applying <cite>var</cite> along some dimension(s).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dim</strong> (<em>str</em><em> or </em><em>sequence of str</em><em>, </em><em>optional</em>) – Dimension(s) over which to apply <cite>var</cite>.</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em> or </em><em>sequence of int</em><em>, </em><em>optional</em>) – Axis(es) over which to apply <cite>var</cite>. Only one of the ‘dim’
@@ -1049,11 +1045,11 @@ returned without attributes.</p></li>
 function for calculating <cite>var</cite> on this object’s data.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>reduced</strong> – New TimeSeries object with <cite>var</cite> applied to its data and the
 indicated dimension(s) removed.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
 </dd>
 </dl>

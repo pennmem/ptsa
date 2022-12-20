@@ -5,11 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>PTSA - EEG Time Series Analysis in Python &mdash; PTSA 3.0.0 documentation</title>
+  <title>PTSA - EEG Time Series Analysis in Python &mdash; PTSA 3.0.2 documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
@@ -63,7 +64,7 @@
             
             
               <div class="version">
-                3.0.0
+                3.0.2
               </div>
             
           
@@ -182,7 +183,7 @@
 }
 </style>
 <section id="ptsa-eeg-time-series-analysis-in-python">
-<h1>PTSA - EEG Time Series Analysis in Python<a class="headerlink" href="#ptsa-eeg-time-series-analysis-in-python" title="Permalink to this headline">¶</a></h1>
+<h1>PTSA - EEG Time Series Analysis in Python<a class="headerlink" href="#ptsa-eeg-time-series-analysis-in-python" title="Permalink to this heading">¶</a></h1>
 <p><strong>PTSA</strong> is an open source Python package that facilitates time-series
 analysis of EEG signals. PTSA builds on <code class="xref py py-mod docutils literal notranslate"><span class="pre">xarray</span></code> functionality
 and provides several convenience tools that significantly simplify analysis of
@@ -201,16 +202,16 @@ object as an input and output a modified <code class="docutils literal notransla
 <p>If you’d like to learn Python via series of statistics tutorials look no further than
 <a class="reference external" href="http://people.duke.edu/~ccc14/sta-663-2016/">introduction to computational statistics in Python</a></p>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
 <section id="installing-pre-built-binaries">
-<h3>Installing pre-built binaries<a class="headerlink" href="#installing-pre-built-binaries" title="Permalink to this headline">¶</a></h3>
+<h3>Installing pre-built binaries<a class="headerlink" href="#installing-pre-built-binaries" title="Permalink to this heading">¶</a></h3>
 <p>The recommended way to install <code class="xref py py-mod docutils literal notranslate"><span class="pre">ptsa</span></code> is to install with conda:</p>
 <div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="go">conda install -c pennmem ptsa</span>
 </pre></div>
 </div>
 </section>
 <section id="installing-with-conda-from-source">
-<h3>Installing with conda from source<a class="headerlink" href="#installing-with-conda-from-source" title="Permalink to this headline">¶</a></h3>
+<h3>Installing with conda from source<a class="headerlink" href="#installing-with-conda-from-source" title="Permalink to this heading">¶</a></h3>
 <p>If you’d rather install the latest development version, you’ll need to perform
 the following steps:</p>
 <p>Clone the git repository:</p>
@@ -227,9 +228,9 @@ the following steps:</p>
 </div>
 </section>
 <section id="optional-dependencies">
-<h3>Optional dependencies<a class="headerlink" href="#optional-dependencies" title="Permalink to this headline">¶</a></h3>
+<h3>Optional dependencies<a class="headerlink" href="#optional-dependencies" title="Permalink to this heading">¶</a></h3>
 <section id="for-netcdf-and-io">
-<h4>For netCDF and IO<a class="headerlink" href="#for-netcdf-and-io" title="Permalink to this headline">¶</a></h4>
+<h4>For netCDF and IO<a class="headerlink" href="#for-netcdf-and-io" title="Permalink to this heading">¶</a></h4>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/Unidata/netcdf4-python">netCDF4</a>: recommended if you
 want to use <code class="xref py py-mod docutils literal notranslate"><span class="pre">xarray</span></code> for reading or writing netCDF files</p></li>
@@ -240,7 +241,7 @@ reading and writing netCDF4 files that does not use the netCDF-C libraries</p></
 </section>
 </section>
 <section id="contents">
-<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples/index.html">Examples</a></li>

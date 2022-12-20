@@ -5,11 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Filtering Time Series &mdash; PTSA 3.0.0 documentation</title>
+  <title>Filtering Time Series &mdash; PTSA 3.0.2 documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
@@ -64,7 +65,7 @@
             
             
               <div class="version">
-                3.0.0
+                3.0.2
               </div>
             
           
@@ -187,7 +188,7 @@
 }
 </style>
 <section id="filtering-time-series">
-<span id="ramdata"></span><h1>Filtering Time Series<a class="headerlink" href="#filtering-time-series" title="Permalink to this headline">¶</a></h1>
+<span id="ramdata"></span><h1>Filtering Time Series<a class="headerlink" href="#filtering-time-series" title="Permalink to this heading">¶</a></h1>
 <p>Filtering is a type of operation that takes as an input one time series and outputs another. For example Butterworth
 band-pass filter may remove unwanted frequencies from your signal. Computing Wavelets is also a form of filtering
 operation that takes one time series and outputs another one with signal that is decomposed into wavelet components</p>
@@ -197,7 +198,7 @@ operation that takes one time series and outputs another one with signal that is
 </div>
 <p>Let us start with something simple - <code class="docutils literal notranslate"><span class="pre">MonopolarToBipolarMapper</span></code>.</p>
 <section id="monopolartobipolarmapper">
-<h2>MonopolartoBipolarMapper<a class="headerlink" href="#monopolartobipolarmapper" title="Permalink to this headline">¶</a></h2>
+<h2>MonopolartoBipolarMapper<a class="headerlink" href="#monopolartobipolarmapper" title="Permalink to this heading">¶</a></h2>
 <p>This filter takes as inputs an array of monopolar eeg data  - <code class="docutils literal notranslate"><span class="pre">timeseries</span></code> parameter below
 and the array of bipolar pairs (<code class="docutils literal notranslate"><span class="pre">bipolar_pairs</span></code>) and outputs another time series
 containing pairwise differences for electrode pairs specified in <code class="docutils literal notranslate"><span class="pre">bipolar_pairs</span></code></p>
@@ -233,7 +234,7 @@ signal differences. Here is the output:</p>
 </div>
 </section>
 <section id="butterworthfilter">
-<h2>ButterworthFilter<a class="headerlink" href="#butterworthfilter" title="Permalink to this headline">¶</a></h2>
+<h2>ButterworthFilter<a class="headerlink" href="#butterworthfilter" title="Permalink to this heading">¶</a></h2>
 <p>To use Butterworth filtering inside PTSA you have two choices: use <code class="docutils literal notranslate"><span class="pre">ButterworthFilter</span></code> object and passing
 <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> object to its <code class="docutils literal notranslate"><span class="pre">.filter</span></code> method or use a convenience function inside <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> object.</p>
 <p>Let’s us start by showing first <code class="docutils literal notranslate"><span class="pre">ButterworthFilter</span></code>:</p>

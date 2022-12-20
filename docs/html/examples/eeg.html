@@ -5,11 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Reading EEG Data from events &mdash; PTSA 3.0.0 documentation</title>
+  <title>Reading EEG Data from events &mdash; PTSA 3.0.2 documentation</title>
   
 
   
@@ -25,10 +25,11 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                3.0.0
+                3.0.2
               </div>
             
           
@@ -281,10 +282,11 @@ div.nboutput.container div.prompt > div {
     }
 }
 
-/* disable scrollbars on prompts */
+/* disable scrollbars and line breaks on prompts */
 div.nbinput.container div.prompt pre,
 div.nboutput.container div.prompt pre {
     overflow: hidden;
+    white-space: pre;
 }
 
 /* input/output area */
@@ -381,11 +383,12 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
+.prompt .copybtn {
     display: none;
 }
 
 /* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
 div.rendered_html table {
   border: none;
   border-collapse: collapse;
@@ -394,10 +397,14 @@ div.rendered_html table {
   font-size: 12px;
   table-layout: fixed;
 }
+.jp-RenderedHTMLCommon thead,
 div.rendered_html thead {
   border-bottom: 1px solid black;
   vertical-align: bottom;
 }
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
 div.rendered_html tr,
 div.rendered_html th,
 div.rendered_html td {
@@ -409,12 +416,15 @@ div.rendered_html td {
   max-width: none;
   border: none;
 }
+.jp-RenderedHTMLCommon th,
 div.rendered_html th {
   font-weight: bold;
 }
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
 div.rendered_html tbody tr:nth-child(odd) {
   background: #f5f5f5;
 }
+.jp-RenderedHTMLCommon tbody tr:hover,
 div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
@@ -442,7 +452,7 @@ div.rendered_html tbody tr:hover {
 }
 </style>
 <section id="Reading-EEG-Data-from-events">
-<h1>Reading EEG Data from events<a class="headerlink" href="#Reading-EEG-Data-from-events" title="Permalink to this headline">¶</a></h1>
+<h1>Reading EEG Data from events<a class="headerlink" href="#Reading-EEG-Data-from-events" title="Permalink to this heading">¶</a></h1>
 <p>Each events array has an <code class="docutils literal notranslate"><span class="pre">eegfile</span></code> field, which points to the directory that contains the associated EEG files. To read this data, you use the EEGReader class.</p>
 <p>Two other important classes for loading EEG data are the TalReader class, which loads information about the electrodes in ECoG subjects, and the MonopolarToBipolarMapper, which performs a bipolar rereferencing on ECoG data.</p>
 <p>This notebook will go over loading EEG data from the three different CML formats.</p>
@@ -450,8 +460,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>%matplotlib inline
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>%matplotlib inline
 from ptsa.data.readers import BaseEventReader,EEGReader,CMLEventReader
 from ptsa.data.readers import TalReader
 from ptsa.data.filters import MonopolarToBipolarMapper
@@ -462,14 +471,13 @@ rhino_root=&#39;/Volumes/rhino_root&#39;
 </div>
 </div>
 <section id="1.-pyFR-data-(and-old-RAM-data)">
-<h2>1. pyFR data (and old RAM data)<a class="headerlink" href="#1.-pyFR-data-(and-old-RAM-data)" title="Permalink to this headline">¶</a></h2>
+<h2>1. pyFR data (and old RAM data)<a class="headerlink" href="#1.-pyFR-data-(and-old-RAM-data)" title="Permalink to this heading">¶</a></h2>
 <p>First, we load the events, which are found on rhino in <code class="docutils literal notranslate"><span class="pre">/data/events/pyFR</span></code>:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>events = BaseEventReader(filename=rhino_root+&#39;/data/events/pyFR/BW001_events.mat&#39;,use_reref_eeg=False).read()
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>events = BaseEventReader(filename=rhino_root+&#39;/data/events/pyFR/BW001_events.mat&#39;,use_reref_eeg=False).read()
 words = events[events.type==&#39;WORD&#39;]
 </pre></div>
 </div>
@@ -480,8 +488,7 @@ words = events[events.type==&#39;WORD&#39;]
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>tal_reader = TalReader(filename=rhino_root+&#39;/data/eeg/BW001/tal/BW001_talLocs_database_bipol.mat&#39;)
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>tal_reader = TalReader(filename=rhino_root+&#39;/data/eeg/BW001/tal/BW001_talLocs_database_bipol.mat&#39;)
 channels = tal_reader.get_monopolar_channels()
 channels
 </pre></div>
@@ -519,8 +526,7 @@ array([&#39;001&#39;, &#39;002&#39;, &#39;003&#39;, &#39;004&#39;, &#39;005&#39;
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>eeg = EEGReader(events=events,channels=channels,start_time=0.0,end_time=1.0).read()
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>eeg = EEGReader(events=events,channels=channels,start_time=0.0,end_time=1.0).read()
 print(eeg)
 </pre></div>
 </div>
@@ -606,8 +612,7 @@ Attributes:
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>plt.plot(eeg.time,eeg.mean(&#39;channels&#39;).mean(&#39;events&#39;))
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>plt.plot(eeg.time,eeg.mean(&#39;channels&#39;).mean(&#39;events&#39;))
 </pre></div>
 </div>
 </div>
@@ -631,8 +636,7 @@ Attributes:
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>print(eeg.coords)
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>print(eeg.coords)
 print
 print
 print(eeg.attrs)
@@ -660,8 +664,7 @@ OrderedDict([(&#39;samplerate&#39;, 200.0), (&#39;gain&#39;, 1.0)])
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>bipolar_pairs = tal_reader.get_bipolar_pairs()
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>bipolar_pairs = tal_reader.get_bipolar_pairs()
 bipolar_eeg= MonopolarToBipolarMapper(time_series=eeg,bipolar_pairs=bipolar_pairs).filter()
 bipolar_eeg
 </pre></div>
@@ -736,8 +739,7 @@ Attributes:
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>plt.plot(bipolar_eeg.time,bipolar_eeg.mean(&#39;bipolar_pairs&#39;).mean(&#39;events&#39;))
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>plt.plot(bipolar_eeg.time,bipolar_eeg.mean(&#39;bipolar_pairs&#39;).mean(&#39;events&#39;))
 </pre></div>
 </div>
 </div>
@@ -762,8 +764,7 @@ Attributes:
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>plt.plot(bipolar_eeg.time,bipolar_eeg.sel(events=bipolar_eeg.events.data[&#39;type&#39;]==&#39;WORD&#39;).mean(&#39;bipolar_pairs&#39;).mean(&#39;events&#39;))
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>plt.plot(bipolar_eeg.time,bipolar_eeg.sel(events=bipolar_eeg.events.data[&#39;type&#39;]==&#39;WORD&#39;).mean(&#39;bipolar_pairs&#39;).mean(&#39;events&#39;))
 </pre></div>
 </div>
 </div>
@@ -788,8 +789,7 @@ Attributes:
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>plt.plot(bipolar_eeg.time,bipolar_eeg.filtered([58.,62.]).mean(&#39;bipolar_pairs&#39;).mean(&#39;events&#39;))
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>plt.plot(bipolar_eeg.time,bipolar_eeg.filtered([58.,62.]).mean(&#39;bipolar_pairs&#39;).mean(&#39;events&#39;))
 </pre></div>
 </div>
 </div>
@@ -811,14 +811,13 @@ Attributes:
 </div>
 </section>
 <section id="2.-RAM-data-(new)">
-<h2>2. RAM data (new)<a class="headerlink" href="#2.-RAM-data-(new)" title="Permalink to this headline">¶</a></h2>
+<h2>2. RAM data (new)<a class="headerlink" href="#2.-RAM-data-(new)" title="Permalink to this heading">¶</a></h2>
 <p>The new system for storing the RAM data stores the information about each subject’s electrode montage in a file <code class="docutils literal notranslate"><span class="pre">pairs.json</span></code>, which we can find using a JsonIndexReader</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>from ptsa.data.readers.IndexReader import JsonIndexReader
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>from ptsa.data.readers.IndexReader import JsonIndexReader
 jr = JsonIndexReader(rhino_root+&#39;/protocols/r1.json&#39;)
 events = np.concatenate(
     [BaseEventReader(filename=f).read() for f in jr.aggregate_values(&#39;task_events&#39;,subject=&#39;R1111M&#39;,experiment=&#39;FR1&#39;)]
@@ -833,8 +832,7 @@ pairs_path = jr.get_value(&#39;pairs&#39;,subject=&#39;R1111M&#39;,experiment=&#
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>tal_reader = TalReader(filename=pairs_path)
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>tal_reader = TalReader(filename=pairs_path)
 channels = tal_reader.get_monopolar_channels()
 eeg = EEGReader(events=words,channels=channels,start_time=0.0,end_time=1.0).read()
 eeg.coords
@@ -858,8 +856,7 @@ Coordinates:
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>bipolar_eeg= MonopolarToBipolarMapper(time_series=eeg,bipolar_pairs=tal_reader.get_bipolar_pairs()).filter()
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>bipolar_eeg= MonopolarToBipolarMapper(time_series=eeg,bipolar_pairs=tal_reader.get_bipolar_pairs()).filter()
 print(bipolar_eeg.coords)
 plt.plot(bipolar_eeg.time,bipolar_eeg.mean(&#39;bipolar_pairs&#39;).mean(&#39;events&#39;))
 </pre></div>
@@ -895,14 +892,13 @@ Coordinates:
 </div>
 </section>
 <section id="3.-LTPFR/LTPFR2">
-<h2>3. LTPFR/LTPFR2<a class="headerlink" href="#3.-LTPFR/LTPFR2" title="Permalink to this headline">¶</a></h2>
+<h2>3. LTPFR/LTPFR2<a class="headerlink" href="#3.-LTPFR/LTPFR2" title="Permalink to this heading">¶</a></h2>
 <p>There are two main differences between reading scalp data and reading ECoG data. The first is that scalp data are usually rereferenced so that the data are relative to the average over all electrodes. This helps to eliminate artifacts due to muscle movement. To load the referenced data, we pass set the parameter <code class="docutils literal notranslate"><span class="pre">use_reref_eeg</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> when reading the events.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>events = BaseEventReader(filename=rhino_root+&#39;/data/eeg/scalp/ltp/ltpFR2/behavioral/events/events_all_LTP093.mat&#39;,
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>events = BaseEventReader(filename=rhino_root+&#39;/data/eeg/scalp/ltp/ltpFR2/behavioral/events/events_all_LTP093.mat&#39;,
                          use_reref_eeg=True,common_root=&#39;data&#39;).read()
 words = events[events.type==&#39;WORD&#39;]
 </pre></div>
@@ -914,8 +910,7 @@ words = events[events.type==&#39;WORD&#39;]
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>channels = np.array([&#39;{:03}&#39;.format(x) for x in range(20,30)])
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>channels = np.array([&#39;{:03}&#39;.format(x) for x in range(20,30)])
 channels
 </pre></div>
 </div>
@@ -933,8 +928,7 @@ array([&#39;020&#39;, &#39;021&#39;, &#39;022&#39;, &#39;023&#39;, &#39;024&#39;
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>eeg = EEGReader(events=words,channels=channels,start_time=0.0,end_time=1.0).read()
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>eeg = EEGReader(events=words,channels=channels,start_time=0.0,end_time=1.0).read()
 plt.plot(eeg.mean(&#39;events&#39;).mean(&#39;channels&#39;))
 </pre></div>
 </div>
