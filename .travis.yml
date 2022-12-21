@@ -31,7 +31,7 @@ install:
   - if [[ "$PYTHON_VERSION" != "2.7" ]]; then
       pip install git+https://github.com/pennmem/cmlreaders.git@v0.9.3#egg=cmlreaders;
     fi
-  - conda install -y -c conda-forge pybind11 fftw importlib-metadata=4.13.0
+  - conda install -y -c conda-forge pybind11 fftw 'importlib-metadata<5.0.0'
   - pip install -r requirements.txt
   - pip install pytest pytest-cov codecov --ignore-installed certifi
 

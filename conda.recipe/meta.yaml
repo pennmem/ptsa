@@ -37,7 +37,7 @@ requirements:
     - xarray
     - traits
     - pybind11
-    - importlib-metadata=4.13.0
+    - importlib-metadata<5.0.0
 
 test:
   # Test that we can import ptsa and its extension modules
