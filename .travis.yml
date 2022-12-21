@@ -27,11 +27,11 @@ before_install:
   - conda info -a
   - conda install -q python=$PYTHON_VERSION conda-build anaconda-client
 install:
-  - conda install -y numpy scipy 'xarray>=2022.11.0' h5py netcdf4 swig traits
+  - conda install -y numpy scipy xarray 'h5py<=3.6.0' netcdf4 swig traits
   - if [[ "$PYTHON_VERSION" != "2.7" ]]; then
       pip install git+https://github.com/pennmem/cmlreaders.git@v0.9.3#egg=cmlreaders;
     fi
-  - conda install -y -c conda-forge pybind11 fftw
+  - conda install -y -c conda-forge pybind11 fftw 'importlib-metadata<5.0.0'
   - pip install -r requirements.txt
   - pip install pytest pytest-cov codecov --ignore-installed certifi
 
