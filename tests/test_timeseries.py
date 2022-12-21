@@ -196,8 +196,7 @@ class TestCMLReaders:
             eeg = reader.load_eeg(events=ev, rel_start=0, rel_stop=10)
 
         ts = eeg.to_ptsa()
-        #ts = ts.assign_coords({'event':pd.MultiIndex.from_frame(
-        #    pd.DataFrame.from_records(ts.event.data).drop(columns=['stim_params', 'test']))})
+        ts = ts.assign_coords({'event':pd.MultiIndex.from_frame(ev)})
 
         ts.to_hdf(filename)
 
