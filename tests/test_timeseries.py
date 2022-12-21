@@ -185,19 +185,20 @@ class TestCMLReaders:
 
         events = EventReader.fromfile(efile, subject="R1111M", experiment="FR1")
         ev = events[events.eegoffset > 0].sample(n=5)
+        ev = ev.drop(columns=['stim_params', 'test'])
 
         rel_start, rel_stop = 0, 10
         get_eeg = partial(self.make_eeg, ev, rel_start, rel_stop)
 
         reader = self.reader
-
+        
         with patch.object(reader, "load_eeg", return_value=get_eeg()):
             eeg = reader.load_eeg(events=ev, rel_start=0, rel_stop=10)
 
         ts = eeg.to_ptsa()
-        ts = ts.assign_coords({'event':pd.MultiIndex.from_frame(
-            pd.DataFrame.from_records(ts.event.data).drop(columns=['stim_params', 'test']))})
-        
+        #ts = ts.assign_coords({'event':pd.MultiIndex.from_frame(
+        #    pd.DataFrame.from_records(ts.event.data).drop(columns=['stim_params', 'test']))})
+
         ts.to_hdf(filename)
 
         ts2 = TimeSeries.from_hdf(filename)
