@@ -22,10 +22,10 @@ requirements:
     - setuptools
     - scipy
     - swig
-    - xarray
+    - xarray>=2022.11.0
     - fftw
     - pybind11
-    - importlib-metadata<5.0.0
+    - importlib-metadata
 
   run:
     - python {{ python }}
@@ -34,10 +34,10 @@ requirements:
     - numpy
     - scipy
     - vs2015_runtime  [win]
-    - xarray
+    - xarray>=2022.11.0
     - traits
     - pybind11
-    - importlib-metadata<5.0.0
+    - importlib-metadata
 
 test:
   # Test that we can import ptsa and its extension modules
