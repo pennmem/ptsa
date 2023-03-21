@@ -29,7 +29,7 @@ before_install:
 install:
   - conda install -y numpy scipy xarray h5py netcdf4 swig traits
   - if [[ "$PYTHON_VERSION" == "3.7" ]]; then
-      conda install 'xarray<0.20'
+      conda install 'xarray<0.20';
     fi
   - if [[ "$PYTHON_VERSION" != "2.7" ]]; then
       pip install git+https://github.com/pennmem/cmlreaders.git@v0.9.3#egg=cmlreaders;
