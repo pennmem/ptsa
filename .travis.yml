@@ -28,7 +28,7 @@ before_install:
   - conda install -q python=$PYTHON_VERSION conda-build anaconda-client
 install:
   - conda install -y numpy scipy xarray h5py netcdf4 swig traits
-  - if [[ "$PYTHON_VERSION" <= "3.7" ]]; then
+  - if [[ "$PYTHON_VERSION" == "3.7" ]]; then
       conda install 'xarray<0.20'
     fi
   - if [[ "$PYTHON_VERSION" != "2.7" ]]; then
