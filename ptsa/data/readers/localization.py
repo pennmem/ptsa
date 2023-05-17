@@ -36,8 +36,8 @@ class LocReader(BaseReader):
         flat_contact_data = list(itertools.chain(*[x["contacts"] for x in leads]))
         flat_pairs_data = list(itertools.chain(*[x["pairs"] for x in leads]))
         all_data = []
-        all_data.append(pd.io.json.json_normalize(flat_contact_data).set_index('name'))
-        all_data.append(pd.io.json.json_normalize(flat_pairs_data).set_index('names'))
+        all_data.append(pd.json_normalize(flat_contact_data).set_index('name'))
+        all_data.append(pd.json_normalize(flat_pairs_data).set_index('names'))
         self._data = all_data
         combined_df = pd.concat(all_data,keys=['contacts','pairs'],)
         return combined_df
