@@ -111,7 +111,7 @@ class EDFRawReader(BaseRawReader):
             # Read epochs
             else:
                 data = np.empty((len(channels), len(start_offsets), read_size),
-                                dtype=np.float)
+                                dtype=float)
                 data.fill(np.nan)
                 read_ok_mask = np.ones((len(channels), len(start_offsets)),
                                        dtype=bool)
