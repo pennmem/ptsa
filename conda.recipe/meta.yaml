@@ -1,8 +1,6 @@
-{% set setup_data = load_setup_py_data() %}
-
 package:
   name: ptsa
-  version: {{ setup_data.get('version') }}
+  version: 3.0.2
   channels: anaconda pennmem
 
 source:
@@ -17,7 +15,7 @@ build:
 requirements:
   build:
     - python {{ python }}
-    - numpy
+    - numpy >=1.17
     - pip
     - setuptools
     - scipy
