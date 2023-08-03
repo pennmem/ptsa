@@ -19,7 +19,7 @@ dependencies:
 - sip
 - six
 - sqlite
-- swig
+- swig>=4.1.0           # required for python>=3.9
 - traits
 - tk
 - wheel

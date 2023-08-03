@@ -1,6 +1,6 @@
 package:
   name: ptsa
-  version: 3.0.2
+  version: 3.0.3
   channels: anaconda pennmem
 
 source:
@@ -19,7 +19,7 @@ requirements:
     - pip
     - setuptools
     - scipy
-    - swig
+    - swig>=4.1.0           # required for python>=3.9 
     - xarray
     - fftw
     - pybind11

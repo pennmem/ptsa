@@ -1,5 +1,11 @@
 Changes
 =======
+Version 3.0.3
+-------------
+**2023.08.03**
+Update SWIG version to support python 3.11
+
+
 Version 3.0.2
 -------------
 **2022.11.18**
