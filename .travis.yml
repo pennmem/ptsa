@@ -33,7 +33,7 @@ install:
   - if [[ "$PYTHON_VERSION" == "3.7" ]]; then
       conda install 'xarray<0.20';
     fi
-  - conda install -y -c conda-forge pybind11 fftw
+  - conda install -y -c conda-forge pybind11 fftw==3.3.10
   - pip install -r requirements.txt
   - pip install pytest pytest-cov codecov --ignore-installed certifi
 

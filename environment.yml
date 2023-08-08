@@ -5,7 +5,7 @@ dependencies:
 - freetype
 - icu
 - libpng
-- numpy
+- numpy<1.25.0          # conflicts with numpy 1.25
 - openssl
 - pandas
 - pip

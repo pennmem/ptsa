@@ -15,13 +15,13 @@ build:
 requirements:
   build:
     - python {{ python }}
-    - numpy >=1.17
+    - numpy >=1.19, <1.25.0         # conflicts with numpy 1.25
     - pip
     - setuptools
     - scipy
     - swig>=4.1.0           # required for python>=3.9 
     - xarray
-    - fftw
+    - fftw==3.3.10          # required for ptsa 3.0.3
     - pybind11
 
   run:
