@@ -1,6 +1,6 @@
 package:
   name: ptsa
-  version: 3.0.3
+  version: 3.0.4
   channels: anaconda pennmem
 
 source:
@@ -15,7 +15,7 @@ build:
 requirements:
   build:
     - python {{ python }}
-    - numpy >=1.19, <1.25.0         # conflicts with numpy 1.25
+    - numpy=1.24         # conflicts with numpy 1.25
     - pip
     - setuptools
     - scipy
