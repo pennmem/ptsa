@@ -1,7 +1,7 @@
 h5py>=3.1
 netcdf4
 traits>=4.6.0
-numpy>=1.19.0,<1.25.0
+# numpy>=1.19.0,<1.25.0
 scipy>=1.0.0
 xarray >= 0.18
 invoke
