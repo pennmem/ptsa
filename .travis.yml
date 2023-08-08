@@ -11,8 +11,8 @@ env:
     - PY_IGNORE_IMPORTMISMATCH=1
   matrix:
     #- PYTHON_VERSION=3.7  current conda no longer supports python<=3.7
-    - PYTHON_VERSION=3.8
-    - PYTHON_VERSION=3.9
+    #- PYTHON_VERSION=3.8
+    #- PYTHON_VERSION=3.9
     - PYTHON_VERSION=3.10
     - PYTHON_VERSION=3.11
 
@@ -29,11 +29,11 @@ before_install:
   - conda info -a
   - conda install -q python=$PYTHON_VERSION conda-build anaconda-client
 install:
-  - conda install -y numpy scipy xarray h5py netcdf4 swig traits
+  - conda install -y numpy=1.24 scipy xarray h5py netcdf4 swig>=4.1.0 traits
   - if [[ "$PYTHON_VERSION" == "3.7" ]]; then
       conda install 'xarray<0.20';
     fi
-  - conda install -y -c conda-forge pybind11 fftw
+  - conda install -y -c conda-forge pybind11 fftw==3.3.10
   - pip install -r requirements.txt
   - pip install pytest pytest-cov codecov --ignore-installed certifi
 

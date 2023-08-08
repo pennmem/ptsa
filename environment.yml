@@ -5,7 +5,7 @@ dependencies:
 - freetype
 - icu
 - libpng
-- numpy
+- numpy<1.25.0          # conflicts with numpy 1.25
 - openssl
 - pandas
 - pip
@@ -19,7 +19,7 @@ dependencies:
 - sip
 - six
 - sqlite
-- swig
+- swig>=4.1.0           # required for python>=3.9
 - traits
 - tk
 - wheel
