@@ -1,5 +1,10 @@
 Changes
 =======
+Version 3.0.4
+-------------
+**2023.08.08**
+Build on numpy 1.24 for compatability with other pennmem packages
+
 Version 3.0.3
 -------------
 **2023.08.03**

@@ -1,3 +1,3 @@
 """PTSA - The Python Time-Series Analysis toolbox."""
 
-__version__ = "3.0.3"
+__version__ = "3.0.4"
