@@ -492,7 +492,7 @@ class TestRegressionPTSA(unittest.TestCase):
         signal = base_eegs[0:1,0:1,:]
         signal_orig_eegs = eegs[0:1,0:1,:]
 
-        pow_wavelets_cpp = np.empty(shape=(base_eegs.shape[-1]*num_freqs,), dtype=np.float)
+        pow_wavelets_cpp = np.empty(shape=(base_eegs.shape[-1]*num_freqs,), dtype=np.float64)
 
         # for i in xrange(num_of_iterations):
         #     morlet_transform.multiphasevec(signal,powers)

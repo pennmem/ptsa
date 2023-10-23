@@ -26,7 +26,7 @@ def fixme():
     x = np.arange(n_points, dtype=np.float)
     signal = np.sin(x*(2*np.pi*frequency/samplerate))-np.cos(x*(2*np.pi*frequency/samplerate))
 
-    powers=np.empty(shape=(signal.shape[0]*num_freqs,), dtype=np.float)
+    powers=np.empty(shape=(signal.shape[0]*num_freqs,), dtype=np.float64)
     num_of_iterations = 100
     # for i in range(num_of_iterations):
     #     morlet_transform.multiphasevec(signal,powers)

@@ -77,7 +77,7 @@ class ResampleFilter(BaseFilter):
 
             # print new_time_axis
 
-            new_time_idx_array = np.rint(new_time_idx_array).astype(np.int)
+            new_time_idx_array = np.rint(new_time_idx_array).astype(np.int32)
 
             new_time_axis = time_axis[new_time_idx_array]
 
