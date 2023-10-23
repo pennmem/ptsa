@@ -116,7 +116,7 @@ class H5RawReader(BaseRawReader):
 
         else:
             eventdata = np.empty((len(channels), len(start_offsets), read_size),
-                                 dtype=np.float)
+                                 dtype=np.float64)
             eventdata.fill(np.nan)
             read_ok_mask = np.ones((len(channels), len(start_offsets))).astype(bool)
             for i, start_offset in enumerate(start_offsets):

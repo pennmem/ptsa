@@ -66,9 +66,9 @@ class BinaryRawReader(BaseRawReader):
 
         # allocate space for data
         eventdata = np.empty((len(channels), len(start_offsets), read_size),
-                             dtype=np.float)
+                             dtype=np.float64)
         eventdata.fill(np.nan)
-        read_ok_mask = np.ones(shape=(len(channels), len(start_offsets)), dtype=np.bool)
+        read_ok_mask = np.ones(shape=(len(channels), len(start_offsets)), dtype=np.bool_)
         # loop over channels
         for c, channel in enumerate(channels):
             try:
