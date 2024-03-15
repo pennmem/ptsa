@@ -4,8 +4,8 @@ import pandas as pd
 
 class TestLocReader:
 
-
-    def setup(cls):
+    @classmethod
+    def setup_class(cls):
         loc_file = osp.join(osp.dirname(__file__), 'data', 'localization.json')
         cls.localization =         LocReader(filename=loc_file).read()
 

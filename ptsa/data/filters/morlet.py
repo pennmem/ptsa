@@ -96,7 +96,7 @@ class MorletWaveletFilter(BaseFilter):
         if 'complex' in self.output:
             wavelets_complex_reshaped = np.empty(
                 shape=(np.prod(wavelet_dims), len(timeseries['time'])),
-                dtype=np.complex)
+                dtype=complex)
 
         mt = morlet.MorletWaveletTransformMP(self.cpus)
 

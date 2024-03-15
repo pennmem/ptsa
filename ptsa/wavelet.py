@@ -291,8 +291,8 @@ def fconv_multi(in1, in2, mode='full'):
     num2,s2 = in2.shape
 
     # see if we will be returning a complex result
-    complex_result = (np.issubdtype(in1.dtype, np.complex) or
-                      np.issubdtype(in2.dtype, np.complex))
+    complex_result = (np.issubdtype(in1.dtype, complex) or
+                      np.issubdtype(in2.dtype, complex))
 
     # determine the size based on the next power of 2
     actual_size = s1+s2-1
@@ -300,11 +300,11 @@ def fconv_multi(in1, in2, mode='full'):
 
     # perform the fft of each row of in1 and in2:
     #in1_fft = np.empty((num1,size),dtype=np.complex128)
-    in1_fft = np.empty((num1,size),dtype=np.complex)
+    in1_fft = np.empty((num1,size),dtype=complex)
     for i in range(num1):
         in1_fft[i] = fft(in1[i],size)
     #in2_fft = np.empty((num2,size),dtype=np.complex128)
-    in2_fft = np.empty((num2,size),dtype=np.complex)
+    in2_fft = np.empty((num2,size),dtype=complex)
     for i in range(num2):
         in2_fft[i] = fft(in2[i],size)
 
@@ -417,7 +417,7 @@ def phase_pow_multi(freqs, dat,  samplerates=None, widths=5,
                          "specify whether power, phase, or both are to be "+
                          "returned. Invalid value: %s " % to_return)
 
-    if not np.issubdtype(conv_dtype,np.complex):
+    if not np.issubdtype(conv_dtype,complex):
         raise ValueError("conv_dtype must be a complex data type!\n"+
                          "Invalid value: "+str(conv_dtype))
 
@@ -566,7 +566,7 @@ def phase_pow_multi_old(freqs, dat, samplerates, widths=5, to_return='both',
                          "specify whether power, phase, or both are to be "+
                          "returned. Invalid value: %s " % to_return)
 
-    if not np.issubdtype(conv_dtype,np.complex):
+    if not np.issubdtype(conv_dtype,complex):
         raise ValueError("conv_dtype must be a complex data type!\n"+
                          "Invalid value: "+str(conv_dtype))
 
