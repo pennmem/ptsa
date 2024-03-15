@@ -1,5 +1,10 @@
 Changes
 =======
+Version 3.0.5
+-------------
+**2024.03.14**
+Remove usage of deprecated and removed np.complex.
+
 Version 3.0.4
 -------------
 **2023.08.08**
