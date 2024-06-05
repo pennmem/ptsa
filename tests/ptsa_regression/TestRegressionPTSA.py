@@ -562,7 +562,7 @@ class TestRegressionPTSA(unittest.TestCase):
         duration = 1.0
 
         n_points = int(np.round(duration*samplerate))
-        x = np.arange(n_points, dtype=np.float)
+        x = np.arange(n_points, dtype=np.float64)
         y = np.sin(x*(2*np.pi*frequency/n_points))
         y_mod = np.sin(x*(2*np.pi*frequency/n_points))* np.sin(x*(2*np.pi*modulation_frequency/n_points))
 

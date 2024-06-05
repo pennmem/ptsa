@@ -418,7 +418,7 @@ class TestBaseFilter:
 #        (np.float64, np.float64),
 #        ("double", np.float64),
 #        ("float32", np.float32),
-#        ("int", np.int),
+#        ("int", np.int32),
 #    ])
 #    def test_dtypes(self, dtype, expected_dtype):
 #        filt = BaseFilter(self.dummy_ts, dtype)

@@ -23,7 +23,7 @@ def fixme():
     duration = 4.096
 
     n_points = int(np.round(duration*samplerate))
-    x = np.arange(n_points, dtype=np.float)
+    x = np.arange(n_points, dtype=np.float64)
     signal = np.sin(x*(2*np.pi*frequency/samplerate))-np.cos(x*(2*np.pi*frequency/samplerate))
 
     powers=np.empty(shape=(signal.shape[0]*num_freqs,), dtype=np.float64)
