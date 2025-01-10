@@ -81,6 +81,38 @@ def get_include_dirs():
     return dirs
 
 
+def get_library_dirs():
+    """
+    Get the library directories for the current Conda environment.
+
+    Returns:
+        list: A list of paths to library directories in the current Conda environment.
+    """
+    # Get the path to the current Conda environment
+    conda_prefix = os.environ.get('CONDA_PREFIX')
+    if not conda_prefix:
+        raise EnvironmentError("Not running inside a Conda environment. Ensure Conda is activated.")
+
+    # Library directories typically found in Conda environments
+    library_dirs = [
+        os.path.join(conda_prefix, 'lib'),  # Default library directory
+    ]
+
+    # Return only directories that actually exist
+    return [d for d in library_dirs if os.path.exists(d)]
+
+
+# Example usage
+if __name__ == "__main__":
+    try:
+        lib_dirs = get_conda_library_dirs()
+        print("Library directories in the current Conda environment:")
+        for dir in lib_dirs:
+            print(f"  - {dir}")
+    except EnvironmentError as e:
+        print(str(e))
+
+
 def get_fftw_libs():
     if sys.platform.startswith("win"):
         return ['libfftw3-3']
@@ -192,6 +224,7 @@ ext_modules = [
         ],
         swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
+        library_dirs=get_library_dirs(),
         extra_compile_args=get_compiler_args(),
     ),
 ]
