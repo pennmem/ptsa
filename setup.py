@@ -212,6 +212,7 @@ ext_modules = [
                  osp.join(morlet_dir, 'morlet.i')],
         swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
+        library_dirs=get_library_dirs(),
         extra_compile_args=get_compiler_args(),
         libraries=get_fftw_libs(),
     ),
@@ -224,7 +225,6 @@ ext_modules = [
         ],
         swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
-        library_dirs=get_library_dirs(),
         extra_compile_args=get_compiler_args(),
     ),
 ]
