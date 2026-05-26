@@ -56,8 +56,8 @@ ptsa.extensions.circular_stat
 .. function:: single_trial_ppc_all_features(recalls, wavelets, ppc_output,\
     theta_sum_recalls, theta_sum_non_recalls, n_freqs, n_bps, n_threads)
 
-.. function:: single_trial_ppc_all_features(wavelets, theta_avg_recalls,\
-    theta_avg_non_recalls, outsample_features,n_freqs, n_bps, n_threads)
+.. function:: single_trial_outsample_ppc_features(wavelets, theta_avg_recalls,\
+    theta_avg_non_recalls, outsample_features, n_freqs, n_bps, n_threads)
 
 
 ptsa.extensions.morlet
