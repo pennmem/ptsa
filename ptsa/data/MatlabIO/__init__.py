@@ -1,6 +1,9 @@
 import sys
 import functools
+from typing import Any, cast
+
 import numpy as np
+from numpy.typing import DTypeLike
 
 from .MatlabIO import *
 
@@ -43,12 +46,14 @@ else:
     })
 
 
-def read_single_matlab_matrix_as_numpy_structured_array(file_name, object_name, verbose=False):
+def read_single_matlab_matrix_as_numpy_structured_array(
+    file_name: str, object_name: str, verbose: bool = False
+) -> np.recarray | None:
     """
     Load a matlab matrix as a numpy structured array.
         :param file_name: Location of the .mat file to load
         :param object_name: Name of the matlab structure to load from the .mat files
-        :param verbose=False: 
+        :param verbose=False:
     """
     matlab_matrix_as_python_obj_dict = deserialize_objects_from_matlab_format(file_name, object_name)
 
@@ -59,7 +64,7 @@ def read_single_matlab_matrix_as_numpy_structured_array(file_name, object_name, 
 
     # Some utility functions expect matlab_matrix_as_python_object to be
     # an array. In cases where the underlying matlab structure has one
-    # element, a single element is returned, so explicitly turn it into an array 
+    # element, a single element is returned, so explicitly turn it into an array
     if type(matlab_matrix_as_python_obj) != np.ndarray:
         matlab_matrix_as_python_obj = np.array([matlab_matrix_as_python_obj])
 
@@ -67,12 +72,16 @@ def read_single_matlab_matrix_as_numpy_structured_array(file_name, object_name, 
     # selector_array = [0] + np.random.randint(len(matlab_matrix_as_python_obj), size=20)
     # selector_array = np.hstack(([0], selector_array))
     template_element_array = matlab_matrix_as_python_obj  # [selector_array]
-    record = matlab_matrix_as_python_obj[0]
     # format_dict = get_np_format([record])
     format_dict = get_np_format(template_element_array)
     # format_dict = get_np_format(record)
 
-    array_fd = np.recarray(shape=matlab_matrix_as_python_obj.shape, dtype=format_dict)
+    # numpy.recarray accepts a {'names': [...], 'formats': [...]} dict as
+    # dtype at runtime, but its stubs only declare DTypeLike.
+    array_fd = np.recarray(
+        shape=matlab_matrix_as_python_obj.shape,
+        dtype=cast(DTypeLike, format_dict),
+    )
 
     populate_record_array(source_array=matlab_matrix_as_python_obj, target_array=array_fd, format_dict=format_dict,
                           prepend_name='',verbose=verbose)
@@ -83,7 +92,9 @@ def read_single_matlab_matrix_as_numpy_structured_array(file_name, object_name, 
     return array_fd
 
 
-def get_np_type(record, _fieldname, verbose=False):
+def get_np_type(
+    record: Any, _fieldname: str, verbose: bool = False
+) -> str | tuple[str, tuple[int, ...]] | dict[str, list[Any]] | None:
     # kind_2_type = {'U': '|S256',
     #                'S': 'S256',
     #                'u': '<i8',
@@ -115,6 +126,7 @@ def get_np_type(record, _fieldname, verbose=False):
         else:
             print('COULD NOT FIGURE OUT TYPE FOR ', _fieldname)
             # format_list.append(format)
+            return None
 
     else:
         attr_dtype = np.array([attr]).dtype
@@ -132,35 +144,36 @@ def get_np_type(record, _fieldname, verbose=False):
             if verbose:
                 print('got format:', format_dict)
                 # print
+            return None
         else:
 
             return attr_dtype.str
 
 
-def get_np_format(record_array, verbose=False):
-    names_list = []
-    format_list = []
+def get_np_format(record_array: Any, verbose: bool = False) -> dict[str, list[Any]]:
+    names_list: list[str] = []
+    format_list: list[Any] = []
 
     first_record = record_array[0]
 
-    dt = {'names': ['a', 'b'], 'formats': ['<f8', {'names': ['x'], 'formats': ['<f8']}]}
-    array_fd = np.recarray(shape=(10,), dtype=dt)
-
     for _fieldname in first_record._fieldnames:
-        formats = []
+        formats: list[Any] = []
         for record in record_array:
             format = get_np_type(record, _fieldname)
             if format is not None:
-                if len(np.dtype(format).shape):
+                # np.dtype accepts str / tuple / dict descriptors at runtime,
+                # but its stub signature is narrower; cast for the typechecker.
+                fmt_for_dtype = cast(DTypeLike, format)
+                if len(np.dtype(fmt_for_dtype).shape):
                     formats.append(format)
                     break
                 elif isinstance(format, dict):
                     formats.append(format)
                     break
-                elif np.dtype(format).kind == 'S':
+                elif np.dtype(fmt_for_dtype).kind == 'S':
                     formats.append(format)
                     break
-                elif np.dtype(format).kind == 'U':
+                elif np.dtype(fmt_for_dtype).kind == 'U':
                     formats.append(format)
                     break
                 else:
@@ -207,11 +220,17 @@ def get_np_format(record_array, verbose=False):
     return {'names': names_list, 'formats': format_list}
 
 
-def rgetattr(obj, attr):
+def rgetattr(obj: Any, attr: str) -> Any:
     return functools.reduce(getattr, [obj] + attr.split('.'))
 
 
-def populate_record_array(source_array, target_array, format_dict, prepend_name='', verbose=False):
+def populate_record_array(
+    source_array: Any,
+    target_array: Any,
+    format_dict: dict[str, list[Any]],
+    prepend_name: str = '',
+    verbose: bool = False,
+) -> None:
     for i, field_name in enumerate(format_dict['names']):
         format = format_dict['formats'][i]
         if isinstance(format, dict):
@@ -219,7 +238,7 @@ def populate_record_array(source_array, target_array, format_dict, prepend_name=
                                   format_dict=format, prepend_name=prepend_name + field_name + '.')
         else:
 
-            for index, x in np.ndenumerate(source_array):
+            for index, _ in np.ndenumerate(source_array):
 
                 try:
                     target_array[field_name][index] = rgetattr(source_array[index], prepend_name + field_name)
@@ -231,7 +250,7 @@ def populate_record_array(source_array, target_array, format_dict, prepend_name=
         print(target_array)
 
 
-def deserialize_objects_from_matlab_format(file_name, *object_names):
+def deserialize_objects_from_matlab_format(file_name: str, *object_names: str) -> dict[str, Any]:
     # store deserialized objects in the dictionary and return it later
     object_dict = {}
 
