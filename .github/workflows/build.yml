@@ -143,5 +143,13 @@ jobs:
             exit 1
           fi
           # The download-artifact action nests each artifact in its own
-          # subdir, hence the recursive glob.
-          anaconda -t "${ANACONDA_TOKEN}" upload --user pennmem --force build/conda/**/*.conda
+          # subdir, hence the recursive find. (Plain ** is not recursive
+          # in bash without `shopt -s globstar`.)
+          shopt -s globstar nullglob
+          mapfile -t pkgs < <(find build/conda -name 'ptsa-*.conda')
+          if [ "${#pkgs[@]}" -eq 0 ]; then
+            echo "No .conda artifacts found under build/conda/." >&2
+            exit 1
+          fi
+          printf '  - %s\n' "${pkgs[@]}"
+          anaconda -t "${ANACONDA_TOKEN}" upload --user pennmem --force "${pkgs[@]}"
