@@ -2,6 +2,7 @@ import copy
 import json
 import os
 import warnings
+from typing import Any
 
 import pandas as pd
 
@@ -27,7 +28,7 @@ class JsonIndexReader(object):
 
     FIELD_NAMES = ('protocol','subject','experiment','session')
 
-    def __init__(self, index_file):
+    def __init__(self, index_file: str) -> None:
         """
         Constructor.
         Reads from the passed in index file, and appends the root of the index files to anything that
@@ -43,7 +44,7 @@ class JsonIndexReader(object):
             self.index = json.loads(infile.read())
         self._prepend_db_root(self.protocols_root, self.index)
 
-    def as_dataframe(self, multiindex=True):
+    def as_dataframe(self, multiindex: bool = True) -> pd.DataFrame:
         """Flatten the index and format as a pandas :class:`DataFrame`. The
         returned :class:`DataFrame` uses a MultiIndex consisting of subject,
         experiment, session.
@@ -81,7 +82,7 @@ class JsonIndexReader(object):
         return df
 
     @classmethod
-    def _prepend_db_root(cls, protocols_root, index):
+    def _prepend_db_root(cls, protocols_root: str, index: dict[str, Any]) -> None:
         """
         Prepends the protocols_root onto elements of index that contain the basename of protocols_root and look
         like paths.
@@ -98,7 +99,7 @@ class JsonIndexReader(object):
 
 
     @classmethod
-    def _merge(cls, index1, index2):
+    def _merge(cls, index1: dict[str, Any], index2: dict[str, Any]) -> dict[str, Any]:
         """
         Merges two dictionaries
         """
@@ -113,7 +114,7 @@ class JsonIndexReader(object):
         return merged
 
     @classmethod
-    def _prune(cls, *indexes):
+    def _prune(cls, *indexes: dict[str, Any]) -> None:
         """
         Removes branches of dictionary tree with no values
         :param indexes: dictionary tree
@@ -128,7 +129,7 @@ class JsonIndexReader(object):
                     del index[k]
 
     @classmethod
-    def _filter(cls, *indexes, **kwargs):
+    def _filter(cls, *indexes: dict[str, Any], **kwargs: Any) -> None:
         """
         Filters a tree of dictionaries by some kwargs
         :param indexes: tree of dictionaries
@@ -136,14 +137,17 @@ class JsonIndexReader(object):
         :return: None
         """
         orig_indexes = indexes
+        # cur_indexes is rebound from the input tuple to lists deeper in the
+        # tree as we recurse — keep it typed as a generic sequence of dicts.
+        cur_indexes: list[dict[str, Any]] | tuple[dict[str, Any], ...] = indexes
         for f_k, f_v in cls.FIELD_KEYS:
-            if len(indexes) == 0:
+            if len(cur_indexes) == 0:
                 break
-            if f_k not in indexes[0]:
+            if f_k not in cur_indexes[0]:
                 continue
             try:
                 v = f_v.format(**kwargs)
-                for index in indexes:
+                for index in cur_indexes:
                     if v not in index[f_k]:
                         del index[f_k]
                     else:
@@ -152,18 +156,18 @@ class JsonIndexReader(object):
                                 del index[f_k][k]
             except KeyError:
                 pass
-            indxs = []
-            for indx in indexes:
+            indxs: list[dict[str, Any]] = []
+            for indx in cur_indexes:
                 if len(indx) > 0:
                     indxs.extend(list(indx[f_k].values()))
-            indexes = indxs # Recurse on the level of the index
+            cur_indexes = indxs  # Recurse on the level of the index
 
         # Post: 'protocol','subject','experiment','session' are not in kwargs.keys()
 
         for kwarg_f, kwarg_v in kwargs.items():
-            if len(indexes) == 0:
+            if len(cur_indexes) == 0:
                 break
-            for index in indexes:
+            for index in cur_indexes:
                 try:
                     if str(index[kwarg_f]) != str(kwarg_v):
                         index.clear()
@@ -175,7 +179,9 @@ class JsonIndexReader(object):
         cls._prune(*orig_indexes)
 
     @classmethod
-    def _aggregate_values(cls, index, field, **kwargs):
+    def _aggregate_values(
+        cls, index: dict[str, Any], field: str, **kwargs: Any
+    ) -> set[str]:
         these_indexes = [copy.deepcopy(index)]
         cls._filter(*these_indexes, **kwargs)
         sub_indexes = {}
@@ -205,7 +211,7 @@ class JsonIndexReader(object):
                     out.add(index_i[field])
         return out
 
-    def get_value(self, field, **kwargs):
+    def get_value(self, field: str, **kwargs: Any) -> str:
         """
         Gets a single field from the dictionary tree. Raises a KeyError if the field is not found, or there
         are multiple entries for the field with the specified constraints
@@ -218,7 +224,7 @@ class JsonIndexReader(object):
             raise ValueError("Expected 1 value for {}, found {}".format(field, len(values)))
         return list(values)[0]
 
-    def aggregate_values(self, field, **kwargs):
+    def aggregate_values(self, field: str, **kwargs: Any) -> set[str]:
         """
         Aggregates values across different experiments, subjects, sessions, etc.
         Allows you to specify constraints for the query (e.g. subject='R1001P', experiment='FR1')
@@ -228,7 +234,7 @@ class JsonIndexReader(object):
         """
         return self._aggregate_values(self.index, field, **kwargs)
 
-    def subjects(self, **kwargs):
+    def subjects(self, **kwargs: Any) -> list[str]:
         """
         Requests a list of subjects, filtered by kwargs
         :param kwargs: e.g. experiment='FR1', session=0
@@ -236,7 +242,7 @@ class JsonIndexReader(object):
         """
         return sorted(list(self.aggregate_values( 'subjects', **kwargs)))
 
-    def experiments(self, **kwargs):
+    def experiments(self, **kwargs: Any) -> list[str]:
         """
         Requests a list of experiments, filtered by kwargs
         :param kwargs: e.g. subject='R1001P', localization=1
@@ -244,7 +250,7 @@ class JsonIndexReader(object):
         """
         return sorted(list(self.aggregate_values('experiments', **kwargs)))
 
-    def sessions(self, **kwargs):
+    def sessions(self, **kwargs: Any) -> list[str]:
         """
         Requests a list of session numbers, filtered by kwargs
         :param kwargs: e.g. subject='R1001P', experiment='FR3'
@@ -252,7 +258,7 @@ class JsonIndexReader(object):
         """
         return sorted(list(self.aggregate_values('sessions', **kwargs)))
 
-    def montages(self, **kwargs):
+    def montages(self, **kwargs: Any) -> list[str]:
         """
         Returns a list of the montage codes (#.#), filtered by kwargs
         :param kwargs: e.g. subject='R1001P', experiment='FR1', session=0

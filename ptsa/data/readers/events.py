@@ -1,6 +1,7 @@
-import numpy as np
-from .base import BaseEventReader
 import traits.api
+
+from .base import BaseEventReader
+
 __all__ = [
     'CMLEventReader',
 ]
@@ -34,8 +35,14 @@ class CMLEventReader(BaseEventReader):
     eeg_fname_search_pattern = traits.api.Str
     eeg_fname_replace_pattern = traits.api.Str
 
-    def __init__(self, filename,eeg_fname_search_pattern = '',eeg_fname_replace_pattern='',**kwargs):
-        BaseEventReader.__init__(self, filename,**kwargs)
+    def __init__(
+        self,
+        filename: str,
+        eeg_fname_search_pattern: str = '',
+        eeg_fname_replace_pattern: str = '',
+        **kwargs,
+    ) -> None:
+        BaseEventReader.__init__(self, filename, **kwargs)
         self.eeg_fname_replace_pattern = eeg_fname_replace_pattern
         self.eeg_fname_search_pattern = eeg_fname_search_pattern
 
@@ -62,5 +69,5 @@ class CMLEventReader(BaseEventReader):
             ev.eegfile = ev.eegfile.replace(self.eeg_fname_search_pattern, self.eeg_fname_replace_pattern)
         return events
 
-    def check_reader_settings_for_json_read(self):
+    def check_reader_settings_for_json_read(self) -> None:
         pass
