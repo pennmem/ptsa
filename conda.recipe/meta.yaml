@@ -15,13 +15,18 @@ build:
 requirements:
   build:
     - python {{ python }}
-    - numpy=1.24         # conflicts with numpy 1.25
+    # numpy variant picked up from conda_build_config.yaml (1.24 or 2).
+    # Building against numpy 1.x produces a binary that runs on numpy 1.x
+    # only (via pin_compatible in `run:`); building against numpy 2.x
+    # produces a numpy-2-compatible binary. Both variants coexist on the
+    # channel; mamba auto-picks the right one based on the user's env.
+    - numpy {{ numpy }}
     - pip
     - setuptools
     - scipy
     - xarray
     - fftw==3.3.10          # required for ptsa 3.0.3
-    - pybind11
+    - pybind11 >=2.12
 
   run:
     - python {{ python }}

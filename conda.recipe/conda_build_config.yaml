@@ -1,0 +1,35 @@
+# conda-build variant matrix for the PTSA 3.0.6 publish.
+#
+# Each conda-build invocation iterates over the cartesian product of
+# python × numpy and produces one .conda per cell (~25 min each on
+# a typical core). pin_compatible('numpy', max_pin='x') in meta.yaml's
+# run: requirements means the numpy-1.24 binary caps at numpy <2 and
+# the numpy-2 binary caps at numpy <3, so mamba picks the right one
+# at install time based on the user's other numpy constraints.
+#
+# Not every (python, numpy) cell is buildable on conda-forge:
+#  - numpy 1.24 only ships wheels for python <=3.11
+#  - We rely on conda-forge for build-time numpy, so the GH Actions
+#    workflow excludes (py3.12, numpy=1.24) and (py3.13, numpy=1.24)
+#    in its matrix. Locally, conda-build will surface the missing
+#    package as a solver failure for those cells, which is fine — we
+#    just don't publish them.
+#
+# To build the full matrix locally:
+#   conda-build conda.recipe --output-folder=build/conda/ \
+#     -c pennmem -c conda-forge --no-anaconda-upload
+#
+# To build a specific cell:
+#   conda-build conda.recipe --output-folder=build/conda/ \
+#     --python=3.11 --variants '{"numpy": "2"}' \
+#     -c pennmem -c conda-forge --no-anaconda-upload
+
+python:
+  - "3.10"
+  - "3.11"
+  - "3.12"
+  - "3.13"
+
+numpy:
+  - "1.24"
+  - "2"
