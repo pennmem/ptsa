@@ -1,259 +1,321 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>API Reference &mdash; PTSA 3.0.2 documentation</title>
-  
-
-  
-  
-  
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference &mdash; PTSA 3.0.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
-  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=c3365b21"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="ptsa.data" href="data.html" />
-    <link rel="prev" title="Filtering Time Series" href="../filters.html" /> 
+    <link rel="prev" title="Filters" href="../filters.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
           
-            <a href="../index.html" class="icon icon-home"> PTSA
           
-
-          
+          <a href="../index.html" class="icon icon-home">
+            PTSA
           </a>
-
-          
-            
-            
-              <div class="version">
-                3.0.2
-              </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ramdata.html">Interacting with RAM Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../filters.html">Filtering Time Series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../morlet.html">Morlet wavelets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filters.html">Filters</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="data.html">ptsa.data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="extensions.html">Extension Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ptsa.data.concat.concat"><code class="docutils literal notranslate"><span class="pre">concat()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../development.html">Development guidelines</a></li>
 </ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../ramdata.html">Interacting with RAM Data</a></li>
+</ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">PTSA</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html">Docs</a> &raquo;</li>
-        
-      <li>API Reference</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Reference</li>
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="../_sources/api/index.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="api-reference">
-<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading">¶</a></h1>
+             
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="data.html">ptsa.data</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="data/timeseriesx.html">TimeSeries</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data/readers.html">Readers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data/filters.html">Filters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data/timeseriesx.html">TimeSeries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries"><code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.add_mirror_buffer"><code class="docutils literal notranslate"><span class="pre">TimeSeries.add_mirror_buffer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.append"><code class="docutils literal notranslate"><span class="pre">TimeSeries.append()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.astype"><code class="docutils literal notranslate"><span class="pre">TimeSeries.astype()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.baseline_corrected"><code class="docutils literal notranslate"><span class="pre">TimeSeries.baseline_corrected()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.coerce_to"><code class="docutils literal notranslate"><span class="pre">TimeSeries.coerce_to()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.create"><code class="docutils literal notranslate"><span class="pre">TimeSeries.create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.filter_with"><code class="docutils literal notranslate"><span class="pre">TimeSeries.filter_with()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.filtered"><code class="docutils literal notranslate"><span class="pre">TimeSeries.filtered()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.from_hdf"><code class="docutils literal notranslate"><span class="pre">TimeSeries.from_hdf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.from_mne_epochs"><code class="docutils literal notranslate"><span class="pre">TimeSeries.from_mne_epochs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.item"><code class="docutils literal notranslate"><span class="pre">TimeSeries.item()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.query"><code class="docutils literal notranslate"><span class="pre">TimeSeries.query()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.reduce"><code class="docutils literal notranslate"><span class="pre">TimeSeries.reduce()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.remove_buffer"><code class="docutils literal notranslate"><span class="pre">TimeSeries.remove_buffer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.resampled"><code class="docutils literal notranslate"><span class="pre">TimeSeries.resampled()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.searchsorted"><code class="docutils literal notranslate"><span class="pre">TimeSeries.searchsorted()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.to_hdf"><code class="docutils literal notranslate"><span class="pre">TimeSeries.to_hdf()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data/readers.html">Readers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data/readers.html#ptsa.data.readers.edf.edf.EDFRawReader"><code class="docutils literal notranslate"><span class="pre">EDFRawReader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data/readers.html#ptsa.data.readers.edf.edf.EDFRawReader.read_file"><code class="docutils literal notranslate"><span class="pre">EDFRawReader.read_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data/readers.html#ptsa.data.readers.BaseEventReader"><code class="docutils literal notranslate"><span class="pre">BaseEventReader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data/readers.html#ptsa.data.readers.BaseEventReader.as_dataframe"><code class="docutils literal notranslate"><span class="pre">BaseEventReader.as_dataframe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/readers.html#ptsa.data.readers.BaseEventReader.find_data_dir_prefix"><code class="docutils literal notranslate"><span class="pre">BaseEventReader.find_data_dir_prefix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/readers.html#ptsa.data.readers.BaseEventReader.modify_eeg_path"><code class="docutils literal notranslate"><span class="pre">BaseEventReader.modify_eeg_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/readers.html#ptsa.data.readers.BaseEventReader.normalize_paths"><code class="docutils literal notranslate"><span class="pre">BaseEventReader.normalize_paths()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/readers.html#ptsa.data.readers.BaseEventReader.read_matlab"><code class="docutils literal notranslate"><span class="pre">BaseEventReader.read_matlab()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data/readers.html#ptsa.data.readers.CMLEventReader"><code class="docutils literal notranslate"><span class="pre">CMLEventReader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data/readers.html#ptsa.data.readers.CMLEventReader.modify_eeg_path"><code class="docutils literal notranslate"><span class="pre">CMLEventReader.modify_eeg_path()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data/readers.html#ptsa.data.readers.EEGReader"><code class="docutils literal notranslate"><span class="pre">EEGReader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data/readers.html#ptsa.data.readers.EEGReader.compute_read_offsets"><code class="docutils literal notranslate"><span class="pre">EEGReader.compute_read_offsets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/readers.html#ptsa.data.readers.EEGReader.read_events_data"><code class="docutils literal notranslate"><span class="pre">EEGReader.read_events_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/readers.html#ptsa.data.readers.EEGReader.read_session_data"><code class="docutils literal notranslate"><span class="pre">EEGReader.read_session_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data/readers.html#ptsa.data.readers.TalReader"><code class="docutils literal notranslate"><span class="pre">TalReader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data/readers.html#ptsa.data.readers.TalReader.from_dict"><code class="docutils literal notranslate"><span class="pre">TalReader.from_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/readers.html#ptsa.data.readers.TalReader.from_records"><code class="docutils literal notranslate"><span class="pre">TalReader.from_records()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/readers.html#ptsa.data.readers.TalReader.get_bipolar_pairs"><code class="docutils literal notranslate"><span class="pre">TalReader.get_bipolar_pairs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/readers.html#ptsa.data.readers.TalReader.get_monopolar_channels"><code class="docutils literal notranslate"><span class="pre">TalReader.get_monopolar_channels()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data/readers.html#ptsa.data.readers.TalReader.mkdtype"><code class="docutils literal notranslate"><span class="pre">TalReader.mkdtype()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data/readers.html#ptsa.data.readers.LocReader"><code class="docutils literal notranslate"><span class="pre">LocReader</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data/filters.html">Filters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data/filters.html#ptsa.data.filters.MorletWaveletFilter"><code class="docutils literal notranslate"><span class="pre">MorletWaveletFilter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data/filters.html#ptsa.data.filters.MorletWaveletFilter.filter"><code class="docutils literal notranslate"><span class="pre">MorletWaveletFilter.filter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data/filters.html#ptsa.data.filters.MorletWaveletFilterCpp"><code class="docutils literal notranslate"><span class="pre">ptsa.data.filters.MorletWaveletFilterCpp</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/filters.html#ptsa.data.filters.ButterworthFilter"><code class="docutils literal notranslate"><span class="pre">ButterworthFilter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data/filters.html#ptsa.data.filters.ButterworthFilter.filter"><code class="docutils literal notranslate"><span class="pre">ButterworthFilter.filter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data/filters.html#ptsa.data.filters.ResampleFilter"><code class="docutils literal notranslate"><span class="pre">ResampleFilter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data/filters.html#ptsa.data.filters.ResampleFilter.filter"><code class="docutils literal notranslate"><span class="pre">ResampleFilter.filter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="extensions.html">Extension Modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="extensions.html#module-ptsa.extensions.circular_stat">ptsa.extensions.circular_stat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extensions.html#module-ptsa.extensions.circular_stat">ptsa.extensions.circular_stat</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="extensions.html#ptsa.extensions.circular_stat.circ_diff"><code class="docutils literal notranslate"><span class="pre">circ_diff()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="extensions.html#ptsa.extensions.circular_stat.circ_diff_par"><code class="docutils literal notranslate"><span class="pre">circ_diff_par()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="extensions.html#ptsa.extensions.circular_stat.circ_mean"><code class="docutils literal notranslate"><span class="pre">circ_mean()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="extensions.html#ptsa.extensions.circular_stat.circ_diff_time_bins"><code class="docutils literal notranslate"><span class="pre">circ_diff_time_bins()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="extensions.html#ptsa.extensions.circular_stat.compute_f_stat"><code class="docutils literal notranslate"><span class="pre">compute_f_stat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="extensions.html#ptsa.extensions.circular_stat.compute_z_scores"><code class="docutils literal notranslate"><span class="pre">compute_z_scores()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="extensions.html#ptsa.extensions.circular_stat.single_trial_ppc_all_features"><code class="docutils literal notranslate"><span class="pre">single_trial_ppc_all_features()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="extensions.html#ptsa.extensions.circular_stat.single_trial_outsample_ppc_features"><code class="docutils literal notranslate"><span class="pre">single_trial_outsample_ppc_features()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="extensions.html#module-ptsa.extensions.morlet">ptsa.extensions.morlet</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extensions.html#ptsa-extensions-edf">ptsa.extensions.edf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extensions.html#ptsa-extensions-edf">ptsa.extensions.edf</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="extensions.html#ptsa.extensions.morlet.ChannelInfo"><code class="docutils literal notranslate"><span class="pre">ChannelInfo</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="extensions.html#ptsa.extensions.morlet.EDFFile"><code class="docutils literal notranslate"><span class="pre">EDFFile</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="extensions.html#ptsa.extensions.morlet.EDFFile.__init__"><code class="docutils literal notranslate"><span class="pre">EDFFile.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="extensions.html#ptsa.extensions.morlet.EDFFile.get_channel_info"><code class="docutils literal notranslate"><span class="pre">EDFFile.get_channel_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="extensions.html#ptsa.extensions.morlet.EDFFile.get_channel_numbers"><code class="docutils literal notranslate"><span class="pre">EDFFile.get_channel_numbers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="extensions.html#ptsa.extensions.morlet.EDFFile.get_samplerate"><code class="docutils literal notranslate"><span class="pre">EDFFile.get_samplerate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="extensions.html#ptsa.extensions.morlet.EDFFile.read_samples"><code class="docutils literal notranslate"><span class="pre">EDFFile.read_samples()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
+<dl class="py function" id="module-ptsa.data.concat">
+<dt class="sig sig-object py" id="ptsa.data.concat.concat">
+<span class="sig-prename descclassname"><span class="pre">ptsa.data.concat.</span></span><span class="sig-name descname"><span class="pre">concat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'different'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'equals'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;NA&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'outer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combine_attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'override'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.concat.concat" title="Link to this definition"></a></dt>
+<dd><p>Concatenate TimeSeries objects along a new or existing dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objs</strong> (<em>sequence</em><em> of </em><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries"><em>TimeSeries</em></a>) – TimeSeries objects to concatenate together. Each object is expected to
+consist of variables and coordinates with matching shapes except for
+along the concatenated dimension.</p></li>
+<li><p><strong>dim</strong> (<em>str</em><em> or </em><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries"><em>TimeSeries</em></a><em> or </em><em>pandas.Index</em>) – Name of the dimension to concatenate along. This can either be a new
+dimension name, in which case it is added along axis=0, or an existing
+dimension name, in which case the location of the dimension is
+unchanged. If dimension is provided as a DataArray or Index, its name
+is used as the dimension to concatenate along and the values are added
+as a coordinate.</p></li>
+<li><p><strong>coords</strong> (<em>{&quot;minimal&quot;</em><em>, </em><em>&quot;different&quot;</em><em>, </em><em>&quot;all&quot;}</em><em> or </em><em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – <p>These coordinate variables will be concatenated together:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;minimal&quot;</span></code> — Only coordinates in which the dimension already
+appears are included.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;different&quot;</span></code> — Coordinates which are not equal (ignoring
+attributes) across all datasets are also concatenated (as well as
+all for which the dimension already appears). Beware: this option
+may load coordinate variable payloads into memory if not already
+loaded.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;all&quot;</span></code> — All coordinate variables are concatenated, except
+those corresponding to other dimensions.</p></li>
+<li><p>list of str — The listed coordinate variables are concatenated,
+in addition to the <code class="docutils literal notranslate"><span class="pre">&quot;minimal&quot;</span></code> coordinates.</p></li>
+</ul>
+</p></li>
+<li><p><strong>compat</strong> (<em>{&quot;identical&quot;</em><em>, </em><em>&quot;equals&quot;</em><em>, </em><em>&quot;broadcast_equals&quot;</em><em>, </em><em>&quot;no_conflicts&quot;</em><em>, </em><em>&quot;override&quot;}</em><em>, </em><em>optional</em>) – <p>How to compare non-concatenated variables of the same name for
+potential conflicts. Passed down to <code class="docutils literal notranslate"><span class="pre">merge</span></code>.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;broadcast_equals&quot;</span></code> — all values must be equal when variables
+are broadcast against each other to ensure common dimensions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;equals&quot;</span></code> — all values and dimensions must be the same.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;identical&quot;</span></code> — all values, dimensions and attributes must be
+the same.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;no_conflicts&quot;</span></code> — only values which are not null in both
+datasets must be equal. The returned dataset then contains the
+combination of all non-null values.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;override&quot;</span></code> — skip comparing and pick the variable from the
+first dataset.</p></li>
+</ul>
+</p></li>
+<li><p><strong>positions</strong> (<em>None</em><em> or </em><em>list</em><em> of </em><em>integer arrays</em><em>, </em><em>optional</em>) – List of integer arrays which specifies the integer positions to which
+to assign each dataset along the concatenated dimension. If not
+supplied, objects are concatenated in the provided order.</p></li>
+<li><p><strong>fill_value</strong> (<em>scalar</em><em> or </em><em>dict-like</em><em>, </em><em>optional</em>) – Value to use for newly missing values. If a dict-like, maps
+variable names to fill values. Use a data array’s name to refer to
+its values.</p></li>
+<li><p><strong>join</strong> (<em>{&quot;outer&quot;</em><em>, </em><em>&quot;inner&quot;</em><em>, </em><em>&quot;left&quot;</em><em>, </em><em>&quot;right&quot;</em><em>, </em><em>&quot;exact&quot;}</em><em>, </em><em>optional</em>) – <p>How to combine differing indexes (excluding <code class="docutils literal notranslate"><span class="pre">dim</span></code>) in objects:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;outer&quot;</span></code> — use the union of object indexes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;inner&quot;</span></code> — use the intersection of object indexes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;left&quot;</span></code> — use indexes from the first object with each dimension.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;right&quot;</span></code> — use indexes from the last object with each dimension.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;exact&quot;</span></code> — instead of aligning, raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> when
+indexes to be aligned are not equal.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;override&quot;</span></code> — if indexes are of same size, rewrite indexes to
+be those of the first object with that dimension. Indexes for the
+same dimension must have the same size in all objects.</p></li>
+</ul>
+</p></li>
+<li><p><strong>combine_attrs</strong> (<em>{&quot;drop&quot;</em><em>, </em><em>&quot;identical&quot;</em><em>, </em><em>&quot;no_conflicts&quot;</em><em>, </em><em>&quot;drop_conflicts&quot;</em><em>, </em><em>&quot;override&quot;}</em><em> or </em><em>callable</em><em>, </em><em>optional</em>) – <p>How to combine attrs of the objects being merged (default:
+<code class="docutils literal notranslate"><span class="pre">&quot;override&quot;</span></code>):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;drop&quot;</span></code> — empty attrs on returned Dataset.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;identical&quot;</span></code> — all attrs must be the same on every object.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;no_conflicts&quot;</span></code> — attrs from all objects are combined; any
+that have the same name must also have the same value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;drop_conflicts&quot;</span></code> — attrs from all objects are combined; any
+that have the same name but different values are dropped.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;override&quot;</span></code> — skip comparing and copy attrs from the first
+dataset to the result.</p></li>
+</ul>
+<p>If a callable, it must expect a sequence of <code class="docutils literal notranslate"><span class="pre">attrs</span></code> dicts and a
+context object as its only parameters.</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>concatenated</strong> – Concatenation of <code class="docutils literal notranslate"><span class="pre">objs</span></code> along <code class="docutils literal notranslate"><span class="pre">dim</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="data.html" class="btn btn-neutral float-right" title="ptsa.data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="../filters.html" class="btn btn-neutral float-left" title="Filtering Time Series" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../filters.html" class="btn btn-neutral float-left" title="Filters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="data.html" class="btn btn-neutral float-right" title="ptsa.data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2022
-
-    </p>
+    <p>&#169; Copyright 2026.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

@@ -1,206 +1,110 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Filters &mdash; PTSA 3.0.2 documentation</title>
-  
-
-  
-  
-  
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Filters &mdash; PTSA 3.0.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=c3365b21"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Extension Modules" href="../extensions.html" />
     <link rel="prev" title="Readers" href="readers.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
           
-            <a href="../../index.html" class="icon icon-home"> PTSA
           
-
-          
+          <a href="../../index.html" class="icon icon-home">
+            PTSA
           </a>
-
-          
-            
-            
-              <div class="version">
-                3.0.2
-              </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../ramdata.html">Interacting with RAM Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../filters.html">Filtering Time Series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../morlet.html">Morlet wavelets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../filters.html">Filters</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../data.html">ptsa.data</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="timeseriesx.html">TimeSeries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="readers.html">Readers</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Filters</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Filters</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ptsa.data.filters.MorletWaveletFilter"><code class="docutils literal notranslate"><span class="pre">MorletWaveletFilter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ptsa.data.filters.MorletWaveletFilterCpp"><code class="docutils literal notranslate"><span class="pre">ptsa.data.filters.MorletWaveletFilterCpp</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ptsa.data.filters.ButterworthFilter"><code class="docutils literal notranslate"><span class="pre">ButterworthFilter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ptsa.data.filters.ResampleFilter"><code class="docutils literal notranslate"><span class="pre">ResampleFilter</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../extensions.html">Extension Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#ptsa.data.concat.concat"><code class="docutils literal notranslate"><span class="pre">concat()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../development.html">Development guidelines</a></li>
 </ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ramdata.html">Interacting with RAM Data</a></li>
+</ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">PTSA</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
-        
-          <li><a href="../index.html">API Reference</a> &raquo;</li>
-        
-          <li><a href="../data.html">ptsa.data</a> &raquo;</li>
-        
-      <li>Filters</li>
-    
-    
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../data.html">ptsa.data</a></li>
+      <li class="breadcrumb-item active">Filters</li>
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="../../_sources/api/data/filters.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="filters">
-<h1>Filters<a class="headerlink" href="#filters" title="Permalink to this heading">¶</a></h1>
+             
+  <section id="filters">
+<h1>Filters<a class="headerlink" href="#filters" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="ptsa.data.filters.MorletWaveletFilter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ptsa.data.filters.</span></span><span class="sig-name descname"><span class="pre">MorletWaveletFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('power',</span> <span class="pre">'phase')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'output'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.MorletWaveletFilter" title="Permalink to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ptsa.data.filters.</span></span><span class="sig-name descname"><span class="pre">MorletWaveletFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('power',</span> <span class="pre">'phase')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'output'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.MorletWaveletFilter" title="Link to this definition"></a></dt>
 <dd><p>Applies a Morlet wavelet transform to a time series, returning the power
 and phase spectra over time.</p>
 <div class="versionchanged">
@@ -209,26 +113,64 @@ filter types.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>freqs</strong> (<em>np.ndarray</em>) – The frequencies to use in the decomposition</p>
-</dd>
-<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>width</strong> (<em>int</em>) – The width of the wavelet (default: 5)</p></li>
-<li><p><strong>output</strong> (<em>Union</em><em>[</em><em>Iterable</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em>) – A string or a list of strings containing power, phase, and/or
-complex (default: <code class="docutils literal notranslate"><span class="pre">['power',</span> <span class="pre">'phase']</span></code>)</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – Print out the wavelet parameters (default: False)</p></li>
-<li><p><strong>cpus</strong> (<em>int</em>) – Number of threads to use when computing the transform (default: 1).</p></li>
-<li><p><strong>output_dim</strong> (<em>str</em>) – Name of the output dimension when returning both power and phase
-(default: <code class="docutils literal notranslate"><span class="pre">'output'</span></code>)</p></li>
-<li><p><strong>complete</strong> (<em>bool</em>) – Use complete Morlet wavelets with a zero mean, which is required for
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freqs</strong> (<em>np.ndarray</em>) – The frequencies to use in the decomposition.</p></li>
+<li><p><strong>width</strong> (<em>int</em><em>, </em><em>optional</em>) – The width of the wavelet (default: 5).</p></li>
+<li><p><strong>output</strong> (<em>Union</em><em>[</em><em>Iterable</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – A string or a list of strings containing <code class="docutils literal notranslate"><span class="pre">'power'</span></code>, <code class="docutils literal notranslate"><span class="pre">'phase'</span></code>,
+and/or <code class="docutils literal notranslate"><span class="pre">'complex'</span></code> (default: <code class="docutils literal notranslate"><span class="pre">('power',</span> <span class="pre">'phase')</span></code>).</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Print out the wavelet parameters (default: True).</p></li>
+<li><p><strong>cpus</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of threads to use when computing the transform (default: 1).</p></li>
+<li><p><strong>output_dim</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the output dimension when returning both power and phase
+(default: <code class="docutils literal notranslate"><span class="pre">'output'</span></code>).</p></li>
+<li><p><strong>complete</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use complete Morlet wavelets with a zero mean, which is required for
 power and phase accuracy with small wavelet widths.  The frequency is
-kept consistent with standard Morlet wavelets.  (default: True)</p></li>
+kept consistent with standard Morlet wavelets (default: True).</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Let <span class="math notranslate nohighlight">\(f\)</span> be the centre frequency, <span class="math notranslate nohighlight">\(w\)</span> the <code class="docutils literal notranslate"><span class="pre">width</span></code>
+(number of cycles of the carrier under the Gaussian envelope, in
+the Tallon-Baudry sense), <span class="math notranslate nohighlight">\(\sigma_f = f / w\)</span> the frequency-
+domain width of the Gaussian, and <span class="math notranslate nohighlight">\(\sigma_t = 1 / (2 \pi
+\sigma_f)\)</span> the corresponding time-domain width.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">complete=False</span></code> the wavelet is the standard complex Morlet,</p>
+<div class="math notranslate nohighlight">
+\[\psi(t) = \frac{1}{\sqrt{\sigma_t \sqrt{\pi}}}\,
+          e^{-t^{2} / (2 \sigma_t^{2})}\,
+          e^{i\, 2 \pi f t}.\]</div>
+<p>With <code class="docutils literal notranslate"><span class="pre">complete=True</span></code> (the default since PTSA 2.0.6) PTSA uses
+the Tallon-Baudry “complete” form: a zero-mean correction
+<span class="math notranslate nohighlight">\(e^{-w^{2}/2}\)</span> is subtracted from the cosine arm, the
+amplitudes <span class="math notranslate nohighlight">\(a_c\)</span> (real part) and <span class="math notranslate nohighlight">\(a_s\)</span> (imaginary
+part) are rescaled analytically so the wavelet keeps unit energy,
+and the time axis is rescaled by</p>
+<div class="math notranslate nohighlight">
+\[\textrm{freq\_scale} =
+  \frac{2}{\pi}\, \arccos\!\left(e^{-w^{2}/2}\right)\]</div>
+<p>so the peak frequency stays at <span class="math notranslate nohighlight">\(f\)</span> despite the offset:</p>
+<div class="math notranslate nohighlight">
+\[\psi_{\text{complete}}(t) =
+  a_c\, e^{-t^{2}/(2\sigma_t^{2})}
+           \left(\cos(\text{freq\_scale} \cdot 2 \pi f t)
+                 - e^{-w^{2}/2}\right)
+  + i\, a_s\, e^{-t^{2}/(2\sigma_t^{2})} \sin(2 \pi f t).\]</div>
+<p>Larger <code class="docutils literal notranslate"><span class="pre">width</span></code> tightens the wavelet’s frequency resolution
+(narrower <span class="math notranslate nohighlight">\(\sigma_f\)</span>) at the cost of widening its time
+resolution (broader <span class="math notranslate nohighlight">\(\sigma_t\)</span>); this is the standard
+Heisenberg/Gabor time-frequency tradeoff.</p>
+<p>See <code class="xref py py-func docutils literal notranslate"><span class="pre">ptsa.extensions.morlet.get_time_domain_wavelet()</span></code> for a
+Python reference implementation of the formula, and
+<code class="docutils literal notranslate"><span class="pre">tests/test_morlet_formula.py</span></code> for independent validation of
+PTSA’s FFT-based kernel against direct time-domain convolution
+with that reference.</p>
+<p class="rubric">References</p>
+<p>Tallon-Baudry, C., &amp; Bertrand, O. (1996). Oscillatory gamma
+activity in humans and its role in object representation. <em>Trends
+in Cognitive Sciences</em>, 3(4), 151-162.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ptsa.data.filters.MorletWaveletFilter.filter">
-<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeseries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.MorletWaveletFilter.filter" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeseries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.MorletWaveletFilter.filter" title="Link to this definition"></a></dt>
 <dd><p>Apply the constructed filter.</p>
 </dd></dl>
 
@@ -236,7 +178,7 @@ kept consistent with standard Morlet wavelets.  (default: True)</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ptsa.data.filters.MorletWaveletFilterCpp">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ptsa.data.filters.</span></span><span class="sig-name descname"><span class="pre">MorletWaveletFilterCpp</span></span><a class="headerlink" href="#ptsa.data.filters.MorletWaveletFilterCpp" title="Permalink to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ptsa.data.filters.</span></span><span class="sig-name descname"><span class="pre">MorletWaveletFilterCpp</span></span><a class="headerlink" href="#ptsa.data.filters.MorletWaveletFilterCpp" title="Link to this definition"></a></dt>
 <dd><p>The same as ptsa.data.filters.MorletWaveletFilter,
 except it utilizes a C++ thread pool to parallelize the computations.</p>
 <p>Additional keyword arguments:</p>
@@ -247,7 +189,7 @@ except it utilizes a C++ thread pool to parallelize the computations.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ptsa.data.filters.ButterworthFilter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ptsa.data.filters.</span></span><span class="sig-name descname"><span class="pre">ButterworthFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filt_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stop'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ButterworthFilter" title="Permalink to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ptsa.data.filters.</span></span><span class="sig-name descname"><span class="pre">ButterworthFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filt_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stop'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ButterworthFilter" title="Link to this definition"></a></dt>
 <dd><p>Applies Butterworth filter to a time series.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
@@ -261,7 +203,7 @@ except it utilizes a C++ thread pool to parallelize the computations.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ptsa.data.filters.ButterworthFilter.filter">
-<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeseries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ButterworthFilter.filter" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeseries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ButterworthFilter.filter" title="Link to this definition"></a></dt>
 <dd><p>Applies Butterwoth filter to input time series and returns filtered
 <code class="xref py py-class docutils literal notranslate"><span class="pre">TimeSeries</span></code> object.</p>
 <dl class="field-list simple">
@@ -278,7 +220,7 @@ except it utilizes a C++ thread pool to parallelize the computations.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ptsa.data.filters.ResampleFilter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ptsa.data.filters.</span></span><span class="sig-name descname"><span class="pre">ResampleFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resamplerate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">round_to_original_timepoints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_axis_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'time'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ResampleFilter" title="Permalink to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ptsa.data.filters.</span></span><span class="sig-name descname"><span class="pre">ResampleFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resamplerate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">round_to_original_timepoints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_axis_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'time'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ResampleFilter" title="Link to this definition"></a></dt>
 <dd><p>Resample a time series to a new sample rate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -295,7 +237,7 @@ should be reused after proper rounding. Defaults to False</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ptsa.data.filters.ResampleFilter.filter">
-<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeseries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ResampleFilter.filter" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeseries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.filters.ResampleFilter.filter" title="Link to this definition"></a></dt>
 <dd><p>Resample a time series.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -313,51 +255,33 @@ should be reused after proper rounding. Defaults to False</p></li>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../extensions.html" class="btn btn-neutral float-right" title="Extension Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="readers.html" class="btn btn-neutral float-left" title="Readers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="readers.html" class="btn btn-neutral float-left" title="Readers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../extensions.html" class="btn btn-neutral float-right" title="Extension Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2022
-
-    </p>
+    <p>&#169; Copyright 2026.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
