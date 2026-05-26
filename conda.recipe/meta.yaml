@@ -26,19 +26,57 @@ requirements:
 
   run:
     - python {{ python }}
-    - h5py
-    - fftw
     # Pin runtime numpy to the major version we built against. The
     # compiled _morlet.so / _circular_stat.so / edffile.so use the
-    # NumPy 1.x C API (legacy array API), which was removed in
-    # NumPy 2.0; without this pin mamba would silently pair the
-    # binary with NumPy 2 → `_ARRAY_API not found` at import time.
-    # See pennmem/ptsa#PR-for-3.0.6 for the full diagnosis.
+    # NumPy C API for whichever numpy was present at build time;
+    # mixing NumPy major versions across that ABI boundary blows
+    # up at import time (e.g. NumPy 1.x extension run against
+    # NumPy 2.x → `_ARRAY_API not found`).
+    #
+    # With max_pin='x', conda-build expands this to
+    # `numpy >=<build-numpy>,<<next-major>a0`. Concretely:
+    #   * built against numpy 1.24 → `numpy >=1.24.4,<2.0a0`
+    #   * built against numpy 2.x  → `numpy >=2.X,<3.0a0`
+    # so every published binary is capped to the next-major bump
+    # automatically. Publishing a binary that handles numpy 3
+    # requires deliberately rebuilding against numpy 3 — this is
+    # the same belt-and-suspenders pattern we apply to the other
+    # ABI-sensitive deps below (scipy, traits, h5py, ...).
     - {{ pin_compatible('numpy', max_pin='x') }}
-    - scipy
+    # Floor pins are the lowest versions actually exercised by the
+    # 3.0.6 test matrix (ptsa_dev: numpy 2.4 / pandas 3.0 / xarray
+    # 2026.4; oneshot-rhino2b: numpy 1.26 / pandas 2.0.3 / xarray
+    # 2024.3.0). Older versions might work but aren't covered, so
+    # we don't promise them.
+    #
+    # Upper bounds cap the *next* major version we haven't
+    # validated against. The 3.0.4 → 3.0.6 effort was triggered
+    # by exactly this class of bug: unbounded run-deps silently
+    # paired ptsa with traits 7 (which deleted `ListStr`) and
+    # numpy 2 (which removed the legacy array API). Caps here
+    # force a deliberate revalidation + rebuild before users get
+    # paired with a future ABI/API break.
+    - scipy >=1.0,<3
+    - xarray >=2024.3
+    - traits >=6,<9
+    - h5py >=3,<5
+    # pandas: TalReader.from_records / mkdtype, BaseEventReader.as_dataframe,
+    # JsonIndexReader.as_dataframe, LocReader.read, TimeSeries.from_mne_epochs
+    # all import pandas directly. Previously satisfied only
+    # transitively via xarray; declared explicitly here so removing
+    # xarray doesn't silently break ptsa.
+    - pandas >=2.0,<5
+    # netcdf4: TimeSeries.to_hdf / from_hdf call
+    # xr.open_dataset(..., engine='netcdf4'). xarray does not pull
+    # netcdf4 in automatically, so without this dep ptsa would
+    # install fine but ts.to_hdf(...) would crash with
+    # `unrecognized engine 'netcdf4'`.
+    - netcdf4 >=1.5,<3
+    # six: legacy py2/3 compat shim still used by data/readers/base.py,
+    # data/readers/binary.py, MatlabIO/__init__.py.
+    - six
+    - fftw 3.3.*
     - vs2015_runtime  [win]
-    - xarray
-    - traits
 
 test:
   # Test that we can import ptsa and its extension modules
