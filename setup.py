@@ -172,15 +172,22 @@ def make_pybind_extension(module, **kwargs):
     )
 
 
+# Install pybind11 if missing (used by morlet, circular_stat, and edf).
+try:
+    import pybind11  # noqa: F401
+except ImportError:
+    if subprocess.call([sys.executable, '-m', 'pip', 'install', 'pybind11']):
+        raise RuntimeError('ERROR, failed:  pip install pybind11')
+
 ext_modules = [
-    Extension(
+    make_pybind_extension(
         'ptsa.extensions.morlet._morlet',
-        sources=[osp.join(morlet_dir, 'morlet.cpp'),
-                 osp.join(morlet_dir, 'MorletWaveletTransformMP.cpp'),
-                 osp.join(morlet_dir, 'morlet.i')],
-        swig_opts=['-c++'],
+        sources=[
+            osp.join(morlet_dir, 'morlet.cpp'),
+            osp.join(morlet_dir, 'MorletWaveletTransformMP.cpp'),
+            osp.join(morlet_dir, 'wrap.cpp'),
+        ],
         include_dirs=get_include_dirs(),
-        extra_compile_args=get_compiler_args(),
         libraries=get_fftw_libs(),
     ),
 
@@ -196,28 +203,16 @@ ext_modules = [
     ),
 ]
 
-# Install pybind11 if missing
-try:
-  import pybind11
-except ImportError:
-  if subprocess.call([sys.executable, '-m', 'pip', 'install', 'pybind11']):
-    raise RuntimeError('ERROR, failed:  pip install pybind11')
-
-# Try to add edffile extension
-try:
-    ext_modules += [
-        make_pybind_extension(
-            'ptsa.extensions.edf.edffile',
-            sources=[
-                'ptsa/extensions/edf/edflib.cpp',
-                'ptsa/extensions/edf/edffile.cpp',
-                'ptsa/extensions/edf/wrap.cpp',
-            ],
-        )
-    ]
-except ImportError as err:
-    print("\n\nWARNING\n\n", err, "\n"
-          "pybind11 not found - you will be unable to read EDF files", sep='')
+ext_modules += [
+    make_pybind_extension(
+        'ptsa.extensions.edf.edffile',
+        sources=[
+            'ptsa/extensions/edf/edflib.cpp',
+            'ptsa/extensions/edf/edffile.cpp',
+            'ptsa/extensions/edf/wrap.cpp',
+        ],
+    ),
+]
 
 
 check_dependencies()

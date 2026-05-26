@@ -19,8 +19,6 @@ dist
 MANIFEST
 ptsa/extensions/circular_stat/circular_stat.py
 ptsa/extensions/circular_stat/circular_stat_wrap.cpp
-ptsa/extensions/morlet/morlet.py
-ptsa/extensions/morlet/morlet_wrap.cpp
 third_party/fftw*/
 htmlcov/
 .coverage
