@@ -42,15 +42,14 @@ class TestClassifier(unittest.TestCase):
 
     @pytest.mark.slow
     def test_classifier(self):
-        m2b = MonopolarToBipolarMapper(timeseries=self.base_eegs, bipolar_pairs=self.bipolar_pairs)
-        bp_eegs = m2b.filter()
+        m2b = MonopolarToBipolarMapper(bipolar_pairs=self.bipolar_pairs)
+        bp_eegs = m2b.filter(self.base_eegs)
 
-        wf = MorletWaveletFilter(timeseries=bp_eegs,
-                                 freqs=np.logspace(np.log10(3), np.log10(180), 8),
+        wf = MorletWaveletFilter(freqs=np.logspace(np.log10(3), np.log10(180), 8),
                                  output='power',
                                  verbose=True)
 
-        pow_wavelet = wf.filter()
+        pow_wavelet = wf.filter(bp_eegs)
 
         pow_wavelet = pow_wavelet.remove_buffer(duration=1.0)
         print(pow_wavelet)
