@@ -93,6 +93,12 @@ is computed using the identity
 where :math:`N` is the number of samples in the the signal :math:`\Psi`,
 in order to take advantage of the speed provided by the FFTW library.
 
+.. skip: next
+   The following snippet is pseudo-code illustrating the low-level
+   extension API; ``signal`` is not bound and the block does not
+   execute under sybil. Use :class:`~ptsa.data.filters.MorletWaveletFilter`
+   for runnable code (see :ref:`morlet`).
+
 .. code-block:: python
     :caption: Example:
 
