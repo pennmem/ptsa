@@ -191,15 +191,13 @@ ext_modules = [
         libraries=get_fftw_libs(),
     ),
 
-    Extension(
+    make_pybind_extension(
         'ptsa.extensions.circular_stat._circular_stat',
         sources=[
             osp.join(circ_stat_dir, 'circular_stat.cpp'),
-            osp.join(circ_stat_dir, 'circular_stat.i')
+            osp.join(circ_stat_dir, 'wrap.cpp'),
         ],
-        swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
-        extra_compile_args=get_compiler_args(),
     ),
 ]
 
