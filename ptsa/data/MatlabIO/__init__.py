@@ -186,7 +186,10 @@ def get_np_format(record_array, verbose=False):
                 # arrays = map(lambda dtype_: np.ndarray(shape=(1), dtype=dtype_), formats)
                 #
                 # common_format = np.dtype(np.common_type(*arrays)).str
-                common_format = np.find_common_type([],formats)
+                # np.find_common_type was removed in NumPy 2.0; np.result_type
+                # is the documented replacement and behaves identically here
+                # since we only pass dtype-like values (no scalar promotion).
+                common_format = np.result_type(*formats)
                 names_list.append(_fieldname)
                 format_list.append(common_format)
 

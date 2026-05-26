@@ -49,7 +49,9 @@ class MonopolarToBipolarMapper(BaseFilter):
 
         if len(np.shape(bipolar_pairs)) == 2:
             if np.shape(bipolar_pairs)[0] == 2:
-                self.bipolar_pairs = np.core.records.fromarrays(
+                # np.core is private as of NumPy 2.0; np.rec is the
+                # documented top-level entry point and has been since 1.x.
+                self.bipolar_pairs = np.rec.fromarrays(
                     bipolar_pairs, names=chan_names)
             else:
                 raise ValueError(
