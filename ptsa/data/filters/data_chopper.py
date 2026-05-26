@@ -1,9 +1,19 @@
+from __future__ import annotations
+
+from typing import Union
+
 import numpy as np
+import numpy.typing as npt
 import traits.api
 import xarray as xr
 
 from . import BaseFilter
 from ptsa.data.timeseries import TimeSeries
+
+# An ``events`` recarray-or-ndarray; some callers pass a structured
+# ``np.ndarray``, others pass an ``np.recarray``. The chopper only uses
+# field-style access (``arr.eegfile``, ``arr.eegoffset``).
+EventsArray = Union[np.recarray, np.ndarray]
 
 
 class DataChopper(BaseFilter):
@@ -17,11 +27,16 @@ class DataChopper(BaseFilter):
     buffer_time = traits.api.CFloat
     events = traits.api.Array
     start_offsets = traits.api.CArray
-    timeseries=traits.api.Instance(TimeSeries)
+    timeseries = traits.api.Instance(TimeSeries)
 
-    def __init__(self, start_time=0.0, end_time=0.0, buffer_time=0.0,
-                 events=np.recarray((1,), dtype=[('x', int)]),
-                 start_offsets=np.array([], dtype=int)):
+    def __init__(
+        self,
+        start_time: float = 0.0,
+        end_time: float = 0.0,
+        buffer_time: float = 0.0,
+        events: EventsArray = np.recarray((1,), dtype=[('x', int)]),
+        start_offsets: np.ndarray = np.array([], dtype=int),
+    ) -> None:
         """
         :param start_time {float} -  read start offset in seconds w.r.t to the eegeffset specified in the events recarray
         :param end_time {float} -  read end offset in seconds w.r.t to the eegeffset specified in the events recarray
@@ -44,7 +59,12 @@ class DataChopper(BaseFilter):
         self.events = events
         self.start_offsets = start_offsets
 
-    def get_event_chunk_size_and_start_point_shift(self, eegoffset, samplerate, offset_time_array):
+    def get_event_chunk_size_and_start_point_shift(
+        self,
+        eegoffset: int,
+        samplerate: float,
+        offset_time_array: npt.NDArray,
+    ) -> tuple[int, int]:
         """
         Computes number of time points for each event and read offset w.r.t. event's eegoffset
         :param ev: record representing single event
@@ -59,32 +79,46 @@ class DataChopper(BaseFilter):
         original_samplerate = float((offset_time_array[-1] - offset_time_array[0])) / offset_time_array.shape[
             0] * samplerate
 
+        # ``self.buffer_time`` etc. are CFloat traits; on a bound instance
+        # they return floats but pyright sees the class descriptor.
+        # ``trait_get`` returns a dict[str, Any] of the runtime values, which
+        # is the documented way to side-step that descriptor confusion.
+        traits_d = self.trait_get('start_time', 'end_time', 'buffer_time')
+        start_time = float(traits_d['start_time'])
+        end_time = float(traits_d['end_time'])
+        buffer_time = float(traits_d['buffer_time'])
 
-        start_point = eegoffset - int(np.ceil((self.buffer_time - self.start_time) * original_samplerate))
+        start_point = eegoffset - int(np.ceil((buffer_time - start_time) * original_samplerate))
         end_point = eegoffset + int(
-            np.ceil((self.end_time + self.buffer_time) * original_samplerate))
+            np.ceil((end_time + buffer_time) * original_samplerate))
 
         selector_array = np.where((offset_time_array >= start_point) & (offset_time_array < end_point))[0]
         start_point_shift = selector_array[0] - np.where((offset_time_array >= eegoffset))[0][0]
 
         return len(selector_array), start_point_shift
 
-    def filter(self, timeseries):
+    def filter(self, timeseries: "TimeSeries") -> "TimeSeries":
         """
         Chops session into chunks corresponding to events
         :return: TimeSeries object with chopped session
         """
-        chop_on_start_offsets_flag = bool(len(self.start_offsets))
+        # ``self.start_offsets`` is a CArray trait; coerce to a real ndarray
+        # so pyright treats it as Sized/Iterable.
+        start_offsets_arr: np.ndarray = np.asarray(self.start_offsets)
+        events_arr: np.ndarray = np.asarray(self.events)
 
+        chop_on_start_offsets_flag = bool(len(start_offsets_arr))
+
+        chopping_axis_data: np.ndarray
         if chop_on_start_offsets_flag:
 
-            start_offsets = self.start_offsets
+            start_offsets = start_offsets_arr
             chopping_axis_name = 'start_offsets'
             chopping_axis_data = start_offsets
         else:
 
-            evs = self.events[self.events.eegfile == timeseries.attrs['dataroot']]
-            start_offsets = evs.eegoffset
+            evs = events_arr[events_arr['eegfile'] == timeseries.attrs['dataroot']]
+            start_offsets = evs['eegoffset']
             chopping_axis_name = 'events'
             chopping_axis_data = evs
 
@@ -95,11 +129,13 @@ class DataChopper(BaseFilter):
         event_chunk_size, start_point_shift = self.get_event_chunk_size_and_start_point_shift(
             eegoffset=start_offsets[0],
             samplerate=samplerate,
-            offset_time_array=offset_time_array
+            offset_time_array=np.asarray(offset_time_array),
         )
 
 
-        event_time_axis = np.arange(event_chunk_size)*(1.0/samplerate)+(self.start_time-self.buffer_time)
+        ts_d = self.trait_get('start_time', 'buffer_time')
+        event_time_axis = np.arange(event_chunk_size) * (1.0 / samplerate) + (
+            float(ts_d['start_time']) - float(ts_d['buffer_time']))
 
         data_list = []
 
@@ -107,7 +143,7 @@ class DataChopper(BaseFilter):
 
             start_chop_pos = np.where(offset_time_array >= eegoffset)[0][0]
             start_chop_pos += start_point_shift
-            selector_array = np.arange(start=start_chop_pos, stop=start_chop_pos + event_chunk_size)
+            selector_array = np.arange(start_chop_pos, start_chop_pos + event_chunk_size)
 
             chopped_data_array = timeseries.isel(time=selector_array)
 
@@ -119,13 +155,13 @@ class DataChopper(BaseFilter):
         ev_concat_data = xr.concat(data_list, dim='start_offsets')
 
 
-        ev_concat_data = ev_concat_data.rename({'start_offsets':chopping_axis_name})
+        ev_concat_data = ev_concat_data.rename({'start_offsets': chopping_axis_name})
         ev_concat_data[chopping_axis_name] = chopping_axis_data
 
         attrs = {
             "start_time": self.start_time,
             "end_time": self.end_time,
-            "buffer_time": self.buffer_time
+            "buffer_time": self.buffer_time,
         }
         ev_concat_data['samplerate'] = samplerate
         return TimeSeries.create(ev_concat_data, samplerate, attrs=attrs)

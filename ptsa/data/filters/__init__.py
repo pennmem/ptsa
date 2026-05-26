@@ -4,3 +4,12 @@ from .data_chopper import DataChopper
 from .monopolar_to_bipolar_mapper import MonopolarToBipolarMapper
 from .morlet import MorletWaveletFilter
 from .resample import ResampleFilter
+
+__all__ = [
+    "BaseFilter",
+    "ButterworthFilter",
+    "DataChopper",
+    "MonopolarToBipolarMapper",
+    "MorletWaveletFilter",
+    "ResampleFilter",
+]

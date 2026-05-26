@@ -1,6 +1,10 @@
+from __future__ import annotations
+
 import time
+from typing import Iterable, Optional, Union
 
 import numpy as np
+import numpy.typing as npt
 import traits.api
 
 from ptsa.data.timeseries import TimeSeries
@@ -101,8 +105,16 @@ class MorletWaveletFilter(BaseFilter):
     output = []
     output_dim = traits.api.Str
 
-    def __init__(self, freqs, width=5, output=('power', 'phase'), 
-                 verbose=True, cpus=1, output_dim='output', complete=True):
+    def __init__(
+        self,
+        freqs: npt.ArrayLike,
+        width: int = 5,
+        output: Union[str, Iterable[str]] = ('power', 'phase'),
+        verbose: bool = True,
+        cpus: int = 1,
+        output_dim: str = 'output',
+        complete: bool = True,
+    ) -> None:
         self.freqs = freqs
         self.width = width
         self.complete = complete
@@ -111,6 +123,8 @@ class MorletWaveletFilter(BaseFilter):
 
         if isinstance(output, str):
             output = [output]
+        else:
+            output = list(output)
 
         for el in output:
             if el not in output_opts:
@@ -126,12 +140,24 @@ class MorletWaveletFilter(BaseFilter):
         self.cpus = cpus
         self.output_dim = output_dim
 
-    def filter(self, timeseries):
-        """Apply the constructed filter."""
+    def filter(self, timeseries: "TimeSeries") -> Optional["TimeSeries"]:
+        """Apply the constructed filter.
+
+        Returns either a :class:`TimeSeries` carrying the requested output
+        (power, phase, complex coefficients, or stacked power+phase) or
+        ``None`` if no output was requested. In practice ``filter`` always
+        returns a :class:`TimeSeries` for any valid configuration constructed
+        via :meth:`__init__`; the ``Optional`` reflects the defensive
+        ``return phases_ts`` path below where the local ``phases_ts`` may
+        not have been assigned in pathological subclasses.
+        """
         nontime_dims = self.get_nontime_dims(timeseries)
         nontime_sizes = self.get_nontime_sizes(timeseries)
 
-        wavelet_dims = nontime_sizes + (self.freqs.shape[0],)
+        # ``self.freqs`` is a traits CArray descriptor on the class; on a
+        # bound instance access returns the underlying ``np.ndarray``.
+        freqs_arr: np.ndarray = np.asarray(self.freqs)
+        wavelet_dims = nontime_sizes + (freqs_arr.shape[0],)
 
         powers_reshaped = np.array([[]], dtype=float)
         phases_reshaped = np.array([[]], dtype=float)
@@ -150,7 +176,8 @@ class MorletWaveletFilter(BaseFilter):
                 shape=(np.prod(wavelet_dims), len(timeseries['time'])),
                 dtype=complex)
 
-        mt = morlet.MorletWaveletTransformMP(self.cpus)
+        cpus = int(self.trait_get('cpus')['cpus'])
+        mt = morlet.MorletWaveletTransformMP(cpus)
 
         timeseries_reshaped = np.ascontiguousarray(
             timeseries.data.reshape(
@@ -174,7 +201,7 @@ class MorletWaveletFilter(BaseFilter):
         mt.set_wavelet_complex_array(wavelets_complex_reshaped)
 
         mt.initialize_signal_props(float(timeseries['samplerate']))
-        mt.initialize_wavelet_props(self.width, self.freqs, self.complete)
+        mt.initialize_wavelet_props(self.width, freqs_arr, self.complete)
         mt.prepare_run()
 
         s = time.time()
@@ -192,7 +219,7 @@ class MorletWaveletFilter(BaseFilter):
             wavelet_complex_final = wavelets_complex_reshaped.reshape(wavelet_dims + (len(timeseries['time']),))
 
         coords = {k: v for k, v in list(timeseries.coords.items())}
-        coords['frequency'] = self.freqs
+        coords['frequency'] = freqs_arr
 
         powers_ts = None
         phases_ts = None
