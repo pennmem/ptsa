@@ -227,13 +227,6 @@ class TestSmokeFilters:
         # has an extra 'output' dim of length 2
         assert "output" in out.dims
 
-    @pytest.mark.xfail(
-        reason="DataChopper.filter assigns chopped_data_array['start_offsets'] = [i] "
-               "to an array whose dims don't contain 'start_offsets'; modern xarray "
-               "raises CoordinateValidationError. The rhino2b stack's "
-               "xarray=2024.3.0 pin masks this. Tier-1 follow-up.",
-        strict=True,
-    )
     def test_data_chopper_with_start_offsets(self):
         from ptsa.data.timeseries import TimeSeries
         from ptsa.data.filters import DataChopper

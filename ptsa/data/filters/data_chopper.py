@@ -112,7 +112,7 @@ class DataChopper(BaseFilter):
             chopped_data_array = timeseries.isel(time=selector_array)
 
             chopped_data_array['time'] = event_time_axis
-            chopped_data_array['start_offsets'] = [i]
+            chopped_data_array = chopped_data_array.expand_dims(start_offsets=[i])
 
             data_list.append(chopped_data_array)
 
