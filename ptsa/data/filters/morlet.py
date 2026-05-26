@@ -19,30 +19,27 @@ class MorletWaveletFilter(BaseFilter):
 
     Parameters
     ----------
-    freqs: np.ndarray
-        The frequencies to use in the decomposition
-    
-    Keyword Arguments
-    -----------------
-    width: int
-        The width of the wavelet (default: 5)
-    output: Union[Iterable[str], str]
-        A string or a list of strings containing power, phase, and/or
-        complex (default: ``['power', 'phase']``)
-    verbose: bool
-        Print out the wavelet parameters (default: False)
-    cpus : int
+    freqs : np.ndarray
+        The frequencies to use in the decomposition.
+    width : int, optional
+        The width of the wavelet (default: 5).
+    output : Union[Iterable[str], str], optional
+        A string or a list of strings containing ``'power'``, ``'phase'``,
+        and/or ``'complex'`` (default: ``('power', 'phase')``).
+    verbose : bool, optional
+        Print out the wavelet parameters (default: True).
+    cpus : int, optional
         Number of threads to use when computing the transform (default: 1).
-    output_dim: str
+    output_dim : str, optional
         Name of the output dimension when returning both power and phase
-        (default: ``'output'``)
-    complete: bool
+        (default: ``'output'``).
+    complete : bool, optional
         Use complete Morlet wavelets with a zero mean, which is required for
         power and phase accuracy with small wavelet widths.  The frequency is
-        kept consistent with standard Morlet wavelets.  (default: True)
+        kept consistent with standard Morlet wavelets (default: True).
 
-    Formula
-    -------
+    Notes
+    -----
     Let :math:`f` be the centre frequency, :math:`w` the ``width``
     (number of cycles of the carrier under the Gaussian envelope, in
     the Tallon-Baudry sense), :math:`\\sigma_f = f / w` the frequency-
