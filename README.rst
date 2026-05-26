@@ -1,8 +1,9 @@
 PTSA
 ====
 
-.. image:: https://travis-ci.org/pennmem/ptsa.svg?branch=master
-    :target: https://travis-ci.org/pennmem/ptsa
+.. image:: https://github.com/pennmem/ptsa/actions/workflows/build.yml/badge.svg?branch=master
+    :target: https://github.com/pennmem/ptsa/actions/workflows/build.yml
+    :alt: build status
 
 .. image:: https://codecov.io/gh/pennmem/ptsa/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/pennmem/ptsa
@@ -160,6 +161,36 @@ Building conda packages
 -----------------------
 
 See separte HOW_TO_RELEASE.md document! Alternatively, this repository is now set up to deploy automatically on tagged commits.
+
+
+Continuous integration
+----------------------
+
+Every push to ``master`` and every pull request runs the GitHub Actions
+workflow in ``.github/workflows/build.yml`` across a cross-platform
+build matrix:
+
+* **Operating systems:** ``ubuntu-latest``, ``macos-latest``,
+  ``windows-latest``
+* **Python:** 3.10, 3.11, 3.12, 3.13
+* **NumPy:** 1.24 and 2.x (NumPy 1.24 wheels only ship for Python
+  <=3.11, so the 3.12 / 3.13 cells are exercised only against NumPy 2)
+
+Each cell does a full ``conda-build`` of ``conda.recipe/``, which both
+compiles the C++ extensions (Morlet wavelet, circular statistics, EDF)
+against the requested NumPy ABI and runs the entire pytest suite
+inside conda-build's stripped-down test environment. A separate smoke
+step then installs the resulting ``.conda`` artifact into a brand-new
+environment to verify it lays down and imports outside the build tree.
+
+When a tag matching ``v*`` is pushed, a follow-up ``deploy`` job
+gathers every matrix artifact and uploads them to
+`anaconda.org/pennmem <https://anaconda.org/pennmem/ptsa>`_ via the
+``ANACONDA_TOKEN`` repository secret.
+
+This workflow replaces the legacy TravisCI configuration; TravisCI
+shut down most open-source builds in 2021 and the old ``.travis.yml``
+no longer ran.
 
 
 License
