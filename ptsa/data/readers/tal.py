@@ -163,7 +163,14 @@ class TalReader(BaseReader,traits.api.HasTraits):
         :param flat_df: {pandas.DataFrame}
         :return: {np.dtype}
         """
-        dt_list =  [(str(c),flat_df[c].values.dtype if flat_df[c].values.dtype != np.dtype('O') else 'U256') for c in flat_df.columns]
+        # pandas >=3 returns StringDtype for what used to be object
+        # columns (PDEP-14). is_string_dtype matches both, so any
+        # column of strings gets coerced to fixed-width unicode.
+        def _col_dtype(col):
+            if pd.api.types.is_string_dtype(col):
+                return 'U256'
+            return col.values.dtype
+        dt_list = [(str(c), _col_dtype(flat_df[c])) for c in flat_df.columns]
         return np.dtype(dt_list)
 
     @classmethod
