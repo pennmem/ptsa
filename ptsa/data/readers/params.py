@@ -1,10 +1,12 @@
 import collections
 import json
-from os.path import *
 import warnings
+from os.path import abspath, basename, dirname, isfile, join, splitext
+from typing import TYPE_CHECKING, Any
+
+import traits.api
 
 from ptsa.data.readers import BaseReader
-import traits.api
 
 __all__ = [
     'ParamsReader',
@@ -15,10 +17,20 @@ class ParamsReader(BaseReader, traits.api.HasTraits):
     """
     Reader for parameter file (e.g. params.txt)
     """
-    filename= traits.api.Str
-    dataroot = traits.api.Str
 
-    def __init__(self, filename='',dataroot=''):
+    # `filename` / `dataroot` are declared at the class level as
+    # `traits.api.Str` so that traits.api.HasTraits binds them as
+    # validated descriptors at runtime. For static type-checkers we
+    # advertise the bound attribute type (`str`) instead, since pyright
+    # does not understand the traits descriptor protocol.
+    if TYPE_CHECKING:
+        filename: str
+        dataroot: str
+    else:
+        filename = traits.api.Str
+        dataroot = traits.api.Str
+
+    def __init__(self, filename: str = '', dataroot: str = '') -> None:
         """
         Constructor
         :param kwds:allowed values are:
@@ -47,7 +59,7 @@ class ParamsReader(BaseReader, traits.api.HasTraits):
 
         if splitext(self.filename)[-1] == '.txt':
             Converter = collections.namedtuple('Converter', ['convert', 'name'])
-            self.param_to_convert_fcn = {
+            self.param_to_convert_fcn: dict[str, Any] = {
                 'samplerate': Converter(convert=float, name='samplerate'),
                 'gain': Converter(convert=float, name='gain'),
                 'format': Converter(convert=lambda s: s.replace("'", "").replace('"', ''), name='format'),
@@ -55,7 +67,7 @@ class ParamsReader(BaseReader, traits.api.HasTraits):
             }
 
     @staticmethod
-    def locate_params_file(dataroot):
+    def locate_params_file(dataroot: str) -> str:
         """
         Identifies exact path to param file.
         :param dataroot: {str} eeg core file name
@@ -68,7 +80,7 @@ class ParamsReader(BaseReader, traits.api.HasTraits):
             if isfile(param_file):
                 return param_file
 
-        for param_file in [join(dirname(dataroot),x) for x in ['sources.json',
+        for param_file in [join(dirname(dataroot), x) for x in ['sources.json',
                                                               join('..', 'sources.json')]
             ]:
             if isfile(param_file):
@@ -80,28 +92,28 @@ class ParamsReader(BaseReader, traits.api.HasTraits):
                       'params.txt, or sources.json, or be in the directory above and '+
                       'named sources.json')
 
-    def read(self):
+    def read(self) -> dict[str, Any]:
         if splitext(self.filename)[-1] == '.txt':
             return self.read_txt()
         else:
             return self.read_json()
 
-    def read_json(self):
+    def read_json(self) -> dict[str, Any]:
         with open(self.filename) as f:
             json_params = json.load(f)[basename(self.dataroot)]
-        params = {}
+        params: dict[str, Any] = {}
         params['samplerate'] = json_params['sample_rate']
         params['gain'] = 1
         params['format'] = json_params['data_format']
         params['dataformat'] = json_params['data_format']
         return params
 
-    def read_txt(self):
+    def read_txt(self) -> dict[str, Any]:
         """
         Parses param file
         :return: {dict} dictionary with param file content
         """
-        params = {}
+        params: dict[str, Any] = {}
         param_file = self.filename
 
         # we have a file, so open and process it
