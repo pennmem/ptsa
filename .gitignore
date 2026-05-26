@@ -27,6 +27,8 @@ htmlcov/
 .pytest_cache/
 __pycache__/
 .pixi/
+.claude/
+test_pixi/
 .ipynb_checkpoints/
 docs/examples/*.h5
 site/
