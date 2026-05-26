@@ -83,10 +83,19 @@ Contents
    api/index
    development
 
-The notebook examples (``docs/examples/``) require ``pandoc`` for
-``nbsphinx`` to render and are excluded from the default build. Set
-``PTSA_DOCS_BUILD_NOTEBOOKS=1`` and install ``pandoc`` to include
-them.
+.. only:: notebooks
+
+   .. toctree::
+      :maxdepth: 1
+
+      examples/index
+
+The worked notebook examples (``docs/examples/``) require ``pandoc``
+on ``PATH`` for ``nbsphinx`` to render and are excluded from the
+default build. Set ``PTSA_DOCS_BUILD_NOTEBOOKS=1`` (and install
+``pandoc``) to add them to the toctree. The notebooks are also
+browsable directly on GitHub:
+https://github.com/pennmem/ptsa/tree/master/docs/examples
 
 
 Legacy lab-data readers (deprecated)
