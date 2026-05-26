@@ -19,7 +19,6 @@ requirements:
     - pip
     - setuptools
     - scipy
-    - swig>=4.1.0           # required for python>=3.9 
     - xarray
     - fftw==3.3.10          # required for ptsa 3.0.3
     - pybind11

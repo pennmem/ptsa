@@ -1,5 +1,4 @@
 from contextlib import contextmanager
-import distutils
 import json
 import os
 import os.path as osp
@@ -41,12 +40,6 @@ def chdir(path):
     os.chdir(path)
     yield
     os.chdir(orig_cwd)
-
-
-def check_dependencies():
-    """Checks for dependencies that aren't installable via pip."""
-    if not distutils.spawn.find_executable('swig'):
-        raise OSError('Missing swig - please `conda install swig`')
 
 
 def get_version_str():
@@ -212,8 +205,6 @@ ext_modules += [
     ),
 ]
 
-
-check_dependencies()
 
 setup(
     name='ptsa',
