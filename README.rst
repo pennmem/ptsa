@@ -65,11 +65,55 @@ To read EDF__ files, you will also need to install pybind11:
 
 __ http://www.edfplus.info/
 
-Install PTSA:
+System prerequisites
+~~~~~~~~~~~~~~~~~~~~
+
+The following must already be available on the system before you build
+PTSA from source — ``pip`` cannot install them:
+
+* ``swig >= 4.1`` on ``PATH`` (the morlet and circular_stat extensions
+  are SWIG-wrapped).
+* The FFTW3 development headers and shared library (e.g. via
+  ``conda install -c conda-forge fftw`` or
+  ``sudo apt-get install libfftw3-dev``).
+
+Install PTSA
+~~~~~~~~~~~~
+
+The recommended path is ``pip install``. PTSA ships a ``pyproject.toml``
+that declares ``numpy`` and ``pybind11`` as build-time requirements, so
+pip can build the C++ extensions cleanly. ``numpy`` and ``pybind11``
+must already be importable in the *current* env when you run pip
+(separate from pip's build env), because ``setup.py`` reads the package
+version by importing ``ptsa.__init__``:
+
+.. code-block:: shell-session
+
+   pip install numpy pybind11
+   pip install --no-build-isolation .
+
+For an editable dev install, add ``-e``:
+
+.. code-block:: shell-session
+
+   pip install --no-build-isolation -e .
+
+Legacy fallback (works but ``setup.py install`` is deprecated by
+setuptools):
 
 .. code-block:: shell-session
 
    python setup.py install
+
+.. note::
+
+   ``pip install .`` *with* PEP 517 build isolation (the default) does
+   not currently work end-to-end: pyproject.toml fixes the original
+   ``ModuleNotFoundError: No module named 'numpy'`` build-time error,
+   but ``setup.py`` separately imports ``ptsa`` at top level to read
+   ``__version__``, which ``setuptools.build_meta`` cannot resolve
+   inside its isolated build env. Use ``--no-build-isolation`` until
+   that is refactored.
 
 If you encounter problems installing, some environment variables may need to be
 set, particularly if you installed FFTW with conda. If your anaconda
