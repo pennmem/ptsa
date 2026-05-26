@@ -50,8 +50,15 @@ def convert_method_return_types(cls):
                 name=xarr.name,
             )
 
-        wrap_xarray.__doc__ = f"Wraps the following, returning as a TimeSeries:\
-                                \n{getattr(xr.DataArray, f.__name__).__doc__}"
+        # Build the wrapped docstring as a short summary only.
+        # Embedding xarray's full multi-line docstring here produced invalid
+        # RST when consumed by Sphinx autodoc (mismatched section underlines
+        # from differing indentation). Point users at the underlying method
+        # instead and keep the wrapper docstring trivially parseable.
+        wrap_xarray.__doc__ = (
+            "Wraps :meth:`xarray.DataArray." + f.__name__ + "`, "
+            "returning the result as a :class:`TimeSeries`."
+        )
         return wrap_xarray
 
     # iterate over desired methods and decorate them
