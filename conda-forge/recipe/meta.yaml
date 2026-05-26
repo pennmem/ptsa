@@ -1,0 +1,77 @@
+{% set name = "ptsa" %}
+{% set version = "3.0.6" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+
+
+  url: https://github.com/pennmem/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: 0000000000000000000000000000000000000000000000000000000000000000
+
+build:
+  number: 0
+  skip: true  # [py<310]
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
+
+requirements:
+  build:
+    - {{ compiler('cxx') }}
+    - {{ stdlib('c') }}
+    - swig >=4.1.0
+  host:
+    - python
+    - pip
+    - setuptools >=61
+    - wheel
+    - numpy
+    - pybind11 >=2.12
+    - fftw 3.3.*
+  run:
+    - python
+    - {{ pin_compatible('numpy', max_pin='x') }}
+    - scipy >=1.0,<3
+    - xarray >=2024.3
+    - traits >=6,<9
+    - h5py >=3,<5
+    - pandas >=2.0,<5
+    - netcdf4 >=1.5,<3
+    - six
+    - fftw 3.3.*
+
+test:
+  imports:
+    - ptsa
+    - ptsa.data.timeseries
+    - ptsa.data.filters
+    - ptsa.extensions.morlet
+    - ptsa.extensions.circular_stat
+  requires:
+    - pytest
+  source_files:
+    - tests/
+  commands:
+    - NO_RHINO=1 python -m pytest tests/ -q -o addopts=""  # [not win]
+    - set NO_RHINO=1 && python -m pytest tests/ -q -o addopts=""  # [win]
+
+about:
+  home: https://github.com/pennmem/ptsa
+  license: GPL-3.0-only
+  license_family: GPL
+  license_file: LICENSE
+  summary: Python Time-Series Analysis toolbox for EEG
+  description: |
+    PTSA is the Penn Computational Memory Lab's EEG analysis toolbox.
+    It provides a thin TimeSeries wrapper around xarray.DataArray, plus a
+    fast multithreaded Morlet wavelet transform written in C++ (linked
+    against FFTW3) and exposed via SWIG. Additional functionality
+    includes pairwise-phase-consistency kernels (circular_stat) and
+    optional EDF/BDF reading via EDFlib (pybind11).
+  dev_url: https://github.com/pennmem/ptsa
+  doc_url: https://pennmem.github.io/ptsa/
+
+extra:
+  recipe-maintainers:
+    - TODO-github-username  # placeholder; user fills in before PR
