@@ -39,7 +39,9 @@ class MonopolarToBipolarMapper(BaseFilter):
     """
     bipolar_pairs = traits.api.Array()
     channels_dim = traits.api.String()
-    chan_names = traits.api.ListStr()
+    # traits.api.ListStr was removed in traits >=7; List(Str) is the
+    # cross-version equivalent.
+    chan_names = traits.api.List(traits.api.Str)
 
     def __init__(self, bipolar_pairs, channels_dim="channels",
                  chan_names=["ch0", "ch1"]):
