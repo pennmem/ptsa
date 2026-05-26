@@ -79,11 +79,30 @@ requirements:
     - vs2015_runtime  [win]
 
 test:
-  # Test that we can import ptsa and its extension modules
+  # Test that we can import ptsa and its extension modules and that the
+  # full pytest suite passes inside conda-build's clean test env. The
+  # smoke imports gate on the extension-module ABI; the pytest run gates
+  # on full library behaviour. CI variants only become publish-eligible
+  # if both pass.
   imports:
     - ptsa
     - ptsa.extensions.morlet
     - ptsa.extensions.circular_stat
+  requires:
+    - pytest
+    - sybil  # the root-level conftest.py uses sybil to collect docs/*.rst
+  source_files:
+    # conda-build's test phase runs in a stripped-down workdir; we have
+    # to opt in to copying the source-tree files pytest needs.
+    - tests/
+    - docs/
+    - conftest.py
+  commands:
+    # NO_RHINO=1 skips ~31 tests that mount lab-only data paths. -o
+    # addopts="" defangs any project-level pytest options that assume a
+    # dev tree (e.g. coverage plugins not installed in the test env).
+    - NO_RHINO=1 python -m pytest tests/ docs/ -q -o addopts=""  # [not win]
+    - cmd /c "set NO_RHINO=1 && python -m pytest tests/ docs/ -q -o addopts=\"\""  # [win]
 
 about:
   home: https://github.com/pennmem/ptsa
