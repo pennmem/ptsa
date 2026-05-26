@@ -28,12 +28,17 @@ requirements:
     - python {{ python }}
     - h5py
     - fftw
-    - numpy
+    # Pin runtime numpy to the major version we built against. The
+    # compiled _morlet.so / _circular_stat.so / edffile.so use the
+    # NumPy 1.x C API (legacy array API), which was removed in
+    # NumPy 2.0; without this pin mamba would silently pair the
+    # binary with NumPy 2 → `_ARRAY_API not found` at import time.
+    # See pennmem/ptsa#PR-for-3.0.6 for the full diagnosis.
+    - {{ pin_compatible('numpy', max_pin='x') }}
     - scipy
     - vs2015_runtime  [win]
     - xarray
     - traits
-    - pybind11
 
 test:
   # Test that we can import ptsa and its extension modules
