@@ -27,6 +27,39 @@ size_t nextpow2(size_t v) {
 }
 
 
+// Build the complex Morlet wavelet for one centre frequency and cache
+// its FFT for later convolution.
+//
+// Parameters
+//   width       number of cycles of the carrier under the Gaussian
+//               envelope (Tallon-Baudry parameterisation; same thing
+//               MNE calls n_cycles, NOT the scipy.signal.morlet `w`).
+//   freq        wavelet centre frequency, Hz.
+//   win_size    length of the signal the wavelet will be convolved
+//               with -- used to size the zero-padded FFT.
+//   sample_freq sample rate of the signal, Hz.
+//   complete    if true, use the Tallon-Baudry "complete" (zero-mean)
+//               Morlet; if false, use the textbook complex Morlet.
+//
+// Formula (sigma_t = 1 / (2*pi*sigma_f) with sigma_f = freq/width):
+//
+//   complete=false:  psi(t) = (1/sqrt(sigma_t*sqrt(pi)))
+//                             * exp(-t^2 / (2*sigma_t^2))
+//                             * exp(i * 2*pi*freq * t)
+//
+//   complete=true :  the real arm gets a zero-mean offset
+//                    -exp(-width^2 / 2) subtracted from the cosine,
+//                    a_c / a_s are rescaled analytically to preserve
+//                    unit energy, and the time axis is multiplied by
+//                    freq_scale = (2/pi) * acos(exp(-width^2/2)) so
+//                    the spectral peak stays at `freq`. See
+//                    Tallon-Baudry & Bertrand 1996.
+//
+// A Python reference implementation of this loop lives at
+// ptsa/extensions/morlet/_python_reference.py and tests in
+// tests/test_morlet_formula.py validate that the FFT-based kernel
+// here agrees with direct time-domain convolution against that
+// reference.
 size_t MorletWaveFFT::init(size_t width, double freq, size_t win_size, double sample_freq, bool complete) {
     double dt = 1.0 / sample_freq;
     double sf = freq / width; //sigma_f;  width of Gaussian in the frequency domain

@@ -41,6 +41,61 @@ class MorletWaveletFilter(BaseFilter):
         power and phase accuracy with small wavelet widths.  The frequency is
         kept consistent with standard Morlet wavelets.  (default: True)
 
+    Formula
+    -------
+    Let :math:`f` be the centre frequency, :math:`w` the ``width``
+    (number of cycles of the carrier under the Gaussian envelope, in
+    the Tallon-Baudry sense), :math:`\\sigma_f = f / w` the frequency-
+    domain width of the Gaussian, and :math:`\\sigma_t = 1 / (2 \\pi
+    \\sigma_f)` the corresponding time-domain width.
+
+    With ``complete=False`` the wavelet is the standard complex Morlet,
+
+    .. math::
+
+       \\psi(t) = \\frac{1}{\\sqrt{\\sigma_t \\sqrt{\\pi}}}\\,
+                 e^{-t^{2} / (2 \\sigma_t^{2})}\\,
+                 e^{i\\, 2 \\pi f t}.
+
+    With ``complete=True`` (the default since PTSA 2.0.6) PTSA uses
+    the Tallon-Baudry "complete" form: a zero-mean correction
+    :math:`e^{-w^{2}/2}` is subtracted from the cosine arm, the
+    amplitudes :math:`a_c` (real part) and :math:`a_s` (imaginary
+    part) are rescaled analytically so the wavelet keeps unit energy,
+    and the time axis is rescaled by
+
+    .. math::
+
+       \\textrm{freq\\_scale} =
+         \\frac{2}{\\pi}\\, \\arccos\\!\\left(e^{-w^{2}/2}\\right)
+
+    so the peak frequency stays at :math:`f` despite the offset:
+
+    .. math::
+
+       \\psi_{\\text{complete}}(t) =
+         a_c\\, e^{-t^{2}/(2\\sigma_t^{2})}
+                  \\left(\\cos(\\text{freq\\_scale} \\cdot 2 \\pi f t)
+                        - e^{-w^{2}/2}\\right)
+         + i\\, a_s\\, e^{-t^{2}/(2\\sigma_t^{2})} \\sin(2 \\pi f t).
+
+    Larger ``width`` tightens the wavelet's frequency resolution
+    (narrower :math:`\\sigma_f`) at the cost of widening its time
+    resolution (broader :math:`\\sigma_t`); this is the standard
+    Heisenberg/Gabor time-frequency tradeoff.
+
+    See :func:`ptsa.extensions.morlet.get_time_domain_wavelet` for a
+    Python reference implementation of the formula, and
+    ``tests/test_morlet_formula.py`` for independent validation of
+    PTSA's FFT-based kernel against direct time-domain convolution
+    with that reference.
+
+    References
+    ----------
+    Tallon-Baudry, C., & Bertrand, O. (1996). Oscillatory gamma
+    activity in humans and its role in object representation. *Trends
+    in Cognitive Sciences*, 3(4), 151-162.
+
     """
     freqs = traits.api.CArray
     width = traits.api.Int
