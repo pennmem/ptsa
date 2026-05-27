@@ -144,7 +144,6 @@ class EEGReader(traits.api.HasTraits):
 
             read_size = end_offset - start_offset + 2 * buffer_offset
 
-            # start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
             start_offsets = events_with_matched_dataroot.eegoffset + start_offset - buffer_offset
 
             brr = RawReader(dataroot=dataroot,
@@ -171,8 +170,6 @@ class EEGReader(traits.api.HasTraits):
         number_of_time_points = offsets_axis.shape[0]
         samplerate = float(session_array['samplerate'])
         physical_time_array = np.arange(number_of_time_points) * (1.0 / samplerate)
-
-        # session_array = session_array.rename({'start_offsets': 'events'})
 
         session_time_series = TimeSeries(session_array.values,
                                          dims=[self.channel_name, 'start_offsets', 'time'],

@@ -213,7 +213,6 @@ class TalReader(BaseReader, traits.api.HasTraits):
             from ptsa.data.MatlabIO import read_single_matlab_matrix_as_numpy_structured_array
 
             struct_names = ['bpTalStruct', 'subjTalEvents']
-            # struct_names = ['bpTalStruct']
             if self.struct_name not in struct_names:
                 self.tal_struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.filename, self.struct_name, verbose=False)
                 if self.tal_struct_array is not None:

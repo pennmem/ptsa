@@ -30,7 +30,6 @@ class NetCDF4XrayReader(BaseReader):
         return array
 
     def reconstruct_axis(self, ds: xarray.Dataset, axis_name: str) -> Optional[np.ndarray]:
-        # axis_element_names = filter(lambda x : x.startswith('axis__'+axis_name), ds.dims)
         axis_identifier_str = '__axis__' + axis_name
         # NOTE: `filter(...)` returns a lazy iterator, but the code below
         # treats it as a sequence (indexing with `[0]` and calling `len()`).

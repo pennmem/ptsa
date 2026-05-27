@@ -221,8 +221,6 @@ class TimeSeries(xr.DataArray):
         if importlib.util.find_spec("h5py") is None:  # pragma: nocover
             raise RuntimeError("You must install h5py to save to HDF5")
 
-        # from ptsa.io import hdf5
-
         for idx in self.indexes:
             if isinstance(self.indexes[idx], MultiIndex):
                 self = self.reset_index(idx)

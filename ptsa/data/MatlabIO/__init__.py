@@ -68,13 +68,8 @@ def read_single_matlab_matrix_as_numpy_structured_array(
     if type(matlab_matrix_as_python_obj) != np.ndarray:
         matlab_matrix_as_python_obj = np.array([matlab_matrix_as_python_obj])
 
-    # # picking first first elment  plus 20 randomly selected elements to determine type
-    # selector_array = [0] + np.random.randint(len(matlab_matrix_as_python_obj), size=20)
-    # selector_array = np.hstack(([0], selector_array))
-    template_element_array = matlab_matrix_as_python_obj  # [selector_array]
-    # format_dict = get_np_format([record])
+    template_element_array = matlab_matrix_as_python_obj
     format_dict = get_np_format(template_element_array)
-    # format_dict = get_np_format(record)
 
     # numpy.recarray accepts a {'names': [...], 'formats': [...]} dict as
     # dtype at runtime, but its stubs only declare DTypeLike.
@@ -95,14 +90,6 @@ def read_single_matlab_matrix_as_numpy_structured_array(
 def get_np_type(
     record: Any, _fieldname: str, verbose: bool = False
 ) -> str | tuple[str, tuple[int, ...]] | dict[str, list[Any]] | None:
-    # kind_2_type = {'U': '|S256',
-    #                'S': 'S256',
-    #                'u': '<i8',
-    #                'i': '<i8',
-    #                'f': '<f8'
-    #                }
-    #
-
     kind_2_type = {'U': '|U256',
                    'S': 'S256',
                    'u': '<i8',
@@ -125,7 +112,6 @@ def get_np_type(
             return format
         else:
             print('COULD NOT FIGURE OUT TYPE FOR ', _fieldname)
-            # format_list.append(format)
             return None
 
     else:
@@ -197,8 +183,6 @@ def get_np_format(record_array: Any, verbose: bool = False) -> dict[str, list[An
                 names_list.append(_fieldname)
                 format_list.append(common_format)
 
-                # numpy_type_abbreviation = np.dtype(np.common_type(np.array(formats))).str
-
             except TypeError:
                 print('COULD NOT FIGURE OUT FORMAT FOR: ' + _fieldname)
             pass
@@ -207,7 +191,6 @@ def get_np_format(record_array: Any, verbose: bool = False) -> dict[str, list[An
         print(names_list)
         print(format_list)
 
-    # fd = {'names':names_list,'formats':format_list}
     return {'names': names_list, 'formats': format_list}
 
 
