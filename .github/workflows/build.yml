@@ -94,7 +94,11 @@ jobs:
           # the spawned command. Call base's conda-build entry point by
           # absolute path there to sidestep PATH/activation entirely.
           if [ "$RUNNER_OS" = "Windows" ]; then
-            "$CONDA/Scripts/conda-build.exe" conda.recipe \
+            # $CONDA is a Windows path (C:\...); convert it so git-bash can
+            # exec the entry point (a raw backslash path is "No such file").
+            CONDA_UNIX="$(cygpath -u "$CONDA")"
+            ls -l "$CONDA_UNIX/Scripts/" | grep -i conda-build || true
+            "$CONDA_UNIX/Scripts/conda-build.exe" conda.recipe \
               --output-folder build/conda \
               --python=${{ matrix.python-version }} \
               --variants "{numpy: ['${{ matrix.numpy-version }}']}" \
