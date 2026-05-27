@@ -59,9 +59,18 @@ class ButterworthFilter(BaseFilter):
 
         """
         time_axis_index = get_axis_index(timeseries, axis_name='time')
-        filtered_array = buttfilt(timeseries,
-                                  self.freq_range, float(timeseries['samplerate']), self.filt_type,
-                                  self.order, axis=time_axis_index)
+        # `self.filt_type` and `self.order` are traits descriptors;
+        # pyright sees the class type rather than the runtime-coerced
+        # value (which is always str/int). Narrow ignores keep the
+        # type-checker quiet without changing behavior.
+        filtered_array = buttfilt(
+            timeseries.values,
+            self.freq_range,
+            float(timeseries['samplerate']),
+            self.filt_type,  # pyright: ignore[reportArgumentType]
+            self.order,      # pyright: ignore[reportArgumentType]
+            axis=time_axis_index,
+        )
 
         filtered_timeseries = timeseries.copy(data=filtered_array)
         return filtered_timeseries

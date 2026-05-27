@@ -23,7 +23,7 @@ __all__ = ["buttfilt"]
 # return type, so pyright sees the union and flags the 2-tuple unpacking. The
 # helper only ever uses ``'ba'``, so a narrow alias keeps the call site clean
 # without a ``cast``.
-FreqRangeLike = float | Sequence[float] | npt.NDArray[np.floating]
+FreqRangeLike = float | Sequence[float] | npt.ArrayLike
 
 
 def buttfilt(

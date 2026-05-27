@@ -201,7 +201,9 @@ class MorletWaveletFilter(BaseFilter):
         mt.set_wavelet_complex_array(wavelets_complex_reshaped)
 
         mt.initialize_signal_props(float(timeseries['samplerate']))
-        mt.initialize_wavelet_props(self.width, freqs_arr, self.complete)
+        # `self.width` is a traits.Int descriptor; pyright sees `type[Int]`
+        # even though instance access returns int.
+        mt.initialize_wavelet_props(self.width, freqs_arr, self.complete)  # pyright: ignore[reportArgumentType]
         mt.prepare_run()
 
         s = time.time()
@@ -263,5 +265,6 @@ class MorletWaveletFilter(BaseFilter):
             elif phases_ts is None:
                 return powers_ts
             else:
-                return powers_ts.append(phases_ts, dim=self.output_dim).assign_coords(
+                # `self.output_dim` is a traits.Str descriptor.
+                return powers_ts.append(phases_ts, dim=self.output_dim).assign_coords(  # pyright: ignore[reportArgumentType]
                     output=['power', 'phase'])

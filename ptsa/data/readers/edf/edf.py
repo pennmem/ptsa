@@ -145,5 +145,5 @@ if __name__ == "__main__": # pragma: no cover
     fname = osp.expanduser("/Volumes/rhino_root/data/eeg/eeg/scalp/ltp/ltpFR2/LTP375/session_0/eeg/LTP375_session_0.bdf")
 
     reader = EDFRawReader(dataroot=fname)
-    data, mask = reader.read_file(fname, [], read_size=1024, start_offsets=np.array([0, 1024, 2048]))
+    data, mask = reader.read_file(fname, np.array([]), read_size=1024, start_offsets=np.array([0, 1024, 2048]))
     print(data)
