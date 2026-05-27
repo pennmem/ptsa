@@ -75,7 +75,12 @@ jobs:
         # editing meta.yaml.
         run: |
           mkdir -p build/conda
-          conda-build conda.recipe \
+          # Invoke via `mamba run -n ptsa_build` rather than bare
+          # `conda-build`: on the Windows `bash -el` runner the activated
+          # env's Scripts/ dir isn't on PATH, so the bare entry point is
+          # "command not found". Running through the env explicitly works
+          # on all three platforms.
+          mamba run -n ptsa_build conda-build conda.recipe \
             --output-folder build/conda \
             --python=${{ matrix.python-version }} \
             --variants "{numpy: ['${{ matrix.numpy-version }}']}" \
@@ -94,6 +99,11 @@ jobs:
             -c conda-forge \
             --channel-priority strict \
             "python=${{ matrix.python-version }}" ptsa
+          # Run from a directory that does NOT contain the source `ptsa/`
+          # package, otherwise CWD shadows the installed conda package and
+          # the import finds the source tree (which has no compiled
+          # _morlet/_circular_stat/edffile .so) → ModuleNotFoundError.
+          cd "$RUNNER_TEMP"
           mamba run -n ptsa_smoke python -c "import ptsa; from ptsa.data.filters import MorletWaveletFilter; from ptsa.data.timeseries import TimeSeries; print('ptsa', ptsa.__version__, 'OK')"
 
       - name: Upload built package as artifact
