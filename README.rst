@@ -106,18 +106,32 @@ install builds the C++ extensions cleanly:
    pip install .
 
 **Development (editable) install** — your source edits take effect
-without reinstalling. This is the recommended setup for developing PTSA
-(and a way to run a locally-built PTSA if the conda channel is
-unavailable):
+without reinstalling, the recommended setup for developing PTSA (and a
+way to run a locally-built PTSA when the conda channel is unavailable).
+
+pip compiles the C++ extensions from source, so a **C++ compiler and
+FFTW must be in the environment first** — pip cannot install those (FFTW
+is a native library, not a Python package). pip *does* provide
+everything else automatically (``numpy``/``pybind11`` for the build, and
+the runtime deps ``scipy``/``xarray``/``traits``/``h5py``/… on install).
+A complete setup from scratch with conda:
 
 .. code-block:: shell-session
 
+   # 1. env with the native build prerequisites pip can't provide:
+   #    FFTW + a C++ compiler.
+   conda create -y -n ptsa-dev -c conda-forge python=3.11 pip fftw gxx_linux-64
+   conda activate ptsa-dev
+
+   # 2. editable install: pip builds the extensions against the FFTW
+   #    above and pulls the Python runtime deps from PyPI.
    pip install -e .
 
-pip's build isolation provides ``numpy`` and ``pybind11`` automatically;
-the **C++ compiler and FFTW must already be present** (see *System
-prerequisites* above) because pip compiles the extensions from source —
-it cannot install a compiler or the native FFTW library for you.
+On macOS, use the system clang instead of ``gxx_linux-64`` (drop it from
+step 1 and run ``xcode-select --install`` once). FFTW can alternatively
+come from the system package manager instead of conda
+(``sudo apt-get install libfftw3-dev`` on Debian/Ubuntu, ``brew install
+fftw`` on macOS) — see *System prerequisites* below.
 
 If you would rather build against the ``numpy``/``pybind11`` already in
 your environment (skipping pip's isolated build env), pass
@@ -164,16 +178,24 @@ Both extras are required to run the suite as configured:
   ``setup.cfg`` (``--cov``). (Alternatively, disable them for a run with
   ``pytest -o addopts=""``.)
 
-Run the suite, skipping the ~31 tests that need Rhino lab-data mounts:
+**By default a plain ``pytest`` run includes the rhino-only tests** —
+about 30 tests that read lab data from the rhino filesystem (the
+``ptsa.data.readers`` layer against real EEG / event / tal files). On
+rhino they run normally; **anywhere else (a laptop, CI) they error**
+with ``OSError: Rhino root not found!``, because the data isn't
+present.
+
+To run only the portable tests, set the ``NO_RHINO`` environment
+variable, which skips the rhino-only ones:
 
 .. code-block:: shell-session
 
     NO_RHINO=1 pytest
 
-This runs the unit tests in ``tests/`` **and** the documentation
-examples in ``docs/*.rst``. On Rhino, omit ``NO_RHINO`` to additionally
-run the data-backed reader/EEG tests (the Rhino mount path is
-auto-detected). The shell script ``run_tests`` wraps the same command.
+Either way the run covers the unit tests in ``tests/`` **and** the
+documentation examples in ``docs/*.rst``. The ``run_tests`` shell script
+wraps the ``NO_RHINO=1`` invocation, and CI always runs with
+``NO_RHINO=1`` set.
 
 
 Building conda packages
