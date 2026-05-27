@@ -60,12 +60,19 @@ jobs:
 
       - name: Install build tooling
         run: |
-          # conda-build orchestrates the recipe; conda-verify lints meta.yaml.
-          # The rest mirrors conda.recipe/meta.yaml's `requirements: build:`
-          # block plus the test-time deps so a one-shot local repro of this
-          # cell is just `conda-build conda.recipe`.
+          # conda-build must live in `base`: we invoke it via the `conda
+          # build` SUBCOMMAND through the always-on-PATH base conda. On the
+          # Windows `bash -el` runner neither a bare `conda-build` entry
+          # point (env Scripts/ not on PATH) nor `mamba run` (mangles the
+          # spawned command — "'onda' is not recognized") works, but the
+          # base `conda build` subcommand does, and it's identical on Linux
+          # and macOS. conda-verify lints meta.yaml; anaconda-client uploads.
+          mamba install -y -n base conda-build conda-verify anaconda-client
+          # Mirror meta.yaml's build/host deps so a local one-shot repro of
+          # a cell is just `conda build conda.recipe`. (conda-build still
+          # provisions its own isolated build env from the recipe; this is
+          # only for parity / a faster solve.)
           mamba install -y -n ptsa_build \
-            conda-build conda-verify anaconda-client \
             "swig>=4.1.0" "fftw==3.3.10" pybind11 \
             "numpy=${{ matrix.numpy-version }}" scipy xarray
 
@@ -75,12 +82,7 @@ jobs:
         # editing meta.yaml.
         run: |
           mkdir -p build/conda
-          # Invoke via `mamba run -n ptsa_build` rather than bare
-          # `conda-build`: on the Windows `bash -el` runner the activated
-          # env's Scripts/ dir isn't on PATH, so the bare entry point is
-          # "command not found". Running through the env explicitly works
-          # on all three platforms.
-          mamba run -n ptsa_build conda-build conda.recipe \
+          conda build conda.recipe \
             --output-folder build/conda \
             --python=${{ matrix.python-version }} \
             --variants "{numpy: ['${{ matrix.numpy-version }}']}" \
@@ -104,7 +106,9 @@ jobs:
           # the import finds the source tree (which has no compiled
           # _morlet/_circular_stat/edffile .so) → ModuleNotFoundError.
           cd "$RUNNER_TEMP"
-          mamba run -n ptsa_smoke python -c "import ptsa; from ptsa.data.filters import MorletWaveletFilter; from ptsa.data.timeseries import TimeSeries; print('ptsa', ptsa.__version__, 'OK')"
+          # conda run (not mamba run): mamba run mangles the spawned command
+          # on the Windows bash -el runner.
+          conda run -n ptsa_smoke python -c "import ptsa; from ptsa.data.filters import MorletWaveletFilter; from ptsa.data.timeseries import TimeSeries; print('ptsa', ptsa.__version__, 'OK')"
 
       - name: Upload built package as artifact
         uses: actions/upload-artifact@v4
