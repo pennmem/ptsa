@@ -24,9 +24,17 @@ from __future__ import annotations
 import math
 
 import numpy as np
+import numpy.typing as npt
+
+__all__ = ["python_morlet_wavelet"]
 
 
-def python_morlet_wavelet(freq, width, samplerate, complete=True):
+def python_morlet_wavelet(
+    freq: float,
+    width: int,
+    samplerate: float,
+    complete: bool = True,
+) -> npt.NDArray[np.complex128]:
     """Generate a complex Morlet wavelet in the time domain.
 
     Direct port of the ``cur_wave`` construction loop in
