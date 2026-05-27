@@ -177,7 +177,9 @@ class EEGReader(traits.api.HasTraits):
                                               self.channel_name: session_array[self.channel_name],
                                               'start_offsets': session_array['start_offsets'],
                                               'time': physical_time_array,
-                                              'offsets': ('time', session_array['offsets']),
+                                              # modern xarray rejects building a coord variable
+                                              # from a DataArray; pass the raw .data instead.
+                                              'offsets': ('time', session_array['offsets'].data),
                                               'samplerate': session_array['samplerate']
                                           }
                                          )

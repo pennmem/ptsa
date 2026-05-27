@@ -148,7 +148,17 @@ class DataChopper(BaseFilter):
             chopped_data_array = timeseries.isel(time=selector_array)
 
             chopped_data_array['time'] = event_time_axis
-            chopped_data_array = chopped_data_array.expand_dims(start_offsets=[i])
+            if 'start_offsets' in chopped_data_array.dims:
+                # Whole-session read: `start_offsets` is already a length-1
+                # dimension. Relabel its coordinate to this chunk's index,
+                # preserving the dimension *order* (channels, start_offsets,
+                # time) so the post-concat result isn't transposed.
+                chopped_data_array = chopped_data_array.assign_coords(start_offsets=[i])
+            else:
+                # Event read: no `start_offsets` dim yet — create it. (Plain
+                # coord assignment raises CoordinateValidationError on modern
+                # xarray when the name isn't already a dimension.)
+                chopped_data_array = chopped_data_array.expand_dims(start_offsets=[i])
 
             data_list.append(chopped_data_array)
 

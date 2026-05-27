@@ -178,7 +178,21 @@ class TalReader(BaseReader, traits.api.HasTraits):
                 new_ts['channel'][:, 1] = ts['channel_2']
                 new_ts['eType'] = ts['type_1']
                 new_ts['tagName'] = ts['code']
-            new_ts.sort(order='channel')
+            # Sort by channel WITHOUT `new_ts.sort(order='channel')`: numpy 2
+            # performs a full-record void comparison when the structured array
+            # contains any object-dtype subfield (e.g. `atlases.tal.region`
+            # holds None for some contacts, so it's inferred as dtype 'O'),
+            # which raises "'<' not supported between NoneType". lexsort /
+            # argsort on the channel column(s) reproduces the same ordering
+            # while only touching the channel field.
+            channel = new_ts['channel']
+            if channel.ndim == 2:
+                # bipolar: (N, 2) — lexicographic by (ch0, ch1)
+                sort_idx = np.lexsort((channel[:, 1], channel[:, 0]))
+            else:
+                # monopolar: scalar channel
+                sort_idx = np.argsort(channel, kind='stable')
+            new_ts = new_ts[sort_idx]
             return np.rec.array(new_ts)
 
     @classmethod
