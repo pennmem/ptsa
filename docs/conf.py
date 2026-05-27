@@ -12,10 +12,21 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-# import sys
 import os
+import sys
+import warnings
 from datetime import datetime
-# sys.path.insert(0, '..')
+
+# Put the repo root on sys.path so autodoc can import ptsa (and its
+# compiled extensions) whether or not ptsa is pip-installed in the build
+# env, and regardless of the working directory sphinx is invoked from.
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# autodoc imports ``ptsa.data.readers``, which emits a FutureWarning at
+# import time (the lab readers are deprecated in favour of cmlreaders).
+# Silence it so it doesn't surface as a spurious Sphinx build warning.
+warnings.filterwarnings('ignore', message=r'.*readers will be removed.*')
+
 from ptsa import __version__
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -79,7 +90,7 @@ release = __version__
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -99,6 +110,14 @@ language = None
 exclude_patterns = ['_build', 'html', 'doctrees', 'Thumbs.db', '.DS_Store']
 if not os.environ.get('PTSA_DOCS_BUILD_NOTEBOOKS'):
     exclude_patterns += ['examples/**']
+
+# index.rst guards the examples toctree with `.. only:: notebooks`, but
+# Sphinx collects the nested toctree during the read phase (before the
+# `only` directive is resolved) and warns that examples/index is excluded
+# in the default (no-pandoc) build. That exclusion is intentional, so
+# silence just that toctree category; set PTSA_DOCS_BUILD_NOTEBOOKS=1 to
+# actually build the notebooks.
+suppress_warnings = ['toc.excluded']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -138,9 +157,11 @@ html_theme = 'sphinx_rtd_theme'
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 if not on_rtd:  # only import and set the theme if we're building docs locally
-    import sphinx_rtd_theme
+    import sphinx_rtd_theme  # noqa: F401  (registers the theme entry point)
     html_theme = 'sphinx_rtd_theme'
-    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+    # Modern sphinx_rtd_theme registers itself via an entry point, so an
+    # explicit html_theme_path is unnecessary (and get_html_theme_path()
+    # is deprecated — it emits a build warning).
 
 
 # Theme options are theme-specific and customize the look and feel of a theme
