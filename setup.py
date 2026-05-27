@@ -278,10 +278,20 @@ setup(
     # This doesn't seem to work because of custom commands. For now, just
     # install the prereqs with conda/pip.
     # See: http://stackoverflow.com/questions/20194565/running-custom-setuptools-build-during-install#20196065
+    # Runtime dependencies pip should pull in. Kept in sync with the
+    # `run:` requirements in conda.recipe/meta.yaml (minus FFTW, which is
+    # a native library pip cannot install, and pybind11, which is
+    # build-only). Without these a `pip install` of ptsa imports fine for
+    # numpy/scipy/xarray but blows up on `import traits` / `import h5py`.
     install_requires=[
         "numpy",
-        "scipy",
-        "xarray",
+        "scipy>=1.0,<3",
+        "xarray>=2024.3",
+        "traits>=6,<9",
+        "h5py>=3,<5",
+        "netcdf4>=1.5,<3",
+        "pandas>=2.0,<5",
+        "six",
     ],
     packages=find_packages(
         exclude=['*.tests', 'tests', 'tests.*', '*.outdated_tests']
