@@ -1,16 +1,17 @@
 from collections import defaultdict
 import os.path
 import warnings
+from typing import Callable, DefaultDict, List, Optional, Tuple, Type
 
 import numpy as np
+import numpy.typing as npt
 import xarray as xr
 
 import traits.api
-from ptsa.data.readers.params import ParamsReader
 from ptsa.data.readers.edf import EDFRawReader
 from ptsa.data.readers.binary import BinaryRawReader
 from ptsa.data.readers.hdf5 import H5RawReader
-from ptsa.data.readers.base import BaseReader
+from ptsa.data.readers.base import BaseRawReader
 from ptsa.data.timeseries import TimeSeries
 
 __all__ = [
@@ -53,43 +54,55 @@ class EEGReader(traits.api.HasTraits):
     An EEGReader must be constructed using either :py:arg:events or :py:arg:session_dataroot.
     """
 
-    channels = traits.api.CArray
-    start_time = traits.api.CFloat
-    end_time = traits.api.CFloat
-    buffer_time = traits.api.CFloat
-    session_dataroot = traits.api.Str
-    remove_bad_events = traits.api.Bool
+    # Class-level trait declarations (descriptors on HasTraits). Pyright
+    # cannot model the trait descriptor → runtime-type conversion, so the
+    # instance-level types are pinned in ``__init__`` below and the trait
+    # types are reported to pyright as their runtime-coerced types.
+    channels: npt.NDArray = traits.api.CArray  # pyright: ignore[reportAssignmentType]
+    start_time: float = traits.api.CFloat  # pyright: ignore[reportAssignmentType]
+    end_time: float = traits.api.CFloat  # pyright: ignore[reportAssignmentType]
+    buffer_time: float = traits.api.CFloat  # pyright: ignore[reportAssignmentType]
+    session_dataroot: str = traits.api.Str  # pyright: ignore[reportAssignmentType]
+    remove_bad_events: bool = traits.api.Bool  # pyright: ignore[reportAssignmentType]
 
-    READER_FILETYPE_DICT = defaultdict(lambda : BinaryRawReader)
-    READER_FILETYPE_DICT.update({'.h5':H5RawReader,
-                                 '.bdf':EDFRawReader,
-                                 '.edf':EDFRawReader,})
+    READER_FILETYPE_DICT: DefaultDict[str, Type[BaseRawReader]] = defaultdict(
+        lambda: BinaryRawReader
+    )
+    READER_FILETYPE_DICT.update({'.h5': H5RawReader,
+                                 '.bdf': EDFRawReader,
+                                 '.edf': EDFRawReader})
 
-    def __init__(self,events=None ,channels=np.array([], dtype='|S3'),
-                 start_time=0.0,end_time=0.0,buffer_time=0.0,session_dataroot='',remove_bad_events=True):
+    def __init__(self,
+                 events: Optional[np.recarray] = None,
+                 channels: npt.NDArray = np.array([], dtype='|S3'),
+                 start_time: float = 0.0,
+                 end_time: float = 0.0,
+                 buffer_time: float = 0.0,
+                 session_dataroot: str = '',
+                 remove_bad_events: bool = True) -> None:
         warnings.warn("Lab-specific readers may be moved to the cmlreaders "
                       "package (https://github.com/pennmem/cmlreaders)",
                       FutureWarning)
-        self.events = events
+        self.events: Optional[np.recarray] = events
         self.channels = channels
-        self.start_time = start_time
-        self.end_time=end_time
-        self.buffer_time = buffer_time
+        self.start_time = float(start_time)
+        self.end_time = float(end_time)
+        self.buffer_time = float(buffer_time)
         self.session_dataroot = session_dataroot
         self.remove_bad_events = remove_bad_events
-        self.removed_corrupt_events = False
-        self.event_ok_mask_sorted = None
+        self.removed_corrupt_events: bool = False
+        self.event_ok_mask_sorted: Optional[npt.NDArray] = None
 
         assert self.start_time <= self.end_time, \
             'start_time (%s) must be less or equal to end_time(%s) ' % (self.start_time, self.end_time)
         assert self.events is not None or self.session_dataroot, 'Either events or session_dataroot must be present'
 
-        self.read_fcn = self.read_events_data
+        self.read_fcn: Callable[[], TimeSeries] = self.read_events_data
         if self.session_dataroot:
             self.read_fcn = self.read_session_data
-        self.channel_name = 'channels'
+        self.channel_name: str = 'channels'
 
-    def compute_read_offsets(self,reader):
+    def compute_read_offsets(self, reader: BaseRawReader) -> Tuple[int, int, int]:
         """
         Reads Parameter file and exracts sampling rate that is used to convert from start_time, end_time, buffer_time
         (expressed in seconds)
@@ -107,12 +120,13 @@ class EEGReader(traits.api.HasTraits):
 
         return start_offset, end_offset, buffer_offset
 
-    def __create_base_raw_readers(self):
+    def __create_base_raw_readers(self) -> Tuple[List[BaseRawReader], List[str]]:
         """
         Creates BaseRawreader for each (unique) dataroot present in events recarray
         :return: list of BaseRawReaders and list of dataroots
         :raises: :py:class:IncompatibleDataError if the readers are not all the same class
         """
+        assert self.events is not None, 'events must be set to read events data'
         evs = self.events
         dataroots = np.unique(evs.eegfile)
         raw_readers = []
@@ -122,7 +136,9 @@ class EEGReader(traits.api.HasTraits):
             RawReader = self.READER_FILETYPE_DICT[os.path.splitext(dataroot)[-1]]
             brr = RawReader(dataroot =dataroot)
 
-            events_with_matched_dataroot = evs[evs.eegfile == dataroot]
+            # np.recarray subscripted with a boolean mask returns a recarray at
+            # runtime, but numpy's stubs declare the return as ndarray.
+            events_with_matched_dataroot: np.recarray = evs[evs.eegfile == dataroot]  # pyright: ignore[reportAssignmentType]
 
             start_offset, end_offset, buffer_offset = self.compute_read_offsets(brr)
 
@@ -141,14 +157,14 @@ class EEGReader(traits.api.HasTraits):
 
         return raw_readers, original_dataroots
 
-    def read_session_data(self):
+    def read_session_data(self) -> TimeSeries:
         """
         Reads entire session worth of data
 
         :return: TimeSeries object (channels x events x time) with data for entire session the events dimension has length 1
         """
         brr = self.READER_FILETYPE_DICT[os.path.splitext(self.session_dataroot)[-1]](dataroot=self.session_dataroot, channels=self.channels)
-        session_array,read_ok_mask = brr.read()
+        session_array, _read_ok_mask = brr.read()
         self.channel_name = brr.channel_name
 
         offsets_axis = session_array['offsets']
@@ -173,13 +189,13 @@ class EEGReader(traits.api.HasTraits):
 
         return session_time_series
 
-    def removed_bad_data(self):
+    def removed_bad_data(self) -> bool:
         return self.removed_corrupt_events
 
-    def get_event_ok_mask(self):
+    def get_event_ok_mask(self) -> Optional[npt.NDArray]:
         return self.event_ok_mask_sorted
 
-    def read_events_data(self):
+    def read_events_data(self) -> TimeSeries:
         """
         Reads eeg data for individual event
 
@@ -187,20 +203,21 @@ class EEGReader(traits.api.HasTraits):
         """
         self.event_ok_mask_sorted = None  # reset self.event_ok_mask_sorted
 
+        assert self.events is not None, 'events must be set to read events data'
         evs = self.events
 
         raw_readers, original_dataroots = self.__create_base_raw_readers()
 
         # used for restoring original order of the events
         ordered_indices = np.arange(len(evs))
-        event_indices_list = []
-        events = []
+        event_indices_list: List[npt.NDArray] = []
+        events: List[npt.NDArray] = []
 
-        ts_array_list = []
+        ts_array_list: List[xr.DataArray] = []
 
-        event_ok_mask_list = []
+        event_ok_mask_list: List[npt.NDArray] = []
 
-        for s, (raw_reader, dataroot) in enumerate(zip(raw_readers, original_dataroots)):
+        for raw_reader, dataroot in zip(raw_readers, original_dataroots):
 
             ts_array, read_ok_mask = raw_reader.read()
 
@@ -255,7 +272,7 @@ class EEGReader(traits.api.HasTraits):
 
         return eventdata
 
-    def read(self):
+    def read(self) -> TimeSeries:
         """
         Calls read_events_data or read_session_data depending on user selection
 
