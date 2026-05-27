@@ -81,6 +81,46 @@ def get_fftw_libs():
         return ['fftw3']
 
 
+def get_library_dirs():
+    """Return extra library search dirs so the linker finds libfftw3.
+
+    On Linux the conda compiler-activation scripts export ``-L$PREFIX/lib``
+    via ``LDFLAGS`` and the link "just works", but the macOS (clang) and
+    Windows (MSVC) builds do not reliably pick that up — the morlet link
+    step fails with ``ld: library 'fftw3' not found``. Add the active conda
+    prefix's lib dir explicitly so the search path is correct everywhere.
+    """
+    dirs = []
+
+    def _add(prefix):
+        if not prefix:
+            return
+        # POSIX conda layout, plus the Windows ``Library\{lib,bin}`` layout.
+        for sub in (('lib',), ('Library', 'lib'), ('Library', 'bin')):
+            dirs.append(os.path.join(prefix, *sub))
+
+    # conda-build always exports PREFIX (and LIBRARY_PREFIX on Windows) for
+    # the host env that carries the fftw dependency; prefer those.
+    for var in ("PREFIX", "LIBRARY_PREFIX", "CONDA_PREFIX"):
+        _add(os.environ.get(var))
+
+    # Fall back to `conda info`'s active prefix (mirrors get_include_dirs).
+    try:
+        p = subprocess.Popen([os.environ["CONDA_EXE"], "info", "--json"],
+                             env=os.environ, stdout=subprocess.PIPE)
+        stdout, _ = p.communicate()
+        _add(json.loads(stdout).get("active_prefix"))
+    except Exception:
+        pass
+
+    # De-duplicate while preserving order; keep only dirs that exist.
+    seen = []
+    for d in dirs:
+        if d and d not in seen and os.path.isdir(d):
+            seen.append(d)
+    return seen
+
+
 def get_compiler_args():
     """Return extra compiler arguments for building extensions."""
     if sys.platform.startswith('darwin'):
@@ -156,9 +196,13 @@ def make_pybind_extension(module, **kwargs):
     compile_args = kwargs.pop('extra_compile_args', [])
     compile_args += get_compiler_args()
 
+    library_dirs = kwargs.pop('library_dirs', [])
+    library_dirs += get_library_dirs()
+
     return Extension(
         module,
         include_dirs=include_dirs,
+        library_dirs=library_dirs,
         extra_compile_args=compile_args,
         language='c++',
         **kwargs
