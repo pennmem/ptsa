@@ -134,16 +134,12 @@ def get_np_type(
         if attr_dtype_kind in list(kind_2_type.keys()):
             return kind_2_type[attr_dtype_kind]
         elif attr_dtype_kind == 'O':
-            # print 'got object'
             format_dict = get_np_format([attr])
-            # format_dict = get_np_format(attr)
-            # format_dict = get_np_type(attr,_fieldname)
             if len(format_dict['names']):
                 return format_dict
 
             if verbose:
                 print('got format:', format_dict)
-                # print
             return None
         else:
 
@@ -178,11 +174,6 @@ def get_np_format(record_array: Any, verbose: bool = False) -> dict[str, list[An
                     break
                 else:
                     formats.append(format)
-
-                    # if format is not None:
-                    #     formats.append(format)
-        # print formats
-
 
         if not len(formats):
             # for record fields for which we could not determine the format we assume it is |S256
