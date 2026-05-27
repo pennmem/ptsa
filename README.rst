@@ -17,11 +17,19 @@ For documentation and tutorials, please see https://pennmem.github.io/ptsa/
 Install via conda
 -----------------
 
-Available on Linux, Mac, and Windows 64 bit:
+Available for Linux (``linux-64``) and macOS (``osx-64`` / ``osx-arm64``):
 
 .. code-block:: shell-session
 
     conda install -c pennmem -c conda-forge ptsa
+
+.. note::
+
+   There is no native Windows (``win-64``) package. On Windows, run PTSA
+   under `WSL <https://learn.microsoft.com/windows/wsl/>`_: install a
+   Linux distribution, then a Linux ``conda``/``miniforge`` inside it, and
+   use the ``linux-64`` package above. The compiled extensions and the
+   full test suite are validated on Linux in CI.
 
 
 Report bug or feature request

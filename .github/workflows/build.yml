@@ -28,7 +28,13 @@ jobs:
       # cross-platform picture on every push.
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        # Linux + macOS only. We do not ship native Windows conda packages:
+        # building the FFTW-linked C++ extensions through conda-build on the
+        # Windows runner runs into a stack of MSYS/conda PATH quirks, and the
+        # lab has never published a win-64 build. Windows users run PTSA
+        # under WSL, where the linux-64 package (built + tested here) works
+        # unchanged.
+        os: [ubuntu-latest, macos-latest]
         python-version: ["3.10", "3.11", "3.12", "3.13"]
         numpy-version: ["1.24", "2"]
         exclude:
@@ -60,17 +66,11 @@ jobs:
 
       - name: Install build tooling
         run: |
-          # conda-build must live in `base`: we invoke it via the `conda
-          # build` SUBCOMMAND through the always-on-PATH base conda. On the
-          # Windows `bash -el` runner neither a bare `conda-build` entry
-          # point (env Scripts/ not on PATH) nor `mamba run` (mangles the
-          # spawned command — "'onda' is not recognized") works, but the
-          # base `conda build` subcommand does, and it's identical on Linux
-          # and macOS.
-          #
-          # Only conda-build here: `conda-verify` caps at python <3.12 and
-          # makes the base (python 3.13) solve fail, and `anaconda-client`
-          # is only needed by the deploy job (which installs its own).
+          # Install conda-build into `base` and invoke it via the `conda
+          # build` subcommand (base conda is always on PATH). Only
+          # conda-build here: `conda-verify` caps at python <3.12 and makes
+          # the base (python 3.13) solve fail, and `anaconda-client` is only
+          # needed by the deploy job (which installs its own).
           mamba install -y -n base conda-build
           # Mirror meta.yaml's build/host deps so a local one-shot repro of
           # a cell is just `conda build conda.recipe`. (conda-build still
@@ -86,30 +86,11 @@ jobs:
         # editing meta.yaml.
         run: |
           mkdir -p build/conda
-          # Linux/macOS use the `conda build` subcommand (already green on
-          # all 12 cells). Windows needs special handling: on its bash -el
-          # runner only condabin/ (conda) is on PATH, not base's Scripts/,
-          # so `conda build` can't discover the subcommand, a bare
-          # `conda-build` is "command not found", and `mamba run` mangles
-          # the spawned command. Call base's conda-build entry point by
-          # absolute path there to sidestep PATH/activation entirely.
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            # $CONDA is a Windows path (C:\...); convert it so git-bash can
-            # exec the entry point (a raw backslash path is "No such file").
-            CONDA_UNIX="$(cygpath -u "$CONDA")"
-            ls -l "$CONDA_UNIX/Scripts/" | grep -i conda-build || true
-            "$CONDA_UNIX/Scripts/conda-build.exe" conda.recipe \
-              --output-folder build/conda \
-              --python=${{ matrix.python-version }} \
-              --variants "{numpy: ['${{ matrix.numpy-version }}']}" \
-              --no-anaconda-upload
-          else
-            conda build conda.recipe \
-              --output-folder build/conda \
-              --python=${{ matrix.python-version }} \
-              --variants "{numpy: ['${{ matrix.numpy-version }}']}" \
-              --no-anaconda-upload
-          fi
+          conda build conda.recipe \
+            --output-folder build/conda \
+            --python=${{ matrix.python-version }} \
+            --variants "{numpy: ['${{ matrix.numpy-version }}']}" \
+            --no-anaconda-upload
 
       - name: Smoke test the built package in a fresh env
         # conda-build's own `test:` block in meta.yaml runs the full pytest
@@ -129,8 +110,6 @@ jobs:
           # the import finds the source tree (which has no compiled
           # _morlet/_circular_stat/edffile .so) → ModuleNotFoundError.
           cd "$RUNNER_TEMP"
-          # conda run (not mamba run): mamba run mangles the spawned command
-          # on the Windows bash -el runner.
           conda run -n ptsa_smoke python -c "import ptsa; from ptsa.data.filters import MorletWaveletFilter; from ptsa.data.timeseries import TimeSeries; print('ptsa', ptsa.__version__, 'OK')"
 
       - name: Upload built package as artifact
