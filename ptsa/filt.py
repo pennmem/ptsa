@@ -6,39 +6,64 @@
 #   copyright and license terms.
 #
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
+"""Tiny SciPy ``buttfilt`` helper, used by ``TimeSeries.filtered`` and
+``ButterworthFilter``."""
+from __future__ import annotations
 
-from scipy.signal import butter
-from numpy import asarray
-from scipy.signal import filtfilt
+from typing import Sequence, cast
+
+import numpy as np
+import numpy.typing as npt
+from scipy.signal import butter, filtfilt
+
+__all__ = ["buttfilt"]
+
+# `butter(..., output='ba')` returns ``(b, a)`` numerator/denominator
+# coefficient vectors. The other output modes (``'zpk'``/``'sos'``) widen the
+# return type, so pyright sees the union and flags the 2-tuple unpacking. The
+# helper only ever uses ``'ba'``, so a narrow alias keeps the call site clean
+# without a ``cast``.
+FreqRangeLike = float | Sequence[float] | npt.NDArray[np.floating]
 
 
-def buttfilt(dat,freq_range,sample_rate,filt_type,order,axis=-1):
-    """Wrapper for a Butterworth filter.
+def buttfilt(
+    dat: npt.ArrayLike,
+    freq_range: FreqRangeLike,
+    sample_rate: float,
+    filt_type: str,
+    order: int,
+    axis: int = -1,
+) -> npt.NDArray[np.floating]:
+    """Apply a zero-phase Butterworth filter along ``axis``.
 
+    Parameters
+    ----------
+    dat
+        Input samples.
+    freq_range
+        Cutoff frequency (or low/high pair) in Hz.
+    sample_rate
+        Sample rate of ``dat`` in Hz.
+    filt_type
+        ``"low"``, ``"high"``, ``"bandpass"`` or ``"bandstop"``.
+    order
+        Filter order.
+    axis
+        Axis along which to filter (default ``-1`` = last).
     """
+    dat_arr = np.asarray(dat)
+    freq = np.asarray(freq_range, dtype=float)
 
-    # make sure dat is an array
-    dat = asarray(dat)
+    nyq = sample_rate / 2.0
 
-    # reshape the data to 2D with time on the 2nd dimension
-    #origshape = dat.shape
-    #dat = reshape_to_2d(dat,axis)
+    # `butter` with the default ``output='ba'`` returns a 2-tuple, but its
+    # overloads union with zpk/sos return shapes — narrow back via cast so
+    # pyright can unpack ``(b, a)`` cleanly. (Locally scoped, single use.)
+    ba = cast(
+        "tuple[npt.NDArray[np.floating], npt.NDArray[np.floating]]",
+        butter(order, freq / nyq, filt_type),
+    )
+    b, a = ba
 
-    # set up the filter
-    freq_range = asarray(freq_range)
-
-    # Nyquist frequency
-    nyq=sample_rate/2.
-
-    # generate the butterworth filter coefficients
-    [b,a]=butter(order,freq_range/nyq,filt_type)
-
-    # loop over final dimension
-    #for i in range(dat.shape[0]):
-    #    dat[i] = filtfilt(b,a,dat[i])
-    #dat = filtfilt2(b,a,dat,axis=axis)
-    dat = filtfilt(b,a,dat,axis=axis)
-
-    # reshape the data back
-    #dat = reshape_from_2d(dat,axis,origshape)
-    return dat
+    filtered = filtfilt(b, a, dat_arr, axis=axis)
+    return cast("npt.NDArray[np.floating]", filtered)

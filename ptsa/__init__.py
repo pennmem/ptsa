@@ -1,3 +1,5 @@
 """PTSA - The Python Time-Series Analysis toolbox."""
 
-__version__ = "3.0.6"
+__version__: str = "3.0.5"
+
+__all__ = ["__version__"]
