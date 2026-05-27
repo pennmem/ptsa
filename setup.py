@@ -43,8 +43,20 @@ def chdir(path):
 
 
 def get_version_str():
-    from ptsa import __version__
-    return __version__
+    # Read __version__ by parsing ptsa/__init__.py rather than importing
+    # ptsa. Under PEP 517 build isolation (e.g. ``pip install -e .``) the
+    # package isn't importable yet — the source dir isn't on sys.path and
+    # nothing is installed — so ``from ptsa import __version__`` raises
+    # ModuleNotFoundError and the build fails before it starts.
+    import re
+    init_py = osp.join(root_dir, 'ptsa', '__init__.py')
+    with open(init_py) as fh:
+        match = re.search(
+            r'''^__version__\s*(?::\s*[^=]+)?=\s*['"]([^'"]+)['"]''',
+            fh.read(), re.MULTILINE)
+    if not match:
+        raise RuntimeError("could not find __version__ in " + init_py)
+    return match.group(1)
 
 
 def get_include_dirs():
