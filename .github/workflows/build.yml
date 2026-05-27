@@ -86,11 +86,26 @@ jobs:
         # editing meta.yaml.
         run: |
           mkdir -p build/conda
-          conda build conda.recipe \
-            --output-folder build/conda \
-            --python=${{ matrix.python-version }} \
-            --variants "{numpy: ['${{ matrix.numpy-version }}']}" \
-            --no-anaconda-upload
+          # Linux/macOS use the `conda build` subcommand (already green on
+          # all 12 cells). Windows needs special handling: on its bash -el
+          # runner only condabin/ (conda) is on PATH, not base's Scripts/,
+          # so `conda build` can't discover the subcommand, a bare
+          # `conda-build` is "command not found", and `mamba run` mangles
+          # the spawned command. Call base's conda-build entry point by
+          # absolute path there to sidestep PATH/activation entirely.
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            "$CONDA/Scripts/conda-build.exe" conda.recipe \
+              --output-folder build/conda \
+              --python=${{ matrix.python-version }} \
+              --variants "{numpy: ['${{ matrix.numpy-version }}']}" \
+              --no-anaconda-upload
+          else
+            conda build conda.recipe \
+              --output-folder build/conda \
+              --python=${{ matrix.python-version }} \
+              --variants "{numpy: ['${{ matrix.numpy-version }}']}" \
+              --no-anaconda-upload
+          fi
 
       - name: Smoke test the built package in a fresh env
         # conda-build's own `test:` block in meta.yaml runs the full pytest
