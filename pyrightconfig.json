@@ -1,0 +1,31 @@
+{
+    "venvPath": "/home1/rdehaan/.conda/envs",
+    "venv": "ptsa_dev",
+    "pythonVersion": "3.11",
+    "pythonPlatform": "Linux",
+    "include": [
+        "ptsa"
+    ],
+    "exclude": [
+        "**/__pycache__",
+        ".pixi",
+        ".claude",
+        "test_pixi",
+        "build",
+        "dist",
+        "docs",
+        "**/*.so",
+        "ptsa/data/common/pathlib.py",
+        "ptsa/extensions/morlet/_morlet*.py",
+        "ptsa/extensions/morlet/morlet_wrap.cpp",
+        "ptsa/extensions/circular_stat/_circular_stat*.py",
+        "ptsa/extensions/circular_stat/circular_stat_wrap.cpp"
+    ],
+    "typeCheckingMode": "basic",
+    "useLibraryCodeForTypes": true,
+    "reportMissingImports": "warning",
+    "reportMissingTypeStubs": false,
+    "reportUnusedImport": "warning",
+    "reportUnusedVariable": "warning",
+    "reportPrivateImportUsage": "warning"
+}

@@ -1,6 +1,6 @@
 package:
   name: ptsa
-  version: 3.0.5
+  version: 3.0.6
   channels: anaconda pennmem
 
 source:
@@ -15,32 +15,98 @@ build:
 requirements:
   build:
     - python {{ python }}
-    - numpy=1.24         # conflicts with numpy 1.25
+    # numpy variant picked up from conda_build_config.yaml (1.24 or 2).
+    # Building against numpy 1.x produces a binary that runs on numpy 1.x
+    # only (via pin_compatible in `run:`); building against numpy 2.x
+    # produces a numpy-2-compatible binary. Both variants coexist on the
+    # channel; mamba auto-picks the right one based on the user's env.
+    - numpy {{ numpy }}
     - pip
     - setuptools
     - scipy
-    - swig>=4.1.0           # required for python>=3.9 
     - xarray
     - fftw==3.3.10          # required for ptsa 3.0.3
-    - pybind11
+    - pybind11 >=2.12
 
   run:
     - python {{ python }}
-    - h5py
-    - fftw
-    - numpy
-    - scipy
+    # Pin runtime numpy to the major version we built against. The
+    # compiled _morlet.so / _circular_stat.so / edffile.so use the
+    # NumPy C API for whichever numpy was present at build time;
+    # mixing NumPy major versions across that ABI boundary blows
+    # up at import time (e.g. NumPy 1.x extension run against
+    # NumPy 2.x → `_ARRAY_API not found`).
+    #
+    # With max_pin='x', conda-build expands this to
+    # `numpy >=<build-numpy>,<<next-major>a0`. Concretely:
+    #   * built against numpy 1.24 → `numpy >=1.24.4,<2.0a0`
+    #   * built against numpy 2.x  → `numpy >=2.X,<3.0a0`
+    # so every published binary is capped to the next-major bump
+    # automatically. Publishing a binary that handles numpy 3
+    # requires deliberately rebuilding against numpy 3 — this is
+    # the same belt-and-suspenders pattern we apply to the other
+    # ABI-sensitive deps below (scipy, traits, h5py, ...).
+    - {{ pin_compatible('numpy', max_pin='x') }}
+    # Floor pins are the lowest versions actually exercised by the
+    # 3.0.6 test matrix (ptsa_dev: numpy 2.4 / pandas 3.0 / xarray
+    # 2026.4; oneshot-rhino2b: numpy 1.26 / pandas 2.0.3 / xarray
+    # 2024.3.0). Older versions might work but aren't covered, so
+    # we don't promise them.
+    #
+    # Upper bounds cap the *next* major version we haven't
+    # validated against. The 3.0.4 → 3.0.6 effort was triggered
+    # by exactly this class of bug: unbounded run-deps silently
+    # paired ptsa with traits 7 (which deleted `ListStr`) and
+    # numpy 2 (which removed the legacy array API). Caps here
+    # force a deliberate revalidation + rebuild before users get
+    # paired with a future ABI/API break.
+    - scipy >=1.0,<3
+    - xarray >=2024.3
+    - traits >=6,<9
+    - h5py >=3,<5
+    # pandas: TalReader.from_records / mkdtype, BaseEventReader.as_dataframe,
+    # JsonIndexReader.as_dataframe, LocReader.read, TimeSeries.from_mne_epochs
+    # all import pandas directly. Previously satisfied only
+    # transitively via xarray; declared explicitly here so removing
+    # xarray doesn't silently break ptsa.
+    - pandas >=2.0,<5
+    # netcdf4: TimeSeries.to_hdf / from_hdf call
+    # xr.open_dataset(..., engine='netcdf4'). xarray does not pull
+    # netcdf4 in automatically, so without this dep ptsa would
+    # install fine but ts.to_hdf(...) would crash with
+    # `unrecognized engine 'netcdf4'`.
+    - netcdf4 >=1.5,<3
+    # six: legacy py2/3 compat shim still used by data/readers/base.py,
+    # data/readers/binary.py, MatlabIO/__init__.py.
+    - six
+    - fftw 3.3.*
     - vs2015_runtime  [win]
-    - xarray
-    - traits
-    - pybind11
 
 test:
-  # Test that we can import ptsa and its extension modules
+  # Test that we can import ptsa and its extension modules and that the
+  # full pytest suite passes inside conda-build's clean test env. The
+  # smoke imports gate on the extension-module ABI; the pytest run gates
+  # on full library behaviour. CI variants only become publish-eligible
+  # if both pass.
   imports:
     - ptsa
     - ptsa.extensions.morlet
     - ptsa.extensions.circular_stat
+  requires:
+    - pytest
+    - sybil  # the root-level conftest.py uses sybil to collect docs/*.rst
+  source_files:
+    # conda-build's test phase runs in a stripped-down workdir; we have
+    # to opt in to copying the source-tree files pytest needs.
+    - tests/
+    - docs/
+    - conftest.py
+  commands:
+    # NO_RHINO=1 skips ~31 tests that mount lab-only data paths. -o
+    # addopts="" defangs any project-level pytest options that assume a
+    # dev tree (e.g. coverage plugins not installed in the test env).
+    - NO_RHINO=1 python -m pytest tests/ docs/ -q -o addopts=""  # [not win]
+    - cmd /c "set NO_RHINO=1 && python -m pytest tests/ docs/ -q -o addopts=\"\""  # [win]
 
 about:
   home: https://github.com/pennmem/ptsa

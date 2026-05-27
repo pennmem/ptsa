@@ -1,8 +1,9 @@
 PTSA
 ====
 
-.. image:: https://travis-ci.org/pennmem/ptsa.svg?branch=master
-    :target: https://travis-ci.org/pennmem/ptsa
+.. image:: https://github.com/pennmem/ptsa/actions/workflows/build.yml/badge.svg?branch=master
+    :target: https://github.com/pennmem/ptsa/actions/workflows/build.yml
+    :alt: build status
 
 .. image:: https://codecov.io/gh/pennmem/ptsa/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/pennmem/ptsa
@@ -16,11 +17,19 @@ For documentation and tutorials, please see https://pennmem.github.io/ptsa/
 Install via conda
 -----------------
 
-Available on Linux, Mac, and Windows 64 bit:
+Available for Linux (``linux-64``) and macOS (``osx-64`` / ``osx-arm64``):
 
 .. code-block:: shell-session
 
     conda install -c pennmem -c conda-forge ptsa
+
+.. note::
+
+   There is no native Windows (``win-64``) package. On Windows, run PTSA
+   under `WSL <https://learn.microsoft.com/windows/wsl/>`_: install a
+   Linux distribution, then a Linux ``conda``/``miniforge`` inside it, and
+   use the ``linux-64`` package above. The compiled extensions and the
+   full test suite are validated on Linux in CI.
 
 
 Report bug or feature request
@@ -65,11 +74,55 @@ To read EDF__ files, you will also need to install pybind11:
 
 __ http://www.edfplus.info/
 
-Install PTSA:
+System prerequisites
+~~~~~~~~~~~~~~~~~~~~
+
+The following must already be available on the system before you build
+PTSA from source — ``pip`` cannot install them:
+
+* ``swig >= 4.1`` on ``PATH`` (the morlet and circular_stat extensions
+  are SWIG-wrapped).
+* The FFTW3 development headers and shared library (e.g. via
+  ``conda install -c conda-forge fftw`` or
+  ``sudo apt-get install libfftw3-dev``).
+
+Install PTSA
+~~~~~~~~~~~~
+
+The recommended path is ``pip install``. PTSA ships a ``pyproject.toml``
+that declares ``numpy`` and ``pybind11`` as build-time requirements, so
+pip can build the C++ extensions cleanly. ``numpy`` and ``pybind11``
+must already be importable in the *current* env when you run pip
+(separate from pip's build env), because ``setup.py`` reads the package
+version by importing ``ptsa.__init__``:
+
+.. code-block:: shell-session
+
+   pip install numpy pybind11
+   pip install --no-build-isolation .
+
+For an editable dev install, add ``-e``:
+
+.. code-block:: shell-session
+
+   pip install --no-build-isolation -e .
+
+Legacy fallback (works but ``setup.py install`` is deprecated by
+setuptools):
 
 .. code-block:: shell-session
 
    python setup.py install
+
+.. note::
+
+   ``pip install .`` *with* PEP 517 build isolation (the default) does
+   not currently work end-to-end: pyproject.toml fixes the original
+   ``ModuleNotFoundError: No module named 'numpy'`` build-time error,
+   but ``setup.py`` separately imports ``ptsa`` at top level to read
+   ``__version__``, which ``setuptools.build_meta`` cannot resolve
+   inside its isolated build env. Use ``--no-build-isolation`` until
+   that is refactored.
 
 If you encounter problems installing, some environment variables may need to be
 set, particularly if you installed FFTW with conda. If your anaconda
@@ -116,6 +169,36 @@ Building conda packages
 -----------------------
 
 See separte HOW_TO_RELEASE.md document! Alternatively, this repository is now set up to deploy automatically on tagged commits.
+
+
+Continuous integration
+----------------------
+
+Every push to ``master`` and every pull request runs the GitHub Actions
+workflow in ``.github/workflows/build.yml`` across a cross-platform
+build matrix:
+
+* **Operating systems:** ``ubuntu-latest``, ``macos-latest``,
+  ``windows-latest``
+* **Python:** 3.10, 3.11, 3.12, 3.13
+* **NumPy:** 1.24 and 2.x (NumPy 1.24 wheels only ship for Python
+  <=3.11, so the 3.12 / 3.13 cells are exercised only against NumPy 2)
+
+Each cell does a full ``conda-build`` of ``conda.recipe/``, which both
+compiles the C++ extensions (Morlet wavelet, circular statistics, EDF)
+against the requested NumPy ABI and runs the entire pytest suite
+inside conda-build's stripped-down test environment. A separate smoke
+step then installs the resulting ``.conda`` artifact into a brand-new
+environment to verify it lays down and imports outside the build tree.
+
+When a tag matching ``v*`` is pushed, a follow-up ``deploy`` job
+gathers every matrix artifact and uploads them to
+`anaconda.org/pennmem <https://anaconda.org/pennmem/ptsa>`_ via the
+``ANACONDA_TOKEN`` repository secret.
+
+This workflow replaces the legacy TravisCI configuration; TravisCI
+shut down most open-source builds in 2021 and the old ``.travis.yml``
+no longer ran.
 
 
 License

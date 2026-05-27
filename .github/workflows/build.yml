@@ -1,0 +1,171 @@
+name: build
+
+# Cross-platform conda build + test matrix for PTSA.
+# Replaces the dead .travis.yml.
+#
+# - PRs to master and pushes to master run the full matrix (build + pytest).
+# - Pushes of tags matching v* additionally upload the resulting .conda
+#   packages to anaconda.org/pennmem (requires the ANACONDA_TOKEN secret).
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+    tags: ["v*"]
+
+# Cancel an in-flight run for the same branch/PR when a new commit lands.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: ${{ matrix.os }} py${{ matrix.python-version }} numpy${{ matrix.numpy-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Don't cancel sibling cells when one fails - we want to see the full
+      # cross-platform picture on every push.
+      fail-fast: false
+      matrix:
+        # Linux + macOS only. We do not ship native Windows conda packages:
+        # building the FFTW-linked C++ extensions through conda-build on the
+        # Windows runner runs into a stack of MSYS/conda PATH quirks, and the
+        # lab has never published a win-64 build. Windows users run PTSA
+        # under WSL, where the linux-64 package (built + tested here) works
+        # unchanged.
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        numpy-version: ["1.24", "2"]
+        exclude:
+          # numpy 1.24 only ships wheels for python <=3.11 on conda-forge.
+          # Skip 3.12 / 3.13 against the 1.24 axis; they are covered by
+          # the numpy 2 axis.
+          - python-version: "3.12"
+            numpy-version: "1.24"
+          - python-version: "3.13"
+            numpy-version: "1.24"
+    defaults:
+      run:
+        # Required for conda activate to persist across run steps.
+        shell: bash -el {0}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up miniforge
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          python-version: ${{ matrix.python-version }}
+          channels: conda-forge
+          channel-priority: strict
+          activate-environment: ptsa_build
+          auto-update-conda: false
+
+      - name: Install build tooling
+        run: |
+          # Install conda-build into `base` and invoke it via the `conda
+          # build` subcommand (base conda is always on PATH). Only
+          # conda-build here: `conda-verify` caps at python <3.12 and makes
+          # the base (python 3.13) solve fail, and `anaconda-client` is only
+          # needed by the deploy job (which installs its own).
+          mamba install -y -n base conda-build
+          # Mirror meta.yaml's build/host deps so a local one-shot repro of
+          # a cell is just `conda build conda.recipe`. (conda-build still
+          # provisions its own isolated build env from the recipe; this is
+          # only for parity / a faster solve.)
+          mamba install -y -n ptsa_build \
+            "swig>=4.1.0" "fftw==3.3.10" pybind11 \
+            "numpy=${{ matrix.numpy-version }}" scipy xarray
+
+      - name: Build conda package
+        # Passing --variants overrides the recipe's pinned numpy and python
+        # for this cell so a single recipe covers the whole matrix without
+        # editing meta.yaml.
+        run: |
+          mkdir -p build/conda
+          conda build conda.recipe \
+            --output-folder build/conda \
+            --python=${{ matrix.python-version }} \
+            --variants "{numpy: ['${{ matrix.numpy-version }}']}" \
+            --no-anaconda-upload
+
+      - name: Smoke test the built package in a fresh env
+        # conda-build's own `test:` block in meta.yaml runs the full pytest
+        # suite; this step additionally verifies the artifact installs
+        # cleanly into a brand-new env outside the build tree and that the
+        # public API loads. We point at build/conda/ explicitly as a
+        # local channel because --output-folder bypasses the default
+        # conda-bld/ that --use-local would otherwise scan.
+        run: |
+          mamba create -y -n ptsa_smoke \
+            -c "${{ github.workspace }}/build/conda" \
+            -c conda-forge \
+            --channel-priority strict \
+            "python=${{ matrix.python-version }}" ptsa
+          # Run from a directory that does NOT contain the source `ptsa/`
+          # package, otherwise CWD shadows the installed conda package and
+          # the import finds the source tree (which has no compiled
+          # _morlet/_circular_stat/edffile .so) → ModuleNotFoundError.
+          cd "$RUNNER_TEMP"
+          conda run -n ptsa_smoke python -c "import ptsa; from ptsa.data.filters import MorletWaveletFilter; from ptsa.data.timeseries import TimeSeries; print('ptsa', ptsa.__version__, 'OK')"
+
+      - name: Upload built package as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          # Artifact names must be unique across the matrix.
+          name: ptsa-${{ matrix.os }}-py${{ matrix.python-version }}-numpy${{ matrix.numpy-version }}
+          path: build/conda/**/ptsa-*.conda
+          if-no-files-found: error
+          retention-days: 14
+
+  deploy:
+    name: Upload to anaconda.org/pennmem
+    needs: build
+    # Only fire on tag pushes, never on PRs or branch pushes.
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - name: Set up miniforge
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          python-version: "3.11"
+          channels: conda-forge
+          channel-priority: strict
+          activate-environment: upload
+          auto-update-conda: false
+
+      - name: Install anaconda-client
+        run: mamba install -y -n upload anaconda-client
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: build/conda
+          pattern: ptsa-*
+
+      - name: Upload to anaconda.org
+        env:
+          ANACONDA_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
+        run: |
+          if [ -z "${ANACONDA_TOKEN}" ]; then
+            echo "ANACONDA_TOKEN secret is not set; skipping upload." >&2
+            exit 1
+          fi
+          # The download-artifact action nests each artifact in its own
+          # subdir, hence the recursive find. (Plain ** is not recursive
+          # in bash without `shopt -s globstar`.)
+          shopt -s globstar nullglob
+          mapfile -t pkgs < <(find build/conda -name 'ptsa-*.conda')
+          if [ "${#pkgs[@]}" -eq 0 ]; then
+            echo "No .conda artifacts found under build/conda/." >&2
+            exit 1
+          fi
+          printf '  - %s\n' "${pkgs[@]}"
+          anaconda -t "${ANACONDA_TOKEN}" upload --user pennmem --force "${pkgs[@]}"

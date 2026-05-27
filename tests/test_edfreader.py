@@ -27,7 +27,7 @@ def test_channel_names(local_eegfile):
 class TestEDFReader:
 
     @classmethod
-    def setup(cls):
+    def setup_class(cls):
         root = get_rhino_root()
         cls.bdf_file_template = osp.join(root, 'protocols', 'ltp',
                                          'subjects', '{subject:s}',

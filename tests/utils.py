@@ -24,7 +24,7 @@ def get_rhino_root():
                     # if we're not on the head node, the hostname won't start
                     # with rhino, so just check that it's in there somewhere
                     names = f.read().split(".")
-                    if "rhino" in names:
+                    if any(n.startswith("rhino") for n in names):
                         return root
             except:
                 continue

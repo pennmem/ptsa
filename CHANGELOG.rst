@@ -1,5 +1,36 @@
 Changes
 =======
+Version 3.0.6
+-------------
+**2026.05.26**
+
+Fixes the install-order pain that required a four-step ``mamba``
+incantation to land PTSA alongside the rest of the CML stack. PTSA
+now installs cleanly in a single conda/mamba solve with no manual
+``numpy==1.24.4`` or ``traits<7`` pins, and the source tree is now
+compatible with the modern numpy 2 / pandas 3 / traits 7 stack.
+
+* Conda package now pins runtime numpy to the major version it was
+  built against (``pin_compatible('numpy', max_pin='x')``). The
+  precompiled morlet/circular_stat/edf extensions use the NumPy 1.x
+  C API; without an upper bound, mamba was silently pairing the
+  binary with NumPy 2.x → ``_ARRAY_API not found`` at import time.
+* Removed ``pybind11`` from ``run:`` requirements (it is a build-only
+  dep; the compiled .so does not need it at import time).
+* Fixed ``traits.api.ListStr`` → ``traits.api.List(traits.api.Str)``
+  in ``MonopolarToBipolarMapper``. ``ListStr`` was removed in
+  ``traits>=7``; PTSA now works on traits 6 and 7.
+* Source compatibility with NumPy 2: replaced the removed
+  ``numpy.find_common_type`` with ``numpy.result_type`` in
+  ``MatlabIO``, and ``numpy.core.records.fromarrays`` with the
+  public ``numpy.rec.fromarrays`` in ``MonopolarToBipolarMapper``.
+  When rebuilt against numpy 2 headers the binary now runs against
+  any numpy 2.x.
+* Source compatibility with pandas 3: ``TalReader.mkdtype`` now uses
+  ``pd.api.types.is_string_dtype`` to coerce string columns,
+  handling both the legacy ``object`` and the new ``StringDtype``
+  (PDEP-14) representations.
+
 Version 3.0.5
 -------------
 **2024.03.14**

@@ -1,10 +1,24 @@
 from base64 import b64decode
 from collections import namedtuple
 from io import BytesIO
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Hashable,
+    Iterable,
+    Literal,
+    Mapping,
+    Optional,
+    Sequence,
+    Type,
+    Union,
+)
 import json
 import time
 import warnings
 
+import numpy.typing as npt
 import xarray as xr
 import numpy as np
 import pandas as pd
@@ -15,6 +29,9 @@ from ptsa.data.common import get_axis_index
 from ptsa.filt import buttfilt
 from pandas import MultiIndex
 import os
+
+if TYPE_CHECKING:
+    import h5py
 
 os.environ["HDF5_USE_FILE_LOCKING"] = "FALSE"
 
@@ -32,16 +49,16 @@ class ConcatenationError(Exception):
 # return type TimeSeries (required for most ptsa functions and to use
 # the built-in hdf5 file-saving
 
-METHODS = ["astype", "query", "reduce"]
+METHODS: list[str] = ["astype", "query", "reduce"]
 
 
-def convert_method_return_types(cls):
+def convert_method_return_types(cls: Type["TimeSeries"]) -> Type["TimeSeries"]:
     # define decorator that wraps methods and converts dtype to TimeSeries
-    def return_type_ts(f):
-        f = getattr(xr.DataArray, f)
+    def return_type_ts(f: str) -> Callable[..., "TimeSeries"]:
+        wrapped = getattr(xr.DataArray, f)
 
-        def wrap_xarray(*args, **kwargs):
-            xarr = f(*args, **kwargs)
+        def wrap_xarray(*args: Any, **kwargs: Any) -> "TimeSeries":
+            xarr = wrapped(*args, **kwargs)
             return TimeSeries(
                 xarr,
                 coords=xarr.coords,
@@ -50,8 +67,15 @@ def convert_method_return_types(cls):
                 name=xarr.name,
             )
 
-        wrap_xarray.__doc__ = f"Wraps the following, returning as a TimeSeries:\
-                                \n{getattr(xr.DataArray, f.__name__).__doc__}"
+        # Build the wrapped docstring as a short summary only.
+        # Embedding xarray's full multi-line docstring here produced invalid
+        # RST when consumed by Sphinx autodoc (mismatched section underlines
+        # from differing indentation). Point users at the underlying method
+        # instead and keep the wrapper docstring trivially parseable.
+        wrap_xarray.__doc__ = (
+            "Wraps :meth:`xarray.DataArray." + f + "`, "
+            "returning the result as a :class:`TimeSeries`."
+        )
         return wrap_xarray
 
     # iterate over desired methods and decorate them
@@ -60,6 +84,10 @@ def convert_method_return_types(cls):
     return cls
 
 
+# The @convert_method_return_types decorator monkey-patches `astype`, `query`,
+# and `reduce` to return TimeSeries instead of DataArray. Pyright cannot
+# introspect this rewriting, so the static class signature here still reports
+# DataArray return types for those three methods; that is expected.
 @convert_method_return_types
 class TimeSeries(xr.DataArray):
     """A thin wrapper around :class:`xr.DataArray` for dealing with time series
@@ -99,8 +127,15 @@ class TimeSeries(xr.DataArray):
     __slots__ = ()
 
     def __init__(
-        self, data, coords, dims=None, name=None, attrs=None, fastpath=False, **kwargs
-    ):
+        self,
+        data: Union[npt.ArrayLike, xr.DataArray, "TimeSeries"],
+        coords: Mapping[Any, Any],
+        dims: Optional[Sequence[Any]] = None,
+        name: Optional[Hashable] = None,
+        attrs: Optional[Mapping[Any, Any]] = None,
+        fastpath: bool = False,
+        **kwargs: Any,
+    ) -> None:
         assert "samplerate" in coords
         super(TimeSeries, self).__init__(
             data=data,
@@ -113,7 +148,15 @@ class TimeSeries(xr.DataArray):
         )
 
     @classmethod
-    def create(cls, data, samplerate, coords=None, dims=None, name=None, attrs=None):
+    def create(
+        cls,
+        data: Union[npt.ArrayLike, xr.DataArray, "TimeSeries"],
+        samplerate: Optional[float],
+        coords: Optional[dict[Any, Any]] = None,
+        dims: Optional[Sequence[Any]] = None,
+        name: Optional[Hashable] = None,
+        attrs: Optional[Mapping[Any, Any]] = None,
+    ) -> "TimeSeries":
         """Factory function for creating a new timeseries object with passing
         the sample rate as a parameter. See :meth:`__init__` for parameters.
 
@@ -124,7 +167,7 @@ class TimeSeries(xr.DataArray):
             coords["samplerate"] = float(samplerate)
         return cls(data, coords=coords, dims=dims, name=name, attrs=attrs)
 
-    def coerce_to(self, dtype=np.float64):
+    def coerce_to(self, dtype: Optional[npt.DTypeLike] = np.float64) -> None:
         """Coerce the data to the specified dtype in place. If dtype is None,
         this method does nothing. Default: coerce to ``np.float64``.
 
@@ -133,7 +176,7 @@ class TimeSeries(xr.DataArray):
             self.data = self.data.astype(dtype)
 
     @classmethod
-    def from_mne_epochs(cls, epochs, event_df):
+    def from_mne_epochs(cls, epochs: Any, event_df: pd.DataFrame) -> "TimeSeries":
         """Create an xarray version of epoch data."""
         x = cls.create(
             epochs.get_data(),
@@ -147,7 +190,12 @@ class TimeSeries(xr.DataArray):
         )
         return x
 
-    def to_hdf(self, filename, mode="w", **kwargs):
+    def to_hdf(
+        self,
+        filename: str,
+        mode: Literal["w", "a"] = "w",
+        **kwargs: Any,
+    ) -> None:
         """Save to disk using HDF5.
 
         Parameters
@@ -166,12 +214,12 @@ class TimeSeries(xr.DataArray):
         and encoded accordingly.
 
         """
-        try:  # pragma: nocover
-            import h5py
-        except ImportError:
-            raise RuntimeError("You must install h5py to save to HDF5")
+        # Presence check only — to_hdf does not use the h5py API directly,
+        # but we want to fail fast with a clear message if it is missing.
+        import importlib.util
 
-        # from ptsa.io import hdf5
+        if importlib.util.find_spec("h5py") is None:  # pragma: nocover
+            raise RuntimeError("You must install h5py to save to HDF5")
 
         for idx in self.indexes:
             if isinstance(self.indexes[idx], MultiIndex):
@@ -198,7 +246,7 @@ class TimeSeries(xr.DataArray):
         dataset.to_netcdf(filename, mode=mode, **kwargs)
 
     @staticmethod
-    def _from_hdf_base64(hfile):
+    def _from_hdf_base64(hfile: "h5py.File") -> Any:
         """Load non-time series data from the legacy base64-encoded HDF5 format.
 
         Parameters
@@ -213,10 +261,15 @@ class TimeSeries(xr.DataArray):
         """
         rtype = namedtuple("HDFBase64RType", "name,dims,coords,attrs")
 
-        dims = hfile["dims"][:]
-        root = hfile["/"]
+        # h5py datasets/groups support [:] / [()] indexing and string keys at
+        # runtime, but the typeshed stubs return generic union types that
+        # pyright can't subscript. Widen the references to `Any` so the
+        # surrounding pythonic indexing typechecks without scattering casts.
+        hfile_any: Any = hfile
+        dims = hfile_any["dims"][:]
+        root = hfile_any["/"]
 
-        coords_group = hfile["coords"]
+        coords_group: Any = hfile_any["coords"]
         names = json.loads(coords_group.attrs["names"])
         coords = {}
 
@@ -236,7 +289,12 @@ class TimeSeries(xr.DataArray):
         return rtype(name, dims, coords, attrs)
 
     @classmethod
-    def from_hdf(cls, filename, engine="netcdf4", **kwargs):
+    def from_hdf(
+        cls,
+        filename: str,
+        engine: str = "netcdf4",
+        **kwargs: Any,
+    ) -> "TimeSeries":
         """Load a serialized time series from an HDF5 file.
         Uses
 
@@ -264,8 +322,11 @@ class TimeSeries(xr.DataArray):
 
             with h5py.File(filename, "r") as hfile:
                 loaded = cls._from_hdf_base64(hfile)
+                # h5py.File indexing returns a union type that pyright cannot
+                # subscript; widen to Any for the `[()]` slice.
+                hfile_any: Any = hfile
                 array = cls.create(
-                    hfile["data"][()],
+                    hfile_any["data"][()],
                     None,
                     coords=loaded.coords,
                     dims=loaded.dims,
@@ -294,7 +355,11 @@ class TimeSeries(xr.DataArray):
             )
         return ts
 
-    def append(self, other, dim=None):
+    def append(
+        self,
+        other: "TimeSeries",
+        dim: Optional[str] = None,
+    ) -> "TimeSeries":
         """Append another :class:`TimeSeries` to this one.
 
         .. versionchanged:: 2.0
@@ -319,11 +384,14 @@ class TimeSeries(xr.DataArray):
             raise ConcatenationError("Dimensions are not identical")
 
         dims = self.dims
-        coords = dict()
+        coords: dict[Any, Any] = dict()
 
         if dim is not None and dim not in dims:
-            new_self = self.expand_dims(dim).assign_coords(**{dim: [0]})
-            other = other.expand_dims(dim).assign_coords(**{dim: [1]})
+            # Pass a dict to assign_coords (not **kwargs) so pyright resolves
+            # the dict-shaped `coords` parameter rather than mistaking the
+            # list value for a positional coords argument.
+            new_self = self.expand_dims(dim).assign_coords({dim: [0]})
+            other = other.expand_dims(dim).assign_coords({dim: [1]})
             return new_self.append(other, dim=dim)
 
         for key in self.coords:
@@ -336,7 +404,9 @@ class TimeSeries(xr.DataArray):
                 else:
                     coords[key] = self[key]
             elif dim is None:
-                coords[key] = np.concatenate([self.coords[key], other.coords[key]])
+                coords[key] = np.concatenate(
+                    [self.coords[key], other.coords[key]]
+                )
             else:
                 if key != dim:
                     if (self[key] != other[key]).all():
@@ -345,12 +415,14 @@ class TimeSeries(xr.DataArray):
                         )
                     coords[key] = self[key]
                 else:
-                    coords[key] = np.concatenate([self[key], other[key]])
+                    coords[key] = np.concatenate(
+                        [self[key].values, other[key].values]
+                    )
 
         if dim is None:
             data = np.concatenate([self.data, other.data])
         else:
-            axis = np.where(np.array(dims) == dim)[0][0]
+            axis = int(np.where(np.array(dims) == dim)[0][0])
             data = np.concatenate([self.data, other.data], axis=axis)
 
         attrs = self.attrs.copy()
@@ -362,14 +434,17 @@ class TimeSeries(xr.DataArray):
         )
         return new
 
-    def __duration_to_samples(self, duration):
+    def __duration_to_samples(self, duration: float) -> int:
         """Convenience function to convert a duration in seconds to number of
         samples.
 
         """
         return int(np.ceil(float(self["samplerate"]) * duration))
 
-    def filter_with(self, filters):
+    def filter_with(
+        self,
+        filters: Union[Any, Iterable[Any]],
+    ) -> "TimeSeries":
         """Filter the time series data using the specified filters in order.
 
         Parameters
@@ -391,14 +466,19 @@ class TimeSeries(xr.DataArray):
         if not isinstance(filters, (list, tuple)):
             filters = [filters]
 
-        filtered = self
+        filtered: "TimeSeries" = self
 
         for filter_ in filters:
             filtered = filter_.filter(filtered)
 
         return filtered
 
-    def filtered(self, freq_range, filt_type="stop", order=4):
+    def filtered(
+        self,
+        freq_range: npt.ArrayLike,
+        filt_type: str = "stop",
+        order: int = 4,
+    ) -> "TimeSeries":
         """
         Filter the data using a Butterworth filter and return a new
         TimeSeries instance.
@@ -437,12 +517,12 @@ class TimeSeries(xr.DataArray):
 
     def resampled(
         self,
-        resampled_rate,
-        window=None,
-        loop_axis=None,
-        num_mp_procs=0,
-        pad_to_pow2=False,
-    ):
+        resampled_rate: float,
+        window: Any = None,
+        loop_axis: Any = None,
+        num_mp_procs: int = 0,
+        pad_to_pow2: bool = False,
+    ) -> "TimeSeries":
         """Returns a time series Fourier resampled at resampled_rate.
 
         Note that Fourier resampling assumes periodicity, so edge effects can
@@ -514,7 +594,7 @@ class TimeSeries(xr.DataArray):
 
         return resampled_time_series
 
-    def remove_buffer(self, duration):
+    def remove_buffer(self, duration: float) -> Optional["TimeSeries"]:
         """
         Return a timeseries with the desired buffer duration (in seconds)
         removed and the time range reset.
@@ -543,7 +623,11 @@ class TimeSeries(xr.DataArray):
         if samples > 0:
             return self[..., samples:-samples]
 
-    def add_mirror_buffer(self, duration, two_sided=True):
+    def add_mirror_buffer(
+        self,
+        duration: float,
+        two_sided: bool = True,
+    ) -> "TimeSeries":
         """
         Return a time series with mirrored data added to both ends of this
         time series (up to specified length/duration).
@@ -596,7 +680,10 @@ class TimeSeries(xr.DataArray):
 
         return TimeSeries(mirrored_data, dims=self.dims, coords=coords)
 
-    def baseline_corrected(self, base_range):
+    def baseline_corrected(
+        self,
+        base_range: tuple[float, float],
+    ) -> "TimeSeries":
         """
         Return a baseline corrected timeseries by subtracting the
         average value in the baseline range from all other time points

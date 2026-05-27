@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 from scipy.signal import resample
 import traits.api
@@ -32,14 +34,18 @@ class ResampleFilter(BaseFilter):
     time_axis_name = traits.api.Str
     time_axis_index = traits.api.Int
 
-    def __init__(self, resamplerate, round_to_original_timepoints=False,
-                 time_axis_name="time"):
+    def __init__(
+        self,
+        resamplerate: float,
+        round_to_original_timepoints: bool = False,
+        time_axis_name: str = "time",
+    ) -> None:
         super(ResampleFilter, self).__init__()
         self.resamplerate = resamplerate
         self.round_to_original_timepoints = round_to_original_timepoints
         self.time_axis_name = time_axis_name
 
-    def filter(self, timeseries):
+    def filter(self, timeseries: "TimeSeries") -> "TimeSeries":
         """Resample a time series.
 
         Returns
@@ -58,13 +64,17 @@ class ResampleFilter(BaseFilter):
             timeseries.dims[self.time_axis_index]]
 
         time_axis_length = len(time_axis)
+        # ``self.resamplerate`` is a CFloat trait; on a bound instance the
+        # value is a Python float, but pyright sees the class descriptor.
+        # Read it via ``trait_get`` so the type narrows to a plain ``Any``.
+        resamplerate = float(self.trait_get('resamplerate')['resamplerate'])
         new_length = int(np.round(
-            time_axis_length*self.resamplerate/samplerate))
+            time_axis_length * resamplerate / samplerate))
 
         try:
             # time axis can be recarray with one of the arrays being time
             time_axis_data = time_axis.data[self.time_axis_name]
-        except (KeyError, IndexError) as excp:
+        except (KeyError, IndexError):
             # if we get here then most likely time axis is ndarray of floats
             time_axis_data = time_axis.data
 
@@ -74,8 +84,6 @@ class ResampleFilter(BaseFilter):
             filtered_array, new_time_idx_array = resample(
                 timeseries.data, new_length, t=time_idx_array,
                 axis=self.time_axis_index)
-
-            # print new_time_axis
 
             new_time_idx_array = np.rint(new_time_idx_array).astype(np.int32)
 

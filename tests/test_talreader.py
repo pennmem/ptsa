@@ -14,6 +14,24 @@ def test_talreader_on_database():
     assert (new_reader.get_monopolar_channels() == old_reader.get_monopolar_channels()).all()
 
 
+@utils.skip_without_rhino
+def test_talreader_monopolar_mat():
+    """Read a monopolar tal struct from a MATLAB ``_talLocs_database_monopol.mat``
+    (struct_type='mono' → struct_name='talStruct'). The other rhino tal test
+    only exercises bipolar .mat + bipolar pairs.json; this covers the
+    monopolar .mat code path."""
+    path = osp.join(utils.get_rhino_root(),
+                    'data/eeg/R1060M/tal/R1060M_talLocs_database_monopol.mat')
+    reader = TalReader(filename=path, struct_type='mono')
+    arr = reader.read()
+    assert len(arr) > 0
+    assert 'channel' in arr.dtype.names
+    # get_monopolar_channels formats each channel as a zero-padded 3-char code
+    chans = reader.get_monopolar_channels()
+    assert len(chans) == len(arr)
+    assert all(len(c) == 3 for c in chans)
+
+
 def test_from_dict():
     pairs_dict ={u'R1111M': {u'code': u'R1111M',
   u'id': u'r1.111.0_0',

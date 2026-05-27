@@ -1,0 +1,1 @@
+{"myeeg": {"data_format": "int16", "n_samples": 1000, "name": "myeeg", "sample_rate": 1000}}

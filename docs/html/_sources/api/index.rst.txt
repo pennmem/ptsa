@@ -6,5 +6,5 @@ API Reference
     data
     extensions
 
-.. automodule:: concat
+.. automodule:: ptsa.data.concat
     :members:

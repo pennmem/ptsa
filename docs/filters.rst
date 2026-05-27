@@ -1,96 +1,144 @@
-.. _ramdata:
+.. _filters:
 
-Filtering Time Series
-===========================
+Filters
+=======
 
-Filtering is a type of operation that takes as an input one time series and outputs another. For example Butterworth
-band-pass filter may remove unwanted frequencies from your signal. Computing Wavelets is also a form of filtering
-operation that takes one time series and outputs another one with signal that is decomposed into wavelet components
+PTSA ships a small collection of filter classes that all share the
+same 3.0 calling convention: construct an instance with its
+configuration parameters, then call ``filter`` on a
+:class:`~ptsa.data.timeseries.TimeSeries`.
+
+.. code-block:: python
+
+    # Generic 3.0 filter pattern:
+    # filt = SomeFilter(<config kwargs>)
+    # result = filt.filter(some_timeseries)
+
+The pre-3.0 idiom of passing the input ``TimeSeries`` into the
+constructor (``SomeFilter(time_series=ts, ...)``) has been removed.
+
+This page gives a brief tour of each filter. The Morlet wavelet has
+its own dedicated page — see :ref:`morlet` for the formula,
+parameter discussion, and worked example.
 
 .. note::
 
-    All filter objects define function ``filter``. This is the function you call to make filter do its job
+   For sybil-collected doctest purposes, the code samples below use
+   a small synthetic ``TimeSeries`` constructed once at the top of
+   the file. Each filter snippet starts from that ``ts`` object so
+   the examples actually execute.
 
-Let us start with something simple - ``MonopolarToBipolarMapper``.
-
-MonopolartoBipolarMapper
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This filter takes as inputs an array of monopolar eeg data  - ``timeseries`` parameter below
-and the array of bipolar pairs (``bipolar_pairs``) and outputs another time series
-containing pairwise differences for electrode pairs specified in ``bipolar_pairs``
-
-Here is the syntax:
+Shared setup
+------------
 
 .. code-block:: python
 
-    from ptsa.data.filters import MonopolarToBipolarMapper
-    m2b = MonopolarToBipolarMapper(bipolar_pairs=bipolar_pairs)
-    bp_eegs = m2b.filter(timeseries=base_eegs)
+    import numpy as np
+    from ptsa.data.timeseries import TimeSeries
 
+    samplerate = 500.0
+    t = np.arange(0.0, 1.0, 1.0 / samplerate)
+    # Three "channels" carrying 10 Hz + 60 Hz line noise.
+    data = (np.sin(2 * np.pi * 10.0 * t)
+            + 0.5 * np.sin(2 * np.pi * 60.0 * t))
+    data = np.tile(data, (3, 1))
+    ts = TimeSeries.create(
+        data,
+        samplerate,
+        dims=('channels', 'time'),
+        coords={'channels': np.array([0, 1, 2]), 'time': t},
+    )
 
-We import ``MonopolarToBipolarMapper`` from ``ptsa.data.filters`` PTSA package , crteate an instance of
-MonopolarToBipolarMapper with appropriate parameters and then call ``filter`` function to compute pairwise
-signal differences. Here is the output:
+MorletWaveletFilter
+-------------------
 
-.. code-block:: python
-
-    <xray.TimeSeries (bipolar_pairs: 141, events: 1020, time: 1800)>
-    array([[[  7119.14164 ,   7119.673316,   7119.14164 , ...,   7156.35896 ,
-               7159.549016,   7164.3341  ],
-            [  7175.499296,   7178.157676,   7186.132816, ...,   7022.376608,
-               7009.084708,   7009.084708],
-            [  7061.188956,   7063.31566 ,   7067.037392, ...,   7227.071868,
-               7228.13522 ,   7221.223432],
-
-    ...
-
-
-Notice that this ``TimeSeries`` object is indexed by bipolar_pairs. As a matter of fact if you type:
-
-.. code-block:: python
-
-    bp_eegs.bipolar_pairs
-
-you will get
+PTSA's main user-facing entry point to the C++/FFTW Morlet wavelet
+kernel. Produces time-resolved power, phase, or raw complex
+coefficients on a frequency grid you supply.
 
 .. code-block:: python
 
-    <xray.DataArray 'bipolar_pairs' (bipolar_pairs: 141)>
-    array([('001', '002'), ('001', '009'), ('002', '003'), ('002', '010'),
-           ('003', '004'), ('003', '011'), ('004', '005'), ('004', '012'),
+    from ptsa.data.filters import MorletWaveletFilter
 
+    wf = MorletWaveletFilter(
+        freqs=np.array([5.0, 10.0, 20.0]),
+        width=5,
+        output='power',
+        complete=True,
+        cpus=1,
+        verbose=False,
+    )
+    power = wf.filter(ts)
+    # dims: ('frequency', 'channels', 'time')
+
+The full formula, parameter explanation (``width``, ``complete``),
+and a comparison against scipy / MNE parameterizations live on the
+:ref:`morlet` page.
 
 ButterworthFilter
-~~~~~~~~~~~~~~~~~
+-----------------
 
-To use Butterworth filtering inside PTSA you have two choices: use ``ButterworthFilter`` object and passing
-``TimeSeries`` object to its ``.filter`` method or use a convenience function inside ``TimeSeries`` object.
-
-Let's us start by showing first ``ButterworthFilter``:
-
+Wraps :func:`scipy.signal.filtfilt` with a Butterworth IIR design.
+Use ``filt_type='stop'`` to notch a band (e.g.\ 60 Hz line noise),
+``'pass'`` for a band-pass, or ``'lowpass'`` / ``'highpass'`` for
+the one-sided variants.
 
 .. code-block:: python
 
     from ptsa.data.filters import ButterworthFilter
-    b_filter = ButterworthFilter(freq_range=[58., 62.], filt_type='stop', order=4)
-    bp_eegs_filtered = b_filter.filter(timeseries=bp_eegs)
 
+    notch = ButterworthFilter(freq_range=[58.0, 62.0],
+                              filt_type='stop', order=4)
+    ts_clean = notch.filter(ts)
 
-Here we create ButterworthFilter object (after importing it from PTSA's ``filters`` package) and specify
-filter parameters: we specify frequency range that we want to filter out
-(to remove frequencies we set ``filt_type`` to ``'stop'``) and specify filter order (here it is 4)
+For convenience, ``TimeSeries`` also exposes the same filter
+in-place as ``ts.filtered(freq_range=[58, 62], filt_type='stop',
+order=4)``.
 
-As before, once the filter object is initialized we call ``filter`` function to get the result
-(filtered ``TimeSeries``).
+ResampleFilter
+--------------
 
-If you prefer you may use alternative way of running Butterworth filter on a ``TimeSeries`` by calling ``filtered``
-function on a ``Timeseries`` object
+Wraps :func:`scipy.signal.resample` to change the samplerate of a
+``TimeSeries``. The output ``samplerate`` coord is updated
+accordingly.
 
 .. code-block:: python
 
-    bp_eegs_filtered_1 = bp_eegs.filtered(freq_range=[58., 62.], filt_type='stop', order=4)
+    from ptsa.data.filters import ResampleFilter
 
+    rs = ResampleFilter(resamplerate=250.0)
+    ts_down = rs.filter(ts)
 
+MonopolarToBipolarMapper
+------------------------
 
+Takes pairwise differences across channels to produce a bipolar
+montage from a monopolar one. ``bipolar_pairs`` is an array of
+length-2 channel indices.
 
+.. code-block:: python
+
+    from ptsa.data.filters import MonopolarToBipolarMapper
+
+    pairs = np.array([(0, 1), (1, 2)],
+                     dtype=[('ch0', '<i8'), ('ch1', '<i8')])
+    m2b = MonopolarToBipolarMapper(bipolar_pairs=pairs)
+    ts_bipolar = m2b.filter(ts)
+
+The output ``TimeSeries`` is indexed by ``bipolar_pairs`` along the
+former channel axis.
+
+DataChopper
+-----------
+
+Slices a continuous (session-length) recording into per-event
+epochs. Construction takes an event recarray, a sample-rate, and an
+epoch start/end offset (in samples or seconds depending on
+``use_millis``). See the class docstring for the full signature.
+
+.. note::
+
+   ``DataChopper.filter`` is exercised primarily on lab data and is
+   not demonstrated with a runnable code block here; consult the
+   API reference and the test suite in
+   ``tests/test_smoke.py`` for usage.

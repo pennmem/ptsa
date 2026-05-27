@@ -1,6 +1,10 @@
+from __future__ import annotations
+
 import time
+from typing import Iterable, Optional, Union
 
 import numpy as np
+import numpy.typing as npt
 import traits.api
 
 from ptsa.data.timeseries import TimeSeries
@@ -19,27 +23,79 @@ class MorletWaveletFilter(BaseFilter):
 
     Parameters
     ----------
-    freqs: np.ndarray
-        The frequencies to use in the decomposition
-    
-    Keyword Arguments
-    -----------------
-    width: int
-        The width of the wavelet (default: 5)
-    output: Union[Iterable[str], str]
-        A string or a list of strings containing power, phase, and/or
-        complex (default: ``['power', 'phase']``)
-    verbose: bool
-        Print out the wavelet parameters (default: False)
-    cpus : int
+    freqs : np.ndarray
+        The frequencies to use in the decomposition.
+    width : int, optional
+        The width of the wavelet (default: 5).
+    output : Union[Iterable[str], str], optional
+        A string or a list of strings containing ``'power'``, ``'phase'``,
+        and/or ``'complex'`` (default: ``('power', 'phase')``).
+    verbose : bool, optional
+        Print out the wavelet parameters (default: True).
+    cpus : int, optional
         Number of threads to use when computing the transform (default: 1).
-    output_dim: str
+    output_dim : str, optional
         Name of the output dimension when returning both power and phase
-        (default: ``'output'``)
-    complete: bool
+        (default: ``'output'``).
+    complete : bool, optional
         Use complete Morlet wavelets with a zero mean, which is required for
         power and phase accuracy with small wavelet widths.  The frequency is
-        kept consistent with standard Morlet wavelets.  (default: True)
+        kept consistent with standard Morlet wavelets (default: True).
+
+    Notes
+    -----
+    Let :math:`f` be the centre frequency, :math:`w` the ``width``
+    (number of cycles of the carrier under the Gaussian envelope, in
+    the Tallon-Baudry sense), :math:`\\sigma_f = f / w` the frequency-
+    domain width of the Gaussian, and :math:`\\sigma_t = 1 / (2 \\pi
+    \\sigma_f)` the corresponding time-domain width.
+
+    With ``complete=False`` the wavelet is the standard complex Morlet,
+
+    .. math::
+
+       \\psi(t) = \\frac{1}{\\sqrt{\\sigma_t \\sqrt{\\pi}}}\\,
+                 e^{-t^{2} / (2 \\sigma_t^{2})}\\,
+                 e^{i\\, 2 \\pi f t}.
+
+    With ``complete=True`` (the default since PTSA 2.0.6) PTSA uses
+    the Tallon-Baudry "complete" form: a zero-mean correction
+    :math:`e^{-w^{2}/2}` is subtracted from the cosine arm, the
+    amplitudes :math:`a_c` (real part) and :math:`a_s` (imaginary
+    part) are rescaled analytically so the wavelet keeps unit energy,
+    and the time axis is rescaled by
+
+    .. math::
+
+       \\textrm{freq\\_scale} =
+         \\frac{2}{\\pi}\\, \\arccos\\!\\left(e^{-w^{2}/2}\\right)
+
+    so the peak frequency stays at :math:`f` despite the offset:
+
+    .. math::
+
+       \\psi_{\\text{complete}}(t) =
+         a_c\\, e^{-t^{2}/(2\\sigma_t^{2})}
+                  \\left(\\cos(\\text{freq\\_scale} \\cdot 2 \\pi f t)
+                        - e^{-w^{2}/2}\\right)
+         + i\\, a_s\\, e^{-t^{2}/(2\\sigma_t^{2})} \\sin(2 \\pi f t).
+
+    Larger ``width`` tightens the wavelet's frequency resolution
+    (narrower :math:`\\sigma_f`) at the cost of widening its time
+    resolution (broader :math:`\\sigma_t`); this is the standard
+    Heisenberg/Gabor time-frequency tradeoff.
+
+    See :func:`ptsa.extensions.morlet.get_time_domain_wavelet` for a
+    Python reference implementation of the formula, and
+    ``tests/test_morlet_formula.py`` for independent validation of
+    PTSA's FFT-based kernel against direct time-domain convolution
+    with that reference.
+
+    References
+    ----------
+    Tallon-Baudry, C., & Bertrand, O. (1996). Oscillatory gamma
+    activity in humans and its role in object representation. *Trends
+    in Cognitive Sciences*, 3(4), 151-162.
 
     """
     freqs = traits.api.CArray
@@ -49,8 +105,16 @@ class MorletWaveletFilter(BaseFilter):
     output = []
     output_dim = traits.api.Str
 
-    def __init__(self, freqs, width=5, output=('power', 'phase'), 
-                 verbose=True, cpus=1, output_dim='output', complete=True):
+    def __init__(
+        self,
+        freqs: npt.ArrayLike,
+        width: int = 5,
+        output: Union[str, Iterable[str]] = ('power', 'phase'),
+        verbose: bool = True,
+        cpus: int = 1,
+        output_dim: str = 'output',
+        complete: bool = True,
+    ) -> None:
         self.freqs = freqs
         self.width = width
         self.complete = complete
@@ -59,6 +123,8 @@ class MorletWaveletFilter(BaseFilter):
 
         if isinstance(output, str):
             output = [output]
+        else:
+            output = list(output)
 
         for el in output:
             if el not in output_opts:
@@ -74,12 +140,24 @@ class MorletWaveletFilter(BaseFilter):
         self.cpus = cpus
         self.output_dim = output_dim
 
-    def filter(self, timeseries):
-        """Apply the constructed filter."""
+    def filter(self, timeseries: "TimeSeries") -> Optional["TimeSeries"]:
+        """Apply the constructed filter.
+
+        Returns either a :class:`TimeSeries` carrying the requested output
+        (power, phase, complex coefficients, or stacked power+phase) or
+        ``None`` if no output was requested. In practice ``filter`` always
+        returns a :class:`TimeSeries` for any valid configuration constructed
+        via :meth:`__init__`; the ``Optional`` reflects the defensive
+        ``return phases_ts`` path below where the local ``phases_ts`` may
+        not have been assigned in pathological subclasses.
+        """
         nontime_dims = self.get_nontime_dims(timeseries)
         nontime_sizes = self.get_nontime_sizes(timeseries)
 
-        wavelet_dims = nontime_sizes + (self.freqs.shape[0],)
+        # ``self.freqs`` is a traits CArray descriptor on the class; on a
+        # bound instance access returns the underlying ``np.ndarray``.
+        freqs_arr: np.ndarray = np.asarray(self.freqs)
+        wavelet_dims = nontime_sizes + (freqs_arr.shape[0],)
 
         powers_reshaped = np.array([[]], dtype=float)
         phases_reshaped = np.array([[]], dtype=float)
@@ -98,7 +176,8 @@ class MorletWaveletFilter(BaseFilter):
                 shape=(np.prod(wavelet_dims), len(timeseries['time'])),
                 dtype=complex)
 
-        mt = morlet.MorletWaveletTransformMP(self.cpus)
+        cpus = int(self.trait_get('cpus')['cpus'])
+        mt = morlet.MorletWaveletTransformMP(cpus)
 
         timeseries_reshaped = np.ascontiguousarray(
             timeseries.data.reshape(
@@ -122,7 +201,9 @@ class MorletWaveletFilter(BaseFilter):
         mt.set_wavelet_complex_array(wavelets_complex_reshaped)
 
         mt.initialize_signal_props(float(timeseries['samplerate']))
-        mt.initialize_wavelet_props(self.width, self.freqs, self.complete)
+        # `self.width` is a traits.Int descriptor; pyright sees `type[Int]`
+        # even though instance access returns int.
+        mt.initialize_wavelet_props(self.width, freqs_arr, self.complete)  # pyright: ignore[reportArgumentType]
         mt.prepare_run()
 
         s = time.time()
@@ -140,7 +221,7 @@ class MorletWaveletFilter(BaseFilter):
             wavelet_complex_final = wavelets_complex_reshaped.reshape(wavelet_dims + (len(timeseries['time']),))
 
         coords = {k: v for k, v in list(timeseries.coords.items())}
-        coords['frequency'] = self.freqs
+        coords['frequency'] = freqs_arr
 
         powers_ts = None
         phases_ts = None
@@ -184,5 +265,6 @@ class MorletWaveletFilter(BaseFilter):
             elif phases_ts is None:
                 return powers_ts
             else:
-                return powers_ts.append(phases_ts, dim=self.output_dim).assign_coords(
+                # `self.output_dim` is a traits.Str descriptor.
+                return powers_ts.append(phases_ts, dim=self.output_dim).assign_coords(  # pyright: ignore[reportArgumentType]
                     output=['power', 'phase'])

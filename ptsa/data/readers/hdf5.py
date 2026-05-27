@@ -1,7 +1,9 @@
 import os.path as osp
+from typing import Any, Tuple
 
 import h5py
 import numpy as np
+import numpy.typing as npt
 
 from ptsa.data.readers import BaseRawReader
 
@@ -12,7 +14,7 @@ __all__ = [
 
 class H5RawReader(BaseRawReader):
     """Class for reading raw EEG data stored in HDF5 format."""
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """
         :param kwargs: allowed values are:
         -------------------------------------
@@ -35,14 +37,22 @@ class H5RawReader(BaseRawReader):
                 raise IndexError('Cannot load bipolar data from monopolar channel list')
             kwargs['channels'] = channels['channel_1']
         super(H5RawReader, self).__init__(**kwargs)
-        with h5py.File(self.dataroot,'r') as eegfile:
+        with h5py.File(self.dataroot, 'r') as eegfile:
             if 'samplerate' in eegfile:
-                self.params_dict['samplerate']= eegfile['samplerate'][()]
+                samplerate_ds = eegfile['samplerate']
+                assert isinstance(samplerate_ds, h5py.Dataset)
+                self.params_dict['samplerate'] = samplerate_ds[()]
         self.channels = channels
         self.channel_labels_to_string()
 
 
-    def read_file(self, filename, channels, start_offsets=np.array([0]), read_size=-1):
+    def read_file(
+        self,
+        filename: str,
+        channels: npt.NDArray[Any],
+        start_offsets: npt.NDArray[Any] = np.array([0]),
+        read_size: int = -1,
+    ) -> Tuple[npt.NDArray[Any], npt.NDArray[np.bool_]]:
         """
         Overloads BaseRawReader.read_file(). Does some mangling of the channels parameter if it is empty or if the
         HDF5 file is a bipolar recording
@@ -56,22 +66,34 @@ class H5RawReader(BaseRawReader):
         """
         with h5py.File(self.dataroot, 'r') as eegfile:
             if len(channels) == 0:
-                channels_ = self.channel_labels = np.array(['{:03d}'.format(x).encode() for x in eegfile['/ports'][:]])
+                ports_ds = eegfile['/ports']
+                assert isinstance(ports_ds, h5py.Dataset)
+                channels_ = self.channel_labels = np.array(
+                    ['{:03d}'.format(x).encode() for x in ports_ds[:]]
+                )
             else:
                 channels_ = channels
             try:
-                monopolar_possible = bool(eegfile['/monopolar_possible'][0])
+                monopolar_ds = eegfile['/monopolar_possible']
+                assert isinstance(monopolar_ds, h5py.Dataset)
+                monopolar_possible = bool(monopolar_ds[0])
 
                 if 'bipolar_info' in eegfile and not monopolar_possible:
+                    ch0_label_ds = eegfile['/bipolar_info/ch0_label']
+                    ch1_label_ds = eegfile['/bipolar_info/ch1_label']
+                    assert isinstance(ch0_label_ds, h5py.Dataset)
+                    assert isinstance(ch1_label_ds, h5py.Dataset)
+                    ch0_label = ch0_label_ds[:]
+                    ch1_label = ch1_label_ds[:]
 
-                    if not (np.in1d(channels_, eegfile['/bipolar_info/ch0_label']).all()):
+                    if not (np.isin(channels_, ch0_label).all()):
                         raise IndexError('Channel[s] %s not in recording' % (
-                            channels_[~np.in1d(channels_, eegfile['/bipolar_info/ch0_label'])]))
-                    channel_mask = np.in1d(eegfile['/bipolar_info/ch0_label'], channels_)
+                            channels_[~np.isin(channels_, ch0_label)]))
+                    channel_mask = np.isin(ch0_label, channels_)
                     self.channel_labels = np.rec.array(
                         list(
-                            zip(eegfile['/bipolar_info/ch0_label'][channel_mask],
-                                eegfile['/bipolar_info/ch1_label'][channel_mask]),
+                            zip(ch0_label[channel_mask],
+                                ch1_label[channel_mask]),
                         ),
                         dtype=[('ch0', int), ('ch1', int)])
 
@@ -81,7 +103,7 @@ class H5RawReader(BaseRawReader):
             except KeyError:
                 is_bipolar = False
 
-            channels_ = channels_ if not is_bipolar else self.channel_labels.ch0
+            channels_ = channels_ if not is_bipolar else self.channel_labels['ch0']
             event_data, read_ok_mask = self.read_h5file(eegfile, channels_,
                                                         start_offsets, read_size)
             if self.read_size == -1:
@@ -91,7 +113,12 @@ class H5RawReader(BaseRawReader):
             return event_data, read_ok_mask
 
     @staticmethod
-    def read_h5file(eegfile, channels, start_offsets=np.array([0]), read_size=-1):
+    def read_h5file(
+        eegfile: h5py.File,
+        channels: npt.NDArray[Any],
+        start_offsets: npt.NDArray[Any] = np.array([0]),
+        read_size: int = -1,
+    ) -> Tuple[npt.NDArray[Any], npt.NDArray[np.bool_]]:
         """
         Reads raw data from HDF5 files into a numpy array of shape (len(channels),len(start_offsets), read_size).
         For each channel and offset, indicates whether the data at that offset on that channel could be read successfully.
@@ -106,7 +133,9 @@ class H5RawReader(BaseRawReader):
         """
         timeseries = eegfile['/timeseries']
         ports = eegfile['/ports']
-        channels_to_read = np.where(np.in1d(ports, channels.astype(int)))[0]
+        assert isinstance(timeseries, h5py.Dataset)
+        assert isinstance(ports, h5py.Dataset)
+        channels_to_read = np.where(np.isin(ports[:], channels.astype(int)))[0]
         if read_size < 0:
             if 'orient' in timeseries.attrs and timeseries.attrs['orient'] == 'row':
                 eventdata = timeseries[:, channels_to_read].T

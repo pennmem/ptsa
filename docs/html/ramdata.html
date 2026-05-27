@@ -1,96 +1,57 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Interacting with RAM Data &mdash; PTSA 3.0.2 documentation</title>
-  
-
-  
-  
-  
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interacting with RAM Data &mdash; PTSA 3.0.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=c3365b21"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Filtering Time Series" href="filters.html" />
-    <link rel="prev" title="Reading EEG Data from events" href="examples/eeg.html" /> 
+    <link rel="prev" title="Getting started with timeseries" href="examples/getting_started.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
           
-            <a href="index.html" class="icon icon-home"> PTSA
           
-
-          
+          <a href="index.html" class="icon icon-home">
+            PTSA
           </a>
-
-          
-            
-            
-              <div class="version">
-                3.0.2
-              </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <ul class="current">
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="morlet.html">Morlet wavelets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filters.html">Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development guidelines</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="examples/index.html">Examples</a></li>
+</ul>
+<ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Interacting with RAM Data</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#reading-events-using-baseeventreader">Reading events using BaseEventReader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#reading-events-using-cmleventreader">Reading events using CMLEventReader</a></li>
@@ -99,99 +60,34 @@
 <li class="toctree-l2"><a class="reference internal" href="#reading-eeg-time-series-using-eegreader">Reading EEG time series using EEGReader</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="filters.html">Filtering Time Series</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/index.html">API Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="development.html">Development guidelines</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">PTSA</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html">Docs</a> &raquo;</li>
-        
-      <li>Interacting with RAM Data</li>
-    
-    
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Interacting with RAM Data</li>
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="_sources/ramdata.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="interacting-with-ram-data">
-<span id="ramdata"></span><h1>Interacting with RAM Data<a class="headerlink" href="#interacting-with-ram-data" title="Permalink to this heading">¶</a></h1>
+             
+  <section id="interacting-with-ram-data">
+<span id="ramdata"></span><h1>Interacting with RAM Data<a class="headerlink" href="#interacting-with-ram-data" title="Link to this heading"></a></h1>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>This section utilizes many deprecated ways of using PTSA so may not work as
@@ -206,10 +102,10 @@ DARPA RAM project.</p>
 <p>Let’s start by looking at how to read experimental events stored in Matlab Format. The class we will use is called
 <code class="docutils literal notranslate"><span class="pre">BaseEventReader</span></code>.</p>
 <section id="reading-events-using-baseeventreader">
-<h2>Reading events using BaseEventReader<a class="headerlink" href="#reading-events-using-baseeventreader" title="Permalink to this heading">¶</a></h2>
+<h2>Reading events using BaseEventReader<a class="headerlink" href="#reading-events-using-baseeventreader" title="Link to this heading"></a></h2>
 <p>To read events that RAM project uses  we need to mount RAM data directory on our computer. In my case I mounted it
 as <code class="docutils literal notranslate"><span class="pre">/Users/rhino_root/data</span></code>.  Now, to read the events we first need to import <code class="docutils literal notranslate"><span class="pre">BaseEventReader</span></code></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">BaseEventReader</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ptsa.data.readers</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseEventReader</span>
 </pre></div>
 </div>
 <p>then we will specify path to the event file, create instance of the <code class="docutils literal notranslate"><span class="pre">BaseEventReader</span></code> called <code class="docutils literal notranslate"><span class="pre">base_e_reader</span></code> and
@@ -240,12 +136,12 @@ function and select only those events that are ot <code class="docutils literal 
 <p>Indicating that the event object is in fact <code class="docutils literal notranslate"><span class="pre">numpy.recarray</span></code></p>
 </section>
 <section id="reading-events-using-cmleventreader">
-<h2>Reading events using CMLEventReader<a class="headerlink" href="#reading-events-using-cmleventreader" title="Permalink to this heading">¶</a></h2>
+<h2>Reading events using CMLEventReader<a class="headerlink" href="#reading-events-using-cmleventreader" title="Link to this heading"></a></h2>
 <p>CMLEventReader (CML stands for Computational Memory Lab) has the same functionality as BaseEventReader but in the
 most basic configuration it reads events “as-is” without any path manipulation. However, it will, by default, replace
 <code class="docutils literal notranslate"><span class="pre">NaN</span></code> with sentinel values and will eliminate events that do not reference eeg file. For example the most basic call
 to CMLEventReader could look like:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">CMLEventReader</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ptsa.data.readers</span><span class="w"> </span><span class="kn">import</span> <span class="n">CMLEventReader</span>
 
 <span class="n">e_path</span> <span class="o">=</span> <span class="s1">&#39;/Volumes/rhino_root/data/events/RAM_FR1/R1111M_events.mat&#39;</span>
 <span class="c1"># ------------------- READING EVENTS</span>
@@ -258,7 +154,7 @@ to CMLEventReader could look like:</p>
 <code class="docutils literal notranslate"><span class="pre">eeg_fname_search_pattern</span></code> and <code class="docutils literal notranslate"><span class="pre">eeg_fname_replace_pattern</span></code> to specify replace procedure of the path segment.
 For example if we want to replace <code class="docutils literal notranslate"><span class="pre">eeg.reref</span></code> path segment of the <code class="docutils literal notranslate"><span class="pre">eegfile</span></code> with <code class="docutils literal notranslate"><span class="pre">eeg.no_reref</span></code> and if we want
 want to “normalize” path (<em>i.e.</em> replace <code class="docutils literal notranslate"><span class="pre">data1</span></code>, <code class="docutils literal notranslate"><span class="pre">data2</span></code> <em>etc…</em> with <code class="docutils literal notranslate"><span class="pre">data</span></code>) we would use the following call:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">CMLEventReader</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ptsa.data.readers</span><span class="w"> </span><span class="kn">import</span> <span class="n">CMLEventReader</span>
 
 <span class="n">e_path</span> <span class="o">=</span> <span class="s1">&#39;/Volumes/rhino_root/data/events/RAM_FR1/R1111M_events.mat&#39;</span>
 <span class="c1"># ------------------- READING EVENTS</span>
@@ -275,13 +171,13 @@ want to “normalize” path (<em>i.e.</em> replace <code class="docutils litera
 <p>Internally <code class="docutils literal notranslate"><span class="pre">CMLReader</span></code> uses code from <code class="docutils literal notranslate"><span class="pre">BaseEventReader</span></code></p>
 </section>
 <section id="finding-paths-using-jsonindexreader">
-<h2>Finding Paths using JsonIndexReader<a class="headerlink" href="#finding-paths-using-jsonindexreader" title="Permalink to this heading">¶</a></h2>
+<h2>Finding Paths using JsonIndexReader<a class="headerlink" href="#finding-paths-using-jsonindexreader" title="Link to this heading"></a></h2>
 <p>While one can always specify the path to the events structure by hand, PTSA has a class
 <code class="docutils literal notranslate"><span class="pre">JsonIndexReader</span></code> that tracks this information. The location of the various event files
 is kept in JSON format, in <cite>/protocols/r1.json</cite>, and <code class="docutils literal notranslate"><span class="pre">JsonIndexReader</span></code> allows one to
 query the index by property.</p>
 <p>We build the reader with:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">JsonIndexReader</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ptsa.data.readers</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonIndexReader</span>
 <span class="n">jr</span> <span class="o">=</span> <span class="n">JsonIndexReader</span><span class="p">(</span><span class="s1">&#39;/protocols/r1.json&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -310,10 +206,10 @@ to a record array:</p>
 <p>and now the events structure is exactly as described in the previous section.</p>
 </section>
 <section id="reading-electrode-information-using-talreader">
-<h2>Reading Electrode Information using TalReader<a class="headerlink" href="#reading-electrode-information-using-talreader" title="Permalink to this heading">¶</a></h2>
+<h2>Reading Electrode Information using TalReader<a class="headerlink" href="#reading-electrode-information-using-talreader" title="Link to this heading"></a></h2>
 <p>To read electrode information that is stored in the so called tal_structs we will use <code class="docutils literal notranslate"><span class="pre">TalReader</span></code> object.
 We first import TalReader:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">TalReader</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ptsa.data.readers</span><span class="w"> </span><span class="kn">import</span> <span class="n">TalReader</span>
 </pre></div>
 </div>
 <p>Next we specify path to the actual <code class="docutils literal notranslate"><span class="pre">.mat</span></code> file containing information about electrodes ,
@@ -388,9 +284,9 @@ that extract a list of individual channel numbers and a list of bipolar pairs.</
 </div>
 </section>
 <section id="reading-eeg-time-series-using-eegreader">
-<h2>Reading EEG time series using EEGReader<a class="headerlink" href="#reading-eeg-time-series-using-eegreader" title="Permalink to this heading">¶</a></h2>
+<h2>Reading EEG time series using EEGReader<a class="headerlink" href="#reading-eeg-time-series-using-eegreader" title="Link to this heading"></a></h2>
 <p>To read EEG time series’ associated with events we typically use <code class="docutils literal notranslate"><span class="pre">EEGReader</span></code>. Here is the syntax:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.readers</span> <span class="kn">import</span> <span class="n">EEGReader</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ptsa.data.readers</span><span class="w"> </span><span class="kn">import</span> <span class="n">EEGReader</span>
 <span class="n">eeg_reader</span> <span class="o">=</span> <span class="n">EEGReader</span><span class="p">(</span><span class="n">events</span><span class="o">=</span><span class="n">base_events</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="n">monopolar_channels</span><span class="p">,</span>
                        <span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">buffer_time</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 
@@ -425,51 +321,32 @@ that extract a list of individual channel numbers and a list of bipolar pairs.</
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="filters.html" class="btn btn-neutral float-right" title="Filtering Time Series" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="examples/eeg.html" class="btn btn-neutral float-left" title="Reading EEG Data from events" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples/getting_started.html" class="btn btn-neutral float-left" title="Getting started with timeseries" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2022
-
-    </p>
+    <p>&#169; Copyright 2026.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

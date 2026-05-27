@@ -2,8 +2,10 @@ from contextlib import closing
 import logging
 import os.path as osp
 import warnings
+from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 
 from ptsa.data.readers import BaseRawReader
 from ptsa.extensions.edf import EDFFile
@@ -25,7 +27,7 @@ class EDFRawReader(BaseRawReader):
 
 
     """
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         if EDFFile is None:
             raise RuntimeError(
                 "The compiled self._edffile extension module was not found.\n"
@@ -38,13 +40,13 @@ class EDFRawReader(BaseRawReader):
             raise RuntimeError('Dataroot missing extension (must be supplied for EDF reader)')
         super(EDFRawReader, self).__init__(**kwargs)
 
-    def init_params(self):
+    def init_params(self) -> dict[str, Any]:
         return {'gain':1,
                 'samplerate':self.samplerate()
                 }
 
 
-    def samplerate(self):
+    def samplerate(self) -> float:
         with closing(EDFFile(self.dataroot)) as self._edf:
             channels = self.channels
             if not len(channels):
@@ -60,8 +62,13 @@ class EDFRawReader(BaseRawReader):
                 raise RuntimeError('Inconsistent samplerates across channels; cannot read channels simultaneously')
             return samplerates[0]
 
-    def read_file(self, filename, channels, start_offsets=np.array([0]),
-                  read_size=-1):
+    def read_file(
+        self,
+        filename: str,
+        channels,
+        start_offsets: npt.NDArray = np.array([0]),
+        read_size: int = -1,
+    ) -> tuple[npt.NDArray, npt.NDArray]:
         """Read an EDF/BDF/EDF+/BDF+ file.
 
         Parameters
@@ -138,5 +145,5 @@ if __name__ == "__main__": # pragma: no cover
     fname = osp.expanduser("/Volumes/rhino_root/data/eeg/eeg/scalp/ltp/ltpFR2/LTP375/session_0/eeg/LTP375_session_0.bdf")
 
     reader = EDFRawReader(dataroot=fname)
-    data, mask = reader.read_file(fname, [], read_size=1024, start_offsets=np.array([0, 1024, 2048]))
+    data, mask = reader.read_file(fname, np.array([]), read_size=1024, start_offsets=np.array([0, 1024, 2048]))
     print(data)

@@ -1,308 +1,249 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Filtering Time Series &mdash; PTSA 3.0.2 documentation</title>
-  
-
-  
-  
-  
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Filters &mdash; PTSA 3.0.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=c3365b21"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="API Reference" href="api/index.html" />
-    <link rel="prev" title="Interacting with RAM Data" href="ramdata.html" /> 
+    <link rel="prev" title="Morlet wavelets" href="morlet.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
           
-            <a href="index.html" class="icon icon-home"> PTSA
           
-
-          
+          <a href="index.html" class="icon icon-home">
+            PTSA
           </a>
-
-          
-            
-            
-              <div class="version">
-                3.0.2
-              </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="examples/index.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ramdata.html">Interacting with RAM Data</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Filtering Time Series</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#monopolartobipolarmapper">MonopolartoBipolarMapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="morlet.html">Morlet wavelets</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Filters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#shared-setup">Shared setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#morletwaveletfilter">MorletWaveletFilter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#butterworthfilter">ButterworthFilter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#resamplefilter">ResampleFilter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#monopolartobipolarmapper">MonopolarToBipolarMapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#datachopper">DataChopper</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development guidelines</a></li>
 </ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/index.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ramdata.html">Interacting with RAM Data</a></li>
+</ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">PTSA</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html">Docs</a> &raquo;</li>
-        
-      <li>Filtering Time Series</li>
-    
-    
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Filters</li>
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="_sources/filters.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="filtering-time-series">
-<span id="ramdata"></span><h1>Filtering Time Series<a class="headerlink" href="#filtering-time-series" title="Permalink to this heading">¶</a></h1>
-<p>Filtering is a type of operation that takes as an input one time series and outputs another. For example Butterworth
-band-pass filter may remove unwanted frequencies from your signal. Computing Wavelets is also a form of filtering
-operation that takes one time series and outputs another one with signal that is decomposed into wavelet components</p>
+             
+  <section id="filters">
+<span id="id1"></span><h1>Filters<a class="headerlink" href="#filters" title="Link to this heading"></a></h1>
+<p>PTSA ships a small collection of filter classes that all share the
+same 3.0 calling convention: construct an instance with its
+configuration parameters, then call <code class="docutils literal notranslate"><span class="pre">filter</span></code> on a
+<a class="reference internal" href="api/data/timeseriesx.html#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeSeries</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generic 3.0 filter pattern:</span>
+<span class="c1"># filt = SomeFilter(&lt;config kwargs&gt;)</span>
+<span class="c1"># result = filt.filter(some_timeseries)</span>
+</pre></div>
+</div>
+<p>The pre-3.0 idiom of passing the input <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> into the
+constructor (<code class="docutils literal notranslate"><span class="pre">SomeFilter(time_series=ts,</span> <span class="pre">...)</span></code>) has been removed.</p>
+<p>This page gives a brief tour of each filter. The Morlet wavelet has
+its own dedicated page — see <a class="reference internal" href="morlet.html#morlet"><span class="std std-ref">Morlet wavelets</span></a> for the formula,
+parameter discussion, and worked example.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>All filter objects define function <code class="docutils literal notranslate"><span class="pre">filter</span></code>. This is the function you call to make filter do its job</p>
+<p>For sybil-collected doctest purposes, the code samples below use
+a small synthetic <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> constructed once at the top of
+the file. Each filter snippet starts from that <code class="docutils literal notranslate"><span class="pre">ts</span></code> object so
+the examples actually execute.</p>
 </div>
-<p>Let us start with something simple - <code class="docutils literal notranslate"><span class="pre">MonopolarToBipolarMapper</span></code>.</p>
-<section id="monopolartobipolarmapper">
-<h2>MonopolartoBipolarMapper<a class="headerlink" href="#monopolartobipolarmapper" title="Permalink to this heading">¶</a></h2>
-<p>This filter takes as inputs an array of monopolar eeg data  - <code class="docutils literal notranslate"><span class="pre">timeseries</span></code> parameter below
-and the array of bipolar pairs (<code class="docutils literal notranslate"><span class="pre">bipolar_pairs</span></code>) and outputs another time series
-containing pairwise differences for electrode pairs specified in <code class="docutils literal notranslate"><span class="pre">bipolar_pairs</span></code></p>
-<p>Here is the syntax:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.filters</span> <span class="kn">import</span> <span class="n">MonopolarToBipolarMapper</span>
-<span class="n">m2b</span> <span class="o">=</span> <span class="n">MonopolarToBipolarMapper</span><span class="p">(</span><span class="n">bipolar_pairs</span><span class="o">=</span><span class="n">bipolar_pairs</span><span class="p">)</span>
-<span class="n">bp_eegs</span> <span class="o">=</span> <span class="n">m2b</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">timeseries</span><span class="o">=</span><span class="n">base_eegs</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>We import <code class="docutils literal notranslate"><span class="pre">MonopolarToBipolarMapper</span></code> from <code class="docutils literal notranslate"><span class="pre">ptsa.data.filters</span></code> PTSA package , crteate an instance of
-MonopolarToBipolarMapper with appropriate parameters and then call <code class="docutils literal notranslate"><span class="pre">filter</span></code> function to compute pairwise
-signal differences. Here is the output:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">xray</span><span class="o">.</span><span class="n">TimeSeries</span> <span class="p">(</span><span class="n">bipolar_pairs</span><span class="p">:</span> <span class="mi">141</span><span class="p">,</span> <span class="n">events</span><span class="p">:</span> <span class="mi">1020</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="mi">1800</span><span class="p">)</span><span class="o">&gt;</span>
-<span class="n">array</span><span class="p">([[[</span>  <span class="mf">7119.14164</span> <span class="p">,</span>   <span class="mf">7119.673316</span><span class="p">,</span>   <span class="mf">7119.14164</span> <span class="p">,</span> <span class="o">...</span><span class="p">,</span>   <span class="mf">7156.35896</span> <span class="p">,</span>
-           <span class="mf">7159.549016</span><span class="p">,</span>   <span class="mf">7164.3341</span>  <span class="p">],</span>
-        <span class="p">[</span>  <span class="mf">7175.499296</span><span class="p">,</span>   <span class="mf">7178.157676</span><span class="p">,</span>   <span class="mf">7186.132816</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>   <span class="mf">7022.376608</span><span class="p">,</span>
-           <span class="mf">7009.084708</span><span class="p">,</span>   <span class="mf">7009.084708</span><span class="p">],</span>
-        <span class="p">[</span>  <span class="mf">7061.188956</span><span class="p">,</span>   <span class="mf">7063.31566</span> <span class="p">,</span>   <span class="mf">7067.037392</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span>   <span class="mf">7227.071868</span><span class="p">,</span>
-           <span class="mf">7228.13522</span> <span class="p">,</span>   <span class="mf">7221.223432</span><span class="p">],</span>
+<section id="shared-setup">
+<h2>Shared setup<a class="headerlink" href="#shared-setup" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ptsa.data.timeseries</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeSeries</span>
 
-<span class="o">...</span>
-</pre></div>
-</div>
-<p>Notice that this <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> object is indexed by bipolar_pairs. As a matter of fact if you type:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bp_eegs</span><span class="o">.</span><span class="n">bipolar_pairs</span>
-</pre></div>
-</div>
-<p>you will get</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">xray</span><span class="o">.</span><span class="n">DataArray</span> <span class="s1">&#39;bipolar_pairs&#39;</span> <span class="p">(</span><span class="n">bipolar_pairs</span><span class="p">:</span> <span class="mi">141</span><span class="p">)</span><span class="o">&gt;</span>
-<span class="n">array</span><span class="p">([(</span><span class="s1">&#39;001&#39;</span><span class="p">,</span> <span class="s1">&#39;002&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;001&#39;</span><span class="p">,</span> <span class="s1">&#39;009&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;002&#39;</span><span class="p">,</span> <span class="s1">&#39;003&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;002&#39;</span><span class="p">,</span> <span class="s1">&#39;010&#39;</span><span class="p">),</span>
-       <span class="p">(</span><span class="s1">&#39;003&#39;</span><span class="p">,</span> <span class="s1">&#39;004&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;003&#39;</span><span class="p">,</span> <span class="s1">&#39;011&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;004&#39;</span><span class="p">,</span> <span class="s1">&#39;005&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;004&#39;</span><span class="p">,</span> <span class="s1">&#39;012&#39;</span><span class="p">),</span>
+<span class="n">samplerate</span> <span class="o">=</span> <span class="mf">500.0</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">samplerate</span><span class="p">)</span>
+<span class="c1"># Three &quot;channels&quot; carrying 10 Hz + 60 Hz line noise.</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+        <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mf">60.0</span> <span class="o">*</span> <span class="n">t</span><span class="p">))</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">ts</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span>
+    <span class="n">samplerate</span><span class="p">,</span>
+    <span class="n">dims</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;channels&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">),</span>
+    <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;channels&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">t</span><span class="p">},</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="butterworthfilter">
-<h2>ButterworthFilter<a class="headerlink" href="#butterworthfilter" title="Permalink to this heading">¶</a></h2>
-<p>To use Butterworth filtering inside PTSA you have two choices: use <code class="docutils literal notranslate"><span class="pre">ButterworthFilter</span></code> object and passing
-<code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> object to its <code class="docutils literal notranslate"><span class="pre">.filter</span></code> method or use a convenience function inside <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> object.</p>
-<p>Let’s us start by showing first <code class="docutils literal notranslate"><span class="pre">ButterworthFilter</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ptsa.data.filters</span> <span class="kn">import</span> <span class="n">ButterworthFilter</span>
-<span class="n">b_filter</span> <span class="o">=</span> <span class="n">ButterworthFilter</span><span class="p">(</span><span class="n">freq_range</span><span class="o">=</span><span class="p">[</span><span class="mf">58.</span><span class="p">,</span> <span class="mf">62.</span><span class="p">],</span> <span class="n">filt_type</span><span class="o">=</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-<span class="n">bp_eegs_filtered</span> <span class="o">=</span> <span class="n">b_filter</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">timeseries</span><span class="o">=</span><span class="n">bp_eegs</span><span class="p">)</span>
+<section id="morletwaveletfilter">
+<h2>MorletWaveletFilter<a class="headerlink" href="#morletwaveletfilter" title="Link to this heading"></a></h2>
+<p>PTSA’s main user-facing entry point to the C++/FFTW Morlet wavelet
+kernel. Produces time-resolved power, phase, or raw complex
+coefficients on a frequency grid you supply.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ptsa.data.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">MorletWaveletFilter</span>
+
+<span class="n">wf</span> <span class="o">=</span> <span class="n">MorletWaveletFilter</span><span class="p">(</span>
+    <span class="n">freqs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">]),</span>
+    <span class="n">width</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">output</span><span class="o">=</span><span class="s1">&#39;power&#39;</span><span class="p">,</span>
+    <span class="n">complete</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">cpus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">power</span> <span class="o">=</span> <span class="n">wf</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+<span class="c1"># dims: (&#39;frequency&#39;, &#39;channels&#39;, &#39;time&#39;)</span>
 </pre></div>
 </div>
-<p>Here we create ButterworthFilter object (after importing it from PTSA’s <code class="docutils literal notranslate"><span class="pre">filters</span></code> package) and specify
-filter parameters: we specify frequency range that we want to filter out
-(to remove frequencies we set <code class="docutils literal notranslate"><span class="pre">filt_type</span></code> to <code class="docutils literal notranslate"><span class="pre">'stop'</span></code>) and specify filter order (here it is 4)</p>
-<p>As before, once the filter object is initialized we call <code class="docutils literal notranslate"><span class="pre">filter</span></code> function to get the result
-(filtered <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code>).</p>
-<p>If you prefer you may use alternative way of running Butterworth filter on a <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> by calling <code class="docutils literal notranslate"><span class="pre">filtered</span></code>
-function on a <code class="docutils literal notranslate"><span class="pre">Timeseries</span></code> object</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bp_eegs_filtered_1</span> <span class="o">=</span> <span class="n">bp_eegs</span><span class="o">.</span><span class="n">filtered</span><span class="p">(</span><span class="n">freq_range</span><span class="o">=</span><span class="p">[</span><span class="mf">58.</span><span class="p">,</span> <span class="mf">62.</span><span class="p">],</span> <span class="n">filt_type</span><span class="o">=</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<p>The full formula, parameter explanation (<code class="docutils literal notranslate"><span class="pre">width</span></code>, <code class="docutils literal notranslate"><span class="pre">complete</span></code>),
+and a comparison against scipy / MNE parameterizations live on the
+<a class="reference internal" href="morlet.html#morlet"><span class="std std-ref">Morlet wavelets</span></a> page.</p>
+</section>
+<section id="butterworthfilter">
+<h2>ButterworthFilter<a class="headerlink" href="#butterworthfilter" title="Link to this heading"></a></h2>
+<p>Wraps <code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.filtfilt()</span></code> with a Butterworth IIR design.
+Use <code class="docutils literal notranslate"><span class="pre">filt_type='stop'</span></code> to notch a band (e.g.60 Hz line noise),
+<code class="docutils literal notranslate"><span class="pre">'pass'</span></code> for a band-pass, or <code class="docutils literal notranslate"><span class="pre">'lowpass'</span></code> / <code class="docutils literal notranslate"><span class="pre">'highpass'</span></code> for
+the one-sided variants.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ptsa.data.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">ButterworthFilter</span>
+
+<span class="n">notch</span> <span class="o">=</span> <span class="n">ButterworthFilter</span><span class="p">(</span><span class="n">freq_range</span><span class="o">=</span><span class="p">[</span><span class="mf">58.0</span><span class="p">,</span> <span class="mf">62.0</span><span class="p">],</span>
+                          <span class="n">filt_type</span><span class="o">=</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">ts_clean</span> <span class="o">=</span> <span class="n">notch</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
 </pre></div>
+</div>
+<p>For convenience, <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> also exposes the same filter
+in-place as <code class="docutils literal notranslate"><span class="pre">ts.filtered(freq_range=[58,</span> <span class="pre">62],</span> <span class="pre">filt_type='stop',</span>
+<span class="pre">order=4)</span></code>.</p>
+</section>
+<section id="resamplefilter">
+<h2>ResampleFilter<a class="headerlink" href="#resamplefilter" title="Link to this heading"></a></h2>
+<p>Wraps <code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.resample()</span></code> to change the samplerate of a
+<code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code>. The output <code class="docutils literal notranslate"><span class="pre">samplerate</span></code> coord is updated
+accordingly.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ptsa.data.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResampleFilter</span>
+
+<span class="n">rs</span> <span class="o">=</span> <span class="n">ResampleFilter</span><span class="p">(</span><span class="n">resamplerate</span><span class="o">=</span><span class="mf">250.0</span><span class="p">)</span>
+<span class="n">ts_down</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="monopolartobipolarmapper">
+<h2>MonopolarToBipolarMapper<a class="headerlink" href="#monopolartobipolarmapper" title="Link to this heading"></a></h2>
+<p>Takes pairwise differences across channels to produce a bipolar
+montage from a monopolar one. <code class="docutils literal notranslate"><span class="pre">bipolar_pairs</span></code> is an array of
+length-2 channel indices.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ptsa.data.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">MonopolarToBipolarMapper</span>
+
+<span class="n">pairs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)],</span>
+                 <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;ch0&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;i8&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;ch1&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;i8&#39;</span><span class="p">)])</span>
+<span class="n">m2b</span> <span class="o">=</span> <span class="n">MonopolarToBipolarMapper</span><span class="p">(</span><span class="n">bipolar_pairs</span><span class="o">=</span><span class="n">pairs</span><span class="p">)</span>
+<span class="n">ts_bipolar</span> <span class="o">=</span> <span class="n">m2b</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The output <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> is indexed by <code class="docutils literal notranslate"><span class="pre">bipolar_pairs</span></code> along the
+former channel axis.</p>
+</section>
+<section id="datachopper">
+<h2>DataChopper<a class="headerlink" href="#datachopper" title="Link to this heading"></a></h2>
+<p>Slices a continuous (session-length) recording into per-event
+epochs. Construction takes an event recarray, a sample-rate, and an
+epoch start/end offset (in samples or seconds depending on
+<code class="docutils literal notranslate"><span class="pre">use_millis</span></code>). See the class docstring for the full signature.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">DataChopper.filter</span></code> is exercised primarily on lab data and is
+not demonstrated with a runnable code block here; consult the
+API reference and the test suite in
+<code class="docutils literal notranslate"><span class="pre">tests/test_smoke.py</span></code> for usage.</p>
 </div>
 </section>
 </section>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="api/index.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="ramdata.html" class="btn btn-neutral float-left" title="Interacting with RAM Data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="morlet.html" class="btn btn-neutral float-left" title="Morlet wavelets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api/index.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2022
-
-    </p>
+    <p>&#169; Copyright 2026.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

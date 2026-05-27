@@ -1,5 +1,4 @@
 from contextlib import contextmanager
-import distutils
 import json
 import os
 import os.path as osp
@@ -43,12 +42,6 @@ def chdir(path):
     os.chdir(orig_cwd)
 
 
-def check_dependencies():
-    """Checks for dependencies that aren't installable via pip."""
-    if not distutils.spawn.find_executable('swig'):
-        raise OSError('Missing swig - please `conda install swig`')
-
-
 def get_version_str():
     from ptsa import __version__
     return __version__
@@ -86,6 +79,46 @@ def get_fftw_libs():
         return ['libfftw3-3']
     else:
         return ['fftw3']
+
+
+def get_library_dirs():
+    """Return extra library search dirs so the linker finds libfftw3.
+
+    On Linux the conda compiler-activation scripts export ``-L$PREFIX/lib``
+    via ``LDFLAGS`` and the link "just works", but the macOS (clang) and
+    Windows (MSVC) builds do not reliably pick that up — the morlet link
+    step fails with ``ld: library 'fftw3' not found``. Add the active conda
+    prefix's lib dir explicitly so the search path is correct everywhere.
+    """
+    dirs = []
+
+    def _add(prefix):
+        if not prefix:
+            return
+        # POSIX conda layout, plus the Windows ``Library\{lib,bin}`` layout.
+        for sub in (('lib',), ('Library', 'lib'), ('Library', 'bin')):
+            dirs.append(os.path.join(prefix, *sub))
+
+    # conda-build always exports PREFIX (and LIBRARY_PREFIX on Windows) for
+    # the host env that carries the fftw dependency; prefer those.
+    for var in ("PREFIX", "LIBRARY_PREFIX", "CONDA_PREFIX"):
+        _add(os.environ.get(var))
+
+    # Fall back to `conda info`'s active prefix (mirrors get_include_dirs).
+    try:
+        p = subprocess.Popen([os.environ["CONDA_EXE"], "info", "--json"],
+                             env=os.environ, stdout=subprocess.PIPE)
+        stdout, _ = p.communicate()
+        _add(json.loads(stdout).get("active_prefix"))
+    except Exception:
+        pass
+
+    # De-duplicate while preserving order; keep only dirs that exist.
+    seen = []
+    for d in dirs:
+        if d and d not in seen and os.path.isdir(d):
+            seen.append(d)
+    return seen
 
 
 def get_compiler_args():
@@ -163,64 +196,59 @@ def make_pybind_extension(module, **kwargs):
     compile_args = kwargs.pop('extra_compile_args', [])
     compile_args += get_compiler_args()
 
+    library_dirs = kwargs.pop('library_dirs', [])
+    library_dirs += get_library_dirs()
+
     return Extension(
         module,
         include_dirs=include_dirs,
+        library_dirs=library_dirs,
         extra_compile_args=compile_args,
         language='c++',
         **kwargs
     )
 
 
+# Install pybind11 if missing (used by morlet, circular_stat, and edf).
+try:
+    import pybind11  # noqa: F401
+except ImportError:
+    if subprocess.call([sys.executable, '-m', 'pip', 'install', 'pybind11']):
+        raise RuntimeError('ERROR, failed:  pip install pybind11')
+
 ext_modules = [
-    Extension(
+    make_pybind_extension(
         'ptsa.extensions.morlet._morlet',
-        sources=[osp.join(morlet_dir, 'morlet.cpp'),
-                 osp.join(morlet_dir, 'MorletWaveletTransformMP.cpp'),
-                 osp.join(morlet_dir, 'morlet.i')],
-        swig_opts=['-c++'],
+        sources=[
+            osp.join(morlet_dir, 'morlet.cpp'),
+            osp.join(morlet_dir, 'MorletWaveletTransformMP.cpp'),
+            osp.join(morlet_dir, 'wrap.cpp'),
+        ],
         include_dirs=get_include_dirs(),
-        extra_compile_args=get_compiler_args(),
         libraries=get_fftw_libs(),
     ),
 
-    Extension(
+    make_pybind_extension(
         'ptsa.extensions.circular_stat._circular_stat',
         sources=[
             osp.join(circ_stat_dir, 'circular_stat.cpp'),
-            osp.join(circ_stat_dir, 'circular_stat.i')
+            osp.join(circ_stat_dir, 'wrap.cpp'),
         ],
-        swig_opts=['-c++'],
         include_dirs=get_include_dirs(),
-        extra_compile_args=get_compiler_args(),
     ),
 ]
 
-# Install pybind11 if missing
-try:
-  import pybind11
-except ImportError:
-  if subprocess.call([sys.executable, '-m', 'pip', 'install', 'pybind11']):
-    raise RuntimeError('ERROR, failed:  pip install pybind11')
+ext_modules += [
+    make_pybind_extension(
+        'ptsa.extensions.edf.edffile',
+        sources=[
+            'ptsa/extensions/edf/edflib.cpp',
+            'ptsa/extensions/edf/edffile.cpp',
+            'ptsa/extensions/edf/wrap.cpp',
+        ],
+    ),
+]
 
-# Try to add edffile extension
-try:
-    ext_modules += [
-        make_pybind_extension(
-            'ptsa.extensions.edf.edffile',
-            sources=[
-                'ptsa/extensions/edf/edflib.cpp',
-                'ptsa/extensions/edf/edffile.cpp',
-                'ptsa/extensions/edf/wrap.cpp',
-            ],
-        )
-    ]
-except ImportError as err:
-    print("\n\nWARNING\n\n", err, "\n"
-          "pybind11 not found - you will be unable to read EDF files", sep='')
-
-
-check_dependencies()
 
 setup(
     name='ptsa',

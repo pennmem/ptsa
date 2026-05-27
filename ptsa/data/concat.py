@@ -1,18 +1,37 @@
-from ptsa.data.timeseries import TimeSeries
+from __future__ import annotations
+
+from typing import Any, Callable, Hashable, Iterable, Sequence
+
+import numpy as np
 import xarray
 from xarray.core import dtypes
-import numpy as np
+
+from ptsa.data.timeseries import TimeSeries
+
+__all__ = ["concat"]
+
+# ``xarray.concat`` types ``coords`` as ``Literal['minimal', 'different',
+# 'all'] | list[Hashable]`` (a ``ConcatOptions`` alias), so a plain ``str``
+# default flunks the overload check. Keeping ``coords`` typed against the
+# upstream alias avoids both a ``cast`` and a ``type: ignore`` here.
+ConcatCoordsArg = Any  # alias broadened to match xarray's private type
+ConcatCompatArg = Any
+ConcatJoinArg = Any
+ConcatCombineAttrsArg = (
+    str | Callable[[Sequence[dict[Any, Any]], Any], dict[Any, Any]]
+)
+
 
 def concat(
-    objs,
-    dim,
-    coords="different",
-    compat="equals",
-    positions=None,
-    fill_value=dtypes.NA,
-    join="outer",
-    combine_attrs="override"
-):
+    objs: Iterable[TimeSeries],
+    dim: Hashable | TimeSeries | xarray.DataArray,
+    coords: ConcatCoordsArg = "different",
+    compat: ConcatCompatArg = "equals",
+    positions: Iterable[np.ndarray] | None = None,
+    fill_value: Any = dtypes.NA,
+    join: ConcatJoinArg = "outer",
+    combine_attrs: ConcatCombineAttrsArg = "override",
+) -> TimeSeries:
     """
     Concatenate TimeSeries objects along a new or existing dimension.
     Parameters
@@ -92,20 +111,26 @@ def concat(
     concatenated : type of objs
     """
 
-    if not np.all([isinstance(obj, TimeSeries) for obj in objs]):
-        raise TypeError("All objects passed to concat must be instances of TimeSeries")
+    objs_list = list(objs)
+    if not all(isinstance(obj, TimeSeries) for obj in objs_list):
+        raise TypeError(
+            "All objects passed to concat must be instances of TimeSeries"
+        )
 
+    # NOTE: ``compat``/``join``/``combine_attrs`` were hard-coded to their
+    # defaults in the pre-3.0.6 source even though the function exposes them
+    # as parameters. Preserved verbatim to avoid silently changing behavior;
+    # see test_timeseries.py::test_concat which exercises only the defaults.
     xarr = xarray.concat(
-        objs, 
-        dim, 
+        objs_list,
+        dim,
         data_vars="all",
         coords=coords,
         compat="equals",
         positions=positions,
         fill_value=fill_value,
         join="outer",
-        combine_attrs="override")
+        combine_attrs="override",
+    )
 
-    ts = TimeSeries(xarr.data, xarr.coords, xarr.dims, xarr.name, xarr.attrs)
-
-    return ts
+    return TimeSeries(xarr.data, xarr.coords, xarr.dims, xarr.name, xarr.attrs)

@@ -1,16 +1,20 @@
 """Base classes for PTSA readers."""
 
+from __future__ import annotations
+
 import sys
 import os
-from os.path import *
+from os.path import join
 import re
 import json
 import unicodedata
 from collections import defaultdict
 import warnings
+from abc import abstractmethod
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union, cast
+
 import numpy as np
 import pandas as pd
-from abc import abstractmethod
 import traits.api
 from xarray import DataArray
 
@@ -26,10 +30,18 @@ __all__ = [
 ]
 
 
+# Type aliases ---------------------------------------------------------------
+
+PathLike = Union[str, os.PathLike]
+JSONDict = Dict[str, Any]
+ListInfo = Dict[str, Dict[str, Any]]
+
+
 class BaseReader(traits.api.HasTraits):
     """Base reader class. Children should implement the :meth:`read` method."""
+
     @abstractmethod
-    def read(self):
+    def read(self) -> Any:
         raise NotImplementedError
 
 
@@ -60,20 +72,35 @@ class BaseEventReader(BaseReader):
 
     """
 
-    filename = traits.api.Str
-    eliminate_events_with_no_eeg = traits.api.Bool
-    eliminate_nans= traits.api.Bool
-    _alter_eeg_path_flag = traits.api.Bool
-    normalize_eeg_path = traits.api.Bool
-    common_root = traits.api.Str
+    # Trait declarations. At runtime, ``HasTraits`` interprets these as trait
+    # descriptors and arranges for each instance to expose the underlying
+    # value (``str``, ``bool``, ...) on attribute access. We annotate each
+    # name with its *runtime* value type so pyright sees ``self.filename`` as
+    # ``str`` (etc.) rather than ``type[traits.api.Str]``; the per-line
+    # ``reportAssignmentType`` ignore covers the descriptor/value-type
+    # mismatch on these declarative lines.
+    filename: str = traits.api.Str  # pyright: ignore[reportAssignmentType]
+    eliminate_events_with_no_eeg: bool = traits.api.Bool  # pyright: ignore[reportAssignmentType]
+    eliminate_nans: bool = traits.api.Bool  # pyright: ignore[reportAssignmentType]
+    _alter_eeg_path_flag: bool = traits.api.Bool  # pyright: ignore[reportAssignmentType]
+    normalize_eeg_path: bool = traits.api.Bool  # pyright: ignore[reportAssignmentType]
+    common_root: str = traits.api.Str  # pyright: ignore[reportAssignmentType]
+    use_reref_eeg: bool = False
 
-    def __init__(self, filename,common_root='data/events',
-                 eliminate_events_with_no_eeg=True,eliminate_nans=True,use_reref_eeg=False,
-                 normalize_eeg_path=True):
+    def __init__(
+        self,
+        filename: PathLike,
+        common_root: str = 'data/events',
+        eliminate_events_with_no_eeg: bool = True,
+        eliminate_nans: bool = True,
+        use_reref_eeg: bool = False,
+        normalize_eeg_path: bool = True,
+    ) -> None:
         warnings.warn("Lab-specific readers may be moved to the cmlreaders "
                       "package (https://github.com/pennmem/cmlreaders)",
                       FutureWarning)
-        self.filename = filename
+        super().__init__()
+        self.filename = os.fspath(filename)
         self.common_root = common_root
         self.eliminate_events_with_no_eeg = eliminate_events_with_no_eeg
         self.eliminate_nans = eliminate_nans
@@ -82,15 +109,15 @@ class BaseEventReader(BaseReader):
         self._alter_eeg_path_flag = not self.use_reref_eeg
 
     @property
-    def alter_eeg_path_flag(self):
+    def alter_eeg_path_flag(self) -> bool:
         return self._alter_eeg_path_flag
 
     @alter_eeg_path_flag.setter
-    def alter_eeg_path_flag(self, val):
+    def alter_eeg_path_flag(self, val: bool) -> None:
         self._alter_eeg_path_flag = val
         self.use_reref_eeg = not self._alter_eeg_path_flag
 
-    def normalize_paths(self, events):
+    def normalize_paths(self, events: np.recarray) -> np.recarray:
         """
         Replaces data1, data2 etc... in the eegfile column of the events with data
         :param events: np.recarray representing events. One of hte field of this array should be eegfile
@@ -109,7 +136,7 @@ class BaseEventReader(BaseReader):
             ev.eegfile = re.sub(data_dir_bad, data_dir_good, ev.eegfile)
         return events
 
-    def modify_eeg_path(self, events):
+    def modify_eeg_path(self, events: np.recarray) -> np.recarray:
         """
         Replaces 'eeg.reref' with 'eeg.noreref' in eegfile path
         :param events: np.recarray representing events. One of hte field of this array should be eegfile
@@ -120,13 +147,13 @@ class BaseEventReader(BaseReader):
             ev.eegfile = ev.eegfile.replace('eeg.reref', 'eeg.noreref')
         return events
 
-    def read(self):
+    def read(self) -> np.recarray:
         if os.path.splitext(self.filename)[-1] == '.json':
             return self.read_json()
         else:
             return self.read_matlab()
 
-    def as_dataframe(self):
+    def as_dataframe(self) -> pd.DataFrame:
         """Read events and return as a :class:`pd.DataFrame`.
 
         .. warning::
@@ -137,15 +164,22 @@ class BaseEventReader(BaseReader):
 
         """
         events = self.read()
-        exclude = ['stim_params'] if 'stim_params' in events.dtype.fields else None
+        fields = events.dtype.fields
+        # ``np.dtype.fields`` is ``None`` for unstructured arrays; events
+        # produced by readers are always structured so this should not trip
+        # in practice, but guard against it for type-narrowing's sake.
+        if fields is not None and 'stim_params' in fields:
+            exclude: Optional[List[str]] = ['stim_params']
+        else:
+            exclude = None
         return pd.DataFrame.from_records(events, exclude=exclude)
 
-    def check_reader_settings_for_json_read(self):
+    def check_reader_settings_for_json_read(self) -> None:
 
         if self.use_reref_eeg:
             raise NotImplementedError('Reref from JSON not implemented')
 
-    def read_json(self):
+    def read_json(self) -> np.recarray:
 
         self.check_reader_settings_for_json_read()
 
@@ -160,9 +194,12 @@ class BaseEventReader(BaseReader):
                 # MAKE THIS CHECK STRONGER
                 indicator[i] = (len(str(evs[i].eegfile)) > 3)
 
-            evs = evs[indicator]
+            # Boolean-mask slicing a recarray returns a recarray at
+            # runtime, but pyright widens to ``ndarray | recarray``.
+            evs = evs[indicator].view(np.recarray)
 
-        if 'eegfile' in evs.dtype.names:
+        names = evs.dtype.names
+        if names is not None and 'eegfile' in names:
             eeg_dir = os.path.join(os.path.dirname(self.filename), '..', '..', 'ephys', 'current_processed', 'noreref')
             eeg_dir = os.path.abspath(eeg_dir)
             for ev in evs:
@@ -170,7 +207,7 @@ class BaseEventReader(BaseReader):
 
         return evs
 
-    def read_matlab(self):
+    def read_matlab(self) -> np.recarray:
         """
         Reads Matlab event file and returns corresponging np.recarray. Path to the eegfile is changed
         w.r.t original Matlab code to account for the following:
@@ -179,12 +216,17 @@ class BaseEventReader(BaseReader):
 
         :return: np.recarray representing events
         """
-        # extract matlab matrix (called 'events') as numpy structured array
-        struct_array = read_single_matlab_matrix_as_numpy_structured_array(self.filename, 'events')
+        # extract matlab matrix (called 'events') as numpy structured array.
+        # ``read_single_matlab_matrix_as_numpy_structured_array`` is
+        # untyped; cast its result to recarray to match the documented
+        # contract (the function constructs the array as ``np.recarray``).
+        evs: np.recarray = cast(
+            np.recarray,
+            read_single_matlab_matrix_as_numpy_structured_array(self.filename, 'events'),
+        )
 
-        evs = struct_array
-
-        if 'eegfile' in evs.dtype.names:
+        names = evs.dtype.names
+        if names is not None and 'eegfile' in names:
             if self.eliminate_events_with_no_eeg:
 
                 # eliminating events that have no eeg file
@@ -196,7 +238,7 @@ class BaseEventReader(BaseReader):
                     indicator[i] = (len(str(evs[i].eegfile)) > 3)
                     # indicator[i] = (type(evs[i].eegfile).__name__.startswith('unicode')) & (len(str(evs[i].eegfile)) > 3)
 
-                evs = evs[indicator]
+                evs = evs[indicator].view(np.recarray)
 
             # determining data_dir_prefix in case rhino /data filesystem was mounted under different root
             if self.normalize_eeg_path:
@@ -216,7 +258,7 @@ class BaseEventReader(BaseReader):
 
         return evs
 
-    def replace_nans(self, evs, replacement_val=-999):
+    def replace_nans(self, evs: np.recarray, replacement_val: float = -999) -> np.recarray:
 
         for descr in evs.dtype.descr:
             field_name = descr[0]
@@ -228,7 +270,7 @@ class BaseEventReader(BaseReader):
                 pass
         return evs
 
-    def find_data_dir_prefix(self):
+    def find_data_dir_prefix(self) -> str:
         """
         determining dir_prefix
 
@@ -252,7 +294,7 @@ class BaseEventReader(BaseReader):
     ### TODO: CLEAN UP, COMMENT
 
     @classmethod
-    def get_element_dtype(cls, element):
+    def get_element_dtype(cls, element: Any) -> Any:
         if isinstance(element, dict):
             return cls.mkdtype(element)
         elif isinstance(element, int):
@@ -271,52 +313,59 @@ class BaseEventReader(BaseReader):
             raise Exception('Could not convert type %s' % type(element))
 
     @classmethod
-    def mkdtype(cls, d):
+    def mkdtype(cls, d: Union[JSONDict, List[Any]]) -> np.dtype:
         if isinstance(d, list):
             dtype = cls.mkdtype(d[0])
             return dtype
-        dtype = []
+        dtype_fields: List[Tuple[str, Any]] = []
 
         for k, v in list(d.items()):
-            dtype.append((str(k), cls.get_element_dtype(v)))
+            dtype_fields.append((str(k), cls.get_element_dtype(v)))
 
-        return np.dtype(dtype)
+        return np.dtype(dtype_fields)
 
     @classmethod
-    def from_json(cls, json_filename):
+    def from_json(cls, json_filename: PathLike) -> np.recarray:
         with open(json_filename, "r") as f:
             d = json.load(f)
         return cls.from_dict(d)
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, d: Union[JSONDict, List[JSONDict]]) -> np.recarray:
         if not isinstance(d, list):
             d = [d]
 
-        list_names = []
+        list_names: List[str] = []
 
         for k, v in list(d[0].items()):
             if isinstance(v, list):
                 list_names.append(k)
 
-        list_info = defaultdict(lambda *_: {'len': 0, 'dtype': None})
+        # The ``lambda *_: ...`` default factory matches the pre-existing
+        # behavior. Each value is a dict with keys ``'len'`` (int) and
+        # ``'dtype'`` (numpy dtype or None).
+        list_info: ListInfo = defaultdict(lambda *_: {'len': 0, 'dtype': None})
 
         for entry in d:
             for k in list_names:
-                list_info[k]['len'] = max(list_info[k]['len'], len(entry[k]))
+                # ``list_info[k]['len']`` starts at 0 (int); ``len(entry[k])``
+                # is also int, so ``max`` is well-typed even though the dict
+                # value type is ``Any``.
+                list_info[k]['len'] = max(int(list_info[k]['len']), len(entry[k]))
                 if not list_info[k]['dtype'] and len(entry[k]) > 0:
                     if isinstance(entry[k][0], dict):
                         list_info[k]['dtype'] = cls.mkdtype(entry[k][0])
                     else:
                         list_info[k]['dtype'] = cls.get_element_dtype(entry[k])
 
-        dtypes = []
+        dtypes: List[Tuple[Any, ...]] = []
         for k, v in list(d[0].items()):
             if not k in list_info:
                 dtypes.append((str(k), cls.get_element_dtype(v)))
             else:
                 dtypes.append((str(k), list_info[k]['dtype'], list_info[k]['len']))
 
+        arr: np.ndarray
         if dtypes:
             arr = np.rec.array(np.zeros(len(d), dtypes))
             cls.copy_values(d, arr, list_info)
@@ -325,11 +374,16 @@ class BaseEventReader(BaseReader):
         return np.rec.array(arr)
 
     @classmethod
-    def copy_values(cls, dict_list, rec_arr, list_info=None):
+    def copy_values(
+        cls,
+        dict_list: Sequence[JSONDict],
+        rec_arr: np.ndarray,
+        list_info: Optional[ListInfo] = None,
+    ) -> None:
         if len(dict_list) == 0:
             return
 
-        dict_fields = {}
+        dict_fields: Dict[str, List[Any]] = {}
         for k, v, in list(dict_list[0].items()):
             if isinstance(v, dict):
                 dict_fields[k] = [inner_dict[k] for inner_dict in dict_list]
@@ -363,7 +417,7 @@ class BaseEventReader(BaseReader):
             cls.copy_values(v, rec_arr[k])
 
     @classmethod
-    def strip_accents(cls, s):
+    def strip_accents(cls, s: str) -> str:
         try:
             return str(''.join(c for c in unicodedata.normalize('NFD', six.text_type(s))
                                if unicodedata.category(c) != 'Mn'))
@@ -381,15 +435,23 @@ class BaseRawReader(BaseReader):
     * Make sure that self.channel_name as appropriate for the referencing scheme used
     """
 
-    dataroot = traits.api.Str
-    channels = traits.api.CArray
-    channel_labels = traits.api.CArray
-    start_offsets = traits.api.CArray
-    read_size = traits.api.Int
+    # See note in ``BaseEventReader`` about why each trait is annotated with
+    # its runtime value type and tagged with a per-line ignore.
+    dataroot: str = traits.api.Str  # pyright: ignore[reportAssignmentType]
+    channels: np.ndarray = traits.api.CArray  # pyright: ignore[reportAssignmentType]
+    channel_labels: np.ndarray = traits.api.CArray  # pyright: ignore[reportAssignmentType]
+    start_offsets: np.ndarray = traits.api.CArray  # pyright: ignore[reportAssignmentType]
+    read_size: int = traits.api.Int  # pyright: ignore[reportAssignmentType]
 
-    channel_name = 'channels'
+    channel_name: str = 'channels'
 
-    def __init__(self, dataroot,channels=tuple(),start_offsets=tuple([0]),read_size=-1):
+    def __init__(
+        self,
+        dataroot: PathLike,
+        channels: Any = tuple(),
+        start_offsets: Any = (0,),
+        read_size: int = -1,
+    ) -> None:
         """
         Constructor
         :param dataroot {str} -  core name of the eegfile file (i.e. full path except extension e.g. '.002').
@@ -401,28 +463,32 @@ class BaseRawReader(BaseReader):
         :return:None
 
         """
-        self.dataroot = dataroot
-        self.channels = channels
-        self.start_offsets = start_offsets
+        super().__init__()
+        self.dataroot = os.fspath(dataroot)
+        # ``traits.api.CArray`` coerces sequences to ndarrays at runtime;
+        # ``np.asarray`` here is a no-op for arrays but ensures the static
+        # type is ``np.ndarray`` for the rest of this method.
+        self.channels = np.asarray(channels)
+        self.start_offsets = np.asarray(start_offsets)
         self.read_size = read_size
-        self.params_dict = self.init_params()
+        self.params_dict: Dict[str, Any] = self.init_params()
         if self.channels.dtype.names is None:
             self.channel_labels = self.channels
         else:
             self.channel_labels = self.channels['channel']
 
 
-    def init_params(self):
+    def init_params(self) -> Dict[str, Any]:
         from ptsa.data.readers.params import ParamsReader
         p_reader = ParamsReader(dataroot=self.dataroot)
         return p_reader.read()
 
-    def channel_labels_to_string(self):
-        if np.issubdtype(self.channel_labels.dtype,np.integer):
+    def channel_labels_to_string(self) -> None:
+        if np.issubdtype(self.channel_labels.dtype, np.integer):
             self.channel_labels = np.array(['{:03}'.format(c).encode() for c in self.channel_labels])
 
 
-    def read(self):
+    def read(self) -> Tuple[DataArray, np.ndarray]:
         """Read EEG data.
 
         Returns
@@ -466,7 +532,13 @@ class BaseRawReader(BaseReader):
         return eventdata, read_ok_mask
 
     @abstractmethod
-    def read_file(self,filename,channels,start_offsets=np.array([0]),read_size=-1):
+    def read_file(
+        self,
+        filename: PathLike,
+        channels: np.ndarray,
+        start_offsets: np.ndarray = np.array([0]),
+        read_size: int = -1,
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """
         Reads raw data from binary files into a numpy array of shape (len(channels),len(start_offsets), read_size).
          For each channel and offset, indicates whether the data at that offset on that channel could be read successfully.

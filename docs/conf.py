@@ -90,7 +90,15 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+#
+# The example notebooks (``examples/*.ipynb``) require ``pandoc`` to
+# render through nbsphinx. Pandoc is not part of the standard PTSA
+# build environment, so the notebooks are excluded from the local
+# Sphinx build by default. Set ``PTSA_DOCS_BUILD_NOTEBOOKS=1`` to
+# re-enable them once pandoc is installed.
+exclude_patterns = ['_build', 'html', 'doctrees', 'Thumbs.db', '.DS_Store']
+if not os.environ.get('PTSA_DOCS_BUILD_NOTEBOOKS'):
+    exclude_patterns += ['examples/**']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.

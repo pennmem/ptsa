@@ -10,6 +10,12 @@ Interacting with RAM Data
     a particular experiment, instead outsourcing that functionality to other
     tools.
 
+.. skip: start
+   The code blocks below require lab-specific RAM data files mounted
+   at ``/protocols/...`` (rhino-only) and cannot be exercised in CI.
+   Sybil skips them; see :ref:`morlet` and :ref:`filters` for
+   runnable end-to-end examples on synthetic data.
+
 Even though PTSA is a general Python framework for time series analysis, it has some built-in
 modules that facilitate working with various formats of EEG data and associated experimental data.
 In this section we will see how to efficiently ready and process data store in formats used by the
@@ -287,3 +293,5 @@ Here is the output:
               3142.20516 ,  3147.52192 ],
             [ 3128.91326 ,  3136.8884  ,  3134.761696, ...,  3286.289356,
               3263.958964,  3272.46578 ]],
+
+.. skip: end

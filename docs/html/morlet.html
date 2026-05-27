@@ -1,0 +1,341 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Morlet wavelets &mdash; PTSA 3.0.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=c3365b21"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Filters" href="filters.html" />
+    <link rel="prev" title="PTSA - EEG Time Series Analysis in Python" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PTSA
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Morlet wavelets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#formula">Formula</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-complete-correction-default">The <code class="docutils literal notranslate"><span class="pre">complete</span></code> correction (default)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#worked-example">Worked example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameterization-comparison">Parameterization comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="filters.html">Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development guidelines</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/index.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ramdata.html">Interacting with RAM Data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PTSA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Morlet wavelets</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/morlet.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="morlet-wavelets">
+<span id="morlet"></span><h1>Morlet wavelets<a class="headerlink" href="#morlet-wavelets" title="Link to this heading"></a></h1>
+<p>The Morlet (Gabor) wavelet transform is the central, load-bearing
+feature of PTSA. Most lab analyses use PTSA primarily to obtain
+time-resolved <strong>power</strong> and <strong>phase</strong> estimates of an EEG signal in a
+set of frequency bands. This page is the canonical reference for the
+formula PTSA implements, the meaning of the user-facing parameters,
+and the differences between PTSA’s parameterization and the ones used
+by SciPy and MNE.</p>
+<section id="formula">
+<h2>Formula<a class="headerlink" href="#formula" title="Link to this heading"></a></h2>
+<p>PTSA’s Morlet wavelet is the standard complex Morlet (Gabor) wavelet
+parameterized by the number of cycles under the Gaussian envelope
+(the <em>Tallon-Baudry parameterization</em>; see <a class="reference internal" href="#tallonbaudry1999" id="id1"><span>[TallonBaudry1999]</span></a>).
+For a target frequency <span class="math notranslate nohighlight">\(f\)</span> and a width <span class="math notranslate nohighlight">\(w\)</span> (number of
+cycles):</p>
+<div class="math notranslate nohighlight">
+\[\sigma_t = \frac{w}{2 \pi f}, \qquad \omega = 2 \pi f,\]</div>
+<div class="math notranslate nohighlight">
+\[\psi(t) = \left(\sigma_t \sqrt{\pi}\right)^{-1/2}
+          \, e^{-t^2 / (2 \sigma_t^2)} \, e^{i \omega t}.\]</div>
+<p>The prefactor <span class="math notranslate nohighlight">\((\sigma_t \sqrt{\pi})^{-1/2}\)</span> gives the wavelet
+unit <span class="math notranslate nohighlight">\(L^2\)</span> energy. The Gaussian envelope <span class="math notranslate nohighlight">\(e^{-t^2/(2
+\sigma_t^2)}\)</span> is evaluated out to <span class="math notranslate nohighlight">\(\pm 3.5 \sigma_t\)</span>; values
+beyond that window are truncated to zero.</p>
+<p>Time-frequency decomposition is carried out by convolving the input
+signal with <span class="math notranslate nohighlight">\(\psi\)</span>. PTSA performs the convolution in the
+frequency domain using FFTW:</p>
+<div class="math notranslate nohighlight">
+\[(\Psi * \psi)(t) = \mathcal{F}^{-1}\!\left[
+     \widehat{\Psi}(\xi) \cdot \widehat{\psi}(\xi)
+ \right](t),\]</div>
+<p>where <span class="math notranslate nohighlight">\(\widehat{\,\cdot\,}\)</span> denotes the discrete Fourier
+transform. The wavelet FFT is precomputed once per frequency and
+reused across signals and trials, which is the source of PTSA’s
+speed for long recording sessions.</p>
+<section id="the-complete-correction-default">
+<h3>The <code class="docutils literal notranslate"><span class="pre">complete</span></code> correction (default)<a class="headerlink" href="#the-complete-correction-default" title="Link to this heading"></a></h3>
+<p>When <code class="docutils literal notranslate"><span class="pre">complete=True</span></code> (the default since PTSA 2.0.6), the wavelet
+is <em>zero-mean corrected</em> so that the integral
+<span class="math notranslate nohighlight">\(\int \psi(t) \, dt\)</span> vanishes exactly. The corrected wavelet is:</p>
+<div class="math notranslate nohighlight">
+\[\tilde{\psi}(t) = \left(\sigma_t \sqrt{\pi}\right)^{-1/2}
+                  \, e^{-t^2 / (2 \sigma_t^2)}
+                  \, \left( e^{i \omega t} - e^{-w^2 / 2} \right).\]</div>
+<p>The <span class="math notranslate nohighlight">\(e^{-w^2/2}\)</span> subtraction would slightly shift the peak
+frequency away from <span class="math notranslate nohighlight">\(f\)</span> if applied naively, so PTSA also
+rescales the time axis by</p>
+<div class="math notranslate nohighlight">
+\[\alpha = \frac{2}{\pi} \arccos\!\left( e^{-w^2 / 2} \right),\]</div>
+<p>so that the corrected wavelet’s peak in the frequency domain stays
+at <span class="math notranslate nohighlight">\(f\)</span>.</p>
+<p>When to flip <code class="docutils literal notranslate"><span class="pre">complete</span></code> to <code class="docutils literal notranslate"><span class="pre">False</span></code>:</p>
+<ul class="simple">
+<li><p>The correction matters most at <em>small</em> widths (e.g.<code class="docutils literal notranslate"><span class="pre">width</span> <span class="pre">&lt;</span>
+<span class="pre">6</span></code>), where the uncorrected wavelet has a non-trivial DC component
+that biases low-frequency power estimates.</p></li>
+<li><p>For larger widths the correction is numerically negligible
+(<span class="math notranslate nohighlight">\(e^{-w^2/2}\)</span> shrinks very fast: <code class="docutils literal notranslate"><span class="pre">w=5</span></code> already gives
+<span class="math notranslate nohighlight">\(\sim 4 \times 10^{-6}\)</span>).</p></li>
+<li><p>Setting <code class="docutils literal notranslate"><span class="pre">complete=False</span></code> is mainly useful for reproducing
+analyses that explicitly used the uncorrected wavelet, or for
+cross-checking against another tool that does not apply the
+Tallon-Baudry zero-mean correction.</p></li>
+</ul>
+</section>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<dl>
+<dt><code class="docutils literal notranslate"><span class="pre">freqs</span></code><span class="classifier">array of float</span></dt><dd><p>Frequencies (Hz) at which to evaluate the transform. The output
+has a <code class="docutils literal notranslate"><span class="pre">frequency</span></code> dimension of the same length. There is no
+requirement that the frequencies be log-spaced; PTSA simply
+builds one cached wavelet FFT per entry.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">width</span></code><span class="classifier">int, default <code class="docutils literal notranslate"><span class="pre">5</span></code></span></dt><dd><p>Number of cycles of the carrier sinusoid under one standard
+deviation of the Gaussian envelope (the <strong>Tallon-Baudry</strong>
+convention). This is <em>not</em> a SciPy-style scale factor. The
+trade-off is the usual time-frequency uncertainty:</p>
+<ul class="simple">
+<li><p>Higher <code class="docutils literal notranslate"><span class="pre">width</span></code> → narrower bandwidth (tighter frequency
+resolution), wider time extent (looser time resolution).</p></li>
+<li><p>Lower <code class="docutils literal notranslate"><span class="pre">width</span></code> → broader bandwidth, sharper temporal
+localization.</p></li>
+</ul>
+<p>Common values in the EEG literature are <code class="docutils literal notranslate"><span class="pre">width=5</span></code> (the PTSA
+default) through <code class="docutils literal notranslate"><span class="pre">width=7</span></code>; <code class="docutils literal notranslate"><span class="pre">width=4</span></code> is at the low end of
+what is typically reported, and the <code class="docutils literal notranslate"><span class="pre">complete=True</span></code> correction
+becomes important there.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">output</span></code><span class="classifier">str or sequence of str, default <code class="docutils literal notranslate"><span class="pre">('power',</span> <span class="pre">'phase')</span></code></span></dt><dd><p>Any combination of <code class="docutils literal notranslate"><span class="pre">'power'</span></code> (squared magnitude of the
+complex coefficient), <code class="docutils literal notranslate"><span class="pre">'phase'</span></code> (angle of the coefficient,
+in radians, in <span class="math notranslate nohighlight">\((-\pi, \pi]\)</span>), and <code class="docutils literal notranslate"><span class="pre">'complex'</span></code> (the
+complex coefficient itself). <code class="docutils literal notranslate"><span class="pre">'complex'</span></code> may not be combined
+with the other two on the same call.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">complete</span></code><span class="classifier">bool, default <code class="docutils literal notranslate"><span class="pre">True</span></code></span></dt><dd><p>Apply the Tallon-Baudry zero-mean correction described above.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">cpus</span></code><span class="classifier">int, default <code class="docutils literal notranslate"><span class="pre">1</span></code></span></dt><dd><p>Number of worker threads used by the C++ kernel.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">verbose</span></code><span class="classifier">bool, default <code class="docutils literal notranslate"><span class="pre">True</span></code></span></dt><dd><p>Print kernel timing information.</p>
+</dd>
+</dl>
+</section>
+<section id="worked-example">
+<h2>Worked example<a class="headerlink" href="#worked-example" title="Link to this heading"></a></h2>
+<p>The example below runs end-to-end on synthetic data (no lab files
+required). It computes the time-resolved power of a 10 Hz sinusoid
+embedded in white noise and checks that the dominant frequency
+estimate is at 10 Hz.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ptsa.data.timeseries</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeSeries</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ptsa.data.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">MorletWaveletFilter</span>
+
+<span class="c1"># 2 s of data at 500 Hz: 10 Hz sine plus 0.1-amplitude white noise.</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">samplerate</span> <span class="o">=</span> <span class="mf">500.0</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">samplerate</span><span class="p">)</span>
+<span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+<span class="c1"># Wrap as a TimeSeries (samplerate coord is required).</span>
+<span class="n">ts</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">signal</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:],</span>
+    <span class="n">samplerate</span><span class="p">,</span>
+    <span class="n">dims</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;channel&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">),</span>
+    <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;channel&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">t</span><span class="p">},</span>
+<span class="p">)</span>
+
+<span class="c1"># Decompose at 5, 10, 20, 40 Hz.</span>
+<span class="n">freqs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">])</span>
+<span class="n">wf</span> <span class="o">=</span> <span class="n">MorletWaveletFilter</span><span class="p">(</span><span class="n">freqs</span><span class="o">=</span><span class="n">freqs</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;power&#39;</span><span class="p">,</span>
+                         <span class="n">width</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">complete</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                         <span class="n">cpus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">power</span> <span class="o">=</span> <span class="n">wf</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+
+<span class="c1"># power has shape (freq, channel, time).</span>
+<span class="k">assert</span> <span class="n">power</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+<span class="c1"># Mean power over the central 1 s (drop edge artifacts).</span>
+<span class="n">middle</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t</span> <span class="o">&lt;</span> <span class="mf">1.5</span><span class="p">)</span>
+<span class="n">mean_power</span> <span class="o">=</span> <span class="n">power</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">middle</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">dominant_freq</span> <span class="o">=</span> <span class="n">freqs</span><span class="p">[</span><span class="n">mean_power</span><span class="o">.</span><span class="n">argmax</span><span class="p">()]</span>
+<span class="k">assert</span> <span class="n">dominant_freq</span> <span class="o">==</span> <span class="mf">10.0</span>
+</pre></div>
+</div>
+<p>The returned <code class="docutils literal notranslate"><span class="pre">power</span></code> is a <a class="reference internal" href="api/data/timeseriesx.html#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeSeries</span></code></a>
+with dims <code class="docutils literal notranslate"><span class="pre">('frequency',</span> <span class="pre">'channel',</span> <span class="pre">'time')</span></code>. The leading boundary
+samples (roughly <span class="math notranslate nohighlight">\(3.5 \sigma_t\)</span> on each side, i.e.a few
+wavelet widths) carry edge artifacts; users typically discard them
+or add a mirror buffer with
+<a class="reference internal" href="api/data/timeseriesx.html#ptsa.data.timeseries.TimeSeries.add_mirror_buffer" title="ptsa.data.timeseries.TimeSeries.add_mirror_buffer"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_mirror_buffer()</span></code></a> before
+filtering.</p>
+</section>
+<section id="parameterization-comparison">
+<h2>Parameterization comparison<a class="headerlink" href="#parameterization-comparison" title="Link to this heading"></a></h2>
+<p>Different libraries parameterize the Morlet wavelet differently.
+Mixing them is a common source of analysis bugs. The table below
+summarizes the three conventions you are most likely to encounter.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 30.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Library</p></th>
+<th class="head"><p>Width parameter</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PTSA (this package)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">width</span></code> = number of cycles under the Gaussian envelope
+(one <span class="math notranslate nohighlight">\(\sigma_t\)</span>).</p></td>
+<td><p>Tallon-Baudry convention. <code class="docutils literal notranslate"><span class="pre">complete=True</span></code> by default
+applies the zero-mean correction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mne.time_frequency.morlet</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">n_cycles</span></code> = number of cycles, same convention as PTSA’s
+<code class="docutils literal notranslate"><span class="pre">width</span></code>.</p></td>
+<td><p>Compatible parameterization. MNE also offers a zero-mean
+option (<code class="docutils literal notranslate"><span class="pre">zero_mean=True</span></code>) analogous to PTSA’s <code class="docutils literal notranslate"><span class="pre">complete</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">scipy.signal.morlet</span></code> (removed in SciPy 1.15)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">w</span></code> = “omega-zero”, related to but <strong>not equal to</strong> the
+cycle count. SciPy used <span class="math notranslate nohighlight">\(\sigma = 1\)</span> in the wavelet
+and scaled the time axis via an additional <code class="docutils literal notranslate"><span class="pre">s</span></code> parameter.</p></td>
+<td><p>The naming conflict (both <code class="docutils literal notranslate"><span class="pre">w</span></code> for SciPy and <code class="docutils literal notranslate"><span class="pre">width</span></code> for
+PTSA can be called “the wavelet width”) routinely confuses
+new users. SciPy values are <em>not</em> drop-in replacements for
+PTSA values.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Do not pass a SciPy-style <code class="docutils literal notranslate"><span class="pre">w</span></code> value to PTSA’s <code class="docutils literal notranslate"><span class="pre">width</span></code> (or
+vice versa). The two parameterizations differ by both definition
+and scale, and using the wrong one silently produces a
+well-formed but incorrect time-frequency map.</p>
+</div>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<div role="list" class="citation-list">
+<div class="citation" id="tallonbaudry1999" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">TallonBaudry1999</a><span class="fn-bracket">]</span></span>
+<p>Tallon-Baudry, C., &amp; Bertrand, O. (1999).
+Oscillatory gamma activity in humans and its role in object
+representation. <em>Trends in Cognitive Sciences</em>, 3(4), 151-162.</p>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="PTSA - EEG Time Series Analysis in Python" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="filters.html" class="btn btn-neutral float-right" title="Filters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
