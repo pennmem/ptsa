@@ -1,19 +1,29 @@
 # conda-build variant matrix for the PTSA 3.0.6 publish.
 #
-# Each conda-build invocation iterates over the cartesian product of
-# python × numpy and produces one .conda per cell (~25 min each on
-# a typical core). pin_compatible('numpy', max_pin='x') in meta.yaml's
-# run: requirements means the numpy-1.24 binary caps at numpy <2 and
-# the numpy-2 binary caps at numpy <3, so mamba picks the right one
-# at install time based on the user's other numpy constraints.
+# We want the cartesian product of python × numpy. conda-build's
+# default behaviour is to *zip* keys that appear in `zip_keys` (the
+# stock conda-forge cbc already zips `python` with `is_python_min`
+# and several other things), which makes a bare two-list declaration
+# unreliable: when `python` has 4 entries and `numpy` has 2, the
+# render collapses to a partial cell set instead of fanning out.
 #
-# Not every (python, numpy) cell is buildable on conda-forge:
-#  - numpy 1.24 only ships wheels for python <=3.11
-#  - We rely on conda-forge for build-time numpy, so the GH Actions
-#    workflow excludes (py3.12, numpy=1.24) and (py3.13, numpy=1.24)
-#    in its matrix. Locally, conda-build will surface the missing
-#    package as a solver failure for those cells, which is fine — we
-#    just don't publish them.
+# To force the full product we declare each desired (python, numpy)
+# pair as one zipped column. conda-build will then emit exactly one
+# build per column, with no implicit zipping against the stock cbc.
+#
+# pin_compatible('numpy', max_pin='x') in meta.yaml's run: requirements
+# caps each binary to its build-numpy major version, so mamba picks
+# the right .conda at install time based on the user's numpy
+# constraints.
+#
+# Cells we publish (6 total):
+#   (py3.10, numpy 1.24)  (py3.11, numpy 1.24)
+#   (py3.10, numpy 2)     (py3.11, numpy 2)
+#   (py3.12, numpy 2)     (py3.13, numpy 2)
+#
+# (py3.12, numpy 1.24) and (py3.13, numpy 1.24) are infeasible:
+# conda-forge never published numpy 1.24 wheels for python >=3.12,
+# so we just don't list them as columns.
 #
 # To build the full matrix locally:
 #   conda-build conda.recipe --output-folder=build/conda/ \
@@ -26,6 +36,8 @@
 
 python:
   - "3.10"
+  - "3.10"
+  - "3.11"
   - "3.11"
   - "3.12"
   - "3.13"
@@ -33,3 +45,11 @@ python:
 numpy:
   - "1.24"
   - "2"
+  - "1.24"
+  - "2"
+  - "2"
+  - "2"
+
+zip_keys:
+  - - python
+    - numpy
