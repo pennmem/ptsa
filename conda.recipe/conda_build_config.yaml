@@ -1,55 +1,22 @@
-# conda-build variant matrix for the PTSA 3.0.6 publish.
+# conda-build pins for PTSA.
 #
-# We want the cartesian product of python × numpy. conda-build's
-# default behaviour is to *zip* keys that appear in `zip_keys` (the
-# stock conda-forge cbc already zips `python` with `is_python_min`
-# and several other things), which makes a bare two-list declaration
-# unreliable: when `python` has 4 entries and `numpy` has 2, the
-# render collapses to a partial cell set instead of fanning out.
+# NOTE: the python × numpy build matrix is driven *externally*, one
+# cell per conda-build invocation, NOT by a variant list here:
 #
-# To force the full product we declare each desired (python, numpy)
-# pair as one zipped column. conda-build will then emit exactly one
-# build per column, with no implicit zipping against the stock cbc.
+#   conda-build conda.recipe --python=3.12 --variants "{numpy: ['2']}" ...
 #
-# pin_compatible('numpy', max_pin='x') in meta.yaml's run: requirements
-# caps each binary to its build-numpy major version, so mamba picks
-# the right .conda at install time based on the user's numpy
-# constraints.
+# The GitHub Actions workflow (.github/workflows/build.yml) does exactly
+# this via its strategy.matrix, and maint/build_matrix.sh does it for
+# local builds. Each invocation builds one (python, numpy) cell in its
+# own clean build env, so there is no cross-contamination.
 #
-# Cells we publish (6 total):
-#   (py3.10, numpy 1.24)  (py3.11, numpy 1.24)
-#   (py3.10, numpy 2)     (py3.11, numpy 2)
-#   (py3.12, numpy 2)     (py3.13, numpy 2)
+# An earlier attempt declared the matrix here as zipped python/numpy
+# lists (`zip_keys: [[python, numpy]]`). conda-build's variant hashing
+# mis-associated the zipped cells — producing scrambled build envs
+# (a py3.10 cell pulling py3.12 numpy) and even an empty package. Do
+# NOT reintroduce a python/numpy matrix in this file; keep the cell
+# selection in the per-invocation `--python` / `--variants` flags.
 #
-# (py3.12, numpy 1.24) and (py3.13, numpy 1.24) are infeasible:
-# conda-forge never published numpy 1.24 wheels for python >=3.12,
-# so we just don't list them as columns.
-#
-# To build the full matrix locally:
-#   conda-build conda.recipe --output-folder=build/conda/ \
-#     -c pennmem -c conda-forge --no-anaconda-upload
-#
-# To build a specific cell:
-#   conda-build conda.recipe --output-folder=build/conda/ \
-#     --python=3.11 --variants '{"numpy": "2"}' \
-#     -c pennmem -c conda-forge --no-anaconda-upload
-
-python:
-  - "3.10"
-  - "3.10"
-  - "3.11"
-  - "3.11"
-  - "3.12"
-  - "3.13"
-
-numpy:
-  - "1.24"
-  - "2"
-  - "1.24"
-  - "2"
-  - "2"
-  - "2"
-
-zip_keys:
-  - - python
-    - numpy
+# pin_compatible('numpy', max_pin='x') in meta.yaml's run: caps each
+# binary to the major version it was built against, so mamba installs
+# the right cell for the user's numpy.
