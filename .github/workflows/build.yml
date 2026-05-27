@@ -66,8 +66,12 @@ jobs:
           # point (env Scripts/ not on PATH) nor `mamba run` (mangles the
           # spawned command — "'onda' is not recognized") works, but the
           # base `conda build` subcommand does, and it's identical on Linux
-          # and macOS. conda-verify lints meta.yaml; anaconda-client uploads.
-          mamba install -y -n base conda-build conda-verify anaconda-client
+          # and macOS.
+          #
+          # Only conda-build here: `conda-verify` caps at python <3.12 and
+          # makes the base (python 3.13) solve fail, and `anaconda-client`
+          # is only needed by the deploy job (which installs its own).
+          mamba install -y -n base conda-build
           # Mirror meta.yaml's build/host deps so a local one-shot repro of
           # a cell is just `conda build conda.recipe`. (conda-build still
           # provisions its own isolated build env from the recipe; this is
