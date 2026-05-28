@@ -44,7 +44,7 @@ Install dependencies:
 
 .. code-block:: shell-session
 
-   conda install -y numpy scipy xarray swig traits
+   conda install -y -c conda-forge numpy scipy xarray pandas h5py netcdf4 traits six
 
 You will also need to install FFTW. To install FFTW with conda on Linux or Mac:
 
@@ -78,30 +78,64 @@ System prerequisites
 ~~~~~~~~~~~~~~~~~~~~
 
 The following must already be available on the system before you build
-PTSA from source — ``pip`` cannot install them:
+PTSA from source — ``pip`` cannot install them (they are not Python
+packages):
 
-* ``swig >= 4.1`` on ``PATH`` (the morlet and circular_stat extensions
-  are SWIG-wrapped).
-* The FFTW3 development headers and shared library (e.g. via
+* A **C++ compiler**. The morlet, circular_stat, and edf extensions are
+  C++ (pybind11). On Linux use ``gcc``/``g++`` (or conda's
+  ``gxx_linux-64``); on macOS the Xcode command-line tools
+  (``xcode-select --install``); on Windows, MSVC.
+* **FFTW3** development headers and shared library (e.g.
   ``conda install -c conda-forge fftw`` or
-  ``sudo apt-get install libfftw3-dev``).
+  ``sudo apt-get install libfftw3-dev``). The morlet extension links
+  against ``libfftw3``.
+
+(``numpy`` and ``pybind11`` are also build-time requirements, but pip
+installs them automatically into its build environment from
+``pyproject.toml`` — you do not need to install them yourself.)
 
 Install PTSA
 ~~~~~~~~~~~~
 
-The recommended path is ``pip install``. PTSA ships a ``pyproject.toml``
-that declares ``numpy`` and ``pybind11`` as build-time requirements, so
-pip can build the C++ extensions cleanly. ``numpy`` and ``pybind11``
-must already be importable in the *current* env when you run pip
-(separate from pip's build env), because ``setup.py`` reads the package
-version by importing ``ptsa.__init__``:
+PTSA ships a ``pyproject.toml`` declaring its build-time requirements
+(``setuptools``, ``wheel``, ``numpy``, ``pybind11``), so a standard pip
+install builds the C++ extensions cleanly:
 
 .. code-block:: shell-session
 
-   pip install numpy pybind11
-   pip install --no-build-isolation .
+   pip install .
 
-For an editable dev install, add ``-e``:
+**Development (editable) install** — your source edits take effect
+without reinstalling, the recommended setup for developing PTSA (and a
+way to run a locally-built PTSA when the conda channel is unavailable).
+
+pip compiles the C++ extensions from source, so a **C++ compiler and
+FFTW must be in the environment first** — pip cannot install those (FFTW
+is a native library, not a Python package). pip *does* provide
+everything else automatically (``numpy``/``pybind11`` for the build, and
+the runtime deps ``scipy``/``xarray``/``traits``/``h5py``/… on install).
+A complete setup from scratch with conda:
+
+.. code-block:: shell-session
+
+   # 1. env with the native build prerequisites pip can't provide:
+   #    FFTW + a C++ compiler.
+   conda create -y -n ptsa-dev -c conda-forge python=3.11 pip fftw gxx_linux-64
+   conda activate ptsa-dev
+
+   # 2. editable install: pip builds the extensions against the FFTW
+   #    above and pulls the Python runtime deps from PyPI.
+   pip install -e .
+
+On macOS, use the system clang instead of ``gxx_linux-64`` (drop it from
+step 1 and run ``xcode-select --install`` once). FFTW can alternatively
+come from the system package manager instead of conda
+(``sudo apt-get install libfftw3-dev`` on Debian/Ubuntu, ``brew install
+fftw`` on macOS) — see *System prerequisites* below.
+
+If you would rather build against the ``numpy``/``pybind11`` already in
+your environment (skipping pip's isolated build env), pass
+``--no-build-isolation``:
 
 .. code-block:: shell-session
 
@@ -113,16 +147,6 @@ setuptools):
 .. code-block:: shell-session
 
    python setup.py install
-
-.. note::
-
-   ``pip install .`` *with* PEP 517 build isolation (the default) does
-   not currently work end-to-end: pyproject.toml fixes the original
-   ``ModuleNotFoundError: No module named 'numpy'`` build-time error,
-   but ``setup.py`` separately imports ``ptsa`` at top level to read
-   ``__version__``, which ``setuptools.build_meta`` cannot resolve
-   inside its isolated build env. Use ``--no-build-isolation`` until
-   that is refactored.
 
 If you encounter problems installing, some environment variables may need to be
 set, particularly if you installed FFTW with conda. If your anaconda
@@ -138,31 +162,40 @@ distribution is installed in ``$HOME/anaconda3`` and the environment name is
 Running Tests
 -------------
 
-To run the PTSA test suite locally, first set up a testing environment:
+Install PTSA in editable mode first (see *Install PTSA* above), then add
+the test tooling:
 
 .. code-block:: shell-session
 
-    conda env create -f environment.yml
-    source activate ptsa
+    conda install -y -c conda-forge pytest pytest-cov sybil
 
-and then build build the extension modules and run the  test suite:
+Both extras are required to run the suite as configured:
+
+* ``sybil`` — the top-level ``conftest.py`` uses it to execute every
+  ``.. code-block:: python`` example in ``docs/*.rst`` as a test, so
+  pytest will not even start collecting without it.
+* ``pytest-cov`` — satisfies the coverage options declared in
+  ``setup.cfg`` (``--cov``). (Alternatively, disable them for a run with
+  ``pytest -o addopts=""``.)
+
+**By default a plain ``pytest`` run includes the rhino-only tests** —
+about 30 tests that read lab data from the rhino filesystem (the
+``ptsa.data.readers`` layer against real EEG / event / tal files). On
+rhino they run normally; **anywhere else (a laptop, CI) they error**
+with ``OSError: Rhino root not found!``, because the data isn't
+present.
+
+To run only the portable tests, set the ``NO_RHINO`` environment
+variable, which skips the rhino-only ones:
 
 .. code-block:: shell-session
 
-    python setup.py develop
-    pytest tests/
+    NO_RHINO=1 pytest
 
-The shell script `run_tests` will also run the test suite, assuming the
-environment is configured.
-
-To skip tests that depend on Rhino the NO_RHINO environment variable must be set:
-
-.. code-block:: shell-session
-
-    export NO_RHINO=TRUE
-
-When running tests which require rhino access, the path to the root rhino
-directory is guessed based on common mount points.
+Either way the run covers the unit tests in ``tests/`` **and** the
+documentation examples in ``docs/*.rst``. The ``run_tests`` shell script
+wraps the ``NO_RHINO=1`` invocation, and CI always runs with
+``NO_RHINO=1`` set.
 
 
 Building conda packages
@@ -178,8 +211,8 @@ Every push to ``master`` and every pull request runs the GitHub Actions
 workflow in ``.github/workflows/build.yml`` across a cross-platform
 build matrix:
 
-* **Operating systems:** ``ubuntu-latest``, ``macos-latest``,
-  ``windows-latest``
+* **Operating systems:** ``ubuntu-latest`` and ``macos-latest``.
+  (Windows is not built — see the WSL note under *Install via conda*.)
 * **Python:** 3.10, 3.11, 3.12, 3.13
 * **NumPy:** 1.24 and 2.x (NumPy 1.24 wheels only ship for Python
   <=3.11, so the 3.12 / 3.13 cells are exercised only against NumPy 2)

@@ -43,8 +43,20 @@ def chdir(path):
 
 
 def get_version_str():
-    from ptsa import __version__
-    return __version__
+    # Read __version__ by parsing ptsa/__init__.py rather than importing
+    # ptsa. Under PEP 517 build isolation (e.g. ``pip install -e .``) the
+    # package isn't importable yet — the source dir isn't on sys.path and
+    # nothing is installed — so ``from ptsa import __version__`` raises
+    # ModuleNotFoundError and the build fails before it starts.
+    import re
+    init_py = osp.join(root_dir, 'ptsa', '__init__.py')
+    with open(init_py) as fh:
+        match = re.search(
+            r'''^__version__\s*(?::\s*[^=]+)?=\s*['"]([^'"]+)['"]''',
+            fh.read(), re.MULTILINE)
+    if not match:
+        raise RuntimeError("could not find __version__ in " + init_py)
+    return match.group(1)
 
 
 def get_include_dirs():
@@ -266,10 +278,20 @@ setup(
     # This doesn't seem to work because of custom commands. For now, just
     # install the prereqs with conda/pip.
     # See: http://stackoverflow.com/questions/20194565/running-custom-setuptools-build-during-install#20196065
+    # Runtime dependencies pip should pull in. Kept in sync with the
+    # `run:` requirements in conda.recipe/meta.yaml (minus FFTW, which is
+    # a native library pip cannot install, and pybind11, which is
+    # build-only). Without these a `pip install` of ptsa imports fine for
+    # numpy/scipy/xarray but blows up on `import traits` / `import h5py`.
     install_requires=[
         "numpy",
-        "scipy",
-        "xarray",
+        "scipy>=1.0,<3",
+        "xarray>=2024.3",
+        "traits>=6,<9",
+        "h5py>=3,<5",
+        "netcdf4>=1.5,<3",
+        "pandas>=2.0,<5",
+        "six",
     ],
     packages=find_packages(
         exclude=['*.tests', 'tests', 'tests.*', '*.outdated_tests']
