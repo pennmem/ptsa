@@ -20,6 +20,7 @@ import pytest
 
 from ptsa.data.timeseries import TimeSeries
 from ptsa.data.filters import MorletWaveletFilter
+from ptsa.extensions.morlet._python_reference import python_morlet_wavelet
 
 
 # Per-test seeded RNG. Replace any np.random.* with these so failures
@@ -221,5 +222,127 @@ def test_morlet_phase_is_linear_in_time_at_input_freq():
         "Phase slope for f0={} Hz was {:.4f} rad/sec, expected "
         "{:.4f} rad/sec (rel err {:.2%})".format(
             f0, slope, expected_slope, rel_err
+        )
+    )
+
+
+# ----------------------------------------------------------------------
+# Zero-mean / DC-rejection property of the complete=True wavelet.
+#
+# The "complete" (complete=True) Morlet subtracts an ``exp(-w^2/2)``
+# offset from the real (cosine) arm so the wavelet integrates to zero —
+# the whole point of ``complete=True``. Without it the real arm has a
+# non-zero DC component and the filter leaks DC power for a constant
+# input. These tests assert both halves of that claim: the formula
+# itself integrates to zero, and PTSA's runtime filter rejects DC on a
+# constant signal.
+# ----------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("width", [4, 5, 7])
+def test_complete_wavelet_real_arm_integrates_to_zero(width):
+    """``python_morlet_wavelet(complete=True).real`` integrates to ~0
+    across widths; ``complete=False`` does not. The second half of the
+    check matters: it proves the zero-mean correction is what's doing
+    the work (not a no-op that happens to pass)."""
+    samplerate = 500.0
+    freq = 10.0
+    dt = 1.0 / samplerate
+
+    w_complete = python_morlet_wavelet(freq, width, samplerate, complete=True)
+    w_standard = python_morlet_wavelet(freq, width, samplerate, complete=False)
+
+    integral_complete = float(w_complete.real.sum() * dt)
+    integral_standard = float(w_standard.real.sum() * dt)
+    peak_complete = float(np.abs(w_complete.real).max())
+
+    # complete=True: the continuous formula integrates to exactly zero;
+    # the discrete truncated sum hits the finite-support floor (wavelet
+    # is sampled out to ±5*sigma_t, where the Gaussian envelope is
+    # exp(-12.5) ~ 4e-6, so the truncation tail leaves a residual of
+    # order 1e-8 of the peak). 1e-5 is comfortably above that floor and
+    # still demonstrates ~5 orders of magnitude DC suppression.
+    assert abs(integral_complete) < 1e-5 * peak_complete, (
+        "complete=True real-arm integral was {:.3e}, expected ~0 "
+        "(DC-rejection failed); peak={:.3e}".format(
+            integral_complete, peak_complete
+        )
+    )
+
+    # complete=False: the uncorrected wavelet has a clearly non-zero
+    # DC component at small width (analytically ~exp(-w^2/2)). At
+    # width=5+ the uncorrected integral is already < 1e-5 of the peak,
+    # so the difference between the two cases shrinks below useful
+    # measurement noise — only assert the correction-vs-no-correction
+    # gap at width=4, where exp(-8) ~ 3e-4 makes it cleanly visible.
+    if width <= 4:
+        assert abs(integral_standard) > 1e3 * abs(integral_complete), (
+            "complete=False integral ({:.3e}) should be much larger "
+            "than complete=True integral ({:.3e}); the zero-mean "
+            "correction appears to be a no-op.".format(
+                integral_standard, integral_complete
+            )
+        )
+
+
+def test_ptsa_morlet_power_rejects_DC_when_complete():
+    """A constant (DC) input should produce ~0 power from the
+    ``complete=True`` filter — the runtime expression of the zero-mean
+    property tested above. ``complete=False`` leaves a noticeable DC
+    response, so this also confirms ``complete=True`` is the stricter
+    of the two."""
+    samplerate = 500.0
+    freq = 10.0
+    width = 4  # small width => largest DC-leakage gap, easiest to see
+
+    duration = 4.0
+    n = int(samplerate * duration)
+    sig = np.ones(n, dtype=np.float64)
+    ts = TimeSeries.create(
+        sig[None, :],
+        samplerate,
+        dims=("channels", "time"),
+        coords={"channels": np.array([0]),
+                "time": np.arange(n) / samplerate},
+    )
+
+    def _power(complete):
+        out = MorletWaveletFilter(
+            freqs=np.array([freq]),
+            width=width,
+            output="power",
+            complete=complete,
+            verbose=False,
+            cpus=1,
+        ).filter(ts)
+        return np.asarray(out.values[0, 0, :], dtype=np.float64)
+
+    p_complete = _power(True)
+    p_standard = _power(False)
+
+    # Strip wavelet-support boundary samples on each side to measure
+    # the interior steady-state response (same trimming logic as
+    # test_morlet_formula.py: convolution at the edges sees an
+    # incomplete wavelet support).
+    wavelet = python_morlet_wavelet(freq, width, samplerate, complete=True)
+    pad = len(wavelet) // 2
+    interior_c = p_complete[pad:-pad]
+    interior_s = p_standard[pad:-pad]
+    assert interior_c.size > 0 and interior_s.size > 0
+
+    # complete=True: response to a unit-magnitude DC signal must be
+    # essentially zero on the interior.
+    assert interior_c.max() < 1e-8, (
+        "complete=True residual DC power was {:.3e}, expected ~0 "
+        "(DC rejection failed for constant input).".format(interior_c.max())
+    )
+
+    # complete=False leaks measurably more DC than complete=True — the
+    # correction has a quantifiable effect, not a no-op.
+    assert interior_s.max() > 1e3 * interior_c.max(), (
+        "complete=False DC power ({:.3e}) should be much larger than "
+        "complete=True ({:.3e}); the zero-mean correction is not "
+        "making a measurable difference.".format(
+            interior_s.max(), interior_c.max()
         )
     )

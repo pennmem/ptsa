@@ -11,8 +11,6 @@
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=c3365b21"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
@@ -54,7 +52,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#worked-example">Worked example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#parameterization-comparison">Parameterization comparison</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="filters.html">Filters</a></li>
@@ -93,7 +90,7 @@
            <div itemprop="articleBody">
              
   <section id="morlet-wavelets">
-<span id="morlet"></span><h1>Morlet wavelets<a class="headerlink" href="#morlet-wavelets" title="Link to this heading"></a></h1>
+<span id="morlet"></span><h1>Morlet wavelets<a class="headerlink" href="#morlet-wavelets" title="Link to this heading">¶</a></h1>
 <p>The Morlet (Gabor) wavelet transform is the central, load-bearing
 feature of PTSA. Most lab analyses use PTSA primarily to obtain
 time-resolved <strong>power</strong> and <strong>phase</strong> estimates of an EEG signal in a
@@ -102,10 +99,9 @@ formula PTSA implements, the meaning of the user-facing parameters,
 and the differences between PTSA’s parameterization and the ones used
 by SciPy and MNE.</p>
 <section id="formula">
-<h2>Formula<a class="headerlink" href="#formula" title="Link to this heading"></a></h2>
+<h2>Formula<a class="headerlink" href="#formula" title="Link to this heading">¶</a></h2>
 <p>PTSA’s Morlet wavelet is the standard complex Morlet (Gabor) wavelet
-parameterized by the number of cycles under the Gaussian envelope
-(the <em>Tallon-Baudry parameterization</em>; see <a class="reference internal" href="#tallonbaudry1999" id="id1"><span>[TallonBaudry1999]</span></a>).
+parameterized by the number of cycles under the Gaussian envelope.
 For a target frequency <span class="math notranslate nohighlight">\(f\)</span> and a width <span class="math notranslate nohighlight">\(w\)</span> (number of
 cycles):</p>
 <div class="math notranslate nohighlight">
@@ -129,7 +125,7 @@ transform. The wavelet FFT is precomputed once per frequency and
 reused across signals and trials, which is the source of PTSA’s
 speed for long recording sessions.</p>
 <section id="the-complete-correction-default">
-<h3>The <code class="docutils literal notranslate"><span class="pre">complete</span></code> correction (default)<a class="headerlink" href="#the-complete-correction-default" title="Link to this heading"></a></h3>
+<h3>The <code class="docutils literal notranslate"><span class="pre">complete</span></code> correction (default)<a class="headerlink" href="#the-complete-correction-default" title="Link to this heading">¶</a></h3>
 <p>When <code class="docutils literal notranslate"><span class="pre">complete=True</span></code> (the default since PTSA 2.0.6), the wavelet
 is <em>zero-mean corrected</em> so that the integral
 <span class="math notranslate nohighlight">\(\int \psi(t) \, dt\)</span> vanishes exactly. The corrected wavelet is:</p>
@@ -154,13 +150,13 @@ that biases low-frequency power estimates.</p></li>
 <span class="math notranslate nohighlight">\(\sim 4 \times 10^{-6}\)</span>).</p></li>
 <li><p>Setting <code class="docutils literal notranslate"><span class="pre">complete=False</span></code> is mainly useful for reproducing
 analyses that explicitly used the uncorrected wavelet, or for
-cross-checking against another tool that does not apply the
-Tallon-Baudry zero-mean correction.</p></li>
+cross-checking against another tool that does not apply a
+zero-mean correction.</p></li>
 </ul>
 </section>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <dl>
 <dt><code class="docutils literal notranslate"><span class="pre">freqs</span></code><span class="classifier">array of float</span></dt><dd><p>Frequencies (Hz) at which to evaluate the transform. The output
 has a <code class="docutils literal notranslate"><span class="pre">frequency</span></code> dimension of the same length. There is no
@@ -168,8 +164,8 @@ requirement that the frequencies be log-spaced; PTSA simply
 builds one cached wavelet FFT per entry.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">width</span></code><span class="classifier">int, default <code class="docutils literal notranslate"><span class="pre">5</span></code></span></dt><dd><p>Number of cycles of the carrier sinusoid under one standard
-deviation of the Gaussian envelope (the <strong>Tallon-Baudry</strong>
-convention). This is <em>not</em> a SciPy-style scale factor. The
+deviation of the Gaussian envelope (the same convention as MNE’s
+<code class="docutils literal notranslate"><span class="pre">n_cycles</span></code>). This is <em>not</em> a SciPy-style scale factor. The
 trade-off is the usual time-frequency uncertainty:</p>
 <ul class="simple">
 <li><p>Higher <code class="docutils literal notranslate"><span class="pre">width</span></code> → narrower bandwidth (tighter frequency
@@ -188,7 +184,7 @@ in radians, in <span class="math notranslate nohighlight">\((-\pi, \pi]\)</span>
 complex coefficient itself). <code class="docutils literal notranslate"><span class="pre">'complex'</span></code> may not be combined
 with the other two on the same call.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">complete</span></code><span class="classifier">bool, default <code class="docutils literal notranslate"><span class="pre">True</span></code></span></dt><dd><p>Apply the Tallon-Baudry zero-mean correction described above.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">complete</span></code><span class="classifier">bool, default <code class="docutils literal notranslate"><span class="pre">True</span></code></span></dt><dd><p>Apply the zero-mean correction described above.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">cpus</span></code><span class="classifier">int, default <code class="docutils literal notranslate"><span class="pre">1</span></code></span></dt><dd><p>Number of worker threads used by the C++ kernel.</p>
 </dd>
@@ -197,7 +193,7 @@ with the other two on the same call.</p>
 </dl>
 </section>
 <section id="worked-example">
-<h2>Worked example<a class="headerlink" href="#worked-example" title="Link to this heading"></a></h2>
+<h2>Worked example<a class="headerlink" href="#worked-example" title="Link to this heading">¶</a></h2>
 <p>The example below runs end-to-end on synthetic data (no lab files
 required). It computes the time-resolved power of a 10 Hz sinusoid
 embedded in white noise and checks that the dominant frequency
@@ -246,7 +242,7 @@ or add a mirror buffer with
 filtering.</p>
 </section>
 <section id="parameterization-comparison">
-<h2>Parameterization comparison<a class="headerlink" href="#parameterization-comparison" title="Link to this heading"></a></h2>
+<h2>Parameterization comparison<a class="headerlink" href="#parameterization-comparison" title="Link to this heading">¶</a></h2>
 <p>Different libraries parameterize the Morlet wavelet differently.
 Mixing them is a common source of analysis bugs. The table below
 summarizes the three conventions you are most likely to encounter.</p>
@@ -266,8 +262,7 @@ summarizes the three conventions you are most likely to encounter.</p>
 <tr class="row-even"><td><p>PTSA (this package)</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">width</span></code> = number of cycles under the Gaussian envelope
 (one <span class="math notranslate nohighlight">\(\sigma_t\)</span>).</p></td>
-<td><p>Tallon-Baudry convention. <code class="docutils literal notranslate"><span class="pre">complete=True</span></code> by default
-applies the zero-mean correction.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">complete=True</span></code> by default applies the zero-mean correction.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mne.time_frequency.morlet</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">n_cycles</span></code> = number of cycles, same convention as PTSA’s
@@ -292,17 +287,6 @@ PTSA values.</p></td>
 vice versa). The two parameterizations differ by both definition
 and scale, and using the wrong one silently produces a
 well-formed but incorrect time-frequency map.</p>
-</div>
-</section>
-<section id="references">
-<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
-<div role="list" class="citation-list">
-<div class="citation" id="tallonbaudry1999" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">TallonBaudry1999</a><span class="fn-bracket">]</span></span>
-<p>Tallon-Baudry, C., &amp; Bertrand, O. (1999).
-Oscillatory gamma activity in humans and its role in object
-representation. <em>Trends in Cognitive Sciences</em>, 3(4), 151-162.</p>
-</div>
 </div>
 </section>
 </section>
