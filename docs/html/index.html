@@ -11,8 +11,6 @@
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=c3365b21"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
@@ -80,7 +78,7 @@
            <div itemprop="articleBody">
              
   <section id="ptsa-eeg-time-series-analysis-in-python">
-<h1>PTSA - EEG Time Series Analysis in Python<a class="headerlink" href="#ptsa-eeg-time-series-analysis-in-python" title="Link to this heading"></a></h1>
+<h1>PTSA - EEG Time Series Analysis in Python<a class="headerlink" href="#ptsa-eeg-time-series-analysis-in-python" title="Link to this heading">¶</a></h1>
 <p><strong>PTSA</strong> (Python Time-Series Analysis) is the Penn Computational
 Memory Lab’s open source toolbox for EEG analysis. Its primary use is
 <strong>fast multithreaded Morlet wavelet</strong> power and phase computation on
@@ -90,7 +88,7 @@ multi-channel EEG data, exposed through a thin
 <p>If you have come to PTSA looking for the wavelet transform, jump
 straight to <a class="reference internal" href="morlet.html#morlet"><span class="std std-ref">Morlet wavelets</span></a>.</p>
 <section id="core-concepts">
-<h2>Core concepts<a class="headerlink" href="#core-concepts" title="Link to this heading"></a></h2>
+<h2>Core concepts<a class="headerlink" href="#core-concepts" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="api/data/timeseriesx.html#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeSeries</span></code></a> — an
 <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> subclass that carries a mandatory
@@ -118,9 +116,9 @@ power, phase, or the raw complex coefficients in one call.</p></li>
 been removed.)</p>
 </section>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
 <section id="recommended-conda">
-<h3>Recommended (conda)<a class="headerlink" href="#recommended-conda" title="Link to this heading"></a></h3>
+<h3>Recommended (conda)<a class="headerlink" href="#recommended-conda" title="Link to this heading">¶</a></h3>
 <p>PTSA is published on the <code class="docutils literal notranslate"><span class="pre">pennmem</span></code> Anaconda channel and depends on
 FFTW, so the cleanest install is via conda:</p>
 <div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="go">conda install -c pennmem -c conda-forge ptsa</span>
@@ -128,7 +126,7 @@ FFTW, so the cleanest install is via conda:</p>
 </div>
 </section>
 <section id="from-source">
-<h3>From source<a class="headerlink" href="#from-source" title="Link to this heading"></a></h3>
+<h3>From source<a class="headerlink" href="#from-source" title="Link to this heading">¶</a></h3>
 <p>Building from source requires SWIG ≥ 4.1 on <code class="docutils literal notranslate"><span class="pre">PATH</span></code>, FFTW3 headers
 and shared libraries, a C++14 compiler, and NumPy and (optionally)
 pybind11 already installed in the build environment. From a fresh
@@ -143,18 +141,13 @@ clone:</p>
 </section>
 </section>
 <section id="contents">
-<h2>Contents<a class="headerlink" href="#contents" title="Link to this heading"></a></h2>
+<h2>Contents<a class="headerlink" href="#contents" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="morlet.html">Morlet wavelets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="filters.html">Filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development guidelines</a></li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/index.html">Examples</a></li>
 </ul>
 </div>
 <p>The worked notebook examples (<code class="docutils literal notranslate"><span class="pre">docs/examples/</span></code>) require <code class="docutils literal notranslate"><span class="pre">pandoc</span></code>
@@ -165,7 +158,7 @@ browsable directly on GitHub:
 <a class="reference external" href="https://github.com/pennmem/ptsa/tree/master/docs/examples">https://github.com/pennmem/ptsa/tree/master/docs/examples</a></p>
 </section>
 <section id="legacy-lab-data-readers-deprecated">
-<h2>Legacy lab-data readers (deprecated)<a class="headerlink" href="#legacy-lab-data-readers-deprecated" title="Link to this heading"></a></h2>
+<h2>Legacy lab-data readers (deprecated)<a class="headerlink" href="#legacy-lab-data-readers-deprecated" title="Link to this heading">¶</a></h2>
 <p>PTSA historically shipped a layer of lab-specific I/O readers under
 <code class="docutils literal notranslate"><span class="pre">ptsa.data.readers</span></code> (<code class="docutils literal notranslate"><span class="pre">BaseEventReader</span></code>, <code class="docutils literal notranslate"><span class="pre">EEGReader</span></code>,
 <code class="docutils literal notranslate"><span class="pre">TalReader</span></code>, <code class="docutils literal notranslate"><span class="pre">JsonIndexReader</span></code>, etc.). These remain in the

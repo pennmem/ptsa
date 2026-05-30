@@ -11,8 +11,6 @@
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
-      <script src="../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=c3365b21"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
@@ -86,7 +84,7 @@
            <div itemprop="articleBody">
              
   <section id="api-reference">
-<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h1>
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="data.html">ptsa.data</a><ul>
@@ -196,91 +194,116 @@
 </div>
 <dl class="py function" id="module-ptsa.data.concat">
 <dt class="sig sig-object py" id="ptsa.data.concat.concat">
-<span class="sig-prename descclassname"><span class="pre">ptsa.data.concat.</span></span><span class="sig-name descname"><span class="pre">concat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'different'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'equals'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;NA&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'outer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combine_attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'override'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ptsa.data.concat.concat" title="Link to this definition"></a></dt>
-<dd><p>Concatenate TimeSeries objects along a new or existing dimension.</p>
+<span class="sig-prename descclassname"><span class="pre">ptsa.data.concat.</span></span><span class="sig-name descname"><span class="pre">concat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">objs:</span> <span class="pre">~typing.Iterable[~ptsa.data.timeseries.TimeSeries],</span> <span class="pre">dim:</span> <span class="pre">~typing.Hashable</span> <span class="pre">|</span> <span class="pre">~ptsa.data.timeseries.TimeSeries</span> <span class="pre">|</span> <span class="pre">~xarray.core.dataarray.DataArray,</span> <span class="pre">coords:</span> <span class="pre">~typing.Any</span> <span class="pre">=</span> <span class="pre">'different',</span> <span class="pre">compat:</span> <span class="pre">~typing.Any</span> <span class="pre">=</span> <span class="pre">'equals',</span> <span class="pre">positions:</span> <span class="pre">~typing.Iterable[~numpy.ndarray]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">fill_value:</span> <span class="pre">~typing.Any</span> <span class="pre">=</span> <span class="pre">&lt;NA&gt;,</span> <span class="pre">join:</span> <span class="pre">~typing.Any</span> <span class="pre">=</span> <span class="pre">'outer',</span> <span class="pre">combine_attrs:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~typing.Callable[[~typing.Sequence[dict[~typing.Any,</span> <span class="pre">~typing.Any]],</span> <span class="pre">~typing.Any],</span> <span class="pre">dict[~typing.Any,</span> <span class="pre">~typing.Any]]</span> <span class="pre">=</span> <span class="pre">'override'</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries"><span class="pre">TimeSeries</span></a></span></span><a class="headerlink" href="#ptsa.data.concat.concat" title="Link to this definition">¶</a></dt>
+<dd><p>Concatenate TimeSeries objects along a new or existing dimension.
+:param objs: TimeSeries objects to concatenate together. Each object is expected to</p>
+<blockquote>
+<div><p>consist of variables and coordinates with matching shapes except for
+along the concatenated dimension.</p>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>objs</strong> (<em>sequence</em><em> of </em><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries"><em>TimeSeries</em></a>) – TimeSeries objects to concatenate together. Each object is expected to
-consist of variables and coordinates with matching shapes except for
-along the concatenated dimension.</p></li>
 <li><p><strong>dim</strong> (<em>str</em><em> or </em><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries"><em>TimeSeries</em></a><em> or </em><em>pandas.Index</em>) – Name of the dimension to concatenate along. This can either be a new
 dimension name, in which case it is added along axis=0, or an existing
 dimension name, in which case the location of the dimension is
 unchanged. If dimension is provided as a DataArray or Index, its name
 is used as the dimension to concatenate along and the values are added
 as a coordinate.</p></li>
-<li><p><strong>coords</strong> (<em>{&quot;minimal&quot;</em><em>, </em><em>&quot;different&quot;</em><em>, </em><em>&quot;all&quot;}</em><em> or </em><em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – <p>These coordinate variables will be concatenated together:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;minimal&quot;</span></code> — Only coordinates in which the dimension already
-appears are included.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;different&quot;</span></code> — Coordinates which are not equal (ignoring
-attributes) across all datasets are also concatenated (as well as
-all for which the dimension already appears). Beware: this option
-may load coordinate variable payloads into memory if not already
-loaded.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;all&quot;</span></code> — All coordinate variables are concatenated, except
-those corresponding to other dimensions.</p></li>
-<li><p>list of str — The listed coordinate variables are concatenated,
-in addition to the <code class="docutils literal notranslate"><span class="pre">&quot;minimal&quot;</span></code> coordinates.</p></li>
+<li><p><strong>coords</strong> (<em>{&quot;minimal&quot;</em><em>, </em><em>&quot;different&quot;</em><em>, </em><em>&quot;all&quot;}</em><em> or </em><em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – <dl>
+<dt>These coordinate variables will be concatenated together:</dt><dd><ul>
+<li><p>”minimal”: Only coordinates in which the dimension already appears</p></li>
 </ul>
+<p>are included.
+* “different”: Coordinates which are not equal (ignoring attributes)
+across all datasets are also concatenated (as well as all for which
+dimension already appears). Beware: this option may load the data
+payload of coordinate variables into memory if they are not already
+loaded.
+* “all”: All coordinate variables will be concatenated, except
+those corresponding to other dimensions.
+* list of str: The listed coordinate variables will be concatenated,
+in addition to the “minimal” coordinates.</p>
+</dd>
+</dl>
 </p></li>
-<li><p><strong>compat</strong> (<em>{&quot;identical&quot;</em><em>, </em><em>&quot;equals&quot;</em><em>, </em><em>&quot;broadcast_equals&quot;</em><em>, </em><em>&quot;no_conflicts&quot;</em><em>, </em><em>&quot;override&quot;}</em><em>, </em><em>optional</em>) – <p>How to compare non-concatenated variables of the same name for
-potential conflicts. Passed down to <code class="docutils literal notranslate"><span class="pre">merge</span></code>.</p>
+<li><p><strong>compat</strong> (<em>{&quot;identical&quot;</em><em>, </em><em>&quot;equals&quot;</em><em>, </em><em>&quot;broadcast_equals&quot;</em><em>, </em><em>&quot;no_conflicts&quot;</em><em>, </em><em>&quot;override&quot;}</em><em>, </em><em>optional</em>) – <p>String indicating how to compare non-concatenated variables of the same name for
+potential conflicts. This is passed down to merge.
+- “broadcast_equals”: all values must be equal when variables are</p>
+<blockquote>
+<div><p>broadcast against each other to ensure common dimensions.</p>
+</div></blockquote>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;broadcast_equals&quot;</span></code> — all values must be equal when variables
-are broadcast against each other to ensure common dimensions.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;equals&quot;</span></code> — all values and dimensions must be the same.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;identical&quot;</span></code> — all values, dimensions and attributes must be
-the same.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;no_conflicts&quot;</span></code> — only values which are not null in both
-datasets must be equal. The returned dataset then contains the
-combination of all non-null values.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;override&quot;</span></code> — skip comparing and pick the variable from the
-first dataset.</p></li>
+<li><p>”equals”: all values and dimensions must be the same.</p></li>
+<li><dl class="simple">
+<dt>”identical”: all values, dimensions and attributes must be the</dt><dd><p>same.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>”no_conflicts”: only values which are not null in both datasets</dt><dd><p>must be equal. The returned dataset then contains the combination
+of all non-null values.</p>
+</dd>
+</dl>
+</li>
+<li><p>”override”: skip comparing and pick variable from first dataset</p></li>
 </ul>
 </p></li>
 <li><p><strong>positions</strong> (<em>None</em><em> or </em><em>list</em><em> of </em><em>integer arrays</em><em>, </em><em>optional</em>) – List of integer arrays which specifies the integer positions to which
 to assign each dataset along the concatenated dimension. If not
 supplied, objects are concatenated in the provided order.</p></li>
 <li><p><strong>fill_value</strong> (<em>scalar</em><em> or </em><em>dict-like</em><em>, </em><em>optional</em>) – Value to use for newly missing values. If a dict-like, maps
-variable names to fill values. Use a data array’s name to refer to
-its values.</p></li>
-<li><p><strong>join</strong> (<em>{&quot;outer&quot;</em><em>, </em><em>&quot;inner&quot;</em><em>, </em><em>&quot;left&quot;</em><em>, </em><em>&quot;right&quot;</em><em>, </em><em>&quot;exact&quot;}</em><em>, </em><em>optional</em>) – <p>How to combine differing indexes (excluding <code class="docutils literal notranslate"><span class="pre">dim</span></code>) in objects:</p>
+variable names to fill values. Use a data array’s name to
+refer to its values.</p></li>
+<li><p><strong>join</strong> (<em>{&quot;outer&quot;</em><em>, </em><em>&quot;inner&quot;</em><em>, </em><em>&quot;left&quot;</em><em>, </em><em>&quot;right&quot;</em><em>, </em><em>&quot;exact&quot;}</em><em>, </em><em>optional</em>) – <p>String indicating how to combine differing indexes
+(excluding dim) in objects
+- “outer”: use the union of object indexes
+- “inner”: use the intersection of object indexes
+- “left”: use indexes from the first object with each dimension
+- “right”: use indexes from the last object with each dimension
+- “exact”: instead of aligning, raise <cite>ValueError</cite> when indexes to be</p>
+<blockquote>
+<div><p>aligned are not equal</p>
+</div></blockquote>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;outer&quot;</span></code> — use the union of object indexes.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;inner&quot;</span></code> — use the intersection of object indexes.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;left&quot;</span></code> — use indexes from the first object with each dimension.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;right&quot;</span></code> — use indexes from the last object with each dimension.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;exact&quot;</span></code> — instead of aligning, raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> when
-indexes to be aligned are not equal.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;override&quot;</span></code> — if indexes are of same size, rewrite indexes to
-be those of the first object with that dimension. Indexes for the
-same dimension must have the same size in all objects.</p></li>
+<li><dl class="simple">
+<dt>”override”: if indexes are of same size, rewrite indexes to be</dt><dd><p>those of the first object with that dimension. Indexes for the same
+dimension must have the same size in all objects.</p>
+</dd>
+</dl>
+</li>
 </ul>
 </p></li>
-<li><p><strong>combine_attrs</strong> (<em>{&quot;drop&quot;</em><em>, </em><em>&quot;identical&quot;</em><em>, </em><em>&quot;no_conflicts&quot;</em><em>, </em><em>&quot;drop_conflicts&quot;</em><em>, </em><em>&quot;override&quot;}</em><em> or </em><em>callable</em><em>, </em><em>optional</em>) – <p>How to combine attrs of the objects being merged (default:
-<code class="docutils literal notranslate"><span class="pre">&quot;override&quot;</span></code>):</p>
+<li><p><strong>combine_attrs</strong> (<em>{&quot;drop&quot;</em><em>, </em><em>&quot;identical&quot;</em><em>, </em><em>&quot;no_conflicts&quot;</em><em>, </em><em>&quot;drop_conflicts&quot;</em><em>,                         </em><em>&quot;override&quot;}</em><em> or </em><em>callable</em><em>, </em><em>default: &quot;override&quot;</em>) – <p>A callable or a string indicating how to combine attrs of the objects being
+merged:
+- “drop”: empty attrs on returned Dataset.
+- “identical”: all attrs must be the same on every object.
+- “no_conflicts”: attrs from all objects are combined, any that have</p>
+<blockquote>
+<div><p>the same name must also have the same value.</p>
+</div></blockquote>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;drop&quot;</span></code> — empty attrs on returned Dataset.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;identical&quot;</span></code> — all attrs must be the same on every object.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;no_conflicts&quot;</span></code> — attrs from all objects are combined; any
-that have the same name must also have the same value.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;drop_conflicts&quot;</span></code> — attrs from all objects are combined; any
-that have the same name but different values are dropped.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;override&quot;</span></code> — skip comparing and copy attrs from the first
-dataset to the result.</p></li>
+<li><dl class="simple">
+<dt>”drop_conflicts”: attrs from all objects are combined, any that have</dt><dd><p>the same name but different values are dropped.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>”override”: skip comparing and copy attrs from the first dataset to</dt><dd><p>the result.</p>
+</dd>
+</dl>
+</li>
 </ul>
-<p>If a callable, it must expect a sequence of <code class="docutils literal notranslate"><span class="pre">attrs</span></code> dicts and a
-context object as its only parameters.</p>
+<p>If a callable, it must expect a sequence of <code class="docutils literal notranslate"><span class="pre">attrs</span></code> dicts and a context object
+as its only parameters.</p>
 </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>concatenated</strong> – Concatenation of <code class="docutils literal notranslate"><span class="pre">objs</span></code> along <code class="docutils literal notranslate"><span class="pre">dim</span></code>.</p>
+<dd class="field-even"><p><strong>concatenated</strong></p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="data/timeseriesx.html#ptsa.data.timeseries.TimeSeries" title="ptsa.data.timeseries.TimeSeries">TimeSeries</a></p>
+<dd class="field-odd"><p>type of objs</p>
 </dd>
 </dl>
 </dd></dl>
