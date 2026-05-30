@@ -198,6 +198,36 @@ wraps the ``NO_RHINO=1`` invocation, and CI always runs with
 ``NO_RHINO=1`` set.
 
 
+Building the documentation
+--------------------------
+
+The Sphinx site lives under ``docs/``; the rendered HTML committed to
+``docs/html/`` is the artifact published to GitHub Pages. To rebuild it,
+use the same dev env you tested with (PTSA must be importable for
+autodoc) plus ``pandoc`` (needed by ``nbsphinx`` to render the example
+notebooks). With conda:
+
+.. code-block:: shell-session
+
+    conda install -y -c conda-forge sphinx sphinx_rtd_theme nbsphinx pandoc
+
+Then from the repo root:
+
+.. code-block:: shell-session
+
+    PYTHONPATH=$PWD PTSA_DOCS_BUILD_NOTEBOOKS=1 python maint/build_docs.py
+
+``maint/build_docs.py`` removes the old ``docs/html/`` and runs
+``make html`` (which writes back into ``docs/html/`` since
+``docs/Makefile`` sets ``BUILDDIR = .``). ``PYTHONPATH=$PWD`` ensures
+``docs/conf.py``'s ``from ptsa import __version__`` resolves when
+sphinx-build runs from the ``docs/`` cwd. Set
+``PTSA_DOCS_BUILD_NOTEBOOKS=1`` to include the example notebooks
+(needs ``pandoc``); omit it for a faster docs-only build.
+
+Open ``docs/html/index.html`` in a browser to preview before committing.
+
+
 Building conda packages
 -----------------------
 
