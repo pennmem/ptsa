@@ -32,14 +32,14 @@ size_t nextpow2(size_t v) {
 //
 // Parameters
 //   width       number of cycles of the carrier under the Gaussian
-//               envelope (Tallon-Baudry parameterisation; same thing
-//               MNE calls n_cycles, NOT the scipy.signal.morlet `w`).
+//               envelope (same thing MNE calls n_cycles, NOT the
+//               scipy.signal.morlet `w` which is a scale factor).
 //   freq        wavelet centre frequency, Hz.
 //   win_size    length of the signal the wavelet will be convolved
 //               with -- used to size the zero-padded FFT.
 //   sample_freq sample rate of the signal, Hz.
-//   complete    if true, use the Tallon-Baudry "complete" (zero-mean)
-//               Morlet; if false, use the textbook complex Morlet.
+//   complete    if true, use the "complete" (zero-mean) Morlet variant;
+//               if false, use the textbook complex Morlet.
 //
 // Formula (sigma_t = 1 / (2*pi*sigma_f) with sigma_f = freq/width):
 //
@@ -52,8 +52,7 @@ size_t nextpow2(size_t v) {
 //                    a_c / a_s are rescaled analytically to preserve
 //                    unit energy, and the time axis is multiplied by
 //                    freq_scale = (2/pi) * acos(exp(-width^2/2)) so
-//                    the spectral peak stays at `freq`. See
-//                    Tallon-Baudry & Bertrand 1996.
+//                    the spectral peak stays at `freq`.
 //
 // A Python reference implementation of this loop lives at
 // ptsa/extensions/morlet/_python_reference.py and tests in
@@ -82,9 +81,32 @@ size_t MorletWaveFFT::init(size_t width, double freq, size_t win_size, double sa
       nt = size_t((nt-1)/freq_scale + 1.5);
       t = t/freq_scale;
       scale /= freq_scale*freq_scale;
+
+      // Re-derive a_c and a_s analytically so each arm still has unit
+      // L^2 energy after the two modifications above: (a) subtracting
+      // `complete_offset` from the cosine, and (b) rescaling the time
+      // axis by 1/freq_scale.
+      //
+      // Real arm: psi_re(t) = a_c * (cos(w'*t) - offset)
+      //                       * exp(-t^2 / scale).
+      //   Expanding (cos - offset)^2 = cos^2 - 2*offset*cos + offset^2
+      //   yields THREE Gaussian-weighted integrals, each with a known
+      //   closed form. Substituting w' = freq_scale*omega and
+      //   scale = 2*sigma_t^2 / freq_scale^2 and simplifying gives the
+      //   three additive terms below, each scaled by 1/freq_scale
+      //   (which falls out of the time-rescale change of variables).
+      //   a_c = 1/sqrt(inv_sq_a_c) then makes int |psi_re|^2 dt = 1.
       double inv_sq_a_c = (1.0 / freq_scale) * ( width/(4.0*freq*sqrt(M_PI)) +
           3.0*width*exp(-(double)width*width) / (4.0*freq*sqrt(M_PI)) -
           (double)width*exp(-3*(double)width*width/4.0) / (freq*sqrt(M_PI)) );
+
+      // Imaginary arm: psi_im(t) = a_s * sin(omega*t) * exp(-t^2/scale).
+      //   No offset (the zero-mean correction is only on the cosine
+      //   arm). int sin^2(omega*t)*exp(-t^2/scale) dt has a single
+      //   closed form; the (1 - exp(-w^2 * pi^2 / (4*acos_term^2)))
+      //   factor encodes the sin^2-vs-Gaussian width interaction at
+      //   the rescaled frequency. a_s = 1/sqrt(inv_sq_a_s) then makes
+      //   int |psi_im|^2 dt = 1.
       double acos_term = acos(exp(-(double)width*width/2.0));
       double inv_sq_a_s = (width*sqrt(M_PI) / (8*freq *
           acos(exp(-(double)width*width/2.0)))) *

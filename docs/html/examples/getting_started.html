@@ -12,8 +12,6 @@
       <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
 
   
-      <script src="../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=c3365b21"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
@@ -101,7 +99,7 @@
            <div itemprop="articleBody">
              
   <section id="Getting-started-with-timeseries">
-<h1>Getting started with timeseries<a class="headerlink" href="#Getting-started-with-timeseries" title="Link to this heading"></a></h1>
+<h1>Getting started with timeseries<a class="headerlink" href="#Getting-started-with-timeseries" title="Link to this heading">¶</a></h1>
 <p><p>This notebook will walk you through some of the basic methods in PTSA’s TimeSeries class. We’ll see how to construct an instance of TimeSeries, how to save and load data, as well as resampling and filtering TimeSeries.</p>
 </p><div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -116,10 +114,12 @@
 </div>
 </div>
 <section id="Let's-start-with-creating-some-data">
-<h2>Let’s start with creating some data<a class="headerlink" href="#Let's-start-with-creating-some-data" title="Link to this heading"></a></h2>
-<p><p>In real applications, you will most likely have your own timeseries data for analysis.
-For the purpose of illustrating the functionalities of the timeseries class, we will construct sinusoids as our timeseries data.
-Let’s create an array of 5000 data points, or samples. Suppose the sampling rate is 10Hz, this means that our timeseires is 5000/10=500 seconds long.</p>
+<h2>Let’s start with creating some data<a class="headerlink" href="#Let's-start-with-creating-some-data" title="Link to this heading">¶</a></h2>
+<p><div class="line-block">
+<div class="line">In real applications, you will most likely have your own timeseries data for analysis.</div>
+<div class="line">For the purpose of illustrating the functionalities of the timeseries class, we will construct sinusoids as our timeseries data.</div>
+<div class="line">Let’s create an array of 5000 data points, or samples. Suppose the sampling rate is 10Hz, this means that our timeseires is 5000/10=500 seconds long.</div>
+</div>
 </p><div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -216,7 +216,7 @@ Last 5 timestamps:  [499.6 499.7 499.8 499.9 500. ]
 </div>
 </section>
 <section id="Create-a-TimeSeries-object">
-<h2>Create a TimeSeries object<a class="headerlink" href="#Create-a-TimeSeries-object" title="Link to this heading"></a></h2>
+<h2>Create a TimeSeries object<a class="headerlink" href="#Create-a-TimeSeries-object" title="Link to this heading">¶</a></h2>
 <p><p>The TimeSeries class is a convenient wrapper of xarray that offers basic functionalities for timeseries analysis. Although we focus our analysis here in the context of timeseries data, many of the following examples can be easily extended to non-timeseries, multidimensional data.
 To create a TimeSeries object, we simply need to construct dimensions and the corresponding coordinates in each dimension.</p>
 </p><div class="nbinput docutils container">
@@ -281,7 +281,7 @@ Coordinates:
 </div>
 </section>
 <section id="Saving-and-loading-your-data">
-<h2>Saving and loading your data<a class="headerlink" href="#Saving-and-loading-your-data" title="Link to this heading"></a></h2>
+<h2>Saving and loading your data<a class="headerlink" href="#Saving-and-loading-your-data" title="Link to this heading">¶</a></h2>
 <p><p>TimeSeries objects can be easily saved and loaded in HDF5 format.</p>
 </p><p><p>Note: You will need to install h5py to use these methods.</p>
 </p><div class="nbinput docutils container">
@@ -795,7 +795,7 @@ Coordinates:
 </div>
 </section>
 <section id="Indexing-your-data">
-<h2>Indexing your data<a class="headerlink" href="#Indexing-your-data" title="Link to this heading"></a></h2>
+<h2>Indexing your data<a class="headerlink" href="#Indexing-your-data" title="Link to this heading">¶</a></h2>
 <p><p>We can used xarray’s .sel() method to index our data, or give the dimension name instead of the dimension index to other methods.</p>
 </p><p><p>Click <a class="reference external" href="http://xarray.pydata.org/en/stable/index.html">here</a> to learn more about xarray methods.</p>
 </p><div class="nbinput docutils container">
@@ -1736,7 +1736,7 @@ Coordinates:
 </div>
 </section>
 <section id="Matching-coordinates">
-<h2>Matching coordinates<a class="headerlink" href="#Matching-coordinates" title="Link to this heading"></a></h2>
+<h2>Matching coordinates<a class="headerlink" href="#Matching-coordinates" title="Link to this heading">¶</a></h2>
 <p><p>We can also place the time dimension as the first dimension. The coordinates in xarray are very useful and are used to keep track of the dimensions of the data. Therefore, the exact shape of the data or the order of the dimensions can vary.</p>
 </p><div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
@@ -1876,7 +1876,7 @@ Coordinates:
 </div>
 </section>
 <section id="Resampling-your-data">
-<h2>Resampling your data<a class="headerlink" href="#Resampling-your-data" title="Link to this heading"></a></h2>
+<h2>Resampling your data<a class="headerlink" href="#Resampling-your-data" title="Link to this heading">¶</a></h2>
 <p><p>We can resample the data to a specific samplerate.</p>
 </p><div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
@@ -1974,7 +1974,7 @@ Coordinates:
 </div>
 </section>
 <section id="Filtering-your-data">
-<h2>Filtering your data<a class="headerlink" href="#Filtering-your-data" title="Link to this heading"></a></h2>
+<h2>Filtering your data<a class="headerlink" href="#Filtering-your-data" title="Link to this heading">¶</a></h2>
 <p><p>Let’s create a new TimeSeries object composed of sinunoids at three different frequencies. We’ll show how to manipulate these data using different filtering methods.</p>
 </p><div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
@@ -2051,7 +2051,7 @@ Text(0.5, 0, &#39;Time(s)&#39;)
 </div>
 </div>
 <section id="We-will-use-three-different-filters-to-filter-out-each-component.">
-<h3>We will use three different filters to filter out each component.<a class="headerlink" href="#We-will-use-three-different-filters-to-filter-out-each-component." title="Link to this heading"></a></h3>
+<h3>We will use three different filters to filter out each component.<a class="headerlink" href="#We-will-use-three-different-filters-to-filter-out-each-component." title="Link to this heading">¶</a></h3>
 <p><ol class="arabic simple">
 <li><p>To filter out the component with the highest frequency (3.2Hz), we’ll use a lowpass filter. A lowpass filter perserves any frequency that is lower than the given frequency.</p></li>
 <li><p>To filter out the component with the lowest frequency (0.2Hz), we’ll use a highpass filter. A highpass filter perserves any frequency that is higher than the given frequency.</p></li>
@@ -2184,7 +2184,7 @@ Text(0.5, 0, &#39;Time(s)&#39;)
 </section>
 </section>
 <section id="There-you-have-it!-You're-now-ready-to-get-rolling-with-PTSA's-timeseries.">
-<h2>There you have it! You’re now ready to get rolling with PTSA’s timeseries.<a class="headerlink" href="#There-you-have-it!-You're-now-ready-to-get-rolling-with-PTSA's-timeseries." title="Link to this heading"></a></h2>
+<h2>There you have it! You’re now ready to get rolling with PTSA’s timeseries.<a class="headerlink" href="#There-you-have-it!-You're-now-ready-to-get-rolling-with-PTSA's-timeseries." title="Link to this heading">¶</a></h2>
 </section>
 </section>
 

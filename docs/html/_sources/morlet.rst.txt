@@ -15,8 +15,7 @@ Formula
 -------
 
 PTSA's Morlet wavelet is the standard complex Morlet (Gabor) wavelet
-parameterized by the number of cycles under the Gaussian envelope
-(the *Tallon-Baudry parameterization*; see [TallonBaudry1999]_).
+parameterized by the number of cycles under the Gaussian envelope.
 For a target frequency :math:`f` and a width :math:`w` (number of
 cycles):
 
@@ -83,8 +82,8 @@ When to flip ``complete`` to ``False``:
   :math:`\sim 4 \times 10^{-6}`).
 - Setting ``complete=False`` is mainly useful for reproducing
   analyses that explicitly used the uncorrected wavelet, or for
-  cross-checking against another tool that does not apply the
-  Tallon-Baudry zero-mean correction.
+  cross-checking against another tool that does not apply a
+  zero-mean correction.
 
 Parameters
 ----------
@@ -97,8 +96,8 @@ Parameters
 
 ``width`` : int, default ``5``
     Number of cycles of the carrier sinusoid under one standard
-    deviation of the Gaussian envelope (the **Tallon-Baudry**
-    convention). This is *not* a SciPy-style scale factor. The
+    deviation of the Gaussian envelope (the same convention as MNE's
+    ``n_cycles``). This is *not* a SciPy-style scale factor. The
     trade-off is the usual time-frequency uncertainty:
 
     - Higher ``width`` → narrower bandwidth (tighter frequency
@@ -119,7 +118,7 @@ Parameters
     with the other two on the same call.
 
 ``complete`` : bool, default ``True``
-    Apply the Tallon-Baudry zero-mean correction described above.
+    Apply the zero-mean correction described above.
 
 ``cpus`` : int, default ``1``
     Number of worker threads used by the C++ kernel.
@@ -196,8 +195,7 @@ summarizes the three conventions you are most likely to encounter.
    * - PTSA (this package)
      - ``width`` = number of cycles under the Gaussian envelope
        (one :math:`\sigma_t`).
-     - Tallon-Baudry convention. ``complete=True`` by default
-       applies the zero-mean correction.
+     - ``complete=True`` by default applies the zero-mean correction.
    * - ``mne.time_frequency.morlet``
      - ``n_cycles`` = number of cycles, same convention as PTSA's
        ``width``.
@@ -218,10 +216,3 @@ summarizes the three conventions you are most likely to encounter.
    vice versa). The two parameterizations differ by both definition
    and scale, and using the wrong one silently produces a
    well-formed but incorrect time-frequency map.
-
-References
-----------
-
-.. [TallonBaudry1999] Tallon-Baudry, C., & Bertrand, O. (1999).
-   Oscillatory gamma activity in humans and its role in object
-   representation. *Trends in Cognitive Sciences*, 3(4), 151-162.

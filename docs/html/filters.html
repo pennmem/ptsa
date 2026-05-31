@@ -11,8 +11,6 @@
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=c3365b21"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
@@ -89,7 +87,7 @@
            <div itemprop="articleBody">
              
   <section id="filters">
-<span id="id1"></span><h1>Filters<a class="headerlink" href="#filters" title="Link to this heading"></a></h1>
+<span id="id1"></span><h1>Filters<a class="headerlink" href="#filters" title="Link to this heading">¶</a></h1>
 <p>PTSA ships a small collection of filter classes that all share the
 same 3.0 calling convention: construct an instance with its
 configuration parameters, then call <code class="docutils literal notranslate"><span class="pre">filter</span></code> on a
@@ -112,7 +110,7 @@ the file. Each filter snippet starts from that <code class="docutils literal not
 the examples actually execute.</p>
 </div>
 <section id="shared-setup">
-<h2>Shared setup<a class="headerlink" href="#shared-setup" title="Link to this heading"></a></h2>
+<h2>Shared setup<a class="headerlink" href="#shared-setup" title="Link to this heading">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">ptsa.data.timeseries</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeSeries</span>
 
@@ -132,7 +130,7 @@ the examples actually execute.</p>
 </div>
 </section>
 <section id="morletwaveletfilter">
-<h2>MorletWaveletFilter<a class="headerlink" href="#morletwaveletfilter" title="Link to this heading"></a></h2>
+<h2>MorletWaveletFilter<a class="headerlink" href="#morletwaveletfilter" title="Link to this heading">¶</a></h2>
 <p>PTSA’s main user-facing entry point to the C++/FFTW Morlet wavelet
 kernel. Produces time-resolved power, phase, or raw complex
 coefficients on a frequency grid you supply.</p>
@@ -155,7 +153,7 @@ and a comparison against scipy / MNE parameterizations live on the
 <a class="reference internal" href="morlet.html#morlet"><span class="std std-ref">Morlet wavelets</span></a> page.</p>
 </section>
 <section id="butterworthfilter">
-<h2>ButterworthFilter<a class="headerlink" href="#butterworthfilter" title="Link to this heading"></a></h2>
+<h2>ButterworthFilter<a class="headerlink" href="#butterworthfilter" title="Link to this heading">¶</a></h2>
 <p>Wraps <code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.filtfilt()</span></code> with a Butterworth IIR design.
 Use <code class="docutils literal notranslate"><span class="pre">filt_type='stop'</span></code> to notch a band (e.g.60 Hz line noise),
 <code class="docutils literal notranslate"><span class="pre">'pass'</span></code> for a band-pass, or <code class="docutils literal notranslate"><span class="pre">'lowpass'</span></code> / <code class="docutils literal notranslate"><span class="pre">'highpass'</span></code> for
@@ -172,7 +170,7 @@ in-place as <code class="docutils literal notranslate"><span class="pre">ts.filt
 <span class="pre">order=4)</span></code>.</p>
 </section>
 <section id="resamplefilter">
-<h2>ResampleFilter<a class="headerlink" href="#resamplefilter" title="Link to this heading"></a></h2>
+<h2>ResampleFilter<a class="headerlink" href="#resamplefilter" title="Link to this heading">¶</a></h2>
 <p>Wraps <code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.resample()</span></code> to change the samplerate of a
 <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code>. The output <code class="docutils literal notranslate"><span class="pre">samplerate</span></code> coord is updated
 accordingly.</p>
@@ -184,7 +182,7 @@ accordingly.</p>
 </div>
 </section>
 <section id="monopolartobipolarmapper">
-<h2>MonopolarToBipolarMapper<a class="headerlink" href="#monopolartobipolarmapper" title="Link to this heading"></a></h2>
+<h2>MonopolarToBipolarMapper<a class="headerlink" href="#monopolartobipolarmapper" title="Link to this heading">¶</a></h2>
 <p>Takes pairwise differences across channels to produce a bipolar
 montage from a monopolar one. <code class="docutils literal notranslate"><span class="pre">bipolar_pairs</span></code> is an array of
 length-2 channel indices.</p>
@@ -200,7 +198,7 @@ length-2 channel indices.</p>
 former channel axis.</p>
 </section>
 <section id="datachopper">
-<h2>DataChopper<a class="headerlink" href="#datachopper" title="Link to this heading"></a></h2>
+<h2>DataChopper<a class="headerlink" href="#datachopper" title="Link to this heading">¶</a></h2>
 <p>Slices a continuous (session-length) recording into per-event
 epochs. Construction takes an event recarray, a sample-rate, and an
 epoch start/end offset (in samples or seconds depending on
